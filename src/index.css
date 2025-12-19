@@ -1,68 +1,240 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&family=Rajdhani:wght@500;600;700&display=swap');
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
+@layer base {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    /* Clear App Design System - Cyberpunk Utilitarian */
+    
+    /* Brand Colors */
+    --clear-purple: 270 50% 60%;      /* #9966CC - primary brand */
+    --clear-indigo: 247 37% 44%;      /* #4F479A - secondary */
+    --clear-orange: 27 90% 51%;       /* #F17B14 - accent/CTAs */
+    --clear-rose: 341 59% 45%;        /* #B62F57 - high intensity */
+    --clear-lime: 91 81% 56%;         /* #8DE937 - low intensity */
+    --clear-offwhite: 40 100% 99%;    /* #FFFEFB - text */
+    --clear-dark: 0 10% 8%;           /* #161313 - background */
+    
+    /* Semantic mappings */
+    --background: var(--clear-dark);
+    --foreground: var(--clear-offwhite);
+    
+    --card: 247 37% 44% / 0.04;
+    --card-foreground: var(--clear-offwhite);
+    
+    --popover: var(--clear-dark);
+    --popover-foreground: var(--clear-offwhite);
+    
+    --primary: var(--clear-purple);
+    --primary-foreground: var(--clear-offwhite);
+    
+    --secondary: var(--clear-indigo);
+    --secondary-foreground: var(--clear-offwhite);
+    
+    --accent: var(--clear-orange);
+    --accent-foreground: var(--clear-offwhite);
+    
+    --muted: 247 37% 44% / 0.1;
+    --muted-foreground: 40 20% 70%;
+    
+    --destructive: var(--clear-rose);
+    --destructive-foreground: var(--clear-offwhite);
+    
+    --success: var(--clear-lime);
+    --success-foreground: var(--clear-dark);
+    
+    --border: 40 10% 50% / 0.15;
+    --input: 247 37% 44% / 0.05;
+    --ring: var(--clear-orange);
+    
+    --radius: 0rem;
   }
-  a:hover {
-    color: #747bff;
+}
+
+@layer base {
+  * {
+    @apply border-border;
   }
-  button {
-    background-color: #f9f9f9;
+  
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+    min-height: 100vh;
+    position: relative;
+  }
+  
+  /* Background layers: gradient image -> dark overlay -> grain (grain on top) */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url('./assets/bg-mobile.png');
+    background-size: cover;
+    background-position: center;
+    z-index: -3;
+  }
+  
+  /* Dark overlay on top of gradient */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: hsl(var(--clear-dark) / 0.35);
+    z-index: -2;
+  }
+  
+  @media (min-width: 768px) {
+    body::before {
+      background-image: url('./assets/bg-desktop.png');
+    }
+  }
+}
+
+@layer components {
+  /* Exercise Card - consistent styling for workout exercises */
+  .exercise-card {
+    background: hsl(var(--clear-orange) / 0.2);
+    border: 1px solid hsl(var(--clear-orange));
+    padding: 1rem;
+  }
+  
+  .exercise-card-title {
+    @apply font-display text-lg font-bold;
+    color: hsl(var(--clear-orange));
+  }
+  
+  /* Glassmorphic Card - semi-transparent, shows gradient but blocks grain */
+  .glass-card {
+    background: hsl(var(--clear-dark) / 0.6);
+    backdrop-filter: blur(20px);
+    border: 1.5px solid hsl(var(--clear-orange) / 0.4);
+    border-radius: var(--radius);
+  }
+  
+  /* Glass Input - same treatment as cards */
+  .glass-input {
+    background: hsl(var(--clear-dark) / 0.6);
+    backdrop-filter: blur(20px);
+    border: 1.5px solid hsl(var(--clear-orange) / 0.4);
+    border-radius: var(--radius);
+  }
+  
+  /* Glowing Button */
+  .glow-button {
+    background: linear-gradient(135deg, hsl(var(--clear-purple)), hsl(270 50% 45%));
+    box-shadow: 0 0 8px hsl(var(--clear-purple) / 0.3);
+    transition: all 0.2s ease;
+  }
+  
+  .glow-button:hover {
+    box-shadow: 0 0 16px hsl(var(--clear-purple) / 0.5);
+    transform: translateY(-1px);
+  }
+  
+  /* Ghost/Outline Button */
+  .ghost-button {
+    background: transparent;
+    border: 1px solid hsl(var(--clear-orange) / 0.5);
+    box-shadow: inset 0 0 8px hsl(var(--clear-orange) / 0.1);
+    transition: all 0.2s ease;
+  }
+  
+  .ghost-button:hover {
+    border-color: hsl(var(--clear-orange));
+    box-shadow: inset 0 0 12px hsl(var(--clear-orange) / 0.2);
+  }
+  
+  /* Active Selection Button */
+  .selection-active {
+    background: hsl(var(--clear-purple));
+    color: hsl(var(--clear-offwhite));
+  }
+  
+  .selection-inactive {
+    background: transparent;
+    border: 1px solid hsl(var(--clear-orange) / 0.4);
+    box-shadow: 0 0 8px hsl(var(--clear-orange) / 0.15);
+  }
+  
+  .selection-inactive:hover {
+    border-color: hsl(var(--clear-orange) / 0.7);
+    box-shadow: 0 0 12px hsl(var(--clear-orange) / 0.25);
+  }
+  
+  /* Input with accent stripe */
+  .cyber-input {
+    background: hsl(var(--clear-indigo) / 0.05);
+    border: 1px solid hsl(40 10% 50% / 0.2);
+    border-left: 3px solid hsl(var(--clear-lime));
+    transition: all 0.2s ease;
+  }
+  
+  .cyber-input:focus {
+    outline: none;
+    border-color: hsl(40 10% 50% / 0.3);
+    box-shadow: 0 0 8px hsl(var(--clear-lime) / 0.2);
+  }
+  
+  /* Grain texture overlay - subtle, sits between dark overlay and content */
+  .grain-overlay::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.03;
+    z-index: -1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+  
+  /* Intensity Slider */
+  .intensity-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    height: 8px;
+  }
+  
+  .intensity-slider::-webkit-slider-runnable-track {
+    height: 8px;
+    background: linear-gradient(90deg, hsl(var(--clear-indigo) / 0.5), hsl(var(--clear-purple) / 0.4));
+    border-radius: 4px;
+    border: 1px solid hsl(40 10% 50% / 0.2);
+  }
+  
+  .intensity-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, hsl(var(--clear-orange)), hsl(27 90% 40%));
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 0 12px hsl(var(--clear-orange) / 0.5);
+    margin-top: -10px;
+    border: 1px solid hsl(var(--clear-orange) / 0.8);
+  }
+  
+  .intensity-slider::-moz-range-track {
+    height: 8px;
+    background: linear-gradient(90deg, hsl(var(--clear-indigo) / 0.5), hsl(var(--clear-purple) / 0.4));
+    border-radius: 4px;
+    border: 1px solid hsl(40 10% 50% / 0.2);
+  }
+  
+  .intensity-slider::-moz-range-thumb {
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, hsl(var(--clear-orange)), hsl(27 90% 40%));
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 0 12px hsl(var(--clear-orange) / 0.5);
+    border: 1px solid hsl(var(--clear-orange) / 0.8);
+  }
+}
+
+@layer utilities {
+  .text-shadow-glow {
+    text-shadow: 0 0 10px currentColor;
   }
 }
