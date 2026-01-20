@@ -6,7 +6,7 @@ const PRIMARY_ANCHORS = [
   "HINGE",
   "PRESS",
   "PULL",
-  "ROTATION",
+  "POWER",
   "SURPRISE",
 ] as const;
 

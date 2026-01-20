@@ -1,5 +1,5 @@
 // Anchor types
-export type AnchorType = 'SQUAT' | 'HINGE' | 'PRESS' | 'PULL' | 'ROTATION' | 'SURPRISE';
+export type AnchorType = 'SQUAT' | 'HINGE' | 'PRESS' | 'PULL' | 'POWER' | 'SURPRISE';
 
 // Exercise with logged data for history
 export interface LoggedExercise {
@@ -332,7 +332,7 @@ export const generateMockWorkoutHistory = (): WorkoutHistoryEntry[] => {
     {
       id: crypto.randomUUID(),
       date: new Date(today.getTime() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
-      anchor: 'ROTATION',
+      anchor: 'POWER',
       intensity: 5,
       duration: 35,
       goal: 'Conditioning',
@@ -405,7 +405,7 @@ export const generateMockStreakData = (): StreakData => {
 
 // Get suggested anchor (avoids last 2-3 used)
 export const getSuggestedAnchor = (history: WorkoutHistoryEntry[]): AnchorType => {
-  const allAnchors: AnchorType[] = ['SQUAT', 'HINGE', 'PRESS', 'PULL', 'ROTATION', 'SURPRISE'];
+  const allAnchors: AnchorType[] = ['SQUAT', 'HINGE', 'PRESS', 'PULL', 'POWER', 'SURPRISE'];
   const recentAnchors = history.slice(0, 3).map(w => w.anchor);
 
   // Filter out recently used anchors

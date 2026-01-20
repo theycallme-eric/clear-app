@@ -19,7 +19,7 @@ const ANCHOR_OPTIONS: { value: AnchorFilter; label: string }[] = [
   { value: 'HINGE', label: 'Hinge' },
   { value: 'PRESS', label: 'Press' },
   { value: 'PULL', label: 'Pull' },
-  { value: 'ROTATION', label: 'Rotation' },
+  { value: 'POWER', label: 'Power' },
   { value: 'SURPRISE', label: 'Surprise' },
 ];
 
