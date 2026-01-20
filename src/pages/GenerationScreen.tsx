@@ -5,9 +5,11 @@ import { AnchorGrid, AnchorType } from "@/components/AnchorGrid";
 import { LocationAccordion } from "@/components/LocationAccordion";
 import { OptionalFields } from "@/components/OptionalFields";
 import { GenerateButton } from "@/components/GenerateButton";
+import { UserPreferences } from "@/types/workout";
 
 interface GenerationScreenProps {
   onGenerate: (params: WorkoutParams) => void;
+  userPreferences: UserPreferences;
 }
 
 export interface WorkoutParams {
@@ -18,12 +20,15 @@ export interface WorkoutParams {
   notes: string;
 }
 
-export const GenerationScreen = ({ onGenerate }: GenerationScreenProps) => {
+export const GenerationScreen = ({ onGenerate, userPreferences }: GenerationScreenProps) => {
   const [intensity, setIntensity] = useState(7);
   const [anchor, setAnchor] = useState<AnchorType | null>(null);
   const [location, setLocation] = useState("Commercial Gym");
   const [time, setTime] = useState("");
   const [notes, setNotes] = useState("");
+
+  // Check if Primary Lift section is enabled in user preferences
+  const hasPrimaryLift = userPreferences.sections.includes("primary");
 
   const handleGenerate = () => {
     onGenerate({
@@ -45,7 +50,7 @@ export const GenerationScreen = ({ onGenerate }: GenerationScreenProps) => {
         <div className="px-4 space-y-6">
           <IntensitySlider value={intensity} onChange={setIntensity} />
           
-          <AnchorGrid selected={anchor} onSelect={setAnchor} />
+          <AnchorGrid selected={anchor} onSelect={setAnchor} hasPrimaryLift={hasPrimaryLift} />
           
           <LocationAccordion selected={location} onSelect={setLocation} />
           

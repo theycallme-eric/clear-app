@@ -1,3 +1,116 @@
+// Anchor types
+export type AnchorType = 'SQUAT' | 'HINGE' | 'PRESS' | 'PULL' | 'ROTATION' | 'SURPRISE';
+
+// Exercise with logged data for history
+export interface LoggedExercise {
+  id: string;
+  name: string;
+  sets: number;
+  reps: number | string; // can be "10 each" or similar
+  weight?: string; // logged weight like "185lbs"
+  note?: string; // user note for this exercise
+}
+
+// Section with logged exercises for history
+export interface LoggedSection {
+  id: string;
+  name: string;
+  exercises: LoggedExercise[];
+}
+
+// Completed workout history entry
+export interface WorkoutHistoryEntry {
+  id: string;
+  date: Date;
+  anchor: AnchorType;
+  intensity: number;
+  duration: number; // in minutes
+  goal?: string; // goal preset used
+  mood?: number; // 1-5
+  sessionNotes?: string;
+  sections?: LoggedSection[]; // full workout data for detail view
+}
+
+// Streak data
+export interface StreakData {
+  currentStreak: number;
+  lastWorkoutDate: Date | null;
+  weekView: Record<string, 'workout' | 'rest' | null>; // ISO date string -> status
+}
+
+// Equipment tiers
+export type EquipmentTier = 'minimal' | 'home' | 'building' | 'full';
+
+// Equipment definitions by tier (cumulative)
+export const EQUIPMENT_BY_TIER: Record<EquipmentTier, string[]> = {
+  minimal: ['Bodyweight', 'Resistance Bands', 'Mat', 'Foam Roller'],
+  home: ['Bodyweight', 'Resistance Bands', 'Mat', 'Foam Roller', 'Dumbbells', 'Kettlebells', 'Bench (flat)', 'Pull-up Bar', 'TRX / Suspension Trainer', 'Treadmill'],
+  building: ['Bodyweight', 'Resistance Bands', 'Mat', 'Foam Roller', 'Dumbbells', 'Kettlebells', 'Bench (flat)', 'Pull-up Bar', 'TRX / Suspension Trainer', 'Treadmill', 'Barbell', 'Squat Rack / Cage', 'Cable Machine', 'Adjustable Bench', 'Lat Pulldown', 'Rowing Machine'],
+  full: ['Bodyweight', 'Resistance Bands', 'Mat', 'Foam Roller', 'Dumbbells', 'Kettlebells', 'Bench (flat)', 'Pull-up Bar', 'TRX / Suspension Trainer', 'Treadmill', 'Barbell', 'Squat Rack / Cage', 'Cable Machine', 'Adjustable Bench', 'Lat Pulldown', 'Rowing Machine', 'Leg Press', 'Smith Machine', 'Hack Squat', 'Chest Press Machine', 'Shoulder Press Machine', 'Leg Curl / Extension', 'Pec Deck / Fly Machine', 'Assisted Pull-up/Dip', 'Battle Ropes', 'Assault Bike', 'Stair Climber'],
+};
+
+// Experience levels
+export type ExperienceLevel = 'new' | 'some' | 'confident';
+
+export const EXPERIENCE_LEVELS: { value: ExperienceLevel; label: string; description: string }[] = [
+  { value: 'new', label: 'New to This', description: 'Still learning the movements. More guidance is helpful.' },
+  { value: 'some', label: 'Some Experience', description: 'Know the basics. Comfortable with common exercises.' },
+  { value: 'confident', label: 'Confident', description: "Just tell me what to do. I'll figure it out." },
+];
+
+// Goal presets
+export type GoalPreset = 'strength' | 'balanced' | 'conditioning' | 'quick';
+
+export const GOAL_PRESETS: { value: GoalPreset; label: string; description: string }[] = [
+  { value: 'strength', label: 'Strength', description: 'Heavy lifts, longer rest' },
+  { value: 'balanced', label: 'Balanced', description: 'A little of everything' },
+  { value: 'conditioning', label: 'Conditioning', description: 'Circuits, shorter rest' },
+  { value: 'quick', label: 'Quick & Effective', description: 'Fewer sections, get done' },
+];
+
+// Workout sections
+export type SectionType = 'warmup' | 'mobility' | 'primary' | 'accessory' | 'skill' | 'carries' | 'core' | 'stability' | 'conditioning' | 'cooldown';
+
+export const WORKOUT_SECTIONS: { id: SectionType; name: string; description: string }[] = [
+  { id: 'warmup', name: 'Warm-up', description: 'Light movement to get your body ready' },
+  { id: 'mobility', name: 'Mobility', description: 'Focused flexibility and range of motion work' },
+  { id: 'primary', name: 'Primary Lift', description: 'The main heavy movement — squats, deadlifts, presses' },
+  { id: 'accessory', name: 'Accessory', description: 'Supporting work for the primary lift' },
+  { id: 'skill', name: 'Skill / Power', description: 'Explosive movements — jumps, throws, Olympic lifts' },
+  { id: 'carries', name: 'Carries', description: "Loaded carries — farmer's walks, suitcase carry" },
+  { id: 'core', name: 'Core', description: 'Rotational and stability work for your midsection' },
+  { id: 'stability', name: 'Stability / Balance', description: 'Single-leg work, proprioception focus' },
+  { id: 'conditioning', name: 'Conditioning', description: 'Cardio, circuits, or higher-intensity finishers' },
+  { id: 'cooldown', name: 'Cooldown', description: 'Stretching and recovery to end the session' },
+];
+
+// Sections enabled by goal preset
+export const SECTIONS_BY_GOAL: Record<GoalPreset, SectionType[]> = {
+  strength: ['warmup', 'mobility', 'primary', 'accessory', 'core', 'cooldown'],
+  balanced: ['warmup', 'mobility', 'primary', 'accessory', 'core', 'conditioning', 'cooldown'],
+  conditioning: ['warmup', 'mobility', 'carries', 'core', 'stability', 'conditioning', 'cooldown'],
+  quick: ['warmup', 'primary', 'core', 'cooldown'],
+};
+
+// Location saved by user
+export interface UserLocation {
+  id: string;
+  name: string;
+  tier: EquipmentTier;
+  equipment: string[];
+}
+
+// Full user preferences
+export interface UserPreferences {
+  onboardingComplete: boolean;
+  locations: UserLocation[];
+  defaultLocationId: string | null;
+  experienceLevel: ExperienceLevel | null;
+  goal: GoalPreset | null;
+  sections: SectionType[];
+  limitations: string;
+}
+
 export interface Exercise {
   id: string;
   name: string;
@@ -30,6 +143,322 @@ export interface GeneratedWorkout {
 }
 
 // Mock data generator for prototype
+// Generate mock workout history with full detail data
+export const generateMockWorkoutHistory = (): WorkoutHistoryEntry[] => {
+  const today = new Date();
+
+  return [
+    {
+      id: crypto.randomUUID(),
+      date: new Date(today.getTime() - 1 * 24 * 60 * 60 * 1000), // Yesterday
+      anchor: 'HINGE',
+      intensity: 7,
+      duration: 42,
+      goal: 'Balanced',
+      mood: 4,
+      sessionNotes: 'Good session. Deadlifts felt strong today.',
+      sections: [
+        {
+          id: 'warmup',
+          name: 'Warm-up',
+          exercises: [
+            { id: 'w1', name: 'Cat-Cow', sets: 2, reps: 10 },
+            { id: 'w2', name: 'Hip Circles', sets: 2, reps: '10 each' },
+          ],
+        },
+        {
+          id: 'primary',
+          name: 'Primary Lift',
+          exercises: [
+            { id: 'p1', name: 'Conventional Deadlift', sets: 4, reps: 6, weight: '225lbs', note: 'Felt heavy but moved well' },
+          ],
+        },
+        {
+          id: 'accessory',
+          name: 'Accessory',
+          exercises: [
+            { id: 'a1', name: 'Romanian Deadlift', sets: 3, reps: 10, weight: '135lbs' },
+            { id: 'a2', name: 'Leg Curl', sets: 3, reps: 12, weight: '90lbs' },
+          ],
+        },
+        {
+          id: 'core',
+          name: 'Core',
+          exercises: [
+            { id: 'c1', name: 'Dead Bug', sets: 3, reps: '8 each' },
+            { id: 'c2', name: 'Pallof Press', sets: 3, reps: '10 each' },
+          ],
+        },
+        {
+          id: 'cooldown',
+          name: 'Cooldown',
+          exercises: [
+            { id: 'cd1', name: 'Pigeon Pose', sets: 1, reps: '60s each' },
+            { id: 'cd2', name: 'Hamstring Stretch', sets: 1, reps: '45s each' },
+          ],
+        },
+      ],
+    },
+    {
+      id: crypto.randomUUID(),
+      date: new Date(today.getTime() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+      anchor: 'SQUAT',
+      intensity: 8,
+      duration: 51,
+      goal: 'Strength',
+      mood: 5,
+      sessionNotes: 'PR day! Hit 185 for 6 reps on back squat.',
+      sections: [
+        {
+          id: 'warmup',
+          name: 'Warm-up',
+          exercises: [
+            { id: 'w1', name: 'Goblet Squat Hold', sets: 2, reps: '30s' },
+            { id: 'w2', name: 'Leg Swings', sets: 2, reps: '10 each' },
+          ],
+        },
+        {
+          id: 'primary',
+          name: 'Primary Lift',
+          exercises: [
+            { id: 'p1', name: 'Barbell Back Squat', sets: 4, reps: 6, weight: '185lbs', note: 'New PR!' },
+          ],
+        },
+        {
+          id: 'accessory',
+          name: 'Accessory',
+          exercises: [
+            { id: 'a1', name: 'Bulgarian Split Squat', sets: 3, reps: '10 each', weight: '35lbs' },
+            { id: 'a2', name: 'Leg Press', sets: 3, reps: 12, weight: '180lbs' },
+          ],
+        },
+        {
+          id: 'core',
+          name: 'Core',
+          exercises: [
+            { id: 'c1', name: 'Plank', sets: 3, reps: '45s' },
+          ],
+        },
+        {
+          id: 'conditioning',
+          name: 'Conditioning',
+          exercises: [
+            { id: 'co1', name: 'Bike Intervals', sets: 6, reps: '30s on/30s off' },
+          ],
+        },
+        {
+          id: 'cooldown',
+          name: 'Cooldown',
+          exercises: [
+            { id: 'cd1', name: 'Couch Stretch', sets: 1, reps: '90s each' },
+          ],
+        },
+      ],
+    },
+    {
+      id: crypto.randomUUID(),
+      date: new Date(today.getTime() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+      anchor: 'PRESS',
+      intensity: 6,
+      duration: 38,
+      goal: 'Balanced',
+      mood: 3,
+      sections: [
+        {
+          id: 'warmup',
+          name: 'Warm-up',
+          exercises: [
+            { id: 'w1', name: 'Arm Circles', sets: 2, reps: 15 },
+            { id: 'w2', name: 'Band Pull-Aparts', sets: 2, reps: 15 },
+          ],
+        },
+        {
+          id: 'primary',
+          name: 'Primary Lift',
+          exercises: [
+            { id: 'p1', name: 'Overhead Press', sets: 4, reps: 8, weight: '95lbs' },
+          ],
+        },
+        {
+          id: 'accessory',
+          name: 'Accessory',
+          exercises: [
+            { id: 'a1', name: 'Incline Dumbbell Press', sets: 3, reps: 10, weight: '50lbs' },
+            { id: 'a2', name: 'Lateral Raises', sets: 3, reps: 12, weight: '15lbs' },
+          ],
+        },
+        {
+          id: 'core',
+          name: 'Core',
+          exercises: [
+            { id: 'c1', name: 'Ab Wheel Rollout', sets: 3, reps: 10 },
+          ],
+        },
+        {
+          id: 'cooldown',
+          name: 'Cooldown',
+          exercises: [
+            { id: 'cd1', name: 'Shoulder Stretch', sets: 1, reps: '45s each' },
+          ],
+        },
+      ],
+    },
+    {
+      id: crypto.randomUUID(),
+      date: new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+      anchor: 'PULL',
+      intensity: 7,
+      duration: 44,
+      goal: 'Balanced',
+      mood: 4,
+      sections: [
+        {
+          id: 'primary',
+          name: 'Primary Lift',
+          exercises: [
+            { id: 'p1', name: 'Barbell Row', sets: 4, reps: 8, weight: '135lbs' },
+          ],
+        },
+        {
+          id: 'accessory',
+          name: 'Accessory',
+          exercises: [
+            { id: 'a1', name: 'Lat Pulldown', sets: 3, reps: 12, weight: '120lbs' },
+            { id: 'a2', name: 'Face Pulls', sets: 3, reps: 15, weight: '40lbs' },
+          ],
+        },
+      ],
+    },
+    {
+      id: crypto.randomUUID(),
+      date: new Date(today.getTime() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
+      anchor: 'ROTATION',
+      intensity: 5,
+      duration: 35,
+      goal: 'Conditioning',
+      mood: 4,
+    },
+    // November entries
+    {
+      id: crypto.randomUUID(),
+      date: new Date(today.getFullYear(), today.getMonth() - 1, 28), // Last month
+      anchor: 'PULL',
+      intensity: 7,
+      duration: 44,
+      goal: 'Balanced',
+      mood: 4,
+    },
+    {
+      id: crypto.randomUUID(),
+      date: new Date(today.getFullYear(), today.getMonth() - 1, 25),
+      anchor: 'SQUAT',
+      intensity: 6,
+      duration: 40,
+      goal: 'Strength',
+      mood: 3,
+    },
+    {
+      id: crypto.randomUUID(),
+      date: new Date(today.getFullYear(), today.getMonth() - 1, 22),
+      anchor: 'HINGE',
+      intensity: 8,
+      duration: 48,
+      goal: 'Balanced',
+      mood: 5,
+    },
+  ];
+};
+
+// Generate mock streak data
+export const generateMockStreakData = (): StreakData => {
+  const today = new Date();
+  const weekView: Record<string, 'workout' | 'rest' | null> = {};
+
+  // Get Monday of current week
+  const dayOfWeek = today.getDay();
+  const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  const monday = new Date(today);
+  monday.setDate(today.getDate() + mondayOffset);
+  monday.setHours(0, 0, 0, 0);
+
+  // Fill in the week view (Mon-Sun)
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + i);
+    const dateKey = date.toISOString().split('T')[0];
+
+    if (date > today) {
+      weekView[dateKey] = null; // Future days
+    } else if (i === 2) {
+      weekView[dateKey] = 'rest'; // Wednesday was rest
+    } else if (date <= today) {
+      weekView[dateKey] = 'workout'; // Workout days
+    }
+  }
+
+  return {
+    currentStreak: 12,
+    lastWorkoutDate: new Date(today.getTime() - 1 * 24 * 60 * 60 * 1000),
+    weekView,
+  };
+};
+
+// Get suggested anchor (avoids last 2-3 used)
+export const getSuggestedAnchor = (history: WorkoutHistoryEntry[]): AnchorType => {
+  const allAnchors: AnchorType[] = ['SQUAT', 'HINGE', 'PRESS', 'PULL', 'ROTATION', 'SURPRISE'];
+  const recentAnchors = history.slice(0, 3).map(w => w.anchor);
+
+  // Filter out recently used anchors
+  const availableAnchors = allAnchors.filter(a => !recentAnchors.includes(a));
+
+  // If all anchors were recently used, just pick one that wasn't the most recent
+  if (availableAnchors.length === 0) {
+    return allAnchors.find(a => a !== recentAnchors[0]) || 'PULL';
+  }
+
+  // Return the first available anchor
+  return availableAnchors[0];
+};
+
+// Get suggested intensity (from last workout)
+export const getSuggestedIntensity = (history: WorkoutHistoryEntry[]): number => {
+  if (history.length === 0) return 7; // Default
+  return history[0].intensity;
+};
+
+// Mock user preferences for returning users
+export const getMockUserPreferences = (): UserPreferences => {
+  return {
+    onboardingComplete: true, // Set to true so we see Home screen
+    locations: [
+      {
+        id: crypto.randomUUID(),
+        name: 'Building Gym',
+        tier: 'building',
+        equipment: EQUIPMENT_BY_TIER.building,
+      },
+    ],
+    defaultLocationId: null, // Will be set to first location's id
+    experienceLevel: 'confident',
+    goal: 'balanced',
+    sections: SECTIONS_BY_GOAL.balanced,
+    limitations: '',
+  };
+};
+
+// Get default/empty preferences for new users
+export const getDefaultUserPreferences = (): UserPreferences => {
+  return {
+    onboardingComplete: false,
+    locations: [],
+    defaultLocationId: null,
+    experienceLevel: null,
+    goal: null,
+    sections: [],
+    limitations: '',
+  };
+};
+
 export const generateMockWorkout = (intensity: number, anchor: string): GeneratedWorkout => {
   return {
     id: crypto.randomUUID(),
