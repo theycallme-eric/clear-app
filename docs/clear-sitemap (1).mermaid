@@ -1,0 +1,44 @@
+---
+title: Clear - App Sitemap
+---
+flowchart TD
+    subgraph ONBOARDING["🚀 Onboarding (First Launch Only)"]
+        O1[Step 1: Equipment/Location]
+        O2[Step 2: Experience Level]
+        O3[Step 3: Goals & Structure]
+        O4[Step 4: Limitations]
+        O5[Step 5: Confirmation]
+        O1 --> O2 --> O3 --> O4 --> O5
+    end
+
+    subgraph CORE["💪 Core Workout Flow"]
+        S1[Screen 1: Generation Input]
+        S2[Screen 2: Review & Edit]
+        S3[Screen 3: Workout Mode]
+        S4[Summary / Save]
+    end
+
+    subgraph SECONDARY["📁 Secondary Screens"]
+        HOME[Home / Dashboard]
+        HIST[Workout History]
+        HIST_D[Session Detail]
+        HIST --> HIST_D
+    end
+
+    subgraph SETTINGS["⚙️ Settings"]
+        SET[Settings Hub]
+        SET_L[Locations / Equipment]
+        SET_E[Experience Level]
+        SET_W[Workout Structure]
+        SET_LIM[Limitations]
+        SET --> SET_L
+        SET --> SET_E
+        SET --> SET_W
+        SET --> SET_LIM
+    end
+
+    %% Connections between groups
+    O5 -.-> S1
+    HOME --> S1
+    S1 --> S2 --> S3 --> S4
+    S4 -.-> HOME

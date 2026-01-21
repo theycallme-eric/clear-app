@@ -1,0 +1,58 @@
+---
+title: Clear - User Navigation Flow
+---
+flowchart TD
+    OPEN([User Opens App])
+    
+    OPEN --> CHECK{First Time?}
+    
+    %% Onboarding Branch
+    CHECK -->|Yes| O1[Equipment Setup]
+    O1 --> O2[Experience Level]
+    O2 --> O3[Goals & Structure]
+    O3 --> O4[Limitations]
+    O4 --> O5[Confirmation]
+    O5 --> GEN
+    
+    %% Returning User Branch
+    CHECK -->|No| HOME[Home / Dashboard]
+    HOME --> GEN[Generation Screen]
+    HOME --> HIST[Workout History]
+    HOME --> SET[Settings]
+    
+    %% Core Flow
+    GEN -->|"Set intensity, anchor, generate"| REV[Review & Edit]
+    REV -->|"Looks good"| WORK[Workout Mode]
+    REV -->|"Edit exercise"| EDIT((Edit Modal))
+    EDIT --> REV
+    REV -->|"Randomize section"| REV
+    
+    %% Workout Execution
+    WORK -->|"Next section"| WORK
+    WORK -->|"Add note"| NOTE((Note Modal))
+    NOTE --> WORK
+    WORK -->|"Finish"| SUM[Summary Screen]
+    
+    %% Post-Workout
+    SUM -->|"Save Session"| HOME
+    SUM -->|"Discard"| HOME
+    
+    %% History Flow
+    HIST --> DETAIL[Session Detail]
+    DETAIL -->|"Back"| HIST
+    
+    %% Settings Flow
+    SET --> SET_L[Locations]
+    SET --> SET_E[Experience]
+    SET --> SET_W[Structure]
+    SET --> SET_LIM[Limitations]
+    SET_L & SET_E & SET_W & SET_LIM -->|"Back"| SET
+    SET -->|"Back"| HOME
+
+    %% Styling
+    style OPEN fill:#8DE937,color:#161313
+    style HOME fill:#9966CC,color:#FFFEFB
+    style GEN fill:#F17B14,color:#FFFEFB
+    style REV fill:#F17B14,color:#FFFEFB
+    style WORK fill:#F17B14,color:#FFFEFB
+    style SUM fill:#F17B14,color:#FFFEFB
