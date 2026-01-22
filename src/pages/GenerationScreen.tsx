@@ -10,6 +10,7 @@ import { UserPreferences } from "@/types/workout";
 interface GenerationScreenProps {
   onGenerate: (params: WorkoutParams) => void;
   userPreferences: UserPreferences;
+  isGenerating?: boolean;
 }
 
 export interface WorkoutParams {
@@ -20,10 +21,14 @@ export interface WorkoutParams {
   notes: string;
 }
 
-export const GenerationScreen = ({ onGenerate, userPreferences }: GenerationScreenProps) => {
+export const GenerationScreen = ({ onGenerate, userPreferences, isGenerating = false }: GenerationScreenProps) => {
+  const defaultLocation = userPreferences.locations.find(
+    l => l.id === userPreferences.defaultLocationId
+  ) || userPreferences.locations[0];
+
   const [intensity, setIntensity] = useState(7);
   const [anchor, setAnchor] = useState<AnchorType | null>(null);
-  const [location, setLocation] = useState("Commercial Gym");
+  const [location, setLocation] = useState(defaultLocation?.name || "Gym");
   const [time, setTime] = useState("");
   const [notes, setNotes] = useState("");
 
@@ -52,7 +57,7 @@ export const GenerationScreen = ({ onGenerate, userPreferences }: GenerationScre
           
           <AnchorGrid selected={anchor} onSelect={setAnchor} hasPrimaryLift={hasPrimaryLift} />
           
-          <LocationAccordion selected={location} onSelect={setLocation} />
+          <LocationAccordion selected={location} onSelect={setLocation} locations={userPreferences.locations} />
           
           <OptionalFields
             time={time}
@@ -62,7 +67,7 @@ export const GenerationScreen = ({ onGenerate, userPreferences }: GenerationScre
           />
         </div>
         
-        <GenerateButton onClick={handleGenerate} disabled={!canGenerate} />
+        <GenerateButton onClick={handleGenerate} disabled={!canGenerate} isLoading={isGenerating} />
       </div>
     </div>
   );

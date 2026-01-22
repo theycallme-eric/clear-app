@@ -128,7 +128,7 @@ type ExerciseStructure =
   | { type: 'circuit'; circuit_id: string }                // Which circuit it belongs to
   | { type: 'emom'; minutes: number }                      // EMOM duration
   | { type: 'amrap'; minutes: number }                     // AMRAP duration
-  | { type: 'ladder'; pattern: string }                    // e.g., "10-8-6-4-2"
+  | { type: 'afap'; time_cap_mins: number; pattern: string }  // AFAP with time cap (e.g., "15-12-9-6-3")
   | { type: 'timed'; work_seconds: number; rest_seconds: number }  // Intervals
 
 type SectionType = 
@@ -472,7 +472,7 @@ WORKOUT REQUEST:
     {
       "section_type": "conditioning",
       "section_title": "Conditioning Finisher",
-      "section_notes": "Quick burner — keep moving, rest as needed.",
+      "section_notes": "AFAP ladder — goal is under 6 minutes. Keep moving, rest as needed.",
       "estimated_duration_mins": 6,
       "exercises": [
         {
@@ -480,26 +480,26 @@ WORKOUT REQUEST:
           "name": "Kettlebell Swings",
           "equipment": "kettlebells",
           "sets": null,
-          "reps": "15",
+          "reps": "15-12-9-6-3",
           "effort_percent": null,
           "tempo": null,
           "rest_seconds": null,
           "coaching_cues": ["Hip hinge, not squat", "Snap hips forward"],
           "regression": null,
-          "structure": { "type": "ladder", "pattern": "15-12-9-6-3" }
+          "structure": { "type": "afap", "time_cap_mins": 6, "pattern": "15-12-9-6-3" }
         },
         {
           "exercise_id": "burpees",
           "name": "Burpees",
           "equipment": "bodyweight",
           "sets": null,
-          "reps": "5",
+          "reps": "5-4-3-2-1",
           "effort_percent": null,
           "tempo": null,
           "rest_seconds": null,
           "coaching_cues": ["Chest to floor", "Jump with intent"],
           "regression": "Step back instead of jump",
-          "structure": { "type": "ladder", "pattern": "5-4-3-2-1" }
+          "structure": { "type": "afap", "time_cap_mins": 6, "pattern": "5-4-3-2-1" }
         }
       ]
     },
@@ -1090,9 +1090,43 @@ Store `prompt_version` with each generated workout for debugging and iteration:
 |-----------|--------------|-----------|--------------|
 | 1-3 | None | None | None |
 | 4 | 3x8-10 @ moderate | 2-3 sets, higher reps | None |
-| 5-6 | 4x6-8 @ 65-70% | 3 sets, moderate reps | 5-8 min AMRAP or ladder |
-| 7-8 | 5x5 @ 75-80% | 3-4 sets, varied | 6-10 min AMRAP or EMOM |
-| 9-10 | 5x3-5 @ 85%+ | 4 sets, push volume | 8-12 min demanding AMRAP |
+| 5-6 | 4x6-8 @ 65-70% | 3 sets, moderate reps | AMRAP or EMOM (5-8 min time box) |
+| 7-8 | 5x5 @ 75-80% | 3-4 sets, varied | AFAP ladder with time cap OR AMRAP (6-10 min) |
+| 9-10 | 5x3-5 @ 85%+ | 4 sets, push volume | AFAP ladder with aggressive time cap (6-8 min) |
+
+---
+
+## Conditioning Time Constraints (Required)
+
+**All conditioning finishers must have a time constraint.** No open-ended conditioning.
+
+### Two Formats:
+
+**1. AMRAP / EMOM (Time Box)**
+- Fixed time, max effort within that window
+- "How many rounds can you complete in X minutes?"
+- Best for: Intensity 5-6 (moderate)
+- Example: "8 min AMRAP: 12 KB swings, 8 burpees, 6 box jumps"
+
+**2. AFAP with Time Cap (Race the Clock)**
+- Fixed work, goal is to finish fast
+- "Complete this ladder — goal is under X minutes"
+- Best for: Intensity 7-10 (push sessions)
+- Example: "15-12-9-6-3 KB swings + burpees, 7 min cap"
+
+### Conditioning by Intensity:
+
+| Intensity | Format | Time Window | Vibe |
+|-----------|--------|-------------|------|
+| 5-6 | AMRAP or EMOM | 5-8 min | Steady effort, keep moving |
+| 7-8 | AFAP with cap OR AMRAP | 6-10 min | Push pace, challenge yourself |
+| 9-10 | AFAP with aggressive cap | 6-8 min | Race it, leave it all there |
+
+### Ladder Patterns to Use:
+- Descending: 15-12-9-6-3
+- Pyramid: 10-8-6-4-2-4-6-8-10
+- Countdown: 10-9-8-7-6-5-4-3-2-1
+- Inverse: 10/1, 9/2, 8/3... (two movements)
 
 ---
 

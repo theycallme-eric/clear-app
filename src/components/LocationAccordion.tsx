@@ -1,21 +1,19 @@
 import { useState } from "react";
-import { ChevronDown, Plus } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const PRESET_LOCATIONS = [
-  "Home Gym",
-  "Commercial Gym",
-  "Outdoor Park",
-  "Hotel Room",
-];
+import { UserLocation } from "@/types/workout";
 
 interface LocationAccordionProps {
   selected: string;
   onSelect: (location: string) => void;
+  locations: UserLocation[];
 }
 
-export const LocationAccordion = ({ selected, onSelect }: LocationAccordionProps) => {
+export const LocationAccordion = ({ selected, onSelect, locations }: LocationAccordionProps) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const selectedLocation = locations.find(l => l.name === selected) || locations[0];
+  const displayName = selectedLocation?.name || selected;
 
   return (
     <div className="glass-card rounded-lg overflow-hidden">
@@ -28,7 +26,7 @@ export const LocationAccordion = ({ selected, onSelect }: LocationAccordionProps
             Location
           </span>
           <span className="font-display text-lg font-semibold text-foreground">
-            {selected}
+            {displayName}
           </span>
         </div>
         <ChevronDown
@@ -39,7 +37,7 @@ export const LocationAccordion = ({ selected, onSelect }: LocationAccordionProps
           )}
         />
       </button>
-      
+
       <div
         className={cn(
           "grid transition-all duration-200 ease-out",
@@ -48,28 +46,23 @@ export const LocationAccordion = ({ selected, onSelect }: LocationAccordionProps
       >
         <div className="overflow-hidden">
           <div className="px-4 pb-4 space-y-2">
-            {PRESET_LOCATIONS.map((location) => (
+            {locations.map((location) => (
               <button
-                key={location}
+                key={location.id}
                 onClick={() => {
-                  onSelect(location);
+                  onSelect(location.name);
                   setIsOpen(false);
                 }}
                 className={cn(
                   "w-full text-left px-3 py-2 rounded font-body text-sm transition-colors",
-                  selected === location
+                  selected === location.name
                     ? "bg-accent/20 text-accent"
                     : "text-foreground/80 hover:bg-secondary/10 hover:text-foreground"
                 )}
               >
-                {location}
+                {location.name}
               </button>
             ))}
-            
-            <button className="w-full flex items-center gap-2 px-3 py-2 text-accent text-sm font-medium hover:bg-accent/10 rounded transition-colors">
-              <Plus size={16} />
-              Add New Location
-            </button>
           </div>
         </div>
       </div>

@@ -16,6 +16,12 @@ dist
 dist-ssr
 *.local
 
+# Supabase temp files
+supabase/.temp/
+
+# macOS artifacts
+*.textClipping
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

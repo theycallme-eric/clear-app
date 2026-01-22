@@ -1,5 +1,8 @@
 import { Header } from "@/components/Header";
-import { Zap, Clock, Flame } from "lucide-react";
+import { Zap, Clock, Flame, Dumbbell } from "lucide-react";
+import { LoadingSkeleton } from "@/components/LoadingSkeleton";
+import { ErrorState } from "@/components/ErrorState";
+import { EmptyState } from "@/components/EmptyState";
 import {
   WorkoutHistoryEntry,
   StreakData,
@@ -11,6 +14,9 @@ import {
 interface HomeScreenProps {
   workoutHistory: WorkoutHistoryEntry[];
   streakData: StreakData;
+  isLoading?: boolean;
+  hasError?: boolean;
+  onRetry?: () => void;
   onGenerateWorkout: () => void;
   onQuickStart: (intensity: number, anchor: AnchorType) => void;
   onViewHistory: () => void;
@@ -22,6 +28,9 @@ interface HomeScreenProps {
 export const HomeScreen = ({
   workoutHistory,
   streakData,
+  isLoading,
+  hasError,
+  onRetry,
   onGenerateWorkout,
   onQuickStart,
   onViewHistory,
@@ -167,44 +176,49 @@ export const HomeScreen = ({
               Recent
             </h3>
 
-            <div className="space-y-2">
-              {workoutHistory.slice(0, 3).map((workout) => (
-                <button
-                  key={workout.id}
-                  onClick={() => onViewWorkoutDetail(workout.id)}
-                  className="w-full glass-card p-4 text-left hover:border-clear-orange/60 transition-all"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-display text-sm font-semibold text-foreground uppercase tracking-wide">
-                        {formatDate(workout.date)} &bull; {workout.anchor} &bull; Int. {workout.intensity}
-                      </p>
-                      <p className="text-muted-foreground text-sm flex items-center gap-1 mt-1">
-                        <Clock className="w-3 h-3" />
-                        {workout.duration} min
-                      </p>
-                    </div>
-                  </div>
-                </button>
-              ))}
-
-              {workoutHistory.length === 0 && (
-                <div className="glass-card p-4 text-center">
-                  <p className="text-muted-foreground text-sm">
-                    No workouts yet. Generate your first one!
-                  </p>
+            {isLoading ? (
+              <LoadingSkeleton count={3} />
+            ) : hasError ? (
+              <ErrorState message="Couldn't load workouts" onRetry={onRetry} />
+            ) : workoutHistory.length === 0 ? (
+              <EmptyState
+                icon={Dumbbell}
+                title="No Workouts Yet"
+                description="Generate your first workout to get started"
+                actionLabel="Generate"
+                onAction={onGenerateWorkout}
+              />
+            ) : (
+              <>
+                <div className="space-y-2">
+                  {workoutHistory.slice(0, 3).map((workout) => (
+                    <button
+                      key={workout.id}
+                      onClick={() => onViewWorkoutDetail(workout.id)}
+                      className="w-full glass-card p-4 text-left hover:border-clear-orange/60 transition-all"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-display text-sm font-semibold text-foreground uppercase tracking-wide">
+                            {formatDate(workout.date)} &bull; {workout.anchor} &bull; Int. {workout.intensity}
+                          </p>
+                          <p className="text-muted-foreground text-sm flex items-center gap-1 mt-1">
+                            <Clock className="w-3 h-3" />
+                            {workout.duration} min
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
                 </div>
-              )}
-            </div>
 
-            {/* View All History link */}
-            {workoutHistory.length > 0 && (
-              <button
-                onClick={onViewHistory}
-                className="w-full mt-3 py-2 text-center text-clear-orange text-sm font-medium hover:text-clear-orange/80 transition-colors"
-              >
-                View All History
-              </button>
+                <button
+                  onClick={onViewHistory}
+                  className="w-full mt-3 py-2 text-center text-clear-orange text-sm font-medium hover:text-clear-orange/80 transition-colors"
+                >
+                  View All History
+                </button>
+              </>
             )}
           </div>
         </div>

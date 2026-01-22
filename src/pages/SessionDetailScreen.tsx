@@ -1,8 +1,10 @@
 import { ArrowLeft, Menu, FileText } from "lucide-react";
 import { WorkoutHistoryEntry } from "@/types/workout";
+import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 
 interface SessionDetailScreenProps {
-  workout: WorkoutHistoryEntry;
+  workout: WorkoutHistoryEntry | null;
+  isLoading?: boolean;
   onBack: () => void;
   onOpenSettings: () => void;
 }
@@ -17,6 +19,7 @@ const MOOD_EMOJIS: Record<number, string> = {
 
 export const SessionDetailScreen = ({
   workout,
+  isLoading,
   onBack,
   onOpenSettings,
 }: SessionDetailScreenProps) => {
@@ -60,6 +63,10 @@ export const SessionDetailScreen = ({
         </header>
 
         <div className="px-4">
+          {isLoading || !workout ? (
+            <LoadingSkeleton count={4} />
+          ) : (
+          <>
           {/* Date Title */}
           <h1 className="font-display text-xl font-bold tracking-wider text-foreground mb-2">
             {formatDateTitle(workout.date)}
@@ -128,6 +135,8 @@ export const SessionDetailScreen = ({
                 "{workout.sessionNotes}"
               </p>
             </div>
+          )}
+          </>
           )}
         </div>
       </div>

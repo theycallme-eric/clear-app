@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { ArrowLeft, Menu, Clock, ChevronDown } from "lucide-react";
+import { ArrowLeft, Menu, Clock, ChevronDown, Dumbbell } from "lucide-react";
 import { WorkoutHistoryEntry, AnchorType } from "@/types/workout";
+import { EmptyState } from "@/components/EmptyState";
 import { cn } from "@/lib/utils";
 
 interface HistoryScreenProps {
@@ -53,8 +54,12 @@ export const HistoryScreen = ({
     return true;
   });
 
-  // Group by month
-  const groupedByMonth = filteredWorkouts.reduce((groups, workout) => {
+  // Sort newest first, then group by month
+  const sortedWorkouts = [...filteredWorkouts].sort(
+    (a, b) => b.date.getTime() - a.date.getTime()
+  );
+
+  const groupedByMonth = sortedWorkouts.reduce((groups, workout) => {
     const monthKey = workout.date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
     if (!groups[monthKey]) {
       groups[monthKey] = [];
@@ -214,9 +219,11 @@ export const HistoryScreen = ({
 
           {/* Workout List Grouped by Month */}
           {Object.keys(groupedByMonth).length === 0 ? (
-            <div className="glass-card p-6 text-center">
-              <p className="text-muted-foreground">No workouts found</p>
-            </div>
+            <EmptyState
+              icon={Dumbbell}
+              title={isActiveFilter ? "No Matches" : "No Workouts Yet"}
+              description={isActiveFilter ? "Try adjusting your filters" : "Complete a workout to see it here"}
+            />
           ) : (
             <div className="space-y-6">
               {Object.entries(groupedByMonth).map(([month, workouts]) => (
