@@ -20,6 +20,7 @@ interface SettingsScreenProps {
   userPreferences: UserPreferences;
   onSavePreferences: (preferences: UserPreferences) => void;
   onBack: () => void;
+  onOpenDeveloper?: () => void;
 }
 
 type SettingsView =
@@ -42,6 +43,7 @@ export const SettingsScreen = ({
   userPreferences,
   onSavePreferences,
   onBack,
+  onOpenDeveloper,
 }: SettingsScreenProps) => {
   const [currentView, setCurrentView] = useState<SettingsView>("hub");
   const [preferences, setPreferences] = useState<UserPreferences>({ ...userPreferences });
@@ -407,6 +409,33 @@ export const SettingsScreen = ({
                   </div>
                 </div>
               </div>
+
+              {/* Developer Section */}
+              {onOpenDeveloper && (
+                <div>
+                  <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-3">
+                    Developer
+                  </p>
+                  <div className="space-y-2">
+                    <button
+                      onClick={onOpenDeveloper}
+                      className="w-full glass-card p-4 text-left hover:border-clear-orange/60 transition-all"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-display text-sm font-semibold text-foreground">
+                            Component Gallery
+                          </p>
+                          <p className="text-muted-foreground text-sm mt-0.5">
+                            Audit design system components
+                          </p>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

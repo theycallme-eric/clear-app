@@ -11,6 +11,7 @@ import { SettingsScreen } from "@/pages/SettingsScreen";
 import { WelcomeScreen } from "@/pages/WelcomeScreen";
 import { SignInScreen } from "@/pages/SignInScreen";
 import { CreateAccountScreen } from "@/pages/CreateAccountScreen";
+import { ComponentGallery } from "@/pages/ComponentGallery";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { AbandonmentModal } from "@/components/AbandonmentModal";
 import { supabase } from "@/lib/supabase";
@@ -29,7 +30,7 @@ import { generateWorkout, isGenerationError, transformAPIWorkoutToFrontend, save
 import type { GenerateWorkoutResponse } from "@/types/generation";
 import { fetchWorkoutHistory, fetchStreakData, fetchUserPreferences, fetchWorkoutDetail } from "@/lib/home-data";
 
-type Screen = "loading" | "welcome" | "signIn" | "createAccount" | "onboarding" | "home" | "generation" | "review" | "workout" | "summary" | "history" | "sessionDetail" | "settings";
+type Screen = "loading" | "welcome" | "signIn" | "createAccount" | "onboarding" | "home" | "generation" | "review" | "workout" | "summary" | "history" | "sessionDetail" | "settings" | "componentGallery";
 
 const Index = () => {
   // Home dashboard data - fetched from database
@@ -414,6 +415,10 @@ const Index = () => {
 
   const handleOpenSettings = () => {
     setCurrentScreen("settings");
+  };
+
+  const handleOpenComponentGallery = () => {
+    setCurrentScreen("componentGallery");
   };
 
   const handleBackFromSettings = () => {
@@ -840,7 +845,11 @@ const Index = () => {
           userPreferences={userPreferences}
           onSavePreferences={handleSavePreferences}
           onBack={handleBackFromSettings}
+          onOpenDeveloper={handleOpenComponentGallery}
         />
+      )}
+      {currentScreen === "componentGallery" && (
+        <ComponentGallery onBack={() => setCurrentScreen("settings")} />
       )}
     </>
   );
