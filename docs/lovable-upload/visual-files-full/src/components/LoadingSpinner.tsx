@@ -1,0 +1,33 @@
+import { cn } from "@/lib/utils";
+
+interface LoadingSpinnerProps {
+  size?: "sm" | "md" | "lg";
+  className?: string;
+  message?: string;
+}
+
+/**
+ * Inline loading spinner for buttons and in-place loading.
+ * Componentized for easy future styling/animation customization.
+ */
+export const LoadingSpinner = ({ size = "md", className, message }: LoadingSpinnerProps) => {
+  const sizeClasses = {
+    sm: "w-4 h-4 border-2",
+    md: "w-6 h-6 border-2",
+    lg: "w-8 h-8 border-3",
+  };
+
+  return (
+    <div className={cn("flex items-center justify-center gap-2", className)}>
+      <div
+        className={cn(
+          "rounded-full border-muted-foreground/30 border-t-clear-orange animate-spin",
+          sizeClasses[size]
+        )}
+      />
+      {message && (
+        <span className="text-sm text-muted-foreground font-mono">{message}</span>
+      )}
+    </div>
+  );
+};

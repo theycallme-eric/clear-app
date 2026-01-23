@@ -104,12 +104,6 @@ const Index = () => {
   // Check auth state on mount
   useEffect(() => {
     const checkAuth = async () => {
-      // Allow direct access to Component Gallery via #gallery hash
-      if (window.location.hash === '#gallery') {
-        setCurrentScreen("componentGallery");
-        return;
-      }
-
       try {
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 

@@ -1,0 +1,48 @@
+import { cn } from "@/lib/utils";
+import { LucideIcon } from "lucide-react";
+
+interface EmptyStateProps {
+  icon?: LucideIcon;
+  title: string;
+  description?: string;
+  actionLabel?: string;
+  onAction?: () => void;
+  className?: string;
+}
+
+/**
+ * Empty state with optional icon, message, and CTA.
+ * Used when lists or sections have no data yet.
+ */
+export const EmptyState = ({
+  icon: Icon,
+  title,
+  description,
+  actionLabel,
+  onAction,
+  className,
+}: EmptyStateProps) => {
+  return (
+    <div className={cn("glass-card p-8 text-center", className)}>
+      {Icon && (
+        <Icon className="w-10 h-10 mx-auto mb-4 text-muted-foreground/50" />
+      )}
+      <p className="font-display text-lg font-semibold text-foreground uppercase tracking-wide mb-1">
+        {title}
+      </p>
+      {description && (
+        <p className="text-sm text-muted-foreground mb-4">
+          {description}
+        </p>
+      )}
+      {actionLabel && onAction && (
+        <button
+          onClick={onAction}
+          className="px-6 py-2 bg-clear-orange text-background font-display text-sm uppercase tracking-wider hover:bg-clear-orange/90 transition-colors"
+        >
+          {actionLabel}
+        </button>
+      )}
+    </div>
+  );
+};

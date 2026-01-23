@@ -1,0 +1,35 @@
+import { cn } from "@/lib/utils";
+import { RefreshCw } from "lucide-react";
+
+interface ErrorStateProps {
+  message?: string;
+  onRetry?: () => void;
+  className?: string;
+}
+
+/**
+ * Error state with optional retry button.
+ * Used when data fetching or operations fail.
+ */
+export const ErrorState = ({
+  message = "Something went wrong",
+  onRetry,
+  className,
+}: ErrorStateProps) => {
+  return (
+    <div className={cn("glass-card p-6 text-center", className)}>
+      <p className="text-foreground font-display text-sm uppercase tracking-wide mb-2">
+        {message}
+      </p>
+      {onRetry && (
+        <button
+          onClick={onRetry}
+          className="inline-flex items-center gap-2 mt-2 px-4 py-2 text-sm font-mono text-clear-orange hover:text-clear-orange/80 transition-colors"
+        >
+          <RefreshCw className="w-4 h-4" />
+          Try Again
+        </button>
+      )}
+    </div>
+  );
+};
