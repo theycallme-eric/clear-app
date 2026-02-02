@@ -1,55 +1,454 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&family=Rajdhani:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600&family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* =============================================================================
+   CLEAR DESIGN SYSTEM
+   Source of truth: docs/frontend/figma-design-tokens.json
+   ============================================================================= */
+
 @layer base {
   :root {
-    /* Clear App Design System - Cyberpunk Utilitarian */
-    
-    /* Brand Colors */
-    --clear-purple: 270 50% 60%;      /* #9966CC - primary brand */
-    --clear-indigo: 247 37% 44%;      /* #4F479A - secondary */
-    --clear-orange: 27 90% 51%;       /* #F17B14 - accent/CTAs */
-    --clear-rose: 341 59% 45%;        /* #B62F57 - high intensity */
-    --clear-lime: 91 81% 56%;         /* #8DE937 - low intensity */
-    --clear-offwhite: 40 100% 99%;    /* #FFFEFB - text */
-    --clear-dark: 0 10% 8%;           /* #161313 - background */
-    
-    /* Semantic mappings */
-    --background: var(--clear-dark);
-    --foreground: var(--clear-offwhite);
-    
-    --card: 247 37% 44% / 0.04;
-    --card-foreground: var(--clear-offwhite);
-    
-    --popover: var(--clear-dark);
-    --popover-foreground: var(--clear-offwhite);
-    
-    --primary: var(--clear-purple);
-    --primary-foreground: var(--clear-offwhite);
-    
-    --secondary: var(--clear-indigo);
-    --secondary-foreground: var(--clear-offwhite);
-    
-    --accent: var(--clear-orange);
-    --accent-foreground: var(--clear-offwhite);
-    
-    --muted: 247 37% 44% / 0.1;
-    --muted-foreground: 40 20% 70%;
-    
-    --destructive: var(--clear-rose);
-    --destructive-foreground: var(--clear-offwhite);
-    
-    --success: var(--clear-lime);
-    --success-foreground: var(--clear-dark);
-    
-    --border: 40 10% 50% / 0.15;
-    --input: 247 37% 44% / 0.05;
-    --ring: var(--clear-orange);
-    
-    --radius: 0rem;
+    /* =========================================================================
+       PRIMITIVES - Color Palettes
+       ========================================================================= */
+
+    /* Orange (Primary) - Solid */
+    --color-orange-50: #FEF1E9;
+    --color-orange-100: #FEE4D3;
+    --color-orange-200: #FCC9A7;
+    --color-orange-300: #FBAE7B;
+    --color-orange-400: #F9934F;
+    --color-orange-500: #F87823;
+    --color-orange-600: #C6601C;
+    --color-orange-700: #954815;
+    --color-orange-800: #63300E;
+    --color-orange-900: #321807;
+
+    /* Orange (Primary) - Alpha */
+    --color-orange-alpha-100: rgba(248, 120, 35, 0.10);
+    --color-orange-alpha-150: rgba(248, 120, 35, 0.15);
+    --color-orange-alpha-200: rgba(248, 120, 35, 0.20);
+    --color-orange-alpha-300: rgba(248, 120, 35, 0.30);
+    --color-orange-alpha-400: rgba(248, 120, 35, 0.40);
+    --color-orange-alpha-500: rgba(248, 120, 35, 0.50);
+    --color-orange-alpha-600: rgba(248, 120, 35, 0.60);
+    --color-orange-alpha-700: rgba(248, 120, 35, 0.70);
+    --color-orange-alpha-800: rgba(248, 120, 35, 0.80);
+    --color-orange-alpha-900: rgba(248, 120, 35, 0.90);
+
+    /* Blue (Secondary) - Solid */
+    --color-blue-50: #E5F6FE;
+    --color-blue-100: #CCEEFD;
+    --color-blue-200: #99DDFB;
+    --color-blue-300: #66CBF8;
+    --color-blue-400: #33BAF6;
+    --color-blue-500: #00A9F4;
+    --color-blue-600: #0087C3;
+    --color-blue-700: #006592;
+    --color-blue-800: #004462;
+    --color-blue-900: #002231;
+
+    /* Blue (Secondary) - Alpha */
+    --color-blue-alpha-100: rgba(0, 169, 244, 0.10);
+    --color-blue-alpha-150: rgba(0, 169, 244, 0.15);
+    --color-blue-alpha-200: rgba(0, 169, 244, 0.20);
+    --color-blue-alpha-300: rgba(0, 169, 244, 0.30);
+    --color-blue-alpha-400: rgba(0, 169, 244, 0.40);
+    --color-blue-alpha-500: rgba(0, 169, 244, 0.50);
+    --color-blue-alpha-600: rgba(0, 169, 244, 0.60);
+    --color-blue-alpha-700: rgba(0, 169, 244, 0.70);
+    --color-blue-alpha-800: rgba(0, 169, 244, 0.80);
+    --color-blue-alpha-900: rgba(0, 169, 244, 0.90);
+
+    /* Green (Success) - Solid */
+    --color-green-50: #F5FCEB;
+    --color-green-100: #EBF8D7;
+    --color-green-200: #D6F1B0;
+    --color-green-300: #C2EB88;
+    --color-green-400: #ADE461;
+    --color-green-500: #99DD39;
+    --color-green-600: #7AB12E;
+    --color-green-700: #5C8522;
+    --color-green-800: #3D5817;
+    --color-green-900: #1F2C0B;
+
+    /* Green (Success) - Alpha */
+    --color-green-alpha-100: rgba(153, 221, 57, 0.10);
+    --color-green-alpha-150: rgba(153, 221, 57, 0.15);
+    --color-green-alpha-200: rgba(153, 221, 57, 0.20);
+    --color-green-alpha-300: rgba(153, 221, 57, 0.30);
+    --color-green-alpha-400: rgba(153, 221, 57, 0.40);
+    --color-green-alpha-500: rgba(153, 221, 57, 0.50);
+    --color-green-alpha-600: rgba(153, 221, 57, 0.60);
+    --color-green-alpha-700: rgba(153, 221, 57, 0.70);
+    --color-green-alpha-800: rgba(153, 221, 57, 0.80);
+    --color-green-alpha-900: rgba(153, 221, 57, 0.90);
+
+    /* Red (Error) - Solid */
+    --color-red-50: #FAE8EE;
+    --color-red-100: #F5D1DE;
+    --color-red-200: #EBA3BC;
+    --color-red-300: #E1759B;
+    --color-red-400: #D74779;
+    --color-red-500: #CD1958;
+    --color-red-600: #A41446;
+    --color-red-700: #7B0F35;
+    --color-red-800: #520A23;
+    --color-red-900: #290512;
+
+    /* Red (Error) - Alpha */
+    --color-red-alpha-100: rgba(205, 25, 88, 0.10);
+    --color-red-alpha-150: rgba(205, 25, 88, 0.15);
+    --color-red-alpha-200: rgba(205, 25, 88, 0.20);
+    --color-red-alpha-300: rgba(205, 25, 88, 0.30);
+    --color-red-alpha-400: rgba(205, 25, 88, 0.40);
+    --color-red-alpha-500: rgba(205, 25, 88, 0.50);
+    --color-red-alpha-600: rgba(205, 25, 88, 0.60);
+    --color-red-alpha-700: rgba(205, 25, 88, 0.70);
+    --color-red-alpha-800: rgba(205, 25, 88, 0.80);
+    --color-red-alpha-900: rgba(205, 25, 88, 0.90);
+
+    /* Purple (Info) - Solid */
+    --color-purple-50: #F6F0FF;
+    --color-purple-100: #EDE1FF;
+    --color-purple-200: #DAC3FF;
+    --color-purple-300: #C8A4FF;
+    --color-purple-400: #B586FF;
+    --color-purple-500: #A368FF;
+    --color-purple-600: #8253CC;
+    --color-purple-700: #623E99;
+    --color-purple-800: #412A66;
+    --color-purple-900: #211533;
+
+    /* Purple (Info) - Alpha */
+    --color-purple-alpha-100: rgba(163, 104, 255, 0.10);
+    --color-purple-alpha-150: rgba(163, 104, 255, 0.15);
+    --color-purple-alpha-200: rgba(163, 104, 255, 0.20);
+    --color-purple-alpha-300: rgba(163, 104, 255, 0.30);
+    --color-purple-alpha-400: rgba(163, 104, 255, 0.40);
+    --color-purple-alpha-500: rgba(163, 104, 255, 0.50);
+    --color-purple-alpha-600: rgba(163, 104, 255, 0.60);
+    --color-purple-alpha-700: rgba(163, 104, 255, 0.70);
+    --color-purple-alpha-800: rgba(163, 104, 255, 0.80);
+    --color-purple-alpha-900: rgba(163, 104, 255, 0.90);
+
+    /* Neutral - Solid */
+    --color-neutral-50: #F1F1F1;
+    --color-neutral-100: #E3E3E3;
+    --color-neutral-200: #C7C7C7;
+    --color-neutral-300: #AAAAAC;
+    --color-neutral-400: #8E8E90;
+    --color-neutral-500: #727274;
+    --color-neutral-600: #5B5B5D;
+    --color-neutral-700: #444446;
+    --color-neutral-800: #2E2E2E;
+    --color-neutral-900: #171717;
+
+    /* Neutral - Alpha */
+    --color-neutral-alpha-100: rgba(114, 114, 116, 0.10);
+    --color-neutral-alpha-200: rgba(114, 114, 116, 0.20);
+    --color-neutral-alpha-300: rgba(114, 114, 116, 0.30);
+    --color-neutral-alpha-400: rgba(114, 114, 116, 0.40);
+    --color-neutral-alpha-500: rgba(114, 114, 116, 0.50);
+    --color-neutral-alpha-600: rgba(114, 114, 116, 0.60);
+    --color-neutral-alpha-700: rgba(114, 114, 116, 0.70);
+    --color-neutral-alpha-800: rgba(114, 114, 116, 0.80);
+    --color-neutral-alpha-900: rgba(114, 114, 116, 0.90);
+
+    /* =========================================================================
+       PRIMITIVES - Spacing
+       ========================================================================= */
+    --spacing-0: 0px;
+    --spacing-25: 1px;
+    --spacing-50: 2px;
+    --spacing-100: 4px;
+    --spacing-200: 8px;
+    --spacing-300: 12px;
+    --spacing-400: 16px;
+    --spacing-500: 20px;
+    --spacing-600: 24px;
+    --spacing-700: 32px;
+    --spacing-800: 40px;
+    --spacing-900: 40px;
+    --spacing-1000: 48px;
+    --spacing-1100: 56px;
+    --spacing-1200: 64px;
+    --spacing-1300: 96px;
+    --spacing-1400: 128px;
+    --spacing-1500: 256px;
+
+    /* =========================================================================
+       PRIMITIVES - Typography (Responsive, Mobile-First)
+       ========================================================================= */
+
+    /* Font Families */
+    --font-headings: 'Rajdhani', sans-serif;
+    --font-paragraph: 'Space Grotesk', sans-serif;
+    --font-label: 'Oxanium', monospace;
+
+    /* Font Weights */
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-bold: 700;
+
+    /* Headings - Mobile (default) */
+    --heading-h1-size: 32px;
+    --heading-h1-line-height: 40px;
+    --heading-h2-size: 28px;
+    --heading-h2-line-height: 32px;
+    --heading-h3-size: 24px;
+    --heading-h3-line-height: 28px;
+    --heading-h4-size: 22px;
+    --heading-h4-line-height: 28px;
+    --heading-h5-size: 20px;
+    --heading-h5-line-height: 24px;
+    --heading-h6-size: 20px;
+    --heading-h6-line-height: 24px;
+
+    /* Labels - Same across breakpoints */
+    --label-xs-size: 12px;
+    --label-xs-line-height: 14px;
+    --label-sm-size: 14px;
+    --label-sm-line-height: 16px;
+    --label-md-size: 16px;
+    --label-md-line-height: 20px;
+    --label-lg-size: 20px;
+    --label-lg-line-height: 24px;
+    --label-xl-size: 24px;
+    --label-xl-line-height: 28px;
+
+    /* Paragraphs - Same across breakpoints */
+    --paragraph-xs-size: 12px;
+    --paragraph-xs-line-height: 14px;
+    --paragraph-sm-size: 14px;
+    --paragraph-sm-line-height: 16px;
+    --paragraph-md-size: 16px;
+    --paragraph-md-line-height: 20px;
+    --paragraph-lg-size: 20px;
+    --paragraph-lg-line-height: 24px;
+    --paragraph-xl-size: 24px;
+    --paragraph-xl-line-height: 28px;
+
+    /* =========================================================================
+       PRIMITIVES - Misc
+       ========================================================================= */
+    --radius: 0px;
+
+    /* =========================================================================
+       SEMANTICS - Themed (Orange Mode = Default)
+       ========================================================================= */
+
+    /* Surfaces */
+    --surface-card: var(--color-orange-alpha-150);
+    --surface-card-accent: var(--color-orange-alpha-400);
+    --surface-cta: var(--color-orange-alpha-400);
+    --surface-cta-hover: var(--color-orange-alpha-600);
+    --surface-cta-accent: var(--color-orange-alpha-600);
+    /* CTA Button surfaces */
+    --surface-cta-primary: var(--color-orange-alpha-400);
+    --surface-cta-primary-hover: var(--color-orange-alpha-600);
+    --surface-cta-primary-disabled: var(--color-neutral-alpha-300);
+    --surface-cta-secondary: rgba(248, 120, 35, 0.05);
+    --surface-cta-secondary-hover: var(--color-orange-alpha-200);
+    --surface-cta-secondary-disabled: rgba(114, 114, 116, 0.05);
+    --surface-success: var(--color-green-alpha-600);
+    --surface-success-accent: var(--color-green-alpha-800);
+    --surface-error: var(--color-red-alpha-600);
+    --surface-error-accent: var(--color-red-alpha-800);
+    --surface-info: var(--color-purple-alpha-600);
+    --surface-info-accent: var(--color-purple-alpha-800);
+    --surface-radio-selected: var(--color-green-alpha-600);
+    --surface-radio-unselect: var(--color-orange-alpha-100);
+    --surface-radio-text-selected: var(--color-green-alpha-500);
+    --surface-radio-card-unselected: var(--color-orange-alpha-100);
+    --surface-select-switch: #FFFFFF;
+    --surface-disabled: var(--color-neutral-alpha-300);
+
+    /* Borders */
+    --border-card: var(--color-orange-500);
+    --border-cta: var(--color-orange-500);
+    --border-cta-hover: var(--color-orange-400);
+    /* CTA Button borders */
+    --border-cta-primary: var(--color-orange-500);
+    --border-cta-primary-hover: var(--color-orange-400);
+    --border-cta-secondary: var(--color-orange-500);
+    --border-disabled: var(--color-neutral-400);
+    --border-success: var(--color-green-500);
+    --border-error: var(--color-red-500);
+    --border-info: var(--color-purple-500);
+    --border-radio-select: var(--color-green-500);
+    --border-radio-unselected: var(--color-orange-900);
+    --border-radio-text-selected: var(--color-green-500);
+    --border-radio-text-unselected: var(--color-orange-900);
+    --border-disabled: var(--color-neutral-400);
+
+    /* Text Colors */
+    --text-header: var(--color-blue-300);
+    --text-paragraph: var(--color-blue-100);
+    --text-cta: var(--color-blue-100);
+    --text-cta-hover: var(--color-blue-500);
+    --text-timer: var(--color-green-400);
+    --text-label-info: var(--color-blue-100);
+    --text-label-selected: var(--color-green-500);
+    --text-label-unselected: var(--color-blue-100);
+    --text-label-timer: var(--color-green-500);
+    --text-success: var(--color-green-900);
+    --text-error: var(--color-red-900);
+    --text-info: var(--color-purple-900);
+    --text-disabled: var(--color-neutral-400);
+    --text-cta-disabled: var(--color-neutral-400);
+    --text-radio-text-select: var(--color-green-900);
+    --text-radio-text-unselected: var(--color-orange-alpha-800);
+    --text-color: #FFFFFF;
+
+    /* Icons */
+    --icon-cta: var(--color-blue-500);
+    --icon-cta-hover: var(--color-blue-500);
+    --icon-disabled: var(--color-neutral-400);
+    --icon-success: var(--color-green-900);
+    --icon-error: var(--color-red-900);
+    --icon-info: var(--color-purple-900);
+    --icon-radio-selected: var(--color-green-500);
+    --icon-radio-unselected: var(--color-orange-500);
+
+    /* Widths (semantic spacing) */
+    --width-none: var(--spacing-0);
+    --width-xs: var(--spacing-25);
+    --width-sm: var(--spacing-50);
+    --width-md: var(--spacing-100);
+    --width-lg: var(--spacing-200);
+    --width-xl: var(--spacing-300);
+    --width-2xl: var(--spacing-400);
+    --width-3xl: var(--spacing-500);
+
+    /* =========================================================================
+       LEGACY MAPPINGS - For backwards compatibility with existing components
+       ========================================================================= */
+    --background: var(--color-neutral-900);
+    --foreground: var(--color-neutral-50);
+    --card: var(--surface-card);
+    --card-foreground: var(--text-paragraph);
+    --popover: var(--color-neutral-900);
+    --popover-foreground: var(--color-neutral-50);
+    --primary: var(--color-orange-500);
+    --primary-foreground: var(--color-neutral-50);
+    --secondary: var(--color-blue-500);
+    --secondary-foreground: var(--color-neutral-50);
+    --accent: var(--color-orange-700);
+    --accent-foreground: var(--color-neutral-50);
+    --muted: var(--color-neutral-alpha-200);
+    --muted-foreground: var(--color-neutral-400);
+    --destructive: var(--color-red-500);
+    --destructive-foreground: var(--color-neutral-50);
+    --success: var(--color-green-500);
+    --success-foreground: var(--color-green-900);
+    --border: var(--color-neutral-alpha-200);
+    --input: var(--color-neutral-alpha-100);
+    --ring: var(--color-orange-500);
+
+    /* Legacy clear-* mappings */
+    --clear-orange: var(--color-orange-500);
+    --clear-purple: var(--color-blue-500);    /* secondary - was purple, now blue */
+    --clear-lime: var(--color-green-500);     /* success */
+    --clear-rose: var(--color-red-500);       /* error */
+    --clear-indigo: var(--color-purple-500);  /* info */
+    --clear-dark: var(--color-neutral-900);
+    --clear-offwhite: var(--color-neutral-50);
+  }
+
+  /* =========================================================================
+     BLUE THEME
+     Apply with: <html data-theme="blue"> or <body data-theme="blue">
+     ========================================================================= */
+  [data-theme="blue"] {
+    /* Surfaces */
+    --surface-card: var(--color-blue-alpha-150);
+    --surface-card-accent: var(--color-blue-alpha-400);
+    --surface-cta: var(--color-blue-alpha-400);
+    --surface-cta-hover: var(--color-blue-alpha-600);
+    --surface-cta-accent: var(--color-blue-alpha-600);
+    --surface-radio-unselect: var(--color-blue-alpha-100);
+    --surface-radio-card-unselected: var(--color-blue-alpha-100);
+    /* CTA Button surfaces - blue theme */
+    --surface-cta-primary: var(--color-blue-alpha-400);
+    --surface-cta-primary-hover: var(--color-blue-alpha-600);
+    --surface-cta-secondary: rgba(0, 169, 244, 0.05);
+    --surface-cta-secondary-hover: var(--color-blue-alpha-200);
+    --surface-cta-secondary-disabled: rgba(114, 114, 116, 0.05);
+
+    /* Borders */
+    --border-card: var(--color-blue-500);
+    --border-cta: var(--color-blue-500);
+    --border-cta-hover: var(--color-blue-600);
+    --border-radio-unselected: var(--color-blue-900);
+    --border-radio-text-unselected: var(--color-blue-900);
+    /* CTA Button borders - blue theme */
+    --border-cta-primary: var(--color-blue-500);
+    --border-cta-primary-hover: var(--color-blue-400);
+    --border-cta-secondary: var(--color-blue-500);
+
+    /* Text Colors */
+    --text-header: var(--color-orange-300);
+    --text-paragraph: var(--color-orange-100);
+    --text-cta: var(--color-orange-100);
+    --text-cta-hover: var(--color-orange-500);
+    --text-label-info: var(--color-orange-100);
+    --text-label-unselected: var(--color-orange-100);
+    --text-radio-text-unselected: var(--color-blue-50);
+
+    /* Icons */
+    --icon-cta: var(--color-orange-500);
+    --icon-cta-hover: var(--color-orange-500);
+    --icon-radio-unselected: var(--color-blue-500);
+
+    /* Legacy mappings for blue theme */
+    --primary: var(--color-blue-500);
+    --accent: var(--color-blue-700);
+    --ring: var(--color-blue-500);
+    --clear-orange: var(--color-blue-500);
+  }
+
+  /* =========================================================================
+     RESPONSIVE TYPOGRAPHY - Tablet (834px+)
+     ========================================================================= */
+  @media (min-width: 834px) {
+    :root {
+      --heading-h1-size: 48px;
+      --heading-h1-line-height: 56px;
+      --heading-h2-size: 42px;
+      --heading-h2-line-height: 48px;
+      --heading-h3-size: 32px;
+      --heading-h3-line-height: 40px;
+      --heading-h4-size: 28px;
+      --heading-h4-line-height: 32px;
+      --heading-h5-size: 24px;
+      --heading-h5-line-height: 28px;
+      --heading-h6-size: 20px;
+      --heading-h6-line-height: 24px;
+    }
+  }
+
+  /* =========================================================================
+     RESPONSIVE TYPOGRAPHY - Desktop (1440px+)
+     ========================================================================= */
+  @media (min-width: 1440px) {
+    :root {
+      --heading-h1-size: 60px;
+      --heading-h1-line-height: 72px;
+      --heading-h2-size: 48px;
+      --heading-h2-line-height: 56px;
+      --heading-h3-size: 40px;
+      --heading-h3-line-height: 48px;
+      --heading-h4-size: 32px;
+      --heading-h4-line-height: 40px;
+      --heading-h5-size: 24px;
+      --heading-h5-line-height: 28px;
+      --heading-h6-size: 20px;
+      --heading-h6-line-height: 24px;
+    }
   }
 }
 
@@ -57,13 +456,13 @@
   * {
     @apply border-border;
   }
-  
+
   body {
     @apply bg-background text-foreground font-body antialiased;
     min-height: 100vh;
     position: relative;
   }
-  
+
   /* Background layers: gradient image -> dark overlay -> grain (grain on top) */
   body::before {
     content: '';
@@ -74,16 +473,16 @@
     background-position: center;
     z-index: -3;
   }
-  
+
   /* Dark overlay on top of gradient */
   body::after {
     content: '';
     position: fixed;
     inset: 0;
-    background: hsl(var(--clear-dark) / 0.35);
+    background: rgba(23, 23, 23, 0.35);
     z-index: -2;
   }
-  
+
   @media (min-width: 768px) {
     body::before {
       background-image: url('./assets/bg-desktop.png');
@@ -92,90 +491,125 @@
 }
 
 @layer components {
+  /* =========================================================================
+     COMPONENT CLASSES
+     Using new semantic tokens
+     ========================================================================= */
+
   /* Exercise Card - consistent styling for workout exercises */
   .exercise-card {
-    background: hsl(var(--clear-orange) / 0.2);
-    border: 1px solid hsl(var(--clear-orange));
-    padding: 1rem;
+    background: var(--surface-card);
+    border: 1px solid var(--border-card);
+    padding: var(--spacing-400);
   }
-  
+
   .exercise-card-title {
-    @apply font-display text-lg font-bold;
-    color: hsl(var(--clear-orange));
+    font-family: var(--font-headings);
+    font-size: var(--heading-h6-size);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-header);
   }
-  
+
   /* Glassmorphic Card - semi-transparent, shows gradient but blocks grain */
   .glass-card {
-    background: hsl(var(--clear-dark) / 0.6);
+    background: rgba(23, 23, 23, 0.6);
     backdrop-filter: blur(20px);
-    border: 1.5px solid hsl(var(--clear-orange) / 0.4);
+    border: 1.5px solid var(--color-orange-alpha-400);
     border-radius: var(--radius);
   }
-  
+
+  [data-theme="blue"] .glass-card {
+    border-color: var(--color-blue-alpha-400);
+  }
+
   /* Glass Input - same treatment as cards */
   .glass-input {
-    background: hsl(var(--clear-dark) / 0.6);
+    background: rgba(23, 23, 23, 0.6);
     backdrop-filter: blur(20px);
-    border: 1.5px solid hsl(var(--clear-orange) / 0.4);
+    border: 1.5px solid var(--color-orange-alpha-400);
     border-radius: var(--radius);
   }
-  
+
+  [data-theme="blue"] .glass-input {
+    border-color: var(--color-blue-alpha-400);
+  }
+
   /* Glowing Button */
   .glow-button {
-    background: linear-gradient(135deg, hsl(var(--clear-purple)), hsl(270 50% 45%));
-    box-shadow: 0 0 8px hsl(var(--clear-purple) / 0.3);
+    background: linear-gradient(135deg, var(--color-purple-500), var(--color-purple-700));
+    box-shadow: 0 0 8px var(--color-purple-alpha-300);
     transition: all 0.2s ease;
   }
-  
+
   .glow-button:hover {
-    box-shadow: 0 0 16px hsl(var(--clear-purple) / 0.5);
+    box-shadow: 0 0 16px var(--color-purple-alpha-500);
     transform: translateY(-1px);
   }
-  
+
   /* Ghost/Outline Button */
   .ghost-button {
     background: transparent;
-    border: 1px solid hsl(var(--clear-orange) / 0.5);
-    box-shadow: inset 0 0 8px hsl(var(--clear-orange) / 0.1);
+    border: 1px solid var(--color-orange-alpha-500);
+    box-shadow: inset 0 0 8px var(--color-orange-alpha-100);
     transition: all 0.2s ease;
   }
-  
+
   .ghost-button:hover {
-    border-color: hsl(var(--clear-orange));
-    box-shadow: inset 0 0 12px hsl(var(--clear-orange) / 0.2);
+    border-color: var(--border-cta);
+    box-shadow: inset 0 0 12px var(--color-orange-alpha-200);
   }
-  
+
+  [data-theme="blue"] .ghost-button {
+    border-color: var(--color-blue-alpha-500);
+    box-shadow: inset 0 0 8px var(--color-blue-alpha-100);
+  }
+
+  [data-theme="blue"] .ghost-button:hover {
+    border-color: var(--border-cta);
+    box-shadow: inset 0 0 12px var(--color-blue-alpha-200);
+  }
+
   /* Active Selection Button */
   .selection-active {
-    background: hsl(var(--clear-purple));
-    color: hsl(var(--clear-offwhite));
+    background: var(--color-purple-500);
+    color: var(--color-neutral-50);
   }
-  
+
   .selection-inactive {
     background: transparent;
-    border: 1px solid hsl(var(--clear-orange) / 0.4);
-    box-shadow: 0 0 8px hsl(var(--clear-orange) / 0.15);
+    border: 1px solid var(--color-orange-alpha-400);
+    box-shadow: 0 0 8px var(--color-orange-alpha-150);
   }
-  
+
   .selection-inactive:hover {
-    border-color: hsl(var(--clear-orange) / 0.7);
-    box-shadow: 0 0 12px hsl(var(--clear-orange) / 0.25);
+    border-color: var(--color-orange-alpha-700);
+    box-shadow: 0 0 12px var(--color-orange-alpha-300);
   }
-  
+
+  [data-theme="blue"] .selection-inactive {
+    border-color: var(--color-blue-alpha-400);
+    box-shadow: 0 0 8px var(--color-blue-alpha-150);
+  }
+
+  [data-theme="blue"] .selection-inactive:hover {
+    border-color: var(--color-blue-alpha-700);
+    box-shadow: 0 0 12px var(--color-blue-alpha-300);
+  }
+
   /* Input with accent stripe */
   .cyber-input {
-    background: hsl(var(--clear-indigo) / 0.05);
-    border: 1px solid hsl(40 10% 50% / 0.2);
-    border-left: 3px solid hsl(var(--clear-lime));
+    background: var(--color-neutral-alpha-100);
+    border: 1px solid var(--color-neutral-alpha-200);
+    border-left: 3px solid var(--color-green-500);
     transition: all 0.2s ease;
   }
-  
+
   .cyber-input:focus {
     outline: none;
-    border-color: hsl(40 10% 50% / 0.3);
-    box-shadow: 0 0 8px hsl(var(--clear-lime) / 0.2);
+    border-color: var(--color-neutral-alpha-300);
+    box-shadow: 0 0 8px var(--color-green-alpha-200);
   }
-  
+
   /* Grain texture overlay - subtle, sits between dark overlay and content */
   .grain-overlay::before {
     content: '';
@@ -186,7 +620,7 @@
     z-index: -1;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   }
-  
+
   /* Intensity Slider */
   .intensity-slider {
     -webkit-appearance: none;
@@ -194,42 +628,134 @@
     background: transparent;
     height: 8px;
   }
-  
+
   .intensity-slider::-webkit-slider-runnable-track {
     height: 8px;
-    background: linear-gradient(90deg, hsl(var(--clear-indigo) / 0.5), hsl(var(--clear-purple) / 0.4));
+    background: linear-gradient(90deg, var(--color-purple-alpha-500), var(--color-purple-alpha-400));
     border-radius: 4px;
-    border: 1px solid hsl(40 10% 50% / 0.2);
+    border: 1px solid var(--color-neutral-alpha-200);
   }
-  
+
   .intensity-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 28px;
     height: 28px;
-    background: linear-gradient(135deg, hsl(var(--clear-orange)), hsl(27 90% 40%));
+    background: linear-gradient(135deg, var(--color-orange-500), var(--color-orange-700));
     border-radius: 4px;
     cursor: pointer;
-    box-shadow: 0 0 12px hsl(var(--clear-orange) / 0.5);
+    box-shadow: 0 0 12px var(--color-orange-alpha-500);
     margin-top: -10px;
-    border: 1px solid hsl(var(--clear-orange) / 0.8);
+    border: 1px solid var(--color-orange-alpha-800);
   }
-  
+
   .intensity-slider::-moz-range-track {
     height: 8px;
-    background: linear-gradient(90deg, hsl(var(--clear-indigo) / 0.5), hsl(var(--clear-purple) / 0.4));
+    background: linear-gradient(90deg, var(--color-purple-alpha-500), var(--color-purple-alpha-400));
     border-radius: 4px;
-    border: 1px solid hsl(40 10% 50% / 0.2);
+    border: 1px solid var(--color-neutral-alpha-200);
   }
-  
+
   .intensity-slider::-moz-range-thumb {
     width: 28px;
     height: 28px;
-    background: linear-gradient(135deg, hsl(var(--clear-orange)), hsl(27 90% 40%));
+    background: linear-gradient(135deg, var(--color-orange-500), var(--color-orange-700));
     border-radius: 4px;
     cursor: pointer;
-    box-shadow: 0 0 12px hsl(var(--clear-orange) / 0.5);
-    border: 1px solid hsl(var(--clear-orange) / 0.8);
+    box-shadow: 0 0 12px var(--color-orange-alpha-500);
+    border: 1px solid var(--color-orange-alpha-800);
+  }
+
+  /* =========================================================================
+     TOAST COMPONENTS
+     ========================================================================= */
+  .toast-success {
+    background: var(--surface-success);
+    border: 1px solid var(--border-success);
+    color: var(--text-success);
+  }
+
+  .toast-error {
+    background: var(--surface-error);
+    border: 1px solid var(--border-error);
+    color: var(--text-error);
+  }
+
+  .toast-info {
+    background: var(--surface-info);
+    border: 1px solid var(--border-info);
+    color: var(--text-info);
+  }
+
+  /* =========================================================================
+     CORNER CUT - Reusable angled corner pattern
+     Used by ActionButton and other UI components
+
+     Usage:
+     - .corner-cut: applies clip-path to element (for backgrounds)
+     - .corner-cut-border: wrapper that creates continuous border via ::before
+     - Combine with variant classes: -primary, -secondary, -disabled
+     - Override --corner-cut-size to change the cut size (default: 8px)
+     ========================================================================= */
+
+  /* CSS custom property for corner cut size (can be overridden) */
+  .corner-cut {
+    --corner-cut-size: 8px;
+    position: relative;
+    clip-path: polygon(
+      0 0,
+      100% 0,
+      100% calc(100% - var(--corner-cut-size)),
+      calc(100% - var(--corner-cut-size)) 100%,
+      0 100%
+    );
+  }
+
+  /* Border wrapper - creates the continuous border around clipped shape */
+  .corner-cut-border {
+    --corner-cut-size: 8px;
+    position: relative;
+  }
+
+  .corner-cut-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 2px solid var(--border-cta-primary);
+    border-left: none; /* No left border - accent bar handles that */
+    clip-path: polygon(
+      0 0,
+      100% 0,
+      100% calc(100% - var(--corner-cut-size)),
+      calc(100% - var(--corner-cut-size)) 100%,
+      0 100%
+    );
+    pointer-events: none;
+    transition: border-color 0.2s;
+  }
+
+  /* Primary variant (default) */
+  .corner-cut-border.corner-cut-border-primary::before {
+    border-color: var(--border-cta-primary);
+  }
+
+  /* Secondary variant */
+  .corner-cut-border.corner-cut-border-secondary::before {
+    border-color: var(--border-cta-secondary);
+  }
+
+  /* Disabled variant (overrides primary/secondary) */
+  .corner-cut-border.corner-cut-border-disabled::before {
+    border-color: var(--border-disabled);
+  }
+
+  /* Hover states (only when not disabled) */
+  .group:hover .corner-cut-border.corner-cut-border-primary:not(.corner-cut-border-disabled)::before {
+    border-color: var(--border-cta-primary-hover);
+  }
+
+  .group:hover .corner-cut-border.corner-cut-border-secondary:not(.corner-cut-border-disabled)::before {
+    border-color: var(--border-cta-secondary);
   }
 }
 

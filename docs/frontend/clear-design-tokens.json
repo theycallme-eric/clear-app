@@ -1,0 +1,366 @@
+{
+  "colors": {
+    "purple": {
+      "50": { "value": "#F5F0FF", "type": "color" },
+      "100": { "value": "#EBE0FF", "type": "color" },
+      "200": { "value": "#D6C2FF", "type": "color" },
+      "300": { "value": "#C2A3FF", "type": "color" },
+      "400": { "value": "#AD85FF", "type": "color" },
+      "500": { "value": "#9966CC", "type": "color", "description": "Base purple - primary brand" },
+      "600": { "value": "#7A52A3", "type": "color" },
+      "700": { "value": "#5C3D7A", "type": "color" },
+      "800": { "value": "#3D2952", "type": "color" },
+      "900": { "value": "#1F1429", "type": "color" }
+    },
+    "indigo": {
+      "50": { "value": "#EFEEF7", "type": "color" },
+      "100": { "value": "#DFDDEF", "type": "color" },
+      "200": { "value": "#BFBBDF", "type": "color" },
+      "300": { "value": "#9F99CF", "type": "color" },
+      "400": { "value": "#7F77BF", "type": "color" },
+      "500": { "value": "#4F479A", "type": "color", "description": "Base indigo - secondary" },
+      "600": { "value": "#3F397B", "type": "color" },
+      "700": { "value": "#2F2B5C", "type": "color" },
+      "800": { "value": "#201D3E", "type": "color" },
+      "900": { "value": "#100E1F", "type": "color" }
+    },
+    "orange": {
+      "50": { "value": "#FFF4E6", "type": "color" },
+      "100": { "value": "#FFE9CC", "type": "color" },
+      "200": { "value": "#FFD399", "type": "color" },
+      "300": { "value": "#FFBD66", "type": "color" },
+      "400": { "value": "#FFA733", "type": "color" },
+      "500": { "value": "#F17B14", "type": "color", "description": "Base orange - accent/CTAs" },
+      "600": { "value": "#C16210", "type": "color" },
+      "700": { "value": "#914A0C", "type": "color" },
+      "800": { "value": "#603108", "type": "color" },
+      "900": { "value": "#301904", "type": "color" }
+    },
+    "rose": {
+      "50": { "value": "#FCE8EE", "type": "color" },
+      "100": { "value": "#F9D1DD", "type": "color" },
+      "200": { "value": "#F3A3BB", "type": "color" },
+      "300": { "value": "#ED7599", "type": "color" },
+      "400": { "value": "#E74777", "type": "color" },
+      "500": { "value": "#B62F57", "type": "color", "description": "Base rose - high intensity/destructive" },
+      "600": { "value": "#922646", "type": "color" },
+      "700": { "value": "#6D1C34", "type": "color" },
+      "800": { "value": "#491323", "type": "color" },
+      "900": { "value": "#240911", "type": "color" }
+    },
+    "lime": {
+      "50": { "value": "#F5FCE8", "type": "color" },
+      "100": { "value": "#EBF9D1", "type": "color" },
+      "200": { "value": "#D7F3A3", "type": "color" },
+      "300": { "value": "#C3ED75", "type": "color" },
+      "400": { "value": "#AFE747", "type": "color" },
+      "500": { "value": "#8DE937", "type": "color", "description": "Base lime - success/low intensity" },
+      "600": { "value": "#71BA2C", "type": "color" },
+      "700": { "value": "#558C21", "type": "color" },
+      "800": { "value": "#385D16", "type": "color" },
+      "900": { "value": "#1C2F0B", "type": "color" }
+    },
+    "neutral": {
+      "50": { "value": "#FFFEFB", "type": "color", "description": "Off-white - primary text" },
+      "100": { "value": "#F5F4F1", "type": "color" },
+      "200": { "value": "#E6E5E2", "type": "color" },
+      "300": { "value": "#C8C7C4", "type": "color" },
+      "400": { "value": "#AAA9A6", "type": "color" },
+      "500": { "value": "#8C8B88", "type": "color" },
+      "600": { "value": "#6E6D6A", "type": "color" },
+      "700": { "value": "#4F4E4C", "type": "color" },
+      "800": { "value": "#31302E", "type": "color" },
+      "900": { "value": "#161313", "type": "color", "description": "Near-black - background" }
+    },
+    "semantic": {
+      "background": { "value": "#161313", "type": "color", "description": "App background" },
+      "foreground": { "value": "#FFFEFB", "type": "color", "description": "Primary text" },
+      "mutedForeground": { "value": "#C2B89A", "type": "color", "description": "Secondary text (hsl 40 20% 70%)" },
+      "card": { "value": "rgba(79, 71, 154, 0.04)", "type": "color", "description": "Card fill (indigo at 4% opacity)" },
+      "muted": { "value": "rgba(79, 71, 154, 0.1)", "type": "color", "description": "Muted fill (indigo at 10% opacity)" },
+      "border": { "value": "rgba(140, 128, 102, 0.15)", "type": "color", "description": "Default border (warm gray 15% opacity)" },
+      "input": { "value": "rgba(79, 71, 154, 0.05)", "type": "color", "description": "Input background (indigo at 5% opacity)" }
+    }
+  },
+  "typography": {
+    "fontFamilies": {
+      "display": { "value": "Rajdhani", "type": "fontFamily", "description": "Headings, titles, buttons" },
+      "body": { "value": "Inter", "type": "fontFamily", "description": "Body text, descriptions" },
+      "mono": { "value": "Oxanium", "type": "fontFamily", "description": "Labels, technical text, section headers" }
+    },
+    "fontSizes": {
+      "5xl": { "value": "48px", "type": "fontSize", "description": "Hero numbers (streak count, intensity)" },
+      "4xl": { "value": "36px", "type": "fontSize", "description": "App title (CLEAR)" },
+      "2xl": { "value": "24px", "type": "fontSize", "description": "Screen hero headings" },
+      "xl": { "value": "20px", "type": "fontSize", "description": "Screen titles" },
+      "lg": { "value": "18px", "type": "fontSize", "description": "Card titles, emphasis" },
+      "base": { "value": "16px", "type": "fontSize", "description": "Default body" },
+      "sm": { "value": "14px", "type": "fontSize", "description": "Body text, descriptions" },
+      "xs": { "value": "12px", "type": "fontSize", "description": "Section labels (mono uppercase)" },
+      "2xs": { "value": "10px", "type": "fontSize", "description": "Subsection labels" },
+      "3xs": { "value": "9px", "type": "fontSize", "description": "Color swatch labels" }
+    },
+    "fontWeights": {
+      "bold": { "value": "700", "type": "fontWeight", "description": "Display headings" },
+      "semibold": { "value": "600", "type": "fontWeight", "description": "Card titles, emphasis text" },
+      "medium": { "value": "500", "type": "fontWeight", "description": "Body emphasis" },
+      "regular": { "value": "400", "type": "fontWeight", "description": "Body text, labels" }
+    },
+    "letterSpacing": {
+      "widest": { "value": "0.1em", "type": "letterSpacing", "description": "Section labels (mono uppercase)" },
+      "wider": { "value": "0.05em", "type": "letterSpacing", "description": "Display headings" },
+      "wide": { "value": "0.025em", "type": "letterSpacing", "description": "Button text, chip labels" },
+      "normal": { "value": "0em", "type": "letterSpacing", "description": "Body text" }
+    },
+    "lineHeights": {
+      "tight": { "value": "1.25", "type": "lineHeight", "description": "Headings" },
+      "normal": { "value": "1.5", "type": "lineHeight", "description": "Body text" },
+      "relaxed": { "value": "1.625", "type": "lineHeight", "description": "Descriptions" }
+    },
+    "textStyles": {
+      "screenTitle": {
+        "fontFamily": { "value": "Rajdhani" },
+        "fontSize": { "value": "20px" },
+        "fontWeight": { "value": "700" },
+        "letterSpacing": { "value": "0.05em" },
+        "textTransform": { "value": "uppercase" },
+        "description": "Screen header titles (HISTORY, SETTINGS, etc.)"
+      },
+      "sectionLabel": {
+        "fontFamily": { "value": "Oxanium" },
+        "fontSize": { "value": "12px" },
+        "fontWeight": { "value": "400" },
+        "letterSpacing": { "value": "0.1em" },
+        "textTransform": { "value": "uppercase" },
+        "color": { "value": "#C2B89A" },
+        "description": "Section headers (RECENT, STREAK, FILTER BY, etc.)"
+      },
+      "cardTitle": {
+        "fontFamily": { "value": "Rajdhani" },
+        "fontSize": { "value": "14px" },
+        "fontWeight": { "value": "600" },
+        "letterSpacing": { "value": "0.025em" },
+        "textTransform": { "value": "uppercase" },
+        "description": "Glass card titles"
+      },
+      "heroHeading": {
+        "fontFamily": { "value": "Rajdhani" },
+        "fontSize": { "value": "24px" },
+        "fontWeight": { "value": "700" },
+        "letterSpacing": { "value": "0.05em" },
+        "textTransform": { "value": "uppercase" },
+        "description": "Large screen headings (Generate Workout)"
+      },
+      "bodyText": {
+        "fontFamily": { "value": "Inter" },
+        "fontSize": { "value": "14px" },
+        "fontWeight": { "value": "400" },
+        "letterSpacing": { "value": "0em" },
+        "description": "Descriptions, secondary content"
+      },
+      "buttonLabel": {
+        "fontFamily": { "value": "Rajdhani" },
+        "fontSize": { "value": "18px" },
+        "fontWeight": { "value": "700" },
+        "letterSpacing": { "value": "0.05em" },
+        "textTransform": { "value": "uppercase" },
+        "description": "Primary CTA buttons"
+      },
+      "chipLabel": {
+        "fontFamily": { "value": "Oxanium" },
+        "fontSize": { "value": "12px" },
+        "fontWeight": { "value": "400" },
+        "letterSpacing": { "value": "0.025em" },
+        "textTransform": { "value": "uppercase" },
+        "description": "Filter chips, equipment tags"
+      }
+    }
+  },
+  "spacing": {
+    "0": { "value": "0px", "type": "spacing" },
+    "1": { "value": "4px", "type": "spacing" },
+    "2": { "value": "8px", "type": "spacing" },
+    "3": { "value": "12px", "type": "spacing" },
+    "4": { "value": "16px", "type": "spacing" },
+    "5": { "value": "20px", "type": "spacing" },
+    "6": { "value": "24px", "type": "spacing" },
+    "8": { "value": "32px", "type": "spacing" },
+    "10": { "value": "40px", "type": "spacing" },
+    "12": { "value": "48px", "type": "spacing" },
+    "16": { "value": "64px", "type": "spacing" },
+    "24": { "value": "96px", "type": "spacing" },
+    "32": { "value": "128px", "type": "spacing" },
+    "semantic": {
+      "pageHorizontal": { "value": "16px", "type": "spacing", "description": "px-4 — page-level horizontal padding" },
+      "sectionGap": { "value": "24px", "type": "spacing", "description": "space-y-6 — between major sections" },
+      "cardPadding": { "value": "16px", "type": "spacing", "description": "p-4 — standard card internal padding" },
+      "cardPaddingLarge": { "value": "24px", "type": "spacing", "description": "p-6 — hero/featured card padding" },
+      "itemGap": { "value": "8px", "type": "spacing", "description": "space-y-2 — between list items" },
+      "labelToContent": { "value": "12px", "type": "spacing", "description": "mb-3 — section label to content below" },
+      "inlineGap": { "value": "8px", "type": "spacing", "description": "gap-2 — inline element spacing" }
+    }
+  },
+  "borderRadius": {
+    "none": { "value": "0px", "type": "borderRadius", "description": "Default --radius is 0rem (sharp corners throughout)" },
+    "sm": { "value": "0px", "type": "borderRadius", "description": "calc(var(--radius) - 4px)" },
+    "md": { "value": "0px", "type": "borderRadius", "description": "calc(var(--radius) - 2px)" },
+    "lg": { "value": "0px", "type": "borderRadius", "description": "var(--radius)" },
+    "full": { "value": "9999px", "type": "borderRadius", "description": "Fully rounded (streak dots, radio buttons)" },
+    "sliderTrack": { "value": "4px", "type": "borderRadius", "description": "Intensity slider track" },
+    "sliderThumb": { "value": "4px", "type": "borderRadius", "description": "Intensity slider thumb" }
+  },
+  "effects": {
+    "blur": {
+      "glassCard": { "value": "20px", "type": "blur", "description": "Backdrop blur for glass-card" }
+    },
+    "boxShadow": {
+      "glowButtonRest": { "value": "0 0 8px rgba(153, 102, 204, 0.3)", "type": "boxShadow", "description": "Glow button default state" },
+      "glowButtonHover": { "value": "0 0 16px rgba(153, 102, 204, 0.5)", "type": "boxShadow", "description": "Glow button hover" },
+      "ghostButtonRest": { "value": "inset 0 0 8px rgba(241, 123, 20, 0.1)", "type": "boxShadow", "description": "Ghost button inner glow" },
+      "ghostButtonHover": { "value": "inset 0 0 12px rgba(241, 123, 20, 0.2)", "type": "boxShadow", "description": "Ghost button hover inner glow" },
+      "selectionInactive": { "value": "0 0 8px rgba(241, 123, 20, 0.15)", "type": "boxShadow", "description": "Inactive selection glow" },
+      "selectionInactiveHover": { "value": "0 0 12px rgba(241, 123, 20, 0.25)", "type": "boxShadow", "description": "Inactive selection hover" },
+      "sliderThumb": { "value": "0 0 12px rgba(241, 123, 20, 0.5)", "type": "boxShadow", "description": "Intensity slider thumb glow" },
+      "pulseGlowMin": { "value": "0 0 8px rgba(241, 123, 20, 0.3)", "type": "boxShadow", "description": "Pulse animation min" },
+      "pulseGlowMax": { "value": "0 0 16px rgba(241, 123, 20, 0.5)", "type": "boxShadow", "description": "Pulse animation max" }
+    },
+    "borders": {
+      "glassCard": { "value": "1.5px solid rgba(241, 123, 20, 0.4)", "type": "border", "description": "Glass card border" },
+      "ghostButton": { "value": "1px solid rgba(241, 123, 20, 0.5)", "type": "border", "description": "Ghost button border" },
+      "ghostButtonHover": { "value": "1px solid #F17B14", "type": "border", "description": "Ghost button hover border" },
+      "selectionInactive": { "value": "1px solid rgba(241, 123, 20, 0.4)", "type": "border", "description": "Inactive selection border" },
+      "sliderTrack": { "value": "1px solid rgba(140, 128, 102, 0.2)", "type": "border", "description": "Slider track border" },
+      "sliderThumb": { "value": "1px solid rgba(241, 123, 20, 0.8)", "type": "border", "description": "Slider thumb border" },
+      "cyberInputLeft": { "value": "3px solid #8DE937", "type": "border", "description": "Cyber input accent stripe" }
+    },
+    "backgrounds": {
+      "glassCard": { "value": "rgba(22, 19, 19, 0.6)", "type": "color", "description": "Glass card background (dark at 60%)" },
+      "glowButton": { "value": "linear-gradient(135deg, #9966CC, #5C3D7A)", "type": "gradient", "description": "Glow button gradient" },
+      "sliderTrack": { "value": "linear-gradient(90deg, rgba(79, 71, 154, 0.5), rgba(153, 102, 204, 0.4))", "type": "gradient", "description": "Intensity slider track" },
+      "sliderThumb": { "value": "linear-gradient(135deg, #F17B14, #914A0C)", "type": "gradient", "description": "Intensity slider thumb" },
+      "darkOverlay": { "value": "rgba(22, 19, 19, 0.35)", "type": "color", "description": "Body dark overlay on background image" },
+      "exerciseCard": { "value": "rgba(241, 123, 20, 0.2)", "type": "color", "description": "Exercise card fill" }
+    },
+    "grain": {
+      "opacity": { "value": "0.03", "type": "opacity", "description": "Grain texture overlay opacity" },
+      "type": { "value": "fractalNoise", "description": "SVG feTurbulence noise type" },
+      "baseFrequency": { "value": "0.9", "description": "Grain density" }
+    },
+    "transitions": {
+      "default": { "value": "all 0.2s ease", "type": "transition", "description": "Standard interaction transition" },
+      "pulseGlow": { "value": "2s ease-in-out infinite", "type": "animation", "description": "Glow pulse keyframe animation" }
+    }
+  },
+  "components": {
+    "glassCard": {
+      "background": { "value": "rgba(22, 19, 19, 0.6)" },
+      "backdropFilter": { "value": "blur(20px)" },
+      "border": { "value": "1.5px solid rgba(241, 123, 20, 0.4)" },
+      "borderRadius": { "value": "0px" },
+      "padding": { "value": "16px" },
+      "description": "Primary container component — semi-transparent with blur"
+    },
+    "glowButton": {
+      "background": { "value": "linear-gradient(135deg, #9966CC, #5C3D7A)" },
+      "boxShadow": { "value": "0 0 8px rgba(153, 102, 204, 0.3)" },
+      "boxShadowHover": { "value": "0 0 16px rgba(153, 102, 204, 0.5)" },
+      "transformHover": { "value": "translateY(-1px)" },
+      "borderRadius": { "value": "0px" },
+      "padding": { "value": "16px" },
+      "fontFamily": { "value": "Rajdhani" },
+      "fontSize": { "value": "18px" },
+      "fontWeight": { "value": "700" },
+      "letterSpacing": { "value": "0.05em" },
+      "textTransform": { "value": "uppercase" },
+      "color": { "value": "#FFFEFB" },
+      "description": "Primary CTA button — gradient with glow effect"
+    },
+    "ghostButton": {
+      "background": { "value": "transparent" },
+      "border": { "value": "1px solid rgba(241, 123, 20, 0.5)" },
+      "borderHover": { "value": "1px solid #F17B14" },
+      "boxShadow": { "value": "inset 0 0 8px rgba(241, 123, 20, 0.1)" },
+      "boxShadowHover": { "value": "inset 0 0 12px rgba(241, 123, 20, 0.2)" },
+      "borderRadius": { "value": "0px" },
+      "description": "Secondary action button — transparent with orange border glow"
+    },
+    "selectionButton": {
+      "active": {
+        "background": { "value": "#9966CC" },
+        "color": { "value": "#FFFEFB" },
+        "border": { "value": "none" }
+      },
+      "inactive": {
+        "background": { "value": "transparent" },
+        "border": { "value": "1px solid rgba(241, 123, 20, 0.4)" },
+        "boxShadow": { "value": "0 0 8px rgba(241, 123, 20, 0.15)" }
+      },
+      "description": "Toggle/selection buttons (anchor grid, filter chips)"
+    },
+    "exerciseCard": {
+      "background": { "value": "rgba(241, 123, 20, 0.2)" },
+      "border": { "value": "1px solid #F17B14" },
+      "padding": { "value": "16px" },
+      "titleColor": { "value": "#F17B14" },
+      "titleFontFamily": { "value": "Rajdhani" },
+      "titleFontSize": { "value": "18px" },
+      "titleFontWeight": { "value": "700" },
+      "description": "Workout exercise display card"
+    },
+    "cyberInput": {
+      "background": { "value": "rgba(79, 71, 154, 0.05)" },
+      "border": { "value": "1px solid rgba(140, 128, 102, 0.2)" },
+      "borderLeft": { "value": "3px solid #8DE937" },
+      "focusBorderColor": { "value": "rgba(140, 128, 102, 0.3)" },
+      "focusBoxShadow": { "value": "0 0 8px rgba(141, 233, 55, 0.2)" },
+      "description": "Text input with lime accent stripe"
+    },
+    "intensitySlider": {
+      "trackHeight": { "value": "8px" },
+      "trackBackground": { "value": "linear-gradient(90deg, rgba(79, 71, 154, 0.5), rgba(153, 102, 204, 0.4))" },
+      "trackBorderRadius": { "value": "4px" },
+      "trackBorder": { "value": "1px solid rgba(140, 128, 102, 0.2)" },
+      "thumbWidth": { "value": "28px" },
+      "thumbHeight": { "value": "28px" },
+      "thumbBackground": { "value": "linear-gradient(135deg, #F17B14, #914A0C)" },
+      "thumbBorderRadius": { "value": "4px" },
+      "thumbBorder": { "value": "1px solid rgba(241, 123, 20, 0.8)" },
+      "thumbBoxShadow": { "value": "0 0 12px rgba(241, 123, 20, 0.5)" },
+      "description": "Custom range slider for intensity 1-10"
+    },
+    "chipSelected": {
+      "background": { "value": "rgba(141, 233, 55, 0.2)" },
+      "border": { "value": "1px solid #8DE937" },
+      "color": { "value": "#8DE937" },
+      "description": "Selected chip/tag (equipment, sections)"
+    },
+    "chipUnselected": {
+      "background": { "value": "transparent" },
+      "border": { "value": "1px solid rgba(194, 184, 154, 0.3)" },
+      "color": { "value": "#C2B89A" },
+      "description": "Unselected chip/tag"
+    },
+    "chipActiveFilter": {
+      "background": { "value": "rgba(241, 123, 20, 0.2)" },
+      "border": { "value": "1px solid #F17B14" },
+      "color": { "value": "#F17B14" },
+      "description": "Active filter chip (history screen)"
+    }
+  },
+  "sizing": {
+    "maxWidth": { "value": "448px", "type": "sizing", "description": "max-w-md — app content max width" },
+    "iconSm": { "value": "12px", "type": "sizing", "description": "w-3 h-3 — small inline icons" },
+    "iconMd": { "value": "16px", "type": "sizing", "description": "w-4 h-4 — standard icons" },
+    "iconLg": { "value": "20px", "type": "sizing", "description": "w-5 h-5 — prominent icons" },
+    "iconXl": { "value": "24px", "type": "sizing", "description": "size-6 — header icons" },
+    "iconHero": { "value": "40px", "type": "sizing", "description": "w-10 h-10 — empty state icons" },
+    "buttonHeight": { "value": "56px", "type": "sizing", "description": "h-14 — primary CTA height" },
+    "anchorButtonHeight": { "value": "56px", "type": "sizing", "description": "h-14 — anchor grid button height" },
+    "weekDayCell": { "value": "40px", "type": "sizing", "description": "w-10 h-10 — streak week view cells" },
+    "intensityDisplay": { "value": "80px", "type": "sizing", "description": "w-20 h-20 — intensity number box" },
+    "sliderThumb": { "value": "28px", "type": "sizing", "description": "Intensity slider thumb" },
+    "spinnerSm": { "value": "16px", "type": "sizing", "description": "Loading spinner small" },
+    "spinnerMd": { "value": "24px", "type": "sizing", "description": "Loading spinner medium" },
+    "spinnerLg": { "value": "32px", "type": "sizing", "description": "Loading spinner large" }
+  }
+}

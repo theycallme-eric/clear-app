@@ -21,6 +21,8 @@ import { LoadingSkeleton, SkeletonCard } from "@/components/LoadingSkeleton";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { ErrorState } from "@/components/ErrorState";
 import { EmptyState } from "@/components/EmptyState";
+import { ActionButton } from "@/components/ActionButton";
+import { ActionCard } from "@/components/ActionCard";
 
 interface ComponentGalleryProps {
   onBack: () => void;
@@ -162,6 +164,59 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
             </div>
           </Section>
 
+          <Section title="ActionButton — Figma Design System">
+            <div className="space-y-4">
+              <Subsection label="Primary variant">
+                <div className="flex flex-wrap gap-3 items-center">
+                  <ActionButton variant="primary">Primary</ActionButton>
+                  <ActionButton variant="primary" iconLeft={<Zap className="w-4 h-4" />}>With Icon</ActionButton>
+                  <ActionButton variant="primary" disabled>Disabled</ActionButton>
+                </div>
+              </Subsection>
+
+              <Subsection label="Secondary variant">
+                <div className="flex flex-wrap gap-3 items-center">
+                  <ActionButton variant="secondary">Secondary</ActionButton>
+                  <ActionButton variant="secondary" iconRight={<Dumbbell className="w-4 h-4" />}>With Icon</ActionButton>
+                  <ActionButton variant="secondary" disabled>Disabled</ActionButton>
+                </div>
+              </Subsection>
+
+              <Subsection label="Transparent variant">
+                <div className="flex flex-wrap gap-3 items-center">
+                  <ActionButton variant="transparent">Transparent</ActionButton>
+                  <ActionButton variant="transparent" iconLeft={<Zap className="w-4 h-4" />}>With Icon</ActionButton>
+                  <ActionButton variant="transparent" disabled>Disabled</ActionButton>
+                </div>
+              </Subsection>
+            </div>
+          </Section>
+
+          {/* ─── CHAMFERED FRAME EXAMPLES ─── */}
+          <Section title="ChamferedFrame Example">
+            <div className="space-y-6">
+
+              <Subsection label="Small (8px Chamfer / 8px Left Col)">
+                <ActionCard cornerSize="sm">
+                  Small Chamfer
+                </ActionCard>
+              </Subsection>
+
+              <Subsection label="Medium (12px Chamfer / 12px Left Col)">
+                <ActionCard cornerSize="md">
+                  Medium Chamfer (Default)
+                </ActionCard>
+              </Subsection>
+
+              <Subsection label="Large (24px Chamfer / 12px Left Col)">
+                <ActionCard cornerSize="lg">
+                  Large Chamfer
+                </ActionCard>
+              </Subsection>
+
+            </div>
+          </Section>
+
           {/* ─── INPUTS ─── */}
           <Section title="Inputs — shadcn/ui">
             <div className="space-y-4">
@@ -266,7 +321,7 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
           <Section title="States">
             <div className="space-y-4">
               <Subsection label="ErrorState (with retry)">
-                <ErrorState message="Couldn't load data" onRetry={() => {}} />
+                <ErrorState message="Couldn't load data" onRetry={() => { }} />
               </Subsection>
 
               <Subsection label="EmptyState (with action)">
@@ -275,7 +330,7 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
                   title="No Workouts Yet"
                   description="Generate your first workout to get started"
                   actionLabel="Generate"
-                  onAction={() => {}}
+                  onAction={() => { }}
                 />
               </Subsection>
 
@@ -300,7 +355,7 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
                 <AnchorGrid selected={anchorValue} onSelect={setAnchorValue} hasPrimaryLift={true} />
               </Subsection>
               <Subsection label="Body focus mode (no primary lift)">
-                <AnchorGrid selected={null} onSelect={() => {}} hasPrimaryLift={false} />
+                <AnchorGrid selected={null} onSelect={() => { }} hasPrimaryLift={false} />
               </Subsection>
             </div>
           </Section>
@@ -308,7 +363,7 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
           <Section title="App — LocationAccordion">
             <LocationAccordion
               selected="Home Gym"
-              onSelect={() => {}}
+              onSelect={() => { }}
               locations={sampleLocations}
             />
           </Section>
@@ -335,7 +390,7 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
 
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
