@@ -1,44 +1,28 @@
-# Token Check Skill
+# Skill: Token Check
 
-**Context:** Verify components use correct design tokens from the Figma design system, not hardcoded values.
+> **Trigger:** When reviewing component styles.
 
-## Token Reference Files
+## Context
 
-- **CSS Variables:** `src/index.css`
-- **Figma Export:** `docs/frontend/figma-design-tokens.json`
+All components must use design tokens from the Figma design system. Hardcoded values break consistency and make theming impossible.
 
-## What to Check
+## Steps
 
-### Colors
-No hardcoded hex values. Use CSS variables:
-```tsx
-// Bad
-style={{ backgroundColor: "#1a1a1a" }}
-className="bg-gray-900"
+1. **Open Component File**
+   - Identify all style-related code
 
-// Good
-style={{ backgroundColor: "var(--surface-cta-primary)" }}
-```
+2. **Search for Violations**
+   - Hex colors (`#`)
+   - RGB/RGBA values
+   - Hardcoded pixel values for colors
 
-### Spacing
-Use Tailwind spacing or CSS variables, not arbitrary values:
-```tsx
-// Acceptable
-className="px-4 py-3"
-className="gap-2"
+3. **Cross-Reference Tokens**
+   - Check `src/index.css` for CSS variables
+   - Check `docs/frontend/figma-design-tokens.json`
 
-// Avoid
-style={{ padding: "13px" }}
-```
-
-### Typography
-Use defined font classes:
-```tsx
-// Good
-className="font-display text-xl font-bold"
-
-// Check if custom values match design tokens
-```
+4. **Replace Violations**
+   - Use appropriate CSS variables
+   - Use Tailwind classes that map to tokens
 
 ## Token Categories
 
@@ -49,18 +33,41 @@ className="font-display text-xl font-bold"
 | Text | `--text-` | `--text-cta` |
 | Icons | `--icon-` | `--icon-cta` |
 
-## Running a Check
+## Common Violations & Fixes
 
-1. Open the component file
-2. Search for:
-   - Hex colors (`#`)
-   - RGB/RGBA values
-   - Hardcoded pixel values for colors
-3. Cross-reference with `figma-design-tokens.json`
-4. Replace any hardcoded values with appropriate CSS variables
+```tsx
+// BAD: Hardcoded hex
+style={{ backgroundColor: "#1a1a1a" }}
+className="bg-gray-900"
 
-## Figma MCP
+// GOOD: CSS variable
+style={{ backgroundColor: "var(--surface-cta-primary)" }}
+className="bg-surface-primary"
 
-If connected to Figma via MCP, you can pull current token values directly:
-- Use `get_variable_defs` to fetch variable definitions for a node
-- Compare against what's in the component
+// BAD: Arbitrary spacing for colors
+style={{ padding: "13px", color: "#ff0000" }}
+
+// GOOD: Tailwind spacing, CSS variable color
+className="p-3"
+style={{ color: "var(--text-error)" }}
+```
+
+## Figma MCP Integration
+
+If connected to Figma via MCP:
+- Use `get_variable_defs` to fetch variable definitions
+- Compare against component implementation
+
+## Reference Files
+
+- `src/index.css` — CSS variables
+- `docs/frontend/figma-design-tokens.json` — Figma export
+- `tailwind.config.js` — Tailwind theme
+
+## Checklist
+
+- [ ] No hex colors found
+- [ ] No RGB/RGBA values found
+- [ ] All colors use CSS variables
+- [ ] Spacing uses Tailwind classes
+- [ ] Typography uses defined classes

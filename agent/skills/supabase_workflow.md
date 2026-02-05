@@ -1,19 +1,56 @@
-# Supabase & Vite Workflow Skill
+# Skill: Supabase Workflow
 
-**Context:** This is a Vite + React Single Page Application (SPA). We use custom state-based routing in `src/pages/Index.tsx`.
+> **Trigger:** When touching Backend, Database, or Auth.
 
-1.  **The "Monolith" Warning:**
-    * `src/pages/Index.tsx` contains the main routing logic and state.
-    * **Rule:** When asking to update the UI, prefer extracting components *out* of this file into `src/components/` rather than adding more JSX to `Index.tsx`.
+## Context
 
-2.  **Type Safety (Vite):**
-    * If you modify the database, run: `npx supabase gen types typescript --project-id "your-project-id" > src/types/database.ts`
-    * Always import types from `src/types/database.ts`.
+This is a Vite + React SPA with Supabase backend. Understanding the architecture prevents common mistakes with types, env vars, and data fetching.
 
-3.  **Environment Variables:**
-    * Use `import.meta.env.VITE_SUPABASE_URL` (NOT process.env).
-    * Never expose the service_role key in client-side code.
+## Steps
 
-4.  **Verification:**
-    * We do not use Server Components. All data fetching happens in `useEffect` or event handlers.
-    * When implementing a feature, check the browser console for network errors.
+1. **Check the Monolith**
+   - `src/pages/Index.tsx` contains main routing and state
+   - **Rule:** Extract components OUT of this file
+   - Do NOT add more JSX to Index.tsx
+
+2. **Type Safety**
+   - If modifying database schema, regenerate types:
+     ```bash
+     npx supabase gen types typescript --project-id "qxckevxniacktaqecypl" > src/types/database.ts
+     ```
+   - Always import types from `src/types/database.ts`
+
+3. **Environment Variables**
+   - Use `import.meta.env.VITE_SUPABASE_URL` (NOT `process.env`)
+   - Never expose `service_role` key in client code
+   - Check `.env` for available variables
+
+4. **Data Fetching**
+   - No Server Components — this is a client-side SPA
+   - Fetch data in `useEffect` or event handlers
+   - Use Supabase client from `src/lib/supabase.ts`
+
+5. **Migrations**
+   - New migrations go in `supabase/migrations/`
+   - Use incrementing numbers: `00012_description.sql`
+   - Apply via Supabase Dashboard SQL Editor
+
+6. **Edge Functions**
+   - Located in `supabase/functions/`
+   - Deploy: `supabase functions deploy function-name`
+
+## Reference Files
+
+- `src/lib/supabase.ts` — Supabase client
+- `src/types/database.ts` — Generated types
+- `supabase/migrations/` — Database migrations
+- `supabase/functions/` — Edge functions
+- `.env` — Environment variables
+
+## Checklist
+
+- [ ] Types regenerated (if schema changed)
+- [ ] Using `import.meta.env` (not `process.env`)
+- [ ] No service_role key in client code
+- [ ] Data fetching in useEffect/handlers
+- [ ] Tested in browser console for network errors

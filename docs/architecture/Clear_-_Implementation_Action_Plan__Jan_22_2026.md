@@ -1,20 +1,25 @@
 # Clear - Implementation Action Plan (Jan 22, 2026)
-**Purpose:** Handoff document for Claude Code implementation  
-**Based on:** Session Recap (Jan 21, 2026)  
+**Purpose:** Handoff document for Antigravity implementation
+**Based on:** Session Recap (Jan 21, 2026)
 **Pattern:** Follows established documentation format from project files
+**Updated:** February 2026
+
+> **Workflow Note:** This document was originally created for Claude Code. The workflow has changed:
+> - **Claude.ai (Opus):** Planning, prompt crafting, architecture decisions
+> - **Antigravity:** All code implementation, file creation, deployment
 
 ---
 
 ## Document Purpose
 
-This is a **handoff document for Claude Code**. Each phase contains:
+This is a **handoff document for Antigravity**. Each phase contains:
 - Clear goals and success criteria
 - Specific files to create/modify
 - Code examples and database operations
 - References to existing project documentation
 - Implementation guidelines
 
-Use this document to maintain context and direction across Claude Code sessions. Each phase is self-contained and can be tackled independently.
+Use this document to maintain context and direction across Antigravity sessions. Each phase is self-contained and can be tackled independently.
 
 ---
 
@@ -682,31 +687,31 @@ if (incomplete) {
 
 ---
 
-## Implementation Guidelines for Claude Code
+## Implementation Guidelines for Antigravity
 
 ### How to Use This Document
 1. **Pick a phase** based on current progress and dependencies
-2. **Reference the specific task** you want Claude Code to implement
+2. **Reference the specific task** you want Antigravity to implement
 3. **Copy the relevant context** (goal, files, code examples, success criteria)
-4. **Use the prompt template** below to start your Claude Code session
+4. **Use the prompt template** below to start your Antigravity session
 
 ### Session Structure
-Each Claude Code session should:
+Each Antigravity session should:
 - State which phase/task you're working on
 - Reference this action plan document
 - Include relevant wireframe/data model docs
 - Specify expected deliverables
 - End with testing the implementation
 
-### Example Claude Code Prompt
+### Example Antigravity Prompt
 ```
-I'm working on Clear (workout app). I need to implement Phase 2, Task 2.1 
+I'm working on Clear (workout app). I need to implement Phase 2, Task 2.1
 from the Implementation Action Plan (Jan 22, 2026).
 
 Reference documents:
-- /mnt/project/Clear_-_Implementation_Action_Plan__Jan_22_2026_.md
-- /mnt/project/Clear_-_Onboarding__Wireframe_.md  
-- /mnt/project/Clear_-_Data_Model.md
+- ~/clear-app/docs/architecture/Clear_-_Implementation_Action_Plan__Jan_22_2026.md
+- ~/clear-app/docs/wireframes/Clear_-_Onboarding__Wireframe_.md
+- ~/clear-app/docs/architecture/Clear_-_Data_Model.md
 
 Task: Connect existing onboarding screens to database. The UI already exists,
 I just need to add the database save logic when user completes Step 5.
@@ -841,9 +846,9 @@ docs: update README with setup instructions
 **Immediate Action (Today):**
 Start with Phase 1 - Complete Auth Flow. Use this document as reference.
 
-**Claude Code Prompt Template:**
+**Antigravity Prompt Template:**
 ```
-I'm working on the Clear workout app. I need to implement [PHASE/TASK] 
+I'm working on the Clear workout app. I need to implement [PHASE/TASK]
 from the Implementation Action Plan (Jan 22, 2026).
 
 Reference documents:
@@ -863,5 +868,6 @@ After completing each phase, update:
 
 ---
 
-*Action Plan created: January 22, 2026*  
-*Ready for Claude Code implementation*
+*Action Plan created: January 22, 2026*
+*Updated: February 2026 - Migrated from Claude Code to Antigravity workflow*
+*Ready for Antigravity implementation*

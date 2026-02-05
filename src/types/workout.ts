@@ -111,25 +111,54 @@ export interface UserPreferences {
   limitations: string;
 }
 
+export type ExerciseStructure =
+  | { type: 'standard' }
+  | { type: 'superset'; paired_with: string }
+  | { type: 'circuit'; circuit_id: string; rounds: number }
+  | { type: 'emom'; minutes: number }
+  | { type: 'amrap'; minutes: number }
+  | { type: 'for_time'; time_cap_mins: number };
+
+export interface StructureResult {
+  id: string;
+  section_id: string;
+  structure_type: 'circuit' | 'emom' | 'amrap' | 'for_time';
+  completion_time_seconds?: number;
+  completed_under_cap?: boolean;
+  rounds_completed?: number;
+  rep_scheme?: string;
+  highest_rung?: number;
+  notes?: string;
+  created_at: string;
+}
+
+export type SectionStatus = 'not_started' | 'completed' | 'skipped';
+
 export interface Exercise {
   id: string;
   name: string;
-  sets: number;
-  reps: number;
+  sets: number | null; // Nullable for circuits/timed
+  reps: string; // Changed to string for flexibility
   effort?: string;
   tempo?: string;
   rest?: string;
   lastWeight?: string;
-  coachingCues?: string;
+  coachingCues?: string[]; // Changed to array
   regression?: string;
   progression?: string;
+  equipment?: string;
+  structure?: ExerciseStructure;
+  weight_logged?: string; // User input
 }
 
 export interface WorkoutSection {
   id: string;
   name: string;
-  type: 'warmup' | 'primary' | 'accessory' | 'rotational' | 'conditioning' | 'cooldown';
+  type: SectionType; // Use the specific SectionType
   exercises: Exercise[];
+  status: SectionStatus;
+  started_at?: string;
+  completed_at?: string;
 }
 
 export interface GeneratedWorkout {
@@ -472,25 +501,28 @@ export const generateMockWorkout = (intensity: number, anchor: string): Generate
         id: "warmup",
         name: "Warm-Up",
         type: "warmup",
+        status: "not_started",
         exercises: [
           {
             id: "w1",
             name: "Band Pull-Aparts",
             sets: 2,
-            reps: 15,
+            reps: "15",
             tempo: "1-0-1",
             rest: "30s",
-            coachingCues: "Squeeze shoulder blades together at end range",
-            regression: "Lighter band tension"
+            coachingCues: ["Squeeze shoulder blades together at end range"],
+            regression: "Lighter band tension",
+            structure: { type: 'standard' }
           },
           {
             id: "w2",
             name: "Cat-Cow Stretch",
             sets: 2,
-            reps: 10,
+            reps: "10",
             tempo: "2-1-2",
             rest: "0s",
-            coachingCues: "Full spinal flexion and extension"
+            coachingCues: ["Full spinal flexion and extension"],
+            structure: { type: 'standard' }
           }
         ]
       },
@@ -498,19 +530,21 @@ export const generateMockWorkout = (intensity: number, anchor: string): Generate
         id: "primary",
         name: "Primary Lift",
         type: "primary",
+        status: "not_started",
         exercises: [
           {
             id: "p1",
             name: "Barbell Bent-Over Row",
             sets: 4,
-            reps: 8,
+            reps: "8",
             effort: "65%",
             tempo: "2-1-2",
             rest: "90s",
             lastWeight: "115-135lbs",
-            coachingCues: "Neutral spine, bar to ribcage",
+            coachingCues: ["Neutral spine, bar to ribcage"],
             regression: "Seated Cable Row",
-            progression: "Pendlay Row"
+            progression: "Pendlay Row",
+            structure: { type: 'standard' }
           }
         ]
       },
@@ -518,45 +552,50 @@ export const generateMockWorkout = (intensity: number, anchor: string): Generate
         id: "accessory",
         name: "Accessory Block",
         type: "accessory",
+        status: "not_started",
         exercises: [
           {
             id: "a1",
             name: "Lat Pulldown",
             sets: 3,
-            reps: 12,
+            reps: "12",
             effort: "RPE 7",
             tempo: "2-0-2",
             rest: "60s",
             lastWeight: "120-140lbs",
-            coachingCues: "Drive elbows down toward hips",
-            regression: "Assisted Pull-Up Machine"
+            coachingCues: ["Drive elbows down toward hips"],
+            regression: "Assisted Pull-Up Machine",
+            structure: { type: 'standard' }
           },
           {
             id: "a2",
             name: "Face Pulls",
             sets: 3,
-            reps: 15,
+            reps: "15",
             tempo: "1-1-1",
             rest: "45s",
-            coachingCues: "External rotation at peak contraction",
-            regression: "Band Face Pulls"
+            coachingCues: ["External rotation at peak contraction"],
+            regression: "Band Face Pulls",
+            structure: { type: 'standard' }
           }
         ]
       },
       {
         id: "rotational",
         name: "Rotational/Stance",
-        type: "rotational",
+        type: "core", /* Replaced invalid 'rotational' with 'core' */
+        status: "not_started",
         exercises: [
           {
             id: "r1",
             name: "Single-Arm Cable Row",
             sets: 3,
-            reps: 10,
+            reps: "10",
             tempo: "2-1-2",
             rest: "45s",
             lastWeight: "40-50lbs",
-            coachingCues: "Anti-rotation through core, staggered stance"
+            coachingCues: ["Anti-rotation through core, staggered stance"],
+            structure: { type: 'standard' }
           }
         ]
       },
@@ -564,15 +603,17 @@ export const generateMockWorkout = (intensity: number, anchor: string): Generate
         id: "conditioning",
         name: "Conditioning",
         type: "conditioning",
+        status: "not_started",
         exercises: [
           {
             id: "c1",
             name: "Rowing Machine Intervals",
             sets: 5,
-            reps: 1,
+            reps: "1",
             effort: "85%",
             rest: "60s",
-            coachingCues: "250m sprints, focus on leg drive"
+            coachingCues: ["250m sprints, focus on leg drive"],
+            structure: { type: 'standard' }
           }
         ]
       },
@@ -580,22 +621,25 @@ export const generateMockWorkout = (intensity: number, anchor: string): Generate
         id: "cooldown",
         name: "Cooldown",
         type: "cooldown",
+        status: "not_started",
         exercises: [
           {
             id: "cd1",
             name: "Child's Pose",
             sets: 1,
-            reps: 1,
+            reps: "1",
             rest: "60s",
-            coachingCues: "Deep breathing, lat stretch"
+            coachingCues: ["Deep breathing, lat stretch"],
+            structure: { type: 'standard' }
           },
           {
             id: "cd2",
             name: "Thread the Needle",
             sets: 1,
-            reps: 8,
+            reps: "8",
             rest: "0s",
-            coachingCues: "Hold 5 seconds each side"
+            coachingCues: ["Hold 5 seconds each side"],
+            structure: { type: 'standard' }
           }
         ]
       }

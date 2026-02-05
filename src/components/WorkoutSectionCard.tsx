@@ -10,7 +10,7 @@ interface WorkoutSectionCardProps {
 
 export const WorkoutSectionCard = ({ section, onRandomize }: WorkoutSectionCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  
+
   return (
     <div className="glass-card overflow-hidden">
       {/* Header - always visible */}
@@ -27,7 +27,7 @@ export const WorkoutSectionCard = ({ section, onRandomize }: WorkoutSectionCardP
           <ChevronDown size={20} className="text-foreground/60" />
         )}
       </button>
-      
+
       {/* Collapsed preview - show all exercises */}
       {!isExpanded && section.exercises.length > 0 && (
         <div className="px-4 pb-4 space-y-3">
@@ -35,25 +35,30 @@ export const WorkoutSectionCard = ({ section, onRandomize }: WorkoutSectionCardP
             <div key={exercise.id} className="exercise-card">
               <p className="exercise-card-title">
                 {exercise.name}
+                {exercise.equipment && (
+                  <span className="ml-2 text-xs font-normal text-muted-foreground uppercase tracking-wider">
+                    {exercise.equipment.replace(/_/g, ' ')}
+                  </span>
+                )}
               </p>
               <p className="text-sm text-foreground">
-                ({exercise.sets}×{exercise.reps})
+                ({exercise.sets ? `${exercise.sets}×` : ''}{exercise.reps})
               </p>
             </div>
           ))}
         </div>
       )}
-      
+
       {/* Expanded view */}
       {isExpanded && (
         <div className="px-4 pb-4 space-y-4">
           {section.exercises.map((exercise) => (
-            <ExerciseCard 
-              key={exercise.id} 
+            <ExerciseCard
+              key={exercise.id}
               exercise={exercise}
             />
           ))}
-          
+
           {/* Randomize button */}
           <button
             onClick={(e) => {

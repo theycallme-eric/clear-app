@@ -1,391 +1,757 @@
-// Generated TypeScript types for Clear Supabase database
-// Based on migrations created 2026-01-20
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
-// ============================================
-// ENUM TYPES
-// ============================================
-
-export type ExperienceLevel = 'new' | 'some' | 'confident';
-
-export type GoalPreset = 'strength' | 'balanced' | 'conditioning' | 'quick';
-
-export type EquipmentTier = 'minimal' | 'home' | 'building' | 'full';
-
-export type AnchorType =
-  | 'squat'
-  | 'hinge'
-  | 'press'
-  | 'pull'
-  | 'power'
-  | 'surprise'
-  | 'upper_body'
-  | 'lower_body'
-  | 'full_body';
-
-export type SectionType =
-  | 'warmup'
-  | 'mobility'
-  | 'primary_lift'
-  | 'accessory'
-  | 'skill_power'
-  | 'carries'
-  | 'core'
-  | 'stability_balance'
-  | 'conditioning'
-  | 'cooldown';
-
-export type StreakStatus = 'active' | 'paused';
-
-export type StreakPauseReason = 'injury' | 'sick' | 'vacation';
-
-export type RestDayReason = 'rest' | 'injury' | 'sick';
-
-export type MovementCategory = 'lower_body' | 'upper_body' | 'core' | 'full_body';
-
-// ============================================
-// TABLE TYPES
-// ============================================
-
-export interface Profile {
-  id: string;
-  created_at: string;
-  updated_at: string;
-  experience_level: ExperienceLevel | null;
-  goal_preset: GoalPreset | null;
-  limitations: string | null;
-  enabled_sections: SectionType[];
-  streak_count: number;
-  streak_start_date: string | null;
-  streak_status: StreakStatus;
-  streak_pause_reason: StreakPauseReason | null;
-  streak_pause_start: string | null;
-  consecutive_rest_days: number;
-  onboarding_completed: boolean;
-  default_location_id: string | null;
-}
-
-export interface Location {
-  id: string;
-  user_id: string;
-  created_at: string;
-  updated_at: string;
-  name: string;
-  tier: EquipmentTier;
-  equipment: string[];
-  is_default: boolean;
-}
-
-export interface WorkoutSession {
-  id: string;
-  user_id: string;
-  location_id: string | null;
-  created_at: string;
-  updated_at: string;
-  date: string;
-  anchor: AnchorType;
-  intensity: number;
-  goal_preset: GoalPreset | null;
-  time_target_mins: number | null;
-  generation_notes: string | null;
-  duration_mins: number | null;
-  mood: string | null;
-  session_notes: string | null;
-  counts_for_streak: boolean;
-  is_rest_day: boolean;
-  rest_day_reason: RestDayReason | null;
-  prompt_version: string | null;
-  completed_at: string | null;
-}
-
-export interface WorkoutSection {
-  id: string;
-  session_id: string;
-  created_at: string;
-  updated_at: string;
-  section_type: SectionType;
-  order_index: number;
-  section_notes: string | null;
-  started_at: string | null;
-  completed_at: string | null;
-}
-
-export interface Exercise {
-  id: string;
-  section_id: string;
-  exercise_id: string;
-  created_at: string;
-  updated_at: string;
-  equipment_used: string;
-  sets: number | null;
-  reps: string;
-  effort_percent: number | null;
-  tempo: string | null;
-  rest_seconds: number | null;
-  coaching_cues: string | null;
-  weight_logged: string | null;
-  exercise_notes: string | null;
-  order_index: number;
-}
-
-export interface MovementPattern {
-  id: string;
-  created_at: string;
-  name: string;
-  category: MovementCategory;
-  anchor: AnchorType;
-  description: string | null;
-}
-
-export interface ExerciseDefinition {
-  id: string;
-  pattern_id: string;
-  created_at: string;
-  updated_at: string;
-  name: string;
-  equipment_options: string[];
-  default_equipment: string;
-  regression: string | null;
-  progression: string | null;
-  coaching_cues: string[] | null;
-  sections: SectionType[];
-  can_be_primary: boolean;
-}
-
-// ============================================
-// INSERT TYPES (for creating new records)
-// ============================================
-
-export interface ProfileInsert {
-  id: string; // Must match auth.users id
-  experience_level?: ExperienceLevel | null;
-  goal_preset?: GoalPreset | null;
-  limitations?: string | null;
-  enabled_sections?: SectionType[];
-  streak_count?: number;
-  streak_start_date?: string | null;
-  streak_status?: StreakStatus;
-  streak_pause_reason?: StreakPauseReason | null;
-  streak_pause_start?: string | null;
-  consecutive_rest_days?: number;
-  onboarding_completed?: boolean;
-  default_location_id?: string | null;
-}
-
-export interface ProfileUpdate {
-  experience_level?: ExperienceLevel | null;
-  goal_preset?: GoalPreset | null;
-  limitations?: string | null;
-  enabled_sections?: SectionType[];
-  streak_count?: number;
-  streak_start_date?: string | null;
-  streak_status?: StreakStatus;
-  streak_pause_reason?: StreakPauseReason | null;
-  streak_pause_start?: string | null;
-  consecutive_rest_days?: number;
-  onboarding_completed?: boolean;
-  default_location_id?: string | null;
-}
-
-export interface LocationInsert {
-  user_id: string;
-  name: string;
-  tier: EquipmentTier;
-  equipment?: string[];
-  is_default?: boolean;
-}
-
-export interface LocationUpdate {
-  name?: string;
-  tier?: EquipmentTier;
-  equipment?: string[];
-  is_default?: boolean;
-}
-
-export interface WorkoutSessionInsert {
-  user_id: string;
-  location_id?: string | null;
-  date: string;
-  anchor: AnchorType;
-  intensity: number;
-  goal_preset?: GoalPreset | null;
-  time_target_mins?: number | null;
-  generation_notes?: string | null;
-  duration_mins?: number | null;
-  mood?: string | null;
-  session_notes?: string | null;
-  counts_for_streak?: boolean;
-  is_rest_day?: boolean;
-  rest_day_reason?: RestDayReason | null;
-  prompt_version?: string | null;
-  completed_at?: string | null;
-}
-
-export interface WorkoutSessionUpdate {
-  location_id?: string | null;
-  date?: string;
-  anchor?: AnchorType;
-  intensity?: number;
-  goal_preset?: GoalPreset | null;
-  time_target_mins?: number | null;
-  generation_notes?: string | null;
-  duration_mins?: number | null;
-  mood?: string | null;
-  session_notes?: string | null;
-  counts_for_streak?: boolean;
-  is_rest_day?: boolean;
-  rest_day_reason?: RestDayReason | null;
-  prompt_version?: string | null;
-  completed_at?: string | null;
-}
-
-export interface WorkoutSectionInsert {
-  session_id: string;
-  section_type: SectionType;
-  order_index: number;
-  section_notes?: string | null;
-  started_at?: string | null;
-  completed_at?: string | null;
-}
-
-export interface WorkoutSectionUpdate {
-  section_type?: SectionType;
-  order_index?: number;
-  section_notes?: string | null;
-  started_at?: string | null;
-  completed_at?: string | null;
-}
-
-export interface ExerciseInsert {
-  section_id: string;
-  exercise_id: string;
-  equipment_used: string;
-  sets?: number | null;
-  reps: string;
-  effort_percent?: number | null;
-  tempo?: string | null;
-  rest_seconds?: number | null;
-  coaching_cues?: string | null;
-  weight_logged?: string | null;
-  exercise_notes?: string | null;
-  order_index: number;
-}
-
-export interface ExerciseUpdate {
-  exercise_id?: string;
-  equipment_used?: string;
-  sets?: number | null;
-  reps?: string;
-  effort_percent?: number | null;
-  tempo?: string | null;
-  rest_seconds?: number | null;
-  coaching_cues?: string | null;
-  weight_logged?: string | null;
-  exercise_notes?: string | null;
-  order_index?: number;
-}
-
-// ============================================
-// SUPABASE DATABASE TYPE (for client)
-// ============================================
-
-export interface Database {
+export type Database = {
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
-      profiles: {
-        Row: Profile;
-        Insert: ProfileInsert;
-        Update: ProfileUpdate;
-      };
-      locations: {
-        Row: Location;
-        Insert: LocationInsert;
-        Update: LocationUpdate;
-      };
-      workout_sessions: {
-        Row: WorkoutSession;
-        Insert: WorkoutSessionInsert;
-        Update: WorkoutSessionUpdate;
-      };
-      workout_sections: {
-        Row: WorkoutSection;
-        Insert: WorkoutSectionInsert;
-        Update: WorkoutSectionUpdate;
-      };
-      exercises: {
-        Row: Exercise;
-        Insert: ExerciseInsert;
-        Update: ExerciseUpdate;
-      };
-      movement_patterns: {
-        Row: MovementPattern;
-        Insert: never; // Read-only
-        Update: never; // Read-only
-      };
       exercise_definitions: {
-        Row: ExerciseDefinition;
-        Insert: never; // Read-only
-        Update: never; // Read-only
-      };
-    };
+        Row: {
+          can_be_primary: boolean
+          coaching_cues: string[] | null
+          created_at: string
+          default_equipment: string
+          equipment_display_names: Json | null
+          equipment_options: string[]
+          id: string
+          name: string
+          pattern_id: string
+          progression: string | null
+          regression: string | null
+          sections: Database["public"]["Enums"]["section_type"][]
+          updated_at: string
+        }
+        Insert: {
+          can_be_primary?: boolean
+          coaching_cues?: string[] | null
+          created_at?: string
+          default_equipment: string
+          equipment_display_names?: Json | null
+          equipment_options: string[]
+          id: string
+          name: string
+          pattern_id: string
+          progression?: string | null
+          regression?: string | null
+          sections: Database["public"]["Enums"]["section_type"][]
+          updated_at?: string
+        }
+        Update: {
+          can_be_primary?: boolean
+          coaching_cues?: string[] | null
+          created_at?: string
+          default_equipment?: string
+          equipment_display_names?: Json | null
+          equipment_options?: string[]
+          id?: string
+          name?: string
+          pattern_id?: string
+          progression?: string | null
+          regression?: string | null
+          sections?: Database["public"]["Enums"]["section_type"][]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_definitions_pattern_id_fkey"
+            columns: ["pattern_id"]
+            isOneToOne: false
+            referencedRelation: "movement_patterns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_definitions_progression_fkey"
+            columns: ["progression"]
+            isOneToOne: false
+            referencedRelation: "exercise_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_definitions_regression_fkey"
+            columns: ["regression"]
+            isOneToOne: false
+            referencedRelation: "exercise_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exercises: {
+        Row: {
+          coaching_cues: string | null
+          created_at: string
+          effort_percent: number | null
+          equipment_used: string
+          exercise_id: string
+          exercise_notes: string | null
+          id: string
+          order_index: number
+          reps: string
+          rest_seconds: number | null
+          section_id: string
+          sets: number | null
+          tempo: string | null
+          updated_at: string
+          weight_logged: string | null
+        }
+        Insert: {
+          coaching_cues?: string | null
+          created_at?: string
+          effort_percent?: number | null
+          equipment_used: string
+          exercise_id: string
+          exercise_notes?: string | null
+          id?: string
+          order_index: number
+          reps: string
+          rest_seconds?: number | null
+          section_id: string
+          sets?: number | null
+          tempo?: string | null
+          updated_at?: string
+          weight_logged?: string | null
+        }
+        Update: {
+          coaching_cues?: string | null
+          created_at?: string
+          effort_percent?: number | null
+          equipment_used?: string
+          exercise_id?: string
+          exercise_notes?: string | null
+          id?: string
+          order_index?: number
+          reps?: string
+          rest_seconds?: number | null
+          section_id?: string
+          sets?: number | null
+          tempo?: string | null
+          updated_at?: string
+          weight_logged?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercises_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercise_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercises_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "workout_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      locations: {
+        Row: {
+          created_at: string
+          equipment: string[]
+          id: string
+          is_default: boolean
+          name: string
+          tier: Database["public"]["Enums"]["equipment_tier"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          equipment?: string[]
+          id?: string
+          is_default?: boolean
+          name: string
+          tier: Database["public"]["Enums"]["equipment_tier"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          equipment?: string[]
+          id?: string
+          is_default?: boolean
+          name?: string
+          tier?: Database["public"]["Enums"]["equipment_tier"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "locations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      movement_patterns: {
+        Row: {
+          anchor: Database["public"]["Enums"]["anchor_type"]
+          category: Database["public"]["Enums"]["movement_category"]
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          anchor: Database["public"]["Enums"]["anchor_type"]
+          category: Database["public"]["Enums"]["movement_category"]
+          created_at?: string
+          description?: string | null
+          id: string
+          name: string
+        }
+        Update: {
+          anchor?: Database["public"]["Enums"]["anchor_type"]
+          category?: Database["public"]["Enums"]["movement_category"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          consecutive_rest_days: number
+          created_at: string
+          default_location_id: string | null
+          enabled_sections: Database["public"]["Enums"]["section_type"][] | null
+          experience_level:
+            | Database["public"]["Enums"]["experience_level"]
+            | null
+          goal_preset: Database["public"]["Enums"]["goal_preset"] | null
+          id: string
+          limitations: string | null
+          onboarding_completed: boolean
+          streak_count: number
+          streak_pause_reason:
+            | Database["public"]["Enums"]["streak_pause_reason"]
+            | null
+          streak_pause_start: string | null
+          streak_start_date: string | null
+          streak_status: Database["public"]["Enums"]["streak_status"]
+          updated_at: string
+        }
+        Insert: {
+          consecutive_rest_days?: number
+          created_at?: string
+          default_location_id?: string | null
+          enabled_sections?:
+            | Database["public"]["Enums"]["section_type"][]
+            | null
+          experience_level?:
+            | Database["public"]["Enums"]["experience_level"]
+            | null
+          goal_preset?: Database["public"]["Enums"]["goal_preset"] | null
+          id: string
+          limitations?: string | null
+          onboarding_completed?: boolean
+          streak_count?: number
+          streak_pause_reason?:
+            | Database["public"]["Enums"]["streak_pause_reason"]
+            | null
+          streak_pause_start?: string | null
+          streak_start_date?: string | null
+          streak_status?: Database["public"]["Enums"]["streak_status"]
+          updated_at?: string
+        }
+        Update: {
+          consecutive_rest_days?: number
+          created_at?: string
+          default_location_id?: string | null
+          enabled_sections?:
+            | Database["public"]["Enums"]["section_type"][]
+            | null
+          experience_level?:
+            | Database["public"]["Enums"]["experience_level"]
+            | null
+          goal_preset?: Database["public"]["Enums"]["goal_preset"] | null
+          id?: string
+          limitations?: string | null
+          onboarding_completed?: boolean
+          streak_count?: number
+          streak_pause_reason?:
+            | Database["public"]["Enums"]["streak_pause_reason"]
+            | null
+          streak_pause_start?: string | null
+          streak_start_date?: string | null
+          streak_status?: Database["public"]["Enums"]["streak_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_profiles_default_location"
+            columns: ["default_location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      structure_results: {
+        Row: {
+          completed_under_cap: boolean | null
+          completion_time_seconds: number | null
+          created_at: string | null
+          highest_rung: number | null
+          id: string
+          notes: string | null
+          rep_scheme: string | null
+          rounds_completed: number | null
+          section_id: string | null
+          structure_type: string
+        }
+        Insert: {
+          completed_under_cap?: boolean | null
+          completion_time_seconds?: number | null
+          created_at?: string | null
+          highest_rung?: number | null
+          id?: string
+          notes?: string | null
+          rep_scheme?: string | null
+          rounds_completed?: number | null
+          section_id?: string | null
+          structure_type: string
+        }
+        Update: {
+          completed_under_cap?: boolean | null
+          completion_time_seconds?: number | null
+          created_at?: string | null
+          highest_rung?: number | null
+          id?: string
+          notes?: string | null
+          rep_scheme?: string | null
+          rounds_completed?: number | null
+          section_id?: string | null
+          structure_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "structure_results_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "workout_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workout_sections: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          order_index: number
+          section_notes: string | null
+          section_type: Database["public"]["Enums"]["section_type"]
+          session_id: string
+          started_at: string | null
+          status: Database["public"]["Enums"]["section_status"] | null
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          order_index: number
+          section_notes?: string | null
+          section_type: Database["public"]["Enums"]["section_type"]
+          session_id: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["section_status"] | null
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          order_index?: number
+          section_notes?: string | null
+          section_type?: Database["public"]["Enums"]["section_type"]
+          session_id?: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["section_status"] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_sections_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "workout_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workout_sessions: {
+        Row: {
+          anchor: Database["public"]["Enums"]["anchor_type"]
+          completed_at: string | null
+          counts_for_streak: boolean
+          created_at: string
+          date: string
+          duration_mins: number | null
+          generation_notes: string | null
+          goal_preset: Database["public"]["Enums"]["goal_preset"] | null
+          id: string
+          intensity: number
+          is_rest_day: boolean
+          location_id: string | null
+          mood: string | null
+          prompt_version: string | null
+          rest_day_reason: Database["public"]["Enums"]["rest_day_reason"] | null
+          session_notes: string | null
+          time_target_mins: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          anchor: Database["public"]["Enums"]["anchor_type"]
+          completed_at?: string | null
+          counts_for_streak?: boolean
+          created_at?: string
+          date: string
+          duration_mins?: number | null
+          generation_notes?: string | null
+          goal_preset?: Database["public"]["Enums"]["goal_preset"] | null
+          id?: string
+          intensity: number
+          is_rest_day?: boolean
+          location_id?: string | null
+          mood?: string | null
+          prompt_version?: string | null
+          rest_day_reason?:
+            | Database["public"]["Enums"]["rest_day_reason"]
+            | null
+          session_notes?: string | null
+          time_target_mins?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          anchor?: Database["public"]["Enums"]["anchor_type"]
+          completed_at?: string | null
+          counts_for_streak?: boolean
+          created_at?: string
+          date?: string
+          duration_mins?: number | null
+          generation_notes?: string | null
+          goal_preset?: Database["public"]["Enums"]["goal_preset"] | null
+          id?: string
+          intensity?: number
+          is_rest_day?: boolean
+          location_id?: string | null
+          mood?: string | null
+          prompt_version?: string | null
+          rest_day_reason?:
+            | Database["public"]["Enums"]["rest_day_reason"]
+            | null
+          session_notes?: string | null
+          time_target_mins?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_sessions_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workout_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+    }
+    Views: {
+      exercises_with_context: {
+        Row: {
+          anchor: Database["public"]["Enums"]["anchor_type"] | null
+          coaching_cues: string | null
+          created_at: string | null
+          effort_percent: number | null
+          equipment_used: string | null
+          exercise_id: string | null
+          exercise_name: string | null
+          exercise_notes: string | null
+          id: string | null
+          order_index: number | null
+          pattern_id: string | null
+          reps: string | null
+          rest_seconds: number | null
+          section_id: string | null
+          section_type: Database["public"]["Enums"]["section_type"] | null
+          sets: number | null
+          tempo: string | null
+          updated_at: string | null
+          user_id: string | null
+          weight_logged: string | null
+          workout_date: string | null
+          workout_intensity: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_definitions_pattern_id_fkey"
+            columns: ["pattern_id"]
+            isOneToOne: false
+            referencedRelation: "movement_patterns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercises_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercise_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercises_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "workout_sections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workout_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+    }
+    Functions: {
+      [_ in never]: never
+    }
     Enums: {
-      experience_level: ExperienceLevel;
-      goal_preset: GoalPreset;
-      equipment_tier: EquipmentTier;
-      anchor_type: AnchorType;
-      section_type: SectionType;
-      streak_status: StreakStatus;
-      streak_pause_reason: StreakPauseReason;
-      rest_day_reason: RestDayReason;
-      movement_category: MovementCategory;
-    };
-  };
+      anchor_type:
+        | "squat"
+        | "hinge"
+        | "press"
+        | "pull"
+        | "power"
+        | "surprise"
+        | "upper_body"
+        | "lower_body"
+        | "full_body"
+      equipment_tier: "minimal" | "home" | "building" | "full"
+      experience_level: "new" | "some" | "confident"
+      goal_preset: "strength" | "balanced" | "conditioning" | "quick"
+      movement_category: "lower_body" | "upper_body" | "core" | "full_body"
+      rest_day_reason: "rest" | "injury" | "sick"
+      section_status: "not_started" | "completed" | "skipped"
+      section_type:
+        | "warmup"
+        | "mobility"
+        | "primary_lift"
+        | "accessory"
+        | "skill_power"
+        | "carries"
+        | "core"
+        | "stability_balance"
+        | "conditioning"
+        | "cooldown"
+      streak_pause_reason: "injury" | "sick" | "vacation"
+      streak_status: "active" | "paused"
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
 }
 
-// ============================================
-// HELPER TYPES
-// ============================================
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
-// Full workout with all nested data
-export interface WorkoutSessionWithDetails extends WorkoutSession {
-  location: Location | null;
-  sections: WorkoutSectionWithExercises[];
-}
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
-export interface WorkoutSectionWithExercises extends WorkoutSection {
-  exercises: ExerciseWithDefinition[];
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
 }
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
 
-export interface ExerciseWithDefinition extends Exercise {
-  definition: ExerciseDefinition;
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
 }
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
 
-// Dashboard data
-export interface DashboardData {
-  streak: {
-    count: number;
-    start_date: string | null;
-    status: StreakStatus;
-  };
-  week_view: DayStatus[];
-  recent_sessions: WorkoutSession[];
-  quick_start_suggestion: {
-    intensity: number;
-    anchor: AnchorType;
-  } | null;
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
 }
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
 
-export interface DayStatus {
-  date: string;
-  status: 'workout' | 'rest' | 'empty';
-  session_id?: string;
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
 }
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
 
-// Exercise history for a specific exercise
-export interface ExerciseHistory {
-  exercise_id: string;
-  exercise_name: string;
-  occurrences: number;
-  weight_range: { min: number; max: number } | null;
-  last_performed: string | null;
-  recent_notes: string[];
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
 }
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
+  public: {
+    Enums: {
+      anchor_type: [
+        "squat",
+        "hinge",
+        "press",
+        "pull",
+        "power",
+        "surprise",
+        "upper_body",
+        "lower_body",
+        "full_body",
+      ],
+      equipment_tier: ["minimal", "home", "building", "full"],
+      experience_level: ["new", "some", "confident"],
+      goal_preset: ["strength", "balanced", "conditioning", "quick"],
+      movement_category: ["lower_body", "upper_body", "core", "full_body"],
+      rest_day_reason: ["rest", "injury", "sick"],
+      section_status: ["not_started", "completed", "skipped"],
+      section_type: [
+        "warmup",
+        "mobility",
+        "primary_lift",
+        "accessory",
+        "skill_power",
+        "carries",
+        "core",
+        "stability_balance",
+        "conditioning",
+        "cooldown",
+      ],
+      streak_pause_reason: ["injury", "sick", "vacation"],
+      streak_status: ["active", "paused"],
+    },
+  },
+} as const
+

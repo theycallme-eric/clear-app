@@ -1,6 +1,11 @@
-# Clear - Claude Code Handoff
-**Created:** December 22, 2025  
-**Purpose:** Everything Claude Code needs to build the remaining screens
+# Clear - Antigravity Handoff
+**Created:** December 22, 2025
+**Updated:** February 2026
+**Purpose:** Everything Antigravity needs to build the remaining screens
+
+> **Workflow Note:** This document was originally created for Claude Code. The workflow has changed:
+> - **Claude.ai (Opus):** Planning, prompt crafting, architecture decisions
+> - **Antigravity:** All code implementation, file creation, deployment
 
 ---
 
@@ -430,7 +435,7 @@ Existing code is in the code folder (Lovable export).
 
 ---
 
-## Notes for Claude Code
+## Notes for Antigravity
 
 1. **Match existing patterns.** Look at how Lovable structured Screen 1-3 and follow the same conventions.
 

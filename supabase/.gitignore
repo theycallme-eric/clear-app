@@ -1,0 +1,11 @@
+# Supabase
+.branches
+.temp
+
+# Secrets (contains API keys)
+.env
+
+# dotenvx
+.env.keys
+.env.local
+.env.*.local

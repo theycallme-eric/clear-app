@@ -1,43 +1,59 @@
-# Project Map Skill
+# Skill: Update Project Map
 
-**Context:** `docs/wireframes/PROJECT_MAP.md` documents the codebase architecture. Update it when the structure changes significantly.
+> **Trigger:** When making major architecture changes.
+
+## Context
+
+The project map documents the codebase architecture. Keeping it current helps future agents understand the system quickly.
 
 ## When to Update
 
-Update PROJECT_MAP.md when:
+Update `docs/wireframes/PROJECT_MAP.md` when:
 - New technology or library is added
 - Major file structure changes
 - New data flow patterns are introduced
 - Risk items are resolved or new ones discovered
 - Key files change purpose or location
 
-## Sections to Maintain
+## Steps
 
-1. **Tech Stack Scan:**
-   - Framework, styling, backend, routing approach
-   - Key libraries and what they do
+1. **Update Tech Stack**
+   - Add new frameworks, libraries
+   - Note what each does
 
-2. **Data Flow:**
-   - How the main user flows work (e.g., "Generate Workout")
+2. **Update Data Flow**
+   - Document how main user flows work
    - Which files are involved in each flow
 
-3. **Environment & Safety:**
-   - API key handling
-   - Type safety status
-
-4. **File Glossary:**
+3. **Update File Glossary**
    - Top 5 most-touched files for design changes
-   - Keep this current as architecture evolves
+   - Keep current as architecture evolves
 
-5. **Risk Report:**
-   - Known technical debt
-   - Areas that are hard to maintain
-   - Remove risks when resolved (e.g., after Index.tsx refactor)
+4. **Update Risk Report**
+   - Add new technical debt
+   - Remove resolved risks (e.g., after refactor)
 
-## After Major Refactors
+5. **Add Timestamp**
+   - At bottom: `*Last updated: [Date] by [Agent]*`
 
-If you complete a significant refactor (like splitting Index.tsx):
-1. Update File Glossary with new file locations
-2. Update Data Flow if routing changed
-3. Remove resolved items from Risk Report
-4. Add note at bottom: `*Last updated: [Date] by [Agent]*`
+## Sections to Maintain
+
+| Section | Content |
+|---------|---------|
+| Tech Stack Scan | Framework, styling, backend, routing |
+| Data Flow | User flows and involved files |
+| Environment & Safety | API keys, type safety status |
+| File Glossary | Key files for design changes |
+| Risk Report | Technical debt, hard-to-maintain areas |
+
+## Reference Files
+
+- `docs/wireframes/PROJECT_MAP.md` — The project map
+
+## Checklist
+
+- [ ] Tech stack section current
+- [ ] Data flows documented
+- [ ] File glossary updated
+- [ ] Risks added/removed as needed
+- [ ] Timestamp updated

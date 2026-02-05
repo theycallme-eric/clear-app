@@ -1,176 +1,160 @@
-import { useState, useEffect, useRef } from "react";
-import { Plus, FileText } from "lucide-react";
+import { useState, useRef } from "react";
 import { GeneratedWorkout } from "@/types/workout";
-import { WorkoutHeader } from "@/components/workout/WorkoutHeader";
-import { WorkoutExerciseItem, ExerciseNote } from "@/components/workout/WorkoutExerciseItem";
 import { WorkoutNavigation } from "@/components/workout/WorkoutNavigation";
+import { GlobalTimer } from "@/components/workout/GlobalTimer";
+import { SectionRenderer } from "@/components/workout/SectionRenderer";
 import { NoteModal } from "@/components/workout/NoteModal";
+import { Plus, FileText } from "lucide-react";
 
 interface WorkoutScreenProps {
   workout: GeneratedWorkout;
   onExit: () => void;
-  onFinish: (notes: WorkoutNotes) => void;
-}
-
-export interface WorkoutNotes {
-  exerciseNotes: Record<string, ExerciseNote[]>;
-  sectionNotes: Record<string, string>;
+  onFinish: (data: any) => void;
 }
 
 export const WorkoutScreen = ({ workout, onExit, onFinish }: WorkoutScreenProps) => {
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
-  const [overallTime, setOverallTime] = useState(0);
-  const [sectionTime, setSectionTime] = useState(0);
-  const [exerciseNotes, setExerciseNotes] = useState<Record<string, ExerciseNote[]>>({});
+  const [completedExercises, setCompletedExercises] = useState<Set<string>>(new Set());
+  const [loggedData, setLoggedData] = useState<Record<string, any>>({});
   const [sectionNotes, setSectionNotes] = useState<Record<string, string>>({});
-  
-  // Note modal state (only for section notes now)
+
+  // Note modal state
   const [noteModal, setNoteModal] = useState<{
     isOpen: boolean;
     title: string;
     key: string;
-    type: "section";
-  }>({ isOpen: false, title: "", key: "", type: "section" });
-  
+  }>({ isOpen: false, title: "", key: "" });
+
   const touchStartX = useRef<number | null>(null);
-  
+  const startTime = useRef(Date.now());
+
   const currentSection = workout.sections[currentSectionIndex];
   const isLastSection = currentSectionIndex === workout.sections.length - 1;
-  
-  // Overall timer
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setOverallTime((prev) => prev + 1);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-  
-  // Section timer - resets when section changes
-  useEffect(() => {
-    setSectionTime(0);
-    const interval = setInterval(() => {
-      setSectionTime((prev) => prev + 1);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [currentSectionIndex]);
-  
+  const progress = ((currentSectionIndex + 1) / workout.sections.length) * 100;
+
   // Swipe gesture handlers
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
-  
+
   const handleTouchEnd = (e: React.TouchEvent) => {
     if (touchStartX.current === null) return;
-    
+
     const touchEndX = e.changedTouches[0].clientX;
     const diff = touchStartX.current - touchEndX;
     const threshold = 50;
-    
+
     if (diff > threshold && !isLastSection) {
-      // Swipe left - next section
       handleNext();
     } else if (diff < -threshold && currentSectionIndex > 0) {
-      // Swipe right - previous section
       handleBack();
     }
-    
+
     touchStartX.current = null;
   };
-  
+
   const handleBack = () => {
     if (currentSectionIndex > 0) {
       setCurrentSectionIndex((prev) => prev - 1);
     }
   };
-  
+
   const handleNext = () => {
     if (isLastSection) {
-      onFinish({ exerciseNotes, sectionNotes });
+      // Gather all data
+      onFinish({
+        completedExercises: Array.from(completedExercises),
+        loggedData,
+        sectionNotes,
+        durationSeconds: Math.floor((Date.now() - startTime.current) / 1000)
+      });
     } else {
       setCurrentSectionIndex((prev) => prev + 1);
+      window.scrollTo(0, 0);
     }
   };
-  
-  const handleAddExerciseNote = (exerciseId: string, noteText: string) => {
-    const newNote: ExerciseNote = {
-      text: noteText,
-      timestamp: new Date()
-    };
-    setExerciseNotes((prev) => ({
+
+  const handleLog = (id: string, data: any) => {
+    setLoggedData(prev => ({
       ...prev,
-      [exerciseId]: [...(prev[exerciseId] || []), newNote]
+      [id]: { ...(prev[id] || {}), ...data }
     }));
   };
-  
+
+  const handleComplete = (id: string, completed: boolean) => {
+    const next = new Set(completedExercises);
+    if (completed) next.add(id);
+    else next.delete(id);
+    setCompletedExercises(next);
+  };
+
   const openSectionNote = () => {
     setNoteModal({
       isOpen: true,
       title: `${currentSection.name} Notes`,
-      key: currentSection.id,
-      type: "section"
+      key: currentSection.id
     });
   };
-  
+
   const handleSaveNote = (note: string) => {
     setSectionNotes((prev) => ({ ...prev, [noteModal.key]: note }));
   };
-  
-  const currentSectionNote = sectionNotes[noteModal.key] || "";
 
   return (
-    <div 
-      className="min-h-screen grain-overlay flex flex-col"
+    <div
+      className="min-h-screen grain-overlay flex flex-col pb-28 relative"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Combined Header with Timer */}
-      <div className="max-w-md mx-auto w-full px-4 pt-4">
-        <WorkoutHeader
-          sectionName={currentSection.name}
-          currentSection={currentSectionIndex}
-          totalSections={workout.sections.length}
-          sectionTime={sectionTime}
-          overallTime={overallTime}
-        />
-      </div>
-      
-      <div className="flex-1 max-w-md mx-auto w-full px-4 pb-28">
-        {/* Parent Section Card containing all exercises */}
-        <div className="mt-4 glass-card p-4">
-          {/* Exercise List - nested inside parent card */}
-          <div className="space-y-3">
-            {currentSection.exercises.map((exercise) => (
-              <WorkoutExerciseItem
-                key={exercise.id}
-                exercise={exercise}
-                notes={exerciseNotes[exercise.id] || []}
-                onAddNote={(noteText) => handleAddExerciseNote(exercise.id, noteText)}
-              />
-            ))}
+      <GlobalTimer isRunning={true} startTime={startTime.current} />
+
+      <div className="max-w-md mx-auto w-full px-4 pt-2">
+        {/* Simplified Header */}
+        <div className="mb-6 space-y-2">
+          <h1 className="text-2xl font-bold font-display uppercase tracking-wider text-clear-orange break-words">
+            {currentSection.name}
+          </h1>
+          <div className="w-full h-1 bg-secondary rounded-full overflow-hidden">
+            <div
+              className="h-full bg-clear-orange transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <div className="flex justify-between text-xs text-muted-foreground uppercase font-bold tracking-widest">
+            <span>Section {currentSectionIndex + 1} of {workout.sections.length}</span>
+            <span>{currentSection.type.replace('_', ' ')}</span>
           </div>
         </div>
-        
-        {/* Section Notes */}
-        <div className="mt-4">
+
+        {/* Main Content */}
+        <SectionRenderer
+          section={currentSection}
+          completedExercises={completedExercises}
+          onLog={handleLog}
+          onComplete={handleComplete}
+        />
+
+        {/* Section Notes Button */}
+        <div className="mt-8">
           <button
             onClick={openSectionNote}
-            className="w-full py-3 flex items-center justify-center gap-2 ghost-button text-foreground font-display uppercase tracking-wide"
+            className="w-full py-3 flex items-center justify-center gap-2 ghost-button text-foreground font-display uppercase tracking-wide opacity-80 hover:opacity-100"
           >
             {sectionNotes[currentSection.id] ? (
               <>
                 <FileText size={16} className="text-clear-orange" />
-                Section Notes
+                Edit Notes
               </>
             ) : (
               <>
                 <Plus size={16} />
-                Section Notes
+                Add Section Note
               </>
             )}
           </button>
         </div>
       </div>
-      
+
       <WorkoutNavigation
         currentSection={currentSectionIndex}
         totalSections={workout.sections.length}
@@ -178,11 +162,11 @@ export const WorkoutScreen = ({ workout, onExit, onFinish }: WorkoutScreenProps)
         onNext={handleNext}
         isLastSection={isLastSection}
       />
-      
+
       <NoteModal
         isOpen={noteModal.isOpen}
         title={noteModal.title}
-        initialNote={currentSectionNote}
+        initialNote={sectionNotes[noteModal.key] || ""}
         onSave={handleSaveNote}
         onClose={() => setNoteModal((prev) => ({ ...prev, isOpen: false }))}
       />

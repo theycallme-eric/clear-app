@@ -8,18 +8,23 @@ interface ExerciseCardProps {
 export const ExerciseCard = ({ exercise, onEditClick }: ExerciseCardProps) => {
   return (
     <div className="exercise-card space-y-3">
-      <button 
+      <button
         onClick={onEditClick}
         className="text-left w-full"
       >
         <h4 className="exercise-card-title">
           {exercise.name}
+          {exercise.equipment && (
+            <span className="ml-2 text-xs font-normal text-muted-foreground uppercase tracking-wider bg-secondary/10 px-1.5 py-0.5 rounded">
+              {exercise.equipment.replace(/_/g, ' ')}
+            </span>
+          )}
         </h4>
       </button>
-      
+
       <div className="flex flex-wrap gap-2 text-sm">
         <span className="text-foreground">
-          {exercise.sets} × {exercise.reps}
+          {exercise.sets ? `${exercise.sets} × ` : ''}{exercise.reps}
           {exercise.effort && ` @ ${exercise.effort}`}
         </span>
         {exercise.tempo && (
@@ -33,16 +38,18 @@ export const ExerciseCard = ({ exercise, onEditClick }: ExerciseCardProps) => {
           </span>
         )}
       </div>
-      
+
       {exercise.lastWeight && (
         <p className="text-sm text-clear-orange">
           Last: {exercise.lastWeight}
         </p>
       )}
-      
+
       {exercise.coachingCues && (
         <p className="text-sm italic text-foreground/70">
-          [{exercise.coachingCues}]
+          [{Array.isArray(exercise.coachingCues)
+            ? exercise.coachingCues.join('. ')
+            : String(exercise.coachingCues)}]
         </p>
       )}
 

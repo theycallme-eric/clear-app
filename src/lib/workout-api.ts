@@ -44,6 +44,8 @@ export function transformAPIWorkoutToFrontend(
       rest: ex.rest_seconds ? `${ex.rest_seconds}s` : undefined,
       coachingCues: ex.coaching_cues?.join('. ') || undefined,
       regression: ex.regression || undefined,
+      equipment: ex.equipment || undefined,
+      structure: ex.structure || { type: 'standard' },
     }));
 
     return {

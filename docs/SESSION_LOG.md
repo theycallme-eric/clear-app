@@ -197,3 +197,4 @@ Insights worth remembering for this or future projects:
 ---
 
 *Log started: [Date]*
+- 2026-02-02: Phase 1: Extracted useAuth hook from Index.tsx

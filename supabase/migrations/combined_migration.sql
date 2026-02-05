@@ -102,14 +102,19 @@ CREATE TRIGGER update_profiles_updated_at
   EXECUTE FUNCTION update_updated_at_column();
 
 -- Function to create profile on user signup
+-- Note: SET search_path = public is required because this trigger runs from auth schema context
 CREATE OR REPLACE FUNCTION handle_new_user()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
-  INSERT INTO profiles (id)
+  INSERT INTO public.profiles (id)
   VALUES (NEW.id);
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
 -- Trigger to auto-create profile when user signs up
 CREATE TRIGGER on_auth_user_created

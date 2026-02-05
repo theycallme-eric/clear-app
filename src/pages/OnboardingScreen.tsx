@@ -4,12 +4,8 @@ import { cn } from "@/lib/utils";
 import {
   UserPreferences,
   EquipmentTier,
-  ExperienceLevel,
-  GoalPreset,
   SectionType,
   EQUIPMENT_BY_TIER,
-  EXPERIENCE_LEVELS,
-  GOAL_PRESETS,
   WORKOUT_SECTIONS,
   SECTIONS_BY_GOAL,
 } from "@/types/workout";
@@ -18,7 +14,7 @@ interface OnboardingScreenProps {
   onComplete: (preferences: UserPreferences) => void;
 }
 
-type OnboardingStep = 1 | 2 | 3 | 4 | 5;
+type OnboardingStep = 1 | 2 | 3 | 4;
 
 const TIER_OPTIONS: { value: EquipmentTier; label: string; description: string }[] = [
   { value: 'minimal', label: 'Minimal', description: 'Bodyweight, bands, mat' },
@@ -26,6 +22,9 @@ const TIER_OPTIONS: { value: EquipmentTier; label: string; description: string }
   { value: 'building', label: 'Building Gym', description: 'Rack, barbell, dumbbells' },
   { value: 'full', label: 'Full Gym', description: 'Commercial, everything' },
 ];
+
+// Default sections for new users (balanced preset)
+const DEFAULT_SECTIONS: SectionType[] = SECTIONS_BY_GOAL.balanced;
 
 export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
   const [step, setStep] = useState<OnboardingStep>(1);
@@ -35,16 +34,11 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
   const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
   const [equipmentAccordionOpen, setEquipmentAccordionOpen] = useState(false);
 
-  // Step 2: Experience Level
-  const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel | null>(null);
-
-  // Step 3: Goals & Structure
-  const [goal, setGoal] = useState<GoalPreset | null>(null);
-  const [sections, setSections] = useState<SectionType[]>([]);
-  const [sectionsAccordionOpen, setSectionsAccordionOpen] = useState(false);
+  // Step 2: Sections
+  const [sections, setSections] = useState<SectionType[]>([...DEFAULT_SECTIONS]);
   const [legendOpen, setLegendOpen] = useState(false);
 
-  // Step 4: Limitations
+  // Step 3: Limitations
   const [limitations, setLimitations] = useState("");
 
   // Handle tier selection
@@ -61,12 +55,6 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
         ? prev.filter(e => e !== equipment)
         : [...prev, equipment]
     );
-  };
-
-  // Handle goal selection
-  const handleGoalSelect = (selectedGoal: GoalPreset) => {
-    setGoal(selectedGoal);
-    setSections([...SECTIONS_BY_GOAL[selectedGoal]]);
   };
 
   // Handle section toggle
@@ -87,7 +75,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
 
   // Navigation
   const handleNext = () => {
-    if (step < 5) setStep((step + 1) as OnboardingStep);
+    if (step < 4) setStep((step + 1) as OnboardingStep);
   };
 
   const handleBack = () => {
@@ -112,8 +100,8 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
         },
       ],
       defaultLocationId: locationId,
-      experienceLevel: experienceLevel!,
-      goal: goal!,
+      experienceLevel: 'some', // Default value (not shown in UI)
+      goal: 'balanced', // Default value (not shown in UI)
       sections: sections,
       limitations: limitations,
     };
@@ -124,10 +112,9 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
   const canProceed = () => {
     switch (step) {
       case 1: return selectedTier !== null;
-      case 2: return experienceLevel !== null;
-      case 3: return goal !== null && sections.length > 0;
-      case 4: return true; // Limitations is optional
-      case 5: return true;
+      case 2: return sections.length > 0;
+      case 3: return true; // Limitations is optional
+      case 4: return true;
       default: return false;
     }
   };
@@ -256,185 +243,86 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
             </div>
           )}
 
-          {/* Step 2: Experience Level */}
+          {/* Step 2: Workout Sections */}
           {step === 2 && (
             <div className="space-y-6">
-              <h2 className="font-display text-2xl font-bold uppercase tracking-wider text-foreground">
-                How Familiar Are You<br />With the Gym?
-              </h2>
-
-              <div className="space-y-3">
-                {EXPERIENCE_LEVELS.map((level) => (
-                  <button
-                    key={level.value}
-                    onClick={() => setExperienceLevel(level.value)}
-                    className={cn(
-                      "w-full glass-card p-4 text-left transition-all",
-                      experienceLevel === level.value
-                        ? "border-clear-orange"
-                        : "hover:border-clear-orange/40"
-                    )}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div
-                        className={cn(
-                          "w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5",
-                          experienceLevel === level.value
-                            ? "border-clear-orange bg-clear-orange"
-                            : "border-muted-foreground"
-                        )}
-                      >
-                        {experienceLevel === level.value && (
-                          <div className="w-2 h-2 bg-background rounded-full" />
-                        )}
-                      </div>
-                      <div>
-                        <p className="font-display text-lg font-semibold uppercase tracking-wide text-foreground">
-                          {level.label}
-                        </p>
-                        <p className="text-muted-foreground text-sm mt-1">
-                          {level.description}
-                        </p>
-                      </div>
-                    </div>
-                  </button>
-                ))}
+              <div>
+                <h2 className="font-display text-2xl font-bold uppercase tracking-wider text-foreground">
+                  Workout Sections
+                </h2>
+                <p className="text-muted-foreground text-sm mt-2">
+                  Choose which parts to include in your workouts.
+                </p>
               </div>
-            </div>
-          )}
 
-          {/* Step 3: Goals & Structure */}
-          {step === 3 && (
-            <div className="space-y-6">
-              <h2 className="font-display text-2xl font-bold uppercase tracking-wider text-foreground">
-                What Are You Going For?
-              </h2>
+              <div className="flex flex-wrap gap-2">
+                {WORKOUT_SECTIONS.map((section) => {
+                  const isSelected = sections.includes(section.id);
+                  const isAccessory = section.id === 'accessory';
+                  const primaryOff = !sections.includes('primary');
+                  const isDisabled = isAccessory && primaryOff;
 
-              <div className="space-y-3">
-                {GOAL_PRESETS.map((preset) => (
-                  <button
-                    key={preset.value}
-                    onClick={() => handleGoalSelect(preset.value)}
-                    className={cn(
-                      "w-full glass-card p-4 text-left transition-all",
-                      goal === preset.value
-                        ? "border-clear-orange"
-                        : "hover:border-clear-orange/40"
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={cn(
-                          "w-5 h-5 rounded-full border-2 flex items-center justify-center",
-                          goal === preset.value
-                            ? "border-clear-orange bg-clear-orange"
-                            : "border-muted-foreground"
-                        )}
-                      >
-                        {goal === preset.value && (
-                          <div className="w-2 h-2 bg-background rounded-full" />
-                        )}
-                      </div>
-                      <div>
-                        <p className="font-display text-lg font-semibold uppercase tracking-wide text-foreground">
-                          {preset.label}
+                  return (
+                    <button
+                      key={section.id}
+                      onClick={() => !isDisabled && handleSectionToggle(section.id)}
+                      disabled={isDisabled}
+                      className={cn(
+                        "px-4 py-2 text-sm font-mono uppercase tracking-wide transition-all",
+                        isSelected
+                          ? "bg-clear-lime/20 border border-clear-lime text-clear-lime"
+                          : isDisabled
+                          ? "bg-transparent border border-muted-foreground/20 text-muted-foreground/40 cursor-not-allowed"
+                          : "bg-transparent border border-muted-foreground/30 text-muted-foreground hover:border-clear-orange/50"
+                      )}
+                    >
+                      {isSelected && <Check className="w-3 h-3 inline mr-1" />}
+                      {section.name}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Legend */}
+              <div className="glass-card">
+                <button
+                  onClick={() => setLegendOpen(!legendOpen)}
+                  className="w-full p-4 flex items-center justify-between text-sm"
+                >
+                  <span className="font-display text-sm font-semibold uppercase tracking-wide text-foreground">
+                    What do these mean?
+                  </span>
+                  {legendOpen ? (
+                    <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                  )}
+                </button>
+
+                {legendOpen && (
+                  <div className="px-4 pb-4 space-y-3 border-t border-muted-foreground/20 pt-3">
+                    {WORKOUT_SECTIONS.map((section) => (
+                      <div key={section.id}>
+                        <p className="font-mono text-xs uppercase tracking-wide text-clear-orange">
+                          {section.name}
                         </p>
                         <p className="text-muted-foreground text-sm">
-                          {preset.description}
+                          {section.description}
                         </p>
                       </div>
-                    </div>
-                  </button>
-                ))}
+                    ))}
+                  </div>
+                )}
               </div>
 
-              {/* Sections Accordion */}
-              {goal && (
-                <div className="glass-card">
-                  <button
-                    onClick={() => setSectionsAccordionOpen(!sectionsAccordionOpen)}
-                    className="w-full p-4 flex items-center justify-between"
-                  >
-                    <span className="font-display text-sm font-semibold uppercase tracking-wide text-foreground">
-                      Customize Sections
-                    </span>
-                    {sectionsAccordionOpen ? (
-                      <ChevronUp className="w-5 h-5 text-muted-foreground" />
-                    ) : (
-                      <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                    )}
-                  </button>
-
-                  {sectionsAccordionOpen && (
-                    <div className="px-4 pb-4 space-y-4">
-                      <div className="flex flex-wrap gap-2">
-                        {WORKOUT_SECTIONS.map((section) => {
-                          const isSelected = sections.includes(section.id);
-                          const isAccessory = section.id === 'accessory';
-                          const primaryOff = !sections.includes('primary');
-                          const isDisabled = isAccessory && primaryOff;
-
-                          return (
-                            <button
-                              key={section.id}
-                              onClick={() => !isDisabled && handleSectionToggle(section.id)}
-                              disabled={isDisabled}
-                              className={cn(
-                                "px-3 py-1.5 text-xs font-mono uppercase tracking-wide transition-all",
-                                isSelected
-                                  ? "bg-clear-lime/20 border border-clear-lime text-clear-lime"
-                                  : isDisabled
-                                  ? "bg-transparent border border-muted-foreground/20 text-muted-foreground/40 cursor-not-allowed"
-                                  : "bg-transparent border border-muted-foreground/30 text-muted-foreground hover:border-clear-orange/50"
-                              )}
-                            >
-                              {isSelected && <Check className="w-3 h-3 inline mr-1" />}
-                              {section.name}
-                            </button>
-                          );
-                        })}
-                      </div>
-
-                      {/* Legend */}
-                      <button
-                        onClick={() => setLegendOpen(!legendOpen)}
-                        className="w-full flex items-center justify-between text-sm text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        <span>What do these mean?</span>
-                        {legendOpen ? (
-                          <ChevronUp className="w-4 h-4" />
-                        ) : (
-                          <ChevronDown className="w-4 h-4" />
-                        )}
-                      </button>
-
-                      {legendOpen && (
-                        <div className="space-y-3 pt-2 border-t border-muted-foreground/20">
-                          {WORKOUT_SECTIONS.map((section) => (
-                            <div key={section.id}>
-                              <p className="font-mono text-xs uppercase tracking-wide text-clear-orange">
-                                {section.name}
-                              </p>
-                              <p className="text-muted-foreground text-sm">
-                                {section.description}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
-
               <p className="text-muted-foreground text-sm text-center">
-                You can change this anytime
+                You can change this anytime in settings
               </p>
             </div>
           )}
 
-          {/* Step 4: Limitations */}
-          {step === 4 && (
+          {/* Step 3: Limitations */}
+          {step === 3 && (
             <div className="space-y-6">
               <div>
                 <h2 className="font-display text-2xl font-bold uppercase tracking-wider text-foreground">
@@ -456,8 +344,8 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
             </div>
           )}
 
-          {/* Step 5: Confirmation */}
-          {step === 5 && (
+          {/* Step 4: Confirmation */}
+          {step === 4 && (
             <div className="space-y-6">
               <h2 className="font-display text-2xl font-bold uppercase tracking-wider text-foreground">
                 Here's Your Setup
@@ -487,39 +375,25 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                 </div>
               </div>
 
-              {/* Experience */}
+              {/* Workout Sections */}
               <div className="glass-card p-4">
                 <div className="flex items-start justify-between">
                   <div>
                     <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-1">
-                      Experience
+                      Workout Sections
                     </p>
                     <p className="font-display text-lg font-semibold text-foreground">
-                      {EXPERIENCE_LEVELS.find(l => l.value === experienceLevel)?.label}
+                      {sections.length} sections
+                    </p>
+                    <p className="text-muted-foreground text-sm mt-1">
+                      {sections.slice(0, 4).map(s =>
+                        WORKOUT_SECTIONS.find(ws => ws.id === s)?.name
+                      ).join(', ')}
+                      {sections.length > 4 && ` +${sections.length - 4} more`}
                     </p>
                   </div>
                   <button
                     onClick={() => handleEditStep(2)}
-                    className="text-clear-orange text-sm hover:text-clear-orange/80 transition-colors"
-                  >
-                    Edit
-                  </button>
-                </div>
-              </div>
-
-              {/* Workout Structure */}
-              <div className="glass-card p-4">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-1">
-                      Workout Structure
-                    </p>
-                    <p className="font-display text-lg font-semibold text-foreground">
-                      {GOAL_PRESETS.find(g => g.value === goal)?.label} ({sections.length} sections)
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => handleEditStep(3)}
                     className="text-clear-orange text-sm hover:text-clear-orange/80 transition-colors"
                   >
                     Edit
@@ -539,7 +413,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                     </p>
                   </div>
                   <button
-                    onClick={() => handleEditStep(4)}
+                    onClick={() => handleEditStep(3)}
                     className="text-clear-orange text-sm hover:text-clear-orange/80 transition-colors"
                   >
                     Edit
@@ -553,7 +427,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
         {/* Fixed Bottom Navigation */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background to-transparent">
           <div className="max-w-md mx-auto space-y-3">
-            {step === 4 ? (
+            {step === 3 ? (
               <div className="flex gap-3">
                 <button
                   onClick={handleNext}
@@ -569,7 +443,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                   Next
                 </button>
               </div>
-            ) : step === 5 ? (
+            ) : step === 4 ? (
               <button
                 onClick={handleComplete}
                 className="w-full glow-button py-4 font-display text-lg font-semibold uppercase tracking-wide"
@@ -587,7 +461,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
             )}
 
             <p className="text-center text-muted-foreground text-sm">
-              Step {step} of 5
+              Step {step} of 4
             </p>
           </div>
         </div>

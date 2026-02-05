@@ -1,6 +1,7 @@
 # Clear - Exercise Library
-**Created:** January 20, 2026  
-**Status:** Initial Build (from workout notes)  
+**Created:** January 20, 2026
+**Updated:** February 2026 (Equipment Display Names enhancement)
+**Status:** Initial Build (from workout notes)
 **Source:** User workout logs + expansion recommendations
 
 ---
@@ -335,6 +336,118 @@ Captured from workout notes for AI generation reference.
 | battle-ropes | Battle Ropes | Full |
 | assault-bike | Assault Bike / Air Bike | Full |
 | stair-climber | Stair Climber | Full |
+
+---
+
+## Equipment + Exercise Relationship Model
+
+**Added:** February 2026
+**Status:** Proposed Enhancement
+
+### The Problem
+
+Currently, exercises that differ only by equipment are stored as separate entries:
+- `bench-press-flat` (barbell)
+- `db-bench-press` (dumbbell)
+
+This duplicates data and makes the library harder to maintain.
+
+### The Distinction
+
+**Keep as separate exercises** when equipment fundamentally changes the movement:
+- Bilateral vs independent limb movement (barbell bench = both arms together, DB bench = independent)
+- Stability/core demands differ significantly
+- Loading capacity is fundamentally different
+- Coaching cues differ
+
+Examples:
+| Separate Exercises | Reason |
+|-------------------|--------|
+| Barbell Bench Press ≠ Dumbbell Bench Press | Independent arms, more stabilizer recruitment, different loading |
+| Barbell RDL ≠ Dumbbell RDL | Same reasons |
+| Barbell Row ≠ Single-Arm DB Row | Unilateral, anti-rotation component |
+
+**Consolidate as one exercise** when equipment is just a different implement:
+- Same movement pattern
+- Same stability demands
+- Same muscle recruitment
+- Just a different handle/shape
+
+Examples:
+| Consolidated Exercise | Equipment Options |
+|----------------------|-------------------|
+| Goblet Squat | Dumbbell, Kettlebell |
+| Farmer's Walk | Dumbbell, Kettlebell, Trap Bar |
+| Russian Twists | Kettlebell, Slam Ball, Dumbbell |
+
+### Schema Enhancement
+
+Add `equipment_display_names` JSONB column to `exercise_definitions`:
+
+```sql
+ALTER TABLE exercise_definitions
+ADD COLUMN equipment_display_names JSONB;
+```
+
+**Example data for consolidated exercise:**
+```sql
+id: 'goblet-squat'
+name: 'Goblet Squat'
+equipment_options: ['dumbbells', 'kettlebells']
+equipment_display_names: {
+  "dumbbells": "Dumbbell Goblet Squat",
+  "kettlebells": "Kettlebell Goblet Squat"
+}
+```
+
+**Example data for fixed equipment exercise:**
+```sql
+id: 'kettlebell-swing'
+name: 'Kettlebell Swing'
+equipment_options: ['kettlebells']
+equipment_display_names: null  -- Not needed, only one option
+```
+
+### How Generation Works (unchanged)
+
+AI continues to output:
+```json
+{
+  "exercise_id": "goblet-squat",
+  "equipment": "kettlebells"
+}
+```
+
+Frontend resolves display name:
+```typescript
+const displayName = exercise.equipment_display_names?.[equipment]
+  ?? exercise.name;
+// → "Kettlebell Goblet Squat"
+```
+
+### Key Constraint Preserved
+
+The AI remains constrained to pick `exercise_id` values from the table — it never generates display names. This maintains the validation already in place.
+
+### Migration Status
+
+**Completed in migration 00011_consolidate_exercises.sql:**
+
+| Action | Result |
+|--------|--------|
+| `bench-press-flat` + `db-bench-press` | → `bench-press` (BB/DB) |
+| `strict-press` + `db-strict-press` | → `strict-press` (BB/DB) |
+| `push-press` + `db-push-press` | → `push-press` (BB/DB) |
+| `romanian-deadlift` + `db-rdl` | → `rdl` (BB/DB/KB) |
+| `kb-snatch` + `db-snatch` | → `snatch` (KB/DB, default DB) |
+| `kb-swing` | → `swing` (KB only) |
+| `db-swing` | Deleted (swing is KB-only) |
+| `hip-thrust` | Split → `bb-hip-thrust` (BB) + `hip-thrust` (DB/BW) |
+
+**Primary Lift Rule:**
+- For consolidated exercises, only barbell variants can be primary lifts
+- Dumbbell/kettlebell variants go in accessory section
+- Edge Function marks these as `[PRIMARY w/barbell]` in the prompt
 
 ---
 

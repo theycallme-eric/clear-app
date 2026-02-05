@@ -43,4 +43,10 @@ Consider creating a variant of `ChamferedFrame` or modifying `ActionButton` to:
 You have access to Figma via MCP. The button component set is in the design file - you can pull the exact structure and variables from there.
 
 ---
-*Last updated by Claude Code*
+
+## Workflow Note
+> **Intentional Update (Feb 2026):** This document was previously maintained by Claude Code. The workflow has changed:
+> - **Claude.ai (Opus):** Planning, prompt crafting, architecture decisions
+> - **Antigravity:** All code implementation, file creation, deployment
+
+*Last updated by Antigravity*
