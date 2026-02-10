@@ -1,3 +1,5 @@
+import { CTAButton } from "@/components/CTAButton";
+
 interface AbandonmentModalProps {
   workoutDate: string;
   onResume: () => void;
@@ -25,12 +27,14 @@ export const AbandonmentModal = ({ workoutDate, onResume, onAbandon }: Abandonme
           >
             Resume Workout
           </button>
-          <button
+          <CTAButton
             onClick={onAbandon}
-            className="w-full py-3 ghost-button text-sm"
+            variant="secondary"
+            size="md"
+            fullWidth
           >
             Abandon & Start Fresh
-          </button>
+          </CTAButton>
         </div>
       </div>
     </div>

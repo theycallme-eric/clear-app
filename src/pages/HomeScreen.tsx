@@ -1,4 +1,5 @@
 import { Header } from "@/components/Header";
+import { CTAButton } from "@/components/CTAButton";
 import { Zap, Clock, Flame, Dumbbell } from "lucide-react";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import { ErrorState } from "@/components/ErrorState";
@@ -162,12 +163,14 @@ export const HomeScreen = ({
             </div>
 
             {/* Mark Rest Day button */}
-            <button
+            <CTAButton
               onClick={onMarkRestDay}
-              className="w-full ghost-button py-2 text-sm"
+              variant="secondary"
+              size="sm"
+              fullWidth
             >
               Mark Rest Day
-            </button>
+            </CTAButton>
           </div>
 
           {/* Recent Workouts */}

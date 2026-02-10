@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ArrowLeft, ArrowRight, Loader2, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import { CTAButton } from "@/components/CTAButton";
 
 interface CreateAccountScreenProps {
   onBack: () => void;
@@ -158,23 +159,22 @@ export const CreateAccountScreen = ({ onBack, onSuccess }: CreateAccountScreenPr
           </div>
 
           {/* Submit Button */}
-          <button
+          <CTAButton
             type="submit"
             disabled={isLoading}
-            className="glow-button w-full h-14 font-display text-lg font-bold uppercase tracking-wider text-foreground flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed mt-8"
-          >
-            {isLoading ? (
-              <>
+            size="lg"
+            fullWidth
+            className="mt-8"
+            iconRight={
+              isLoading ? (
                 <Loader2 size={20} className="animate-spin" />
-                Creating Account...
-              </>
-            ) : (
-              <>
-                Create Account
+              ) : (
                 <ArrowRight size={20} />
-              </>
-            )}
-          </button>
+              )
+            }
+          >
+            {isLoading ? "Creating Account..." : "Create Account"}
+          </CTAButton>
         </form>
 
         {/* Terms */}

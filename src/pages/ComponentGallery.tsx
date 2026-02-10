@@ -23,6 +23,8 @@ import { ErrorState } from "@/components/ErrorState";
 import { EmptyState } from "@/components/EmptyState";
 import { ActionButton } from "@/components/ActionButton";
 import { ActionCard } from "@/components/ActionCard";
+import { CTAButton } from "@/components/CTAButton";
+import { toast } from "@/components/ui/sonner";
 
 interface ComponentGalleryProps {
   onBack: () => void;
@@ -145,10 +147,10 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
                 </button>
               </Subsection>
 
-              <Subsection label="ghost-button">
-                <button className="ghost-button w-full py-3 text-sm">
-                  Ghost Button
-                </button>
+              <Subsection label="CTAButton secondary (replaces ghost-button)">
+                <CTAButton variant="secondary" fullWidth>
+                  Secondary Button
+                </CTAButton>
               </Subsection>
 
               <Subsection label="selection-active / inactive">
@@ -188,6 +190,46 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
                   <ActionButton variant="transparent" iconLeft={<Zap className="w-4 h-4" />}>With Icon</ActionButton>
                   <ActionButton variant="transparent" disabled>Disabled</ActionButton>
                 </div>
+              </Subsection>
+            </div>
+          </Section>
+
+          <Section title="CTAButton — Using ChamferedFrame">
+            <div className="space-y-4">
+              <Subsection label="Sizes">
+                <div className="flex flex-wrap gap-3 items-center">
+                  <CTAButton size="sm">Small</CTAButton>
+                  <CTAButton size="md">Medium</CTAButton>
+                  <CTAButton size="lg">Large</CTAButton>
+                </div>
+              </Subsection>
+
+              <Subsection label="Primary variant">
+                <div className="flex flex-wrap gap-3 items-center">
+                  <CTAButton variant="primary">Primary</CTAButton>
+                  <CTAButton variant="primary" iconLeft={<Zap className="w-4 h-4" />}>With Icon</CTAButton>
+                  <CTAButton variant="primary" disabled>Disabled</CTAButton>
+                </div>
+              </Subsection>
+
+              <Subsection label="Secondary variant">
+                <div className="flex flex-wrap gap-3 items-center">
+                  <CTAButton variant="secondary">Secondary</CTAButton>
+                  <CTAButton variant="secondary" iconRight={<Dumbbell className="w-4 h-4" />}>With Icon</CTAButton>
+                  <CTAButton variant="secondary" disabled>Disabled</CTAButton>
+                </div>
+              </Subsection>
+
+              <Subsection label="Transparent variant">
+                <div className="flex flex-wrap gap-3 items-center">
+                  <CTAButton variant="transparent">Transparent</CTAButton>
+                  <CTAButton variant="transparent" iconLeft={<Zap className="w-4 h-4" />}>With Icon</CTAButton>
+                  <CTAButton variant="transparent" disabled>Disabled</CTAButton>
+                </div>
+              </Subsection>
+
+              <Subsection label="Full width (lg)">
+                <CTAButton variant="primary" size="lg" fullWidth>Full Width Primary</CTAButton>
               </Subsection>
             </div>
           </Section>
@@ -289,6 +331,36 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
             </div>
           </Section>
 
+          {/* ─── TOASTS ─── */}
+          <Section title="Toasts — Chamfered">
+            <div className="space-y-4">
+              <Subsection label="Trigger toasts">
+                <div className="flex flex-wrap gap-3">
+                  <CTAButton
+                    size="sm"
+                    onClick={() => toast.success("Action completed")}
+                  >
+                    Success
+                  </CTAButton>
+                  <CTAButton
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => toast.error("Something went wrong")}
+                  >
+                    Error
+                  </CTAButton>
+                  <CTAButton
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => toast.info("Here's some information")}
+                  >
+                    Info
+                  </CTAButton>
+                </div>
+              </Subsection>
+            </div>
+          </Section>
+
           {/* ─── CARDS & CONTAINERS ─── */}
           <Section title="Cards & Containers">
             <div className="space-y-4">
@@ -352,10 +424,10 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
           <Section title="App — AnchorGrid">
             <div className="space-y-4">
               <Subsection label="Primary Lift mode">
-                <AnchorGrid selected={anchorValue} onSelect={setAnchorValue} hasPrimaryLift={true} />
+                <AnchorGrid selected={anchorValue} onSelect={setAnchorValue} />
               </Subsection>
               <Subsection label="Body focus mode (no primary lift)">
-                <AnchorGrid selected={null} onSelect={() => { }} hasPrimaryLift={false} />
+                <AnchorGrid selected={null} onSelect={() => { }} />
               </Subsection>
             </div>
           </Section>
@@ -373,9 +445,9 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
               <Subsection label="Normal (relative positioned for gallery)">
                 <div className="relative h-20">
                   <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <button className="glow-button w-full h-14 font-display text-lg font-bold uppercase tracking-wider text-foreground flex items-center justify-center gap-2">
+                    <CTAButton size="lg" fullWidth>
                       Initiate Workout
-                    </button>
+                    </CTAButton>
                   </div>
                 </div>
               </Subsection>

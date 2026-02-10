@@ -1,91 +1,47 @@
 import { cn } from "@/lib/utils";
 
-// Primary Lift anchors (movement pattern focus)
-const PRIMARY_ANCHORS = [
-  "SQUAT",
-  "HINGE",
-  "PRESS",
-  "PULL",
-  "POWER",
+// User-facing anchor options
+const ANCHORS = [
+  "LOWER BODY",
+  "UPPER BODY",
+  "FULL BODY",
   "SURPRISE",
 ] as const;
 
-// Non-Primary Lift anchors (body region focus)
-const BODY_ANCHORS = [
-  "UPPER BODY",
-  "LOWER BODY",
-  "FULL BODY",
-] as const;
+export type AnchorType = typeof ANCHORS[number];
 
-export type PrimaryAnchorType = typeof PRIMARY_ANCHORS[number];
-export type BodyAnchorType = typeof BODY_ANCHORS[number];
-export type AnchorType = PrimaryAnchorType | BodyAnchorType;
+// Movement patterns (sent to API, stored in DB)
+export type MovementPattern = "squat" | "hinge" | "press" | "pull" | "power";
 
 interface AnchorGridProps {
   selected: AnchorType | null;
   onSelect: (anchor: AnchorType) => void;
-  hasPrimaryLift?: boolean; // Whether Primary Lift section is enabled
 }
 
-export const AnchorGrid = ({ selected, onSelect, hasPrimaryLift = true }: AnchorGridProps) => {
-  const anchors = hasPrimaryLift ? PRIMARY_ANCHORS : BODY_ANCHORS;
-
+export const AnchorGrid = ({ selected, onSelect }: AnchorGridProps) => {
   return (
     <div className="glass-card rounded-lg p-6">
       <label className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-4 block">
-        {hasPrimaryLift ? "Anchor Movement" : "Focus Area"}
+        Focus Area
       </label>
 
-      {hasPrimaryLift ? (
-        // 3x2 grid for primary lift anchors
-        <div className="grid grid-cols-3 gap-3">
-          {anchors.map((anchor) => (
-            <button
-              key={anchor}
-              onClick={() => onSelect(anchor)}
-              className={cn(
-                "h-14 rounded-none font-display text-sm font-semibold uppercase tracking-wide transition-all duration-200",
-                selected === anchor
-                  ? "selection-active"
-                  : "selection-inactive text-foreground/90 hover:text-foreground"
-              )}
-            >
-              {anchor}
-            </button>
-          ))}
-        </div>
-      ) : (
-        // 2+1 layout for body anchors
-        <div className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
-            {BODY_ANCHORS.slice(0, 2).map((anchor) => (
-              <button
-                key={anchor}
-                onClick={() => onSelect(anchor)}
-                className={cn(
-                  "h-14 rounded-none font-display text-sm font-semibold uppercase tracking-wide transition-all duration-200",
-                  selected === anchor
-                    ? "selection-active"
-                    : "selection-inactive text-foreground/90 hover:text-foreground"
-                )}
-              >
-                {anchor}
-              </button>
-            ))}
-          </div>
+      {/* 2x2 grid for anchor options */}
+      <div className="grid grid-cols-2 gap-3">
+        {ANCHORS.map((anchor) => (
           <button
-            onClick={() => onSelect("FULL BODY")}
+            key={anchor}
+            onClick={() => onSelect(anchor)}
             className={cn(
-              "w-full h-14 rounded-none font-display text-sm font-semibold uppercase tracking-wide transition-all duration-200",
-              selected === "FULL BODY"
+              "h-14 rounded-none font-display text-sm font-semibold uppercase tracking-wide transition-all duration-200",
+              selected === anchor
                 ? "selection-active"
                 : "selection-inactive text-foreground/90 hover:text-foreground"
             )}
           >
-            FULL BODY
+            {anchor}
           </button>
-        </div>
-      )}
+        ))}
+      </div>
     </div>
   );
 };

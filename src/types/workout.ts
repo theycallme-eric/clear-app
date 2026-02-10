@@ -1,5 +1,8 @@
-// Anchor types
-export type AnchorType = 'SQUAT' | 'HINGE' | 'PRESS' | 'PULL' | 'POWER' | 'SURPRISE';
+// User-facing anchor types (what user selects in UI)
+export type AnchorType = 'LOWER BODY' | 'UPPER BODY' | 'FULL BODY' | 'SURPRISE';
+
+// Movement patterns (what gets sent to API and stored in DB)
+export type MovementPattern = 'squat' | 'hinge' | 'press' | 'pull' | 'power';
 
 // Exercise with logged data for history
 export interface LoggedExercise {
@@ -22,7 +25,7 @@ export interface LoggedSection {
 export interface WorkoutHistoryEntry {
   id: string;
   date: Date;
-  anchor: AnchorType;
+  anchor: string; // Movement pattern stored in DB (squat, hinge, press, pull, power)
   intensity: number;
   duration: number; // in minutes
   goal?: string; // goal preset used
@@ -180,7 +183,7 @@ export const generateMockWorkoutHistory = (): WorkoutHistoryEntry[] => {
     {
       id: crypto.randomUUID(),
       date: new Date(today.getTime() - 1 * 24 * 60 * 60 * 1000), // Yesterday
-      anchor: 'HINGE',
+      anchor: 'hinge',
       intensity: 7,
       duration: 42,
       goal: 'Balanced',
@@ -231,7 +234,7 @@ export const generateMockWorkoutHistory = (): WorkoutHistoryEntry[] => {
     {
       id: crypto.randomUUID(),
       date: new Date(today.getTime() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
-      anchor: 'SQUAT',
+      anchor: 'squat',
       intensity: 8,
       duration: 51,
       goal: 'Strength',
@@ -287,7 +290,7 @@ export const generateMockWorkoutHistory = (): WorkoutHistoryEntry[] => {
     {
       id: crypto.randomUUID(),
       date: new Date(today.getTime() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
-      anchor: 'PRESS',
+      anchor: 'press',
       intensity: 6,
       duration: 38,
       goal: 'Balanced',
@@ -335,7 +338,7 @@ export const generateMockWorkoutHistory = (): WorkoutHistoryEntry[] => {
     {
       id: crypto.randomUUID(),
       date: new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
-      anchor: 'PULL',
+      anchor: 'pull',
       intensity: 7,
       duration: 44,
       goal: 'Balanced',
@@ -361,7 +364,7 @@ export const generateMockWorkoutHistory = (): WorkoutHistoryEntry[] => {
     {
       id: crypto.randomUUID(),
       date: new Date(today.getTime() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
-      anchor: 'POWER',
+      anchor: 'power',
       intensity: 5,
       duration: 35,
       goal: 'Conditioning',
@@ -371,7 +374,7 @@ export const generateMockWorkoutHistory = (): WorkoutHistoryEntry[] => {
     {
       id: crypto.randomUUID(),
       date: new Date(today.getFullYear(), today.getMonth() - 1, 28), // Last month
-      anchor: 'PULL',
+      anchor: 'pull',
       intensity: 7,
       duration: 44,
       goal: 'Balanced',
@@ -380,7 +383,7 @@ export const generateMockWorkoutHistory = (): WorkoutHistoryEntry[] => {
     {
       id: crypto.randomUUID(),
       date: new Date(today.getFullYear(), today.getMonth() - 1, 25),
-      anchor: 'SQUAT',
+      anchor: 'squat',
       intensity: 6,
       duration: 40,
       goal: 'Strength',
@@ -389,7 +392,7 @@ export const generateMockWorkoutHistory = (): WorkoutHistoryEntry[] => {
     {
       id: crypto.randomUUID(),
       date: new Date(today.getFullYear(), today.getMonth() - 1, 22),
-      anchor: 'HINGE',
+      anchor: 'hinge',
       intensity: 8,
       duration: 48,
       goal: 'Balanced',
@@ -432,21 +435,43 @@ export const generateMockStreakData = (): StreakData => {
   };
 };
 
-// Get suggested anchor (avoids last 2-3 used)
+// Get suggested anchor based on least recently worked body region
 export const getSuggestedAnchor = (history: WorkoutHistoryEntry[]): AnchorType => {
-  const allAnchors: AnchorType[] = ['SQUAT', 'HINGE', 'PRESS', 'PULL', 'POWER', 'SURPRISE'];
-  const recentAnchors = history.slice(0, 3).map(w => w.anchor);
+  const allAnchors: AnchorType[] = ['LOWER BODY', 'UPPER BODY', 'FULL BODY', 'SURPRISE'];
 
-  // Filter out recently used anchors
-  const availableAnchors = allAnchors.filter(a => !recentAnchors.includes(a));
-
-  // If all anchors were recently used, just pick one that wasn't the most recent
-  if (availableAnchors.length === 0) {
-    return allAnchors.find(a => a !== recentAnchors[0]) || 'PULL';
+  if (history.length === 0) {
+    return 'FULL BODY'; // Default for new users
   }
 
-  // Return the first available anchor
-  return availableAnchors[0];
+  // Categorize recent workouts by body region
+  const recentPatterns = history.slice(0, 5).map(w => w.anchor.toLowerCase());
+
+  // Find last occurrence of each category
+  let lastLower = -1;
+  let lastUpper = -1;
+  let lastFull = -1;
+
+  recentPatterns.forEach((pattern, index) => {
+    if (pattern === 'squat' || pattern === 'hinge') {
+      if (lastLower === -1) lastLower = index;
+    } else if (pattern === 'press' || pattern === 'pull') {
+      if (lastUpper === -1) lastUpper = index;
+    } else if (pattern === 'power') {
+      if (lastFull === -1) lastFull = index;
+    }
+  });
+
+  // Suggest the category that was least recently used (or never used)
+  // -1 means never used, which is highest priority
+  if (lastLower === -1) return 'LOWER BODY';
+  if (lastUpper === -1) return 'UPPER BODY';
+  if (lastFull === -1) return 'FULL BODY';
+
+  // All categories have been used, pick the one done longest ago
+  const maxIndex = Math.max(lastLower, lastUpper, lastFull);
+  if (maxIndex === lastLower) return 'LOWER BODY';
+  if (maxIndex === lastUpper) return 'UPPER BODY';
+  return 'FULL BODY';
 };
 
 // Get suggested intensity (from last workout)

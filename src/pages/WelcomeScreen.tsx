@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import { CTAButton } from "@/components/CTAButton";
 
 interface WelcomeScreenProps {
   onSignIn: () => void;
@@ -21,20 +22,23 @@ export const WelcomeScreen = ({ onSignIn, onCreateAccount }: WelcomeScreenProps)
 
         {/* Buttons */}
         <div className="w-full space-y-4">
-          <button
+          <CTAButton
             onClick={onCreateAccount}
-            className="glow-button w-full h-14 font-display text-lg font-bold uppercase tracking-wider text-foreground flex items-center justify-center gap-2"
+            size="lg"
+            fullWidth
+            iconRight={<ArrowRight size={20} />}
           >
             Create Account
-            <ArrowRight size={20} />
-          </button>
+          </CTAButton>
 
-          <button
+          <CTAButton
             onClick={onSignIn}
-            className="w-full h-14 font-display text-lg font-bold uppercase tracking-wider text-foreground/80 hover:text-foreground border border-foreground/20 hover:border-foreground/40 transition-colors flex items-center justify-center gap-2"
+            variant="secondary"
+            size="lg"
+            fullWidth
           >
             Sign In
-          </button>
+          </CTAButton>
         </div>
       </div>
     </div>

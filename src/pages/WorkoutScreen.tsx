@@ -5,6 +5,7 @@ import { GlobalTimer } from "@/components/workout/GlobalTimer";
 import { SectionRenderer } from "@/components/workout/SectionRenderer";
 import { NoteModal } from "@/components/workout/NoteModal";
 import { Plus, FileText } from "lucide-react";
+import { CTAButton } from "@/components/CTAButton";
 
 interface WorkoutScreenProps {
   workout: GeneratedWorkout;
@@ -136,9 +137,11 @@ export const WorkoutScreen = ({ workout, onExit, onFinish }: WorkoutScreenProps)
 
         {/* Section Notes Button */}
         <div className="mt-8">
-          <button
+          <CTAButton
             onClick={openSectionNote}
-            className="w-full py-3 flex items-center justify-center gap-2 ghost-button text-foreground font-display uppercase tracking-wide opacity-80 hover:opacity-100"
+            variant="secondary"
+            size="md"
+            fullWidth
           >
             {sectionNotes[currentSection.id] ? (
               <>
@@ -151,7 +154,7 @@ export const WorkoutScreen = ({ workout, onExit, onFinish }: WorkoutScreenProps)
                 Add Section Note
               </>
             )}
-          </button>
+          </CTAButton>
         </div>
       </div>
 

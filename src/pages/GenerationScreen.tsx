@@ -11,6 +11,7 @@ interface GenerationScreenProps {
   onGenerate: (params: WorkoutParams) => void;
   userPreferences: UserPreferences;
   isGenerating?: boolean;
+  onOpenSettings?: () => void;
 }
 
 export interface WorkoutParams {
@@ -21,7 +22,7 @@ export interface WorkoutParams {
   notes: string;
 }
 
-export const GenerationScreen = ({ onGenerate, userPreferences, isGenerating = false }: GenerationScreenProps) => {
+export const GenerationScreen = ({ onGenerate, userPreferences, isGenerating = false, onOpenSettings }: GenerationScreenProps) => {
   const defaultLocation = userPreferences.locations.find(
     l => l.id === userPreferences.defaultLocationId
   ) || userPreferences.locations[0];
@@ -32,8 +33,6 @@ export const GenerationScreen = ({ onGenerate, userPreferences, isGenerating = f
   const [time, setTime] = useState("");
   const [notes, setNotes] = useState("");
 
-  // Check if Primary Lift section is enabled in user preferences
-  const hasPrimaryLift = userPreferences.sections.includes("primary");
 
   const handleGenerate = () => {
     onGenerate({
@@ -50,12 +49,12 @@ export const GenerationScreen = ({ onGenerate, userPreferences, isGenerating = f
   return (
     <div className="min-h-screen grain-overlay">
       <div className="max-w-md mx-auto pb-24">
-        <Header />
+        <Header onMenuClick={onOpenSettings} />
         
         <div className="px-4 space-y-6">
           <IntensitySlider value={intensity} onChange={setIntensity} />
           
-          <AnchorGrid selected={anchor} onSelect={setAnchor} hasPrimaryLift={hasPrimaryLift} />
+          <AnchorGrid selected={anchor} onSelect={setAnchor} />
           
           <LocationAccordion selected={location} onSelect={setLocation} locations={userPreferences.locations} />
           

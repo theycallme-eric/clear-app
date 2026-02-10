@@ -3,6 +3,7 @@ import { Flame } from "lucide-react";
 import { GeneratedWorkout, StreakData } from "@/types/workout";
 import { WorkoutNotes } from "./WorkoutScreen";
 import { cn } from "@/lib/utils";
+import { CTAButton } from "@/components/CTAButton";
 
 interface SummaryScreenProps {
   workout: GeneratedWorkout;
@@ -187,12 +188,13 @@ export const SummaryScreen = ({
       {/* Fixed Bottom Action */}
       <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background to-transparent pt-8 pb-4 px-4">
         <div className="max-w-md mx-auto">
-          <button
+          <CTAButton
             onClick={handleFinish}
-            className="glow-button w-full h-14 font-display text-lg font-bold uppercase tracking-wider text-foreground"
+            size="lg"
+            fullWidth
           >
             Finish
-          </button>
+          </CTAButton>
         </div>
       </div>
     </div>

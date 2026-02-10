@@ -44,10 +44,10 @@ const Index = () => {
   // Initialize hooks
   const { handleOnboardingComplete } = useOnboardingFlow(async () => {
     await loadHomeData();
-    navigateTo("generation");
+    navigateTo("home");
   });
 
-  const workoutFlow = useWorkoutFlow(userPreferences, loadHomeData);
+  const workoutFlow = useWorkoutFlow(userPreferences, loadHomeData, workoutHistory);
   const historyDetail = useHistoryDetail();
   const { handleSavePreferences } = usePreferencesSync(userPreferences, setUserPreferences);
 
@@ -219,6 +219,7 @@ const Index = () => {
           onGenerate={(params) => workoutFlow.handleGenerate(params, () => navigateTo("review"))}
           userPreferences={userPreferences}
           isGenerating={workoutFlow.isGenerating}
+          onOpenSettings={() => navigateTo("settings")}
         />
       )}
       {currentScreen === "review" && workoutFlow.generatedWorkout && (

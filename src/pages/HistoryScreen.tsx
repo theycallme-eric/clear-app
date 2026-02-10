@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ArrowLeft, Menu, Clock, ChevronDown, Dumbbell } from "lucide-react";
-import { WorkoutHistoryEntry, AnchorType } from "@/types/workout";
+import { WorkoutHistoryEntry, MovementPattern } from "@/types/workout";
 import { EmptyState } from "@/components/EmptyState";
 import { cn } from "@/lib/utils";
 
@@ -11,17 +11,16 @@ interface HistoryScreenProps {
   onOpenSettings: () => void;
 }
 
-type AnchorFilter = AnchorType | 'ALL';
+type AnchorFilter = MovementPattern | 'ALL';
 type IntensityFilter = 'ALL' | '1-2' | '3-4' | '5-6' | '7-8' | '9-10';
 
 const ANCHOR_OPTIONS: { value: AnchorFilter; label: string }[] = [
   { value: 'ALL', label: 'All Anchors' },
-  { value: 'SQUAT', label: 'Squat' },
-  { value: 'HINGE', label: 'Hinge' },
-  { value: 'PRESS', label: 'Press' },
-  { value: 'PULL', label: 'Pull' },
-  { value: 'POWER', label: 'Power' },
-  { value: 'SURPRISE', label: 'Surprise' },
+  { value: 'squat', label: 'Squat' },
+  { value: 'hinge', label: 'Hinge' },
+  { value: 'press', label: 'Press' },
+  { value: 'pull', label: 'Pull' },
+  { value: 'power', label: 'Power' },
 ];
 
 const INTENSITY_OPTIONS: { value: IntensityFilter; label: string }[] = [

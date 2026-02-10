@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import { CTAButton } from "../CTAButton";
 
 interface NoteModalProps {
   isOpen: boolean;
@@ -65,18 +66,21 @@ export const NoteModal = ({
         
         {/* Actions */}
         <div className="flex gap-3 p-4 border-t border-border/30">
-          <button
+          <CTAButton
             onClick={onClose}
-            className="flex-1 py-3 ghost-button font-display font-bold uppercase tracking-wide text-foreground"
+            variant="secondary"
+            size="md"
+            className="flex-1"
           >
             Cancel
-          </button>
-          <button
+          </CTAButton>
+          <CTAButton
             onClick={handleSave}
-            className="flex-1 py-3 glow-button font-display font-bold uppercase tracking-wide text-foreground"
+            size="md"
+            className="flex-1"
           >
             Save
-          </button>
+          </CTAButton>
         </div>
       </div>
     </div>

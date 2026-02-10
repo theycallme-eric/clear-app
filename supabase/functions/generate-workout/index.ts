@@ -243,6 +243,17 @@ PRIMARY LIFT RULES:
 
 ---
 
+MULTI-ANCHOR EXERCISES:
+
+Some exercises belong to multiple anchors. For example:
+- Deadlifts: primary anchor is HINGE, but also valid for PULL (heavy lat/back involvement)
+- Push Press: primary anchor is PRESS, but also valid for POWER (explosive leg drive)
+- Thrusters: primary anchor is POWER, but also valid for SQUAT and PRESS
+
+When an exercise lists multiple anchors, you CAN use it for any of those anchors. This adds variety.
+
+---
+
 EQUIPMENT CONSTRAINTS:
 
 - Only prescribe exercises the user can perform with available equipment
@@ -300,6 +311,8 @@ interface ExerciseDefinition {
   regression: string | null;
   can_be_primary: boolean;
   equipment_display_names: Record<string, string> | null;
+  anchors: string[] | null; // All anchors this exercise belongs to
+  primary_anchor: string | null; // The main anchor for this exercise
 }
 
 function buildUserPrompt(
@@ -323,7 +336,9 @@ function buildUserPrompt(
     const hasBarbellOption = ex.equipment_options.includes('barbell');
     const primaryStr = ex.can_be_primary && hasBarbellOption ? ' [PRIMARY w/barbell]' : '';
     const regressionStr = ex.regression ? ` regression:${ex.regression}` : '';
-    return `  ${ex.id} | ${ex.name} | equipment:[${equipStr}] | sections:[${sectionsStr}]${primaryStr}${regressionStr} | cues:[${cuesStr}]`;
+    // Include anchors so Claude knows which exercises work for which focus
+    const anchorsStr = ex.anchors?.length ? ` anchors:[${ex.anchors.join(', ')}]` : '';
+    return `  ${ex.id} | ${ex.name} | equipment:[${equipStr}] | sections:[${sectionsStr}]${primaryStr}${anchorsStr}${regressionStr} | cues:[${cuesStr}]`;
   }).join('\n');
 
   return `USER CONTEXT:
@@ -610,9 +625,10 @@ serve(async (req: Request) => {
     }));
 
     // Fetch exercise library with full details for prompt injection
+    // Use the view that includes all anchors (primary and secondary)
     const { data: exerciseDefinitions } = await supabase
-      .from('exercise_definitions')
-      .select('id, name, equipment_options, default_equipment, sections, coaching_cues, regression, can_be_primary, equipment_display_names');
+      .from('exercise_definitions_with_anchors')
+      .select('id, name, equipment_options, default_equipment, sections, coaching_cues, regression, can_be_primary, equipment_display_names, anchors, primary_anchor');
 
     // Build available equipment set (always include bodyweight)
     const availableEquipment = new Set([...location.equipment, 'bodyweight']);

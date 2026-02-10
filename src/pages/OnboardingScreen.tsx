@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowLeft, ChevronDown, ChevronUp, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CTAButton } from "@/components/CTAButton";
 import {
   UserPreferences,
   EquipmentTier,
@@ -429,35 +430,40 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
           <div className="max-w-md mx-auto space-y-3">
             {step === 3 ? (
               <div className="flex gap-3">
-                <button
+                <CTAButton
                   onClick={handleNext}
-                  className="flex-1 ghost-button py-3 text-sm"
+                  variant="secondary"
+                  size="sm"
+                  className="flex-1"
                 >
                   Skip for Now
-                </button>
-                <button
+                </CTAButton>
+                <CTAButton
                   onClick={handleNext}
                   disabled={!canProceed()}
-                  className="flex-1 glow-button py-3 font-display text-sm font-semibold uppercase tracking-wide disabled:opacity-50"
+                  size="sm"
+                  className="flex-1"
                 >
                   Next
-                </button>
+                </CTAButton>
               </div>
             ) : step === 4 ? (
-              <button
+              <CTAButton
                 onClick={handleComplete}
-                className="w-full glow-button py-4 font-display text-lg font-semibold uppercase tracking-wide"
+                size="lg"
+                fullWidth
               >
                 Generate First Workout
-              </button>
+              </CTAButton>
             ) : (
-              <button
+              <CTAButton
                 onClick={handleNext}
                 disabled={!canProceed()}
-                className="w-full glow-button py-4 font-display text-lg font-semibold uppercase tracking-wide disabled:opacity-50"
+                size="lg"
+                fullWidth
               >
                 Next
-              </button>
+              </CTAButton>
             )}
 
             <p className="text-center text-muted-foreground text-sm">

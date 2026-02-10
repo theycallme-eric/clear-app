@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { CTAButton } from "../CTAButton";
 
 interface WorkoutNavigationProps {
   currentSection: number;
@@ -19,14 +20,15 @@ export const WorkoutNavigation = ({
     <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background to-transparent pt-8 pb-4 px-4">
       <div className="max-w-md mx-auto flex items-center justify-between gap-4">
         {/* Back Button */}
-        <button
+        <CTAButton
           onClick={onBack}
           disabled={currentSection === 0}
-          className="ghost-button px-4 py-3 flex items-center gap-1 font-display font-bold uppercase tracking-wide text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+          variant="secondary"
+          size="md"
+          iconLeft={<ChevronLeft size={18} />}
         >
-          <ChevronLeft size={18} />
           Back
-        </button>
+        </CTAButton>
         
         {/* Progress Dots */}
         <div className="flex items-center gap-2">
@@ -45,13 +47,13 @@ export const WorkoutNavigation = ({
         </div>
         
         {/* Next/Finish Button */}
-        <button
+        <CTAButton
           onClick={onNext}
-          className="glow-button px-4 py-3 flex items-center gap-1 font-display font-bold uppercase tracking-wide text-foreground"
+          size="md"
+          iconRight={<ChevronRight size={18} />}
         >
           {isLastSection ? "Finish" : "Next"}
-          <ChevronRight size={18} />
-        </button>
+        </CTAButton>
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import {
     WorkoutNotes,
     UserPreferences,
     AnchorType,
+    WorkoutHistoryEntry,
     EQUIPMENT_BY_TIER,
     generateMockWorkout,
 } from "@/types/workout";
@@ -17,10 +18,12 @@ import {
     saveGeneratedWorkout,
 } from "@/lib/workout-api";
 import { fetchWorkoutDetail } from "@/lib/home-data";
+import { resolveAnchorToPattern } from "@/lib/anchor-mapping";
 
 export const useWorkoutFlow = (
     userPreferences: UserPreferences,
-    loadHomeData: () => Promise<void>
+    loadHomeData: () => Promise<void>,
+    workoutHistory: WorkoutHistoryEntry[] = []
 ) => {
     const [workoutParams, setWorkoutParams] = useState<WorkoutParams | null>(null);
     const [generatedWorkout, setGeneratedWorkout] = useState<GeneratedWorkout | null>(null);
@@ -86,10 +89,15 @@ export const useWorkoutFlow = (
                 return sectionMap[s] || s;
             });
 
+            // Resolve user anchor selection to movement pattern
+            const userAnchor = params.anchor || 'FULL BODY';
+            const movementPattern = resolveAnchorToPattern(userAnchor, workoutHistory);
+            console.log(`Anchor mapping: ${userAnchor} -> ${movementPattern}`);
+
             // Call the Edge Function
             const result = await generateWorkout({
                 intensity: params.intensity,
-                anchor: (params.anchor || 'PULL').toLowerCase(),
+                anchor: movementPattern,
                 duration_mins: durationMins,
                 location_name: locationName,
                 equipment,
@@ -105,7 +113,7 @@ export const useWorkoutFlow = (
                 toast.error("Using demo workout", {
                     description: result.details || result.error,
                 });
-                const workout = generateMockWorkout(params.intensity, params.anchor || "PULL");
+                const workout = generateMockWorkout(params.intensity, movementPattern);
                 setGeneratedWorkout(workout);
                 setCurrentSessionId(null); // No session ID for mock workouts
                 setCurrentLocationId(null);
@@ -137,11 +145,11 @@ export const useWorkoutFlow = (
                 const workout = transformAPIWorkoutToFrontend(
                     result.workout,
                     params.intensity,
-                    params.anchor || 'PULL'
+                    movementPattern
                 );
                 setGeneratedWorkout(workout);
                 toast.success("Workout generated!", {
-                    description: `${params.anchor} focus at intensity ${params.intensity}`,
+                    description: `${userAnchor} (${movementPattern}) at intensity ${params.intensity}`,
                 });
             }
 
@@ -152,7 +160,9 @@ export const useWorkoutFlow = (
             toast.error("Generation failed", {
                 description: "Using demo workout instead",
             });
-            const workout = generateMockWorkout(params.intensity, params.anchor || "PULL");
+            // Use a default movement pattern for the mock
+            const fallbackPattern = resolveAnchorToPattern(params.anchor || 'FULL BODY', workoutHistory);
+            const workout = generateMockWorkout(params.intensity, fallbackPattern);
             setGeneratedWorkout(workout);
             if (onSuccess) onSuccess();
         } finally {

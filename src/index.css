@@ -275,6 +275,7 @@
     --border-cta-primary: var(--color-orange-500);
     --border-cta-primary-hover: var(--color-orange-400);
     --border-cta-secondary: var(--color-orange-500);
+    --border-cta-secondary-hover: var(--color-orange-600);
     --border-disabled: var(--color-neutral-400);
     --border-success: var(--color-green-500);
     --border-error: var(--color-red-500);
@@ -389,6 +390,7 @@
     --border-cta-primary: var(--color-blue-500);
     --border-cta-primary-hover: var(--color-blue-400);
     --border-cta-secondary: var(--color-blue-500);
+    --border-cta-secondary-hover: var(--color-blue-600);
 
     /* Text Colors */
     --text-header: var(--color-orange-300);

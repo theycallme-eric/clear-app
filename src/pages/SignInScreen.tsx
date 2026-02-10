@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ArrowLeft, ArrowRight, Loader2, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import { CTAButton } from "@/components/CTAButton";
 
 interface SignInScreenProps {
   onBack: () => void;
@@ -132,23 +133,21 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
           </button>
 
           {/* Submit Button */}
-          <button
+          <CTAButton
             type="submit"
             disabled={isLoading}
-            className="glow-button w-full h-14 font-display text-lg font-bold uppercase tracking-wider text-foreground flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? (
-              <>
+            size="lg"
+            fullWidth
+            iconRight={
+              isLoading ? (
                 <Loader2 size={20} className="animate-spin" />
-                Signing In...
-              </>
-            ) : (
-              <>
-                Sign In
+              ) : (
                 <ArrowRight size={20} />
-              </>
-            )}
-          </button>
+              )
+            }
+          >
+            {isLoading ? "Signing In..." : "Sign In"}
+          </CTAButton>
         </form>
       </div>
     </div>

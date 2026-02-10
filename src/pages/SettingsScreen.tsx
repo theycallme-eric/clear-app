@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowLeft, ChevronRight, ChevronDown, ChevronUp, Check, Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CTAButton } from "@/components/CTAButton";
 import {
   UserPreferences,
   UserLocation,
@@ -602,12 +603,15 @@ export const SettingsScreen = ({
 
               {/* Delete Location (only for editing existing) */}
               {currentView === "editLocation" && preferences.locations.length > 1 && (
-                <button
+                <CTAButton
                   onClick={deleteLocation}
-                  className="w-full ghost-button py-3 text-sm text-rose-500 border-rose-500/50 hover:border-rose-500"
+                  variant="secondary"
+                  size="md"
+                  fullWidth
+                  className="[--btn-text:theme(colors.rose.500)]"
                 >
                   Delete Location
-                </button>
+                </CTAButton>
               )}
             </div>
           )}
@@ -808,12 +812,14 @@ export const SettingsScreen = ({
               </div>
 
               {limitations && (
-                <button
+                <CTAButton
                   onClick={clearLimitations}
-                  className="w-full ghost-button py-2 text-sm"
+                  variant="secondary"
+                  size="sm"
+                  fullWidth
                 >
                   Clear All
-                </button>
+                </CTAButton>
               )}
             </div>
           )}
@@ -825,7 +831,7 @@ export const SettingsScreen = ({
           currentView === "limitations") && (
           <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background to-transparent">
             <div className="max-w-md mx-auto">
-              <button
+              <CTAButton
                 onClick={() => {
                   if (currentView === "editLocation" || currentView === "addLocation") {
                     saveLocation();
@@ -837,10 +843,11 @@ export const SettingsScreen = ({
                     saveLimitations();
                   }
                 }}
-                className="w-full glow-button py-4 font-display text-lg font-semibold uppercase tracking-wide"
+                size="lg"
+                fullWidth
               >
                 Save
-              </button>
+              </CTAButton>
             </div>
           </div>
         )}
