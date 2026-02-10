@@ -1,6 +1,11 @@
-# Skill: Manage Backlog
+---
+name: backlog
+description: Task tracking and backlog management
+trigger: When adding or completing tasks
+category: documentation
+---
 
-> **Trigger:** When adding or completing tasks.
+# Skill: Manage Backlog
 
 ## Context
 
@@ -46,6 +51,11 @@ The backlog tracks all pending work, organized by priority. Keeping it current e
 ## Reference Files
 
 - `docs/BACKLOG.md` — The backlog
+
+## Related Skills
+
+- [close-session](.claude/skills/close-session.md) — End of session workflow
+- [handoff](.claude/skills/handoff.md) — Start of session workflow
 
 ## Checklist
 

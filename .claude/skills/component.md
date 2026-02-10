@@ -1,6 +1,11 @@
-# Skill: Create Component
+---
+name: component
+description: Guidelines for creating and refactoring UI components
+trigger: When creating or refactoring a UI component
+category: ui
+---
 
-> **Trigger:** When creating or refactoring a UI component.
+# Skill: Create Component
 
 ## Context
 
@@ -26,8 +31,8 @@ All UI components must follow the design system and project conventions. This en
    - Shared UI primitives → `src/components/ui/`
 
 4. **After Creation**
-   - Run `token_check.md` skill to verify tokens
-   - Run `gallery_add.md` skill to add visual test
+   - Run [token-check](.claude/skills/token-check.md) skill to verify tokens
+   - Run [gallery-add](.claude/skills/gallery-add.md) skill to add visual test
 
 ## Component Template
 
@@ -54,6 +59,16 @@ export function ComponentName({ className, ...props }: ComponentNameProps) {
 - `tailwind.config.js` — Tailwind theme config
 - `docs/frontend/figma-design-tokens.json` — Figma export
 - `src/lib/utils.ts` — `cn()` helper
+
+## Related Skills
+
+- [chamfered-component](.claude/skills/chamfered-component.md) — For chamfered frame patterns
+- [token-check](.claude/skills/token-check.md) — Verify design token usage
+- [gallery-add](.claude/skills/gallery-add.md) — Add to component gallery
+
+## Related Agents
+
+- [figma-ui-implementer](.claude/agents/figma-ui-implementer.md) — For Figma-to-code implementation
 
 ## Checklist
 

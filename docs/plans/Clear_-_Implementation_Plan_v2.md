@@ -969,7 +969,7 @@ End-to-end testing of complete workout generation v2 system.
 ## Session Checklist (Every Session)
 
 Before starting:
-- [ ] Read `agent/skills/handoff.md`
+- [ ] Read `.claude/skills/handoff.md`
 - [ ] Read relevant skill for task type
 - [ ] Read context files listed in task
 

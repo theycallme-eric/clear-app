@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserLocation } from "@/types/workout";
+import { Card } from "./Card";
 
 interface LocationAccordionProps {
   selected: string;
@@ -16,25 +17,32 @@ export const LocationAccordion = ({ selected, onSelect, locations }: LocationAcc
   const displayName = selectedLocation?.name || selected;
 
   return (
-    <div className="glass-card rounded-lg overflow-hidden">
+    <Card cornerSize="md" padding="none">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between p-4 text-left"
       >
         <div>
-          <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground block mb-1">
+          <span
+            className="font-mono text-xs uppercase tracking-widest block mb-1"
+            style={{ color: "var(--text-paragraph)" }}
+          >
             Location
           </span>
-          <span className="font-display text-lg font-semibold text-foreground">
+          <span
+            className="font-display text-lg font-semibold"
+            style={{ color: "var(--text-header)" }}
+          >
             {displayName}
           </span>
         </div>
         <ChevronDown
           size={20}
           className={cn(
-            "text-muted-foreground transition-transform duration-200",
+            "transition-transform duration-200",
             isOpen && "rotate-180"
           )}
+          style={{ color: "var(--text-paragraph)" }}
         />
       </button>
 
@@ -66,6 +74,6 @@ export const LocationAccordion = ({ selected, onSelect, locations }: LocationAcc
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };

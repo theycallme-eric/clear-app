@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Card } from "./Card";
 
 // User-facing anchor options
 const ANCHORS = [
@@ -20,8 +21,11 @@ interface AnchorGridProps {
 
 export const AnchorGrid = ({ selected, onSelect }: AnchorGridProps) => {
   return (
-    <div className="glass-card rounded-lg p-6">
-      <label className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-4 block">
+    <Card cornerSize="md" padding="lg">
+      <label
+        className="font-mono text-xs uppercase tracking-widest mb-4 block"
+        style={{ color: "var(--text-paragraph)" }}
+      >
         Focus Area
       </label>
 
@@ -42,6 +46,6 @@ export const AnchorGrid = ({ selected, onSelect }: AnchorGridProps) => {
           </button>
         ))}
       </div>
-    </div>
+    </Card>
   );
 };

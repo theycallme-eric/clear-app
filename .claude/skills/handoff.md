@@ -1,6 +1,11 @@
-# Skill: Process Handoff
+---
+name: handoff
+description: Entry point for work sessions - parse tasks, load context, check relevant skills
+trigger: When the user pastes a "Session Plan" or prompt
+category: workflow
+---
 
-> **Trigger:** When the user pastes a "Session Plan" or prompt.
+# Skill: Process Handoff
 
 ## Context
 
@@ -17,7 +22,7 @@ This is the entry point for any work session. Properly parsing the handoff ensur
    - Understand current state before making changes
 
 3. **Check Skill Index**
-   - Read `README.md` in this folder
+   - Read `.claude/README.md` for available skills
    - Load relevant skills (e.g., if touching UI → read `component.md`)
 
 4. **Extraction Check**
@@ -31,9 +36,14 @@ This is the entry point for any work session. Properly parsing the handoff ensur
 
 ## Reference Files
 
-- `agent/skills/README.md` — Skill index
-- `docs/antigravity-handoff.md` — Current handoff state
+- `.claude/README.md` — Skill and agent registry
 - `docs/BACKLOG.md` — Task context
+
+## Related Skills
+
+- [close-session](.claude/skills/close-session.md) — End of session workflow
+- [component](.claude/skills/component.md) — UI component creation
+- [supabase-workflow](.claude/skills/supabase-workflow.md) — Backend work
 
 ## Checklist
 

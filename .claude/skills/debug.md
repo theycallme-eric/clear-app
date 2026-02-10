@@ -1,6 +1,11 @@
-# Skill: Debug Error
+---
+name: debug
+description: Systematic error resolution process
+trigger: When a build fails or the user reports a runtime error
+category: backend
+---
 
-> **Trigger:** When a build fails or the user reports a runtime error.
+# Skill: Debug Error
 
 ## Context
 
@@ -55,6 +60,11 @@ Systematic debugging prevents guessing and ensures issues are properly resolved.
 - `src/types/database.ts` — Database types
 - `tailwind.config.js` — Tailwind config
 - `vite.config.ts` — Build config
+
+## Related Skills
+
+- [supabase-workflow](.claude/skills/supabase-workflow.md) — Backend patterns
+- [token-check](.claude/skills/token-check.md) — Style-related errors
 
 ## Checklist
 

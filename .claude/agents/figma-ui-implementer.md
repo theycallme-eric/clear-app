@@ -65,7 +65,7 @@ You are a senior UI Implementation Specialist with deep expertise in translating
 - Examples: CTA buttons, toast notifications, action cards, form fields, radio labels
 
 ### What to Do Instead
-1. **Use the chamfered-component skill**: Read `.claude/skills/chamfered-component.md`
+1. **Use the chamfered-component skill**: Read [chamfered-component](.claude/skills/chamfered-component.md)
 2. **Use existing components**: `ChamferedFrame` and `LeftColumn` from `src/components/`
 3. **Extract only the design tokens** from Figma (colors, spacing, typography)
 4. **Apply tokens to the existing component pattern**
@@ -91,7 +91,29 @@ You are a senior UI Implementation Specialist with deep expertise in translating
 </ChamferedFrame>
 ```
 
-See the full skill at `.claude/skills/chamfered-component.md` for hover states, size variants, and token mapping.
+See the full skill at [chamfered-component](.claude/skills/chamfered-component.md) for hover states, size variants, and token mapping.
+
+---
+
+## Related Skills
+
+- [component](.claude/skills/component.md) — General component creation guidelines
+- [chamfered-component](.claude/skills/chamfered-component.md) — Chamfered frame pattern
+- [token-audit](.claude/skills/token-audit.md) — Audit components for token compliance
+- [gallery-add](.claude/skills/gallery-add.md) — Add components to visual gallery
+
+---
+
+## Post-Implementation Audit
+
+After creating or modifying any component, run the token audit checklist:
+
+1. Read `.claude/skills/token-audit.md`
+2. Run the audit checks against your changes
+3. Fix any violations before marking the task complete
+4. If you added new tokens to `index.css`, confirm they exist in both `:root` and `[data-theme="blue"]`
+
+Do not consider UI work complete until the audit passes.
 
 ---
 

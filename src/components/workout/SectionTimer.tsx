@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Play, Pause, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Card } from "../Card";
 
 interface SectionTimerProps {
     mode: 'countdown' | 'countup';
@@ -63,8 +64,16 @@ export const SectionTimer = ({
         : 0;
 
     return (
-        <div className={cn("flex flex-col items-center gap-3 p-4 glass-card rounded-xl", className)}>
-            {label && <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{label}</span>}
+        <Card cornerSize="md" padding="none" className={className}>
+            <div className="flex flex-col items-center gap-3 p-4">
+            {label && (
+                <span
+                    className="text-xs font-bold uppercase tracking-wider"
+                    style={{ color: "var(--text-paragraph)" }}
+                >
+                    {label}
+                </span>
+            )}
 
             <div className="relative flex items-center justify-center w-32 h-32">
                 {/* Progress Ring Background */}
@@ -121,6 +130,7 @@ export const SectionTimer = ({
                     <RefreshCw size={18} />
                 </button>
             </div>
-        </div>
+            </div>
+        </Card>
     );
 };

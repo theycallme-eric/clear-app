@@ -1,6 +1,11 @@
-# Skill: Token Check
+---
+name: token-check
+description: Verify components use design tokens instead of hardcoded values
+trigger: When reviewing component styles
+category: ui
+---
 
-> **Trigger:** When reviewing component styles.
+# Skill: Token Check
 
 ## Context
 
@@ -63,6 +68,15 @@ If connected to Figma via MCP:
 - `src/index.css` — CSS variables
 - `docs/frontend/figma-design-tokens.json` — Figma export
 - `tailwind.config.js` — Tailwind theme
+
+## Related Skills
+
+- [component](.claude/skills/component.md) — Component creation guidelines
+- [chamfered-component](.claude/skills/chamfered-component.md) — Chamfered frame tokens
+
+## Related Agents
+
+- [figma-ui-implementer](.claude/agents/figma-ui-implementer.md) — Figma token extraction
 
 ## Checklist
 

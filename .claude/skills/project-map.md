@@ -1,6 +1,11 @@
-# Skill: Update Project Map
+---
+name: project-map
+description: Maintain architecture documentation
+trigger: When making major architecture changes
+category: documentation
+---
 
-> **Trigger:** When making major architecture changes.
+# Skill: Update Project Map
 
 ## Context
 
@@ -49,6 +54,10 @@ Update `docs/wireframes/PROJECT_MAP.md` when:
 ## Reference Files
 
 - `docs/wireframes/PROJECT_MAP.md` — The project map
+
+## Related Skills
+
+- [close-session](.claude/skills/close-session.md) — End of session workflow
 
 ## Checklist
 

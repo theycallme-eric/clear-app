@@ -1,6 +1,11 @@
-# Skill: Close Session
+---
+name: close-session
+description: End of session workflow - log work, update backlog, notify user
+trigger: When all tasks in the session are complete
+category: workflow
+---
 
-> **Trigger:** When all tasks in the session are complete.
+# Skill: Close Session
 
 ## Context
 
@@ -17,12 +22,9 @@ Track completed work for project history and continuity between agents. This ens
    - Mark completed items as `[x]`
    - Add any new items discovered during work
 
-3. **Update Handoff** (if applicable)
-   - Clear or update `docs/antigravity-handoff.md` with current status
-
-4. **Architecture Check** (if applicable)
+3. **Architecture Check** (if applicable)
    - If you added a new Page, Service, or major component
-   - Update `docs/wireframes/PROJECT_MAP.md`
+   - Run [project-map](.claude/skills/project-map.md) skill
 
 5. **Final Message**
    - Tell user: "Session complete. Log and backlog updated. Ready for next plan."
@@ -56,14 +58,18 @@ Track completed work for project history and continuity between agents. This ens
 
 - `docs/SESSION_LOG.md` — Work history
 - `docs/BACKLOG.md` — Task tracking
-- `docs/antigravity-handoff.md` — Handoff state
 - `docs/wireframes/PROJECT_MAP.md` — Architecture docs
+
+## Related Skills
+
+- [handoff](.claude/skills/handoff.md) — Start of session workflow
+- [backlog](.claude/skills/backlog.md) — Task management
+- [project-map](.claude/skills/project-map.md) — Architecture documentation
 
 ## Checklist
 
 - [ ] Session entry added to SESSION_LOG.md
 - [ ] Completed items marked in BACKLOG.md
 - [ ] New items added to BACKLOG.md (if any)
-- [ ] Handoff doc updated (if applicable)
 - [ ] PROJECT_MAP.md updated (if major changes)
 - [ ] User notified session is complete

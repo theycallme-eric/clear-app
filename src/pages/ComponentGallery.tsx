@@ -23,6 +23,7 @@ import { ErrorState } from "@/components/ErrorState";
 import { EmptyState } from "@/components/EmptyState";
 import { ActionButton } from "@/components/ActionButton";
 import { ActionCard } from "@/components/ActionCard";
+import { Card as ChamferedCard } from "@/components/Card";
 import { CTAButton } from "@/components/CTAButton";
 import { toast } from "@/components/ui/sonner";
 
@@ -254,6 +255,64 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
                 <ActionCard cornerSize="lg">
                   Large Chamfer
                 </ActionCard>
+              </Subsection>
+
+            </div>
+          </Section>
+
+          {/* ─── UNIVERSAL CARD ─── */}
+          <Section title="Card — Universal Container">
+            <div className="space-y-6">
+
+              <Subsection label="Default (with left accent column)">
+                <ChamferedCard>
+                  <p className="font-display text-sm font-semibold text-foreground uppercase tracking-wide">
+                    Universal Card
+                  </p>
+                  <p className="text-muted-foreground text-sm mt-1">
+                    Uses ChamferedFrame + LeftColumn pattern
+                  </p>
+                </ChamferedCard>
+              </Subsection>
+
+              <Subsection label="Corner sizes">
+                <div className="space-y-3">
+                  <ChamferedCard cornerSize="sm">
+                    <span className="font-display text-sm">Small (8px chamfer)</span>
+                  </ChamferedCard>
+                  <ChamferedCard cornerSize="md">
+                    <span className="font-display text-sm">Medium (12px chamfer)</span>
+                  </ChamferedCard>
+                  <ChamferedCard cornerSize="lg">
+                    <span className="font-display text-sm">Large (24px chamfer)</span>
+                  </ChamferedCard>
+                </div>
+              </Subsection>
+
+              <Subsection label="Padding sizes">
+                <div className="space-y-3">
+                  <ChamferedCard padding="sm">
+                    <span className="font-display text-sm">Small padding</span>
+                  </ChamferedCard>
+                  <ChamferedCard padding="md">
+                    <span className="font-display text-sm">Medium padding (default)</span>
+                  </ChamferedCard>
+                  <ChamferedCard padding="lg">
+                    <span className="font-display text-sm">Large padding</span>
+                  </ChamferedCard>
+                </div>
+              </Subsection>
+
+              <Subsection label="Interactive (onClick)">
+                <ChamferedCard onClick={() => toast.info("Card clicked!")}>
+                  <span className="font-display text-sm">Click me</span>
+                </ChamferedCard>
+              </Subsection>
+
+              <Subsection label="Without left column (for nesting)">
+                <ChamferedCard showLeftColumn={false}>
+                  <span className="font-display text-sm">No accent column</span>
+                </ChamferedCard>
               </Subsection>
 
             </div>

@@ -1,4 +1,11 @@
-# Chamfered Component Skill
+---
+name: chamfered-component
+description: Create components using the ChamferedFrame + LeftColumn pattern
+trigger: Building components with chamfered corners or left accent bars
+category: ui
+---
+
+# Skill: Chamfered Component
 
 Create components using the ChamferedFrame + LeftColumn pattern from the CLEAR design system.
 
@@ -177,11 +184,20 @@ const sizeConfig = {
 
 ## Key Files
 
-- `src/components/ChamferedFrame.tsx` - SVG-based chamfered container
-- `src/components/LeftColumn.tsx` - Left accent bar
-- `src/index.css` - All CSS tokens (check `:root` and `[data-theme="blue"]`)
-- `src/components/CTAButton.tsx` - Reference implementation with hover states
-- `src/components/ActionCard.tsx` - Reference implementation without hover states
+- `src/components/ChamferedFrame.tsx` — SVG-based chamfered container
+- `src/components/LeftColumn.tsx` — Left accent bar
+- `src/index.css` — All CSS tokens (check `:root` and `[data-theme="blue"]`)
+- `src/components/CTAButton.tsx` — Reference implementation with hover states
+- `src/components/ActionCard.tsx` — Reference implementation without hover states
+
+## Related Skills
+
+- [component](.claude/skills/component.md) — General component guidelines
+- [token-check](.claude/skills/token-check.md) — Verify design tokens
+
+## Related Agents
+
+- [figma-ui-implementer](.claude/agents/figma-ui-implementer.md) — Figma-to-code workflow
 
 ---
 

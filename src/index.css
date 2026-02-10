@@ -28,6 +28,7 @@
     --color-orange-900: #321807;
 
     /* Orange (Primary) - Alpha */
+    --color-orange-alpha-050: rgba(248, 120, 35, 0.05);
     --color-orange-alpha-100: rgba(248, 120, 35, 0.10);
     --color-orange-alpha-150: rgba(248, 120, 35, 0.15);
     --color-orange-alpha-200: rgba(248, 120, 35, 0.20);
@@ -52,6 +53,7 @@
     --color-blue-900: #002231;
 
     /* Blue (Secondary) - Alpha */
+    --color-blue-alpha-050: rgba(0, 169, 244, 0.05);
     --color-blue-alpha-100: rgba(0, 169, 244, 0.10);
     --color-blue-alpha-150: rgba(0, 169, 244, 0.15);
     --color-blue-alpha-200: rgba(0, 169, 244, 0.20);
@@ -266,6 +268,10 @@
     --surface-radio-card-unselected: var(--color-orange-alpha-100);
     --surface-select-switch: #FFFFFF;
     --surface-disabled: var(--color-neutral-alpha-300);
+    /* Slider surfaces */
+    --surface-slider-thumb: var(--color-orange-alpha-900);
+    --surface-slider-active: var(--color-orange-alpha-400);
+    --surface-slider-inactive: var(--color-orange-alpha-050);
 
     /* Borders */
     --border-card: var(--color-orange-500);
@@ -285,6 +291,9 @@
     --border-radio-text-selected: var(--color-green-500);
     --border-radio-text-unselected: var(--color-orange-900);
     --border-disabled: var(--color-neutral-400);
+    /* Slider borders */
+    --border-slider: var(--color-orange-500);
+    --border-slider-thumb: var(--color-orange-500);
 
     /* Text Colors */
     --text-header: var(--color-blue-300);
@@ -379,6 +388,10 @@
     --surface-cta-secondary: rgba(0, 169, 244, 0.05);
     --surface-cta-secondary-hover: var(--color-blue-alpha-200);
     --surface-cta-secondary-disabled: rgba(114, 114, 116, 0.05);
+    /* Slider surfaces - blue theme */
+    --surface-slider-thumb: var(--color-blue-alpha-900);
+    --surface-slider-active: var(--color-blue-alpha-400);
+    --surface-slider-inactive: var(--color-blue-alpha-050);
 
     /* Borders */
     --border-card: var(--color-blue-500);
@@ -391,6 +404,9 @@
     --border-cta-primary-hover: var(--color-blue-400);
     --border-cta-secondary: var(--color-blue-500);
     --border-cta-secondary-hover: var(--color-blue-600);
+    /* Slider borders - blue theme */
+    --border-slider: var(--color-blue-500);
+    --border-slider-thumb: var(--color-blue-500);
 
     /* Text Colors */
     --text-header: var(--color-orange-300);
@@ -623,49 +639,50 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   }
 
-  /* Intensity Slider */
+  /* Intensity Slider
+     Figma specs: 4px track, 10px thumb, 2px padding, 1px border
+     ========================================================================= */
   .intensity-slider {
     -webkit-appearance: none;
     appearance: none;
-    background: transparent;
-    height: 8px;
+    height: 4px;
+    border-radius: 0;
+    border: 1px solid var(--border-slider);
+    padding: 2px;
+    box-sizing: content-box;
   }
 
   .intensity-slider::-webkit-slider-runnable-track {
-    height: 8px;
-    background: linear-gradient(90deg, var(--color-purple-alpha-500), var(--color-purple-alpha-400));
-    border-radius: 4px;
-    border: 1px solid var(--color-neutral-alpha-200);
+    height: 4px;
+    background: transparent;
+    border-radius: 0;
   }
 
   .intensity-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 28px;
-    height: 28px;
-    background: linear-gradient(135deg, var(--color-orange-500), var(--color-orange-700));
-    border-radius: 4px;
+    width: 10px;
+    height: 10px;
+    background: var(--surface-slider-thumb);
+    border-radius: 0;
     cursor: pointer;
-    box-shadow: 0 0 12px var(--color-orange-alpha-500);
-    margin-top: -10px;
-    border: 1px solid var(--color-orange-alpha-800);
+    margin-top: -3px;
+    border: 1px solid var(--border-slider-thumb);
   }
 
   .intensity-slider::-moz-range-track {
-    height: 8px;
-    background: linear-gradient(90deg, var(--color-purple-alpha-500), var(--color-purple-alpha-400));
-    border-radius: 4px;
-    border: 1px solid var(--color-neutral-alpha-200);
+    height: 4px;
+    background: transparent;
+    border-radius: 0;
   }
 
   .intensity-slider::-moz-range-thumb {
-    width: 28px;
-    height: 28px;
-    background: linear-gradient(135deg, var(--color-orange-500), var(--color-orange-700));
-    border-radius: 4px;
+    width: 10px;
+    height: 10px;
+    background: var(--surface-slider-thumb);
+    border-radius: 0;
     cursor: pointer;
-    box-shadow: 0 0 12px var(--color-orange-alpha-500);
-    border: 1px solid var(--color-orange-alpha-800);
+    border: 1px solid var(--border-slider-thumb);
   }
 
   /* =========================================================================
@@ -764,5 +781,176 @@
 @layer utilities {
   .text-shadow-glow {
     text-shadow: 0 0 10px currentColor;
+  }
+
+  /* =========================================================================
+     TYPOGRAPHY UTILITIES
+     From Figma design system - use these instead of Tailwind text-* classes
+     ========================================================================= */
+
+  /* ----- Headings (Rajdhani) - Responsive via CSS variables ----- */
+  .text-heading-h1 {
+    font-family: var(--font-headings);
+    font-size: var(--heading-h1-size);
+    line-height: var(--heading-h1-line-height);
+  }
+  .text-heading-h2 {
+    font-family: var(--font-headings);
+    font-size: var(--heading-h2-size);
+    line-height: var(--heading-h2-line-height);
+  }
+  .text-heading-h3 {
+    font-family: var(--font-headings);
+    font-size: var(--heading-h3-size);
+    line-height: var(--heading-h3-line-height);
+  }
+  .text-heading-h4 {
+    font-family: var(--font-headings);
+    font-size: var(--heading-h4-size);
+    line-height: var(--heading-h4-line-height);
+  }
+  .text-heading-h5 {
+    font-family: var(--font-headings);
+    font-size: var(--heading-h5-size);
+    line-height: var(--heading-h5-line-height);
+  }
+  .text-heading-h6 {
+    font-family: var(--font-headings);
+    font-size: var(--heading-h6-size);
+    line-height: var(--heading-h6-line-height);
+  }
+
+  /* ----- Paragraph (Space Grotesk) ----- */
+  .text-paragraph-xs {
+    font-family: var(--font-paragraph);
+    font-size: var(--paragraph-xs-size);
+    line-height: var(--paragraph-xs-line-height);
+  }
+  .text-paragraph-sm {
+    font-family: var(--font-paragraph);
+    font-size: var(--paragraph-sm-size);
+    line-height: var(--paragraph-sm-line-height);
+  }
+  .text-paragraph-md {
+    font-family: var(--font-paragraph);
+    font-size: var(--paragraph-md-size);
+    line-height: var(--paragraph-md-line-height);
+  }
+  .text-paragraph-lg {
+    font-family: var(--font-paragraph);
+    font-size: var(--paragraph-lg-size);
+    line-height: var(--paragraph-lg-line-height);
+  }
+  .text-paragraph-xl {
+    font-family: var(--font-paragraph);
+    font-size: var(--paragraph-xl-size);
+    line-height: var(--paragraph-xl-line-height);
+  }
+
+  /* ----- Label (Oxanium) ----- */
+  .text-label-xs {
+    font-family: var(--font-label);
+    font-size: var(--label-xs-size);
+    line-height: var(--label-xs-line-height);
+  }
+  .text-label-sm {
+    font-family: var(--font-label);
+    font-size: var(--label-sm-size);
+    line-height: var(--label-sm-line-height);
+  }
+  .text-label-md {
+    font-family: var(--font-label);
+    font-size: var(--label-md-size);
+    line-height: var(--label-md-line-height);
+  }
+  .text-label-lg {
+    font-family: var(--font-label);
+    font-size: var(--label-lg-size);
+    line-height: var(--label-lg-line-height);
+  }
+  .text-label-xl {
+    font-family: var(--font-label);
+    font-size: var(--label-xl-size);
+    line-height: var(--label-xl-line-height);
+  }
+
+  /* ----- Tab (Oxanium) ----- */
+  .text-tab-xs {
+    font-family: var(--font-label);
+    font-size: var(--label-xs-size);
+    line-height: var(--label-xs-line-height);
+  }
+  .text-tab-sm {
+    font-family: var(--font-label);
+    font-size: var(--label-sm-size);
+    line-height: var(--label-sm-line-height);
+  }
+  .text-tab-md {
+    font-family: var(--font-label);
+    font-size: var(--label-md-size);
+    line-height: var(--label-md-line-height);
+  }
+  .text-tab-lg {
+    font-family: var(--font-label);
+    font-size: var(--label-lg-size);
+    line-height: var(--label-lg-line-height);
+  }
+  .text-tab-xl {
+    font-family: var(--font-label);
+    font-size: var(--label-xl-size);
+    line-height: var(--label-xl-line-height);
+  }
+
+  /* ----- CTA (Oxanium, uppercase) ----- */
+  .text-cta-xs {
+    font-family: var(--font-label);
+    font-size: var(--label-xs-size);
+    line-height: var(--label-xs-line-height);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .text-cta-sm {
+    font-family: var(--font-label);
+    font-size: var(--label-sm-size);
+    line-height: var(--label-sm-line-height);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .text-cta-md {
+    font-family: var(--font-label);
+    font-size: var(--label-md-size);
+    line-height: var(--label-md-line-height);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .text-cta-lg {
+    font-family: var(--font-label);
+    font-size: var(--label-lg-size);
+    line-height: var(--label-lg-line-height);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* ----- Time (Oxanium) ----- */
+  .text-time-lg {
+    font-family: var(--font-label);
+    font-size: var(--label-lg-size);
+    line-height: var(--label-lg-line-height);
+  }
+  .text-time-xl {
+    font-family: var(--font-label);
+    font-size: var(--label-xl-size);
+    line-height: var(--label-xl-line-height);
+  }
+
+  /* ----- Font Weights ----- */
+  .font-regular {
+    font-weight: var(--font-weight-regular);
+  }
+  .font-medium {
+    font-weight: var(--font-weight-medium);
+  }
+  .font-bold {
+    font-weight: var(--font-weight-bold);
   }
 }

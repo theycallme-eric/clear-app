@@ -1,6 +1,11 @@
-# Skill: Supabase Workflow
+---
+name: supabase-workflow
+description: Patterns for working with Supabase backend, database, and auth
+trigger: When touching Backend, Database, or Auth
+category: backend
+---
 
-> **Trigger:** When touching Backend, Database, or Auth.
+# Skill: Supabase Workflow
 
 ## Context
 
@@ -46,6 +51,10 @@ This is a Vite + React SPA with Supabase backend. Understanding the architecture
 - `supabase/migrations/` — Database migrations
 - `supabase/functions/` — Edge functions
 - `.env` — Environment variables
+
+## Related Skills
+
+- [debug](.claude/skills/debug.md) — Error resolution
 
 ## Checklist
 

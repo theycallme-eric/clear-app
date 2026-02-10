@@ -6,9 +6,9 @@
 
 ## How Antigravity Works
 
-Antigravity is a code implementation agent that follows structured "skills" (SOPs) located in `agent/skills/`. When you hand off a plan, Antigravity will:
+Antigravity is a code implementation agent that follows structured "skills" (SOPs) located in `.claude/skills/`. When you hand off a plan, Antigravity will:
 
-1. Read `agent/skills/README.md` to find relevant skills
+1. Read `.claude/README.md` to find relevant skills
 2. Load skills that match the task type
 3. Follow the steps in each skill
 4. Use checklists to verify work
@@ -21,10 +21,10 @@ Antigravity is a code implementation agent that follows structured "skills" (SOP
 
 | Category | Skills | When Antigravity Uses Them |
 |----------|--------|---------------------------|
-| **Workflow** | `handoff.md`, `close_session.md` | Start/end of every session |
-| **UI** | `component.md`, `gallery_add.md`, `token_check.md` | Creating/modifying components |
-| **Backend** | `supabase_workflow.md`, `debug.md` | Database, auth, API work |
-| **Documentation** | `backlog.md`, `project_map.md` | Updating project docs |
+| **Workflow** | `handoff`, `close-session` | Start/end of every session |
+| **UI** | `component`, `chamfered-component`, `gallery-add`, `token-check` | Creating/modifying components |
+| **Backend** | `supabase-workflow`, `debug` | Database, auth, API work |
+| **Documentation** | `backlog`, `project-map` | Updating project docs |
 
 ---
 
@@ -199,8 +199,9 @@ Claude.ai                          Antigravity
 
 | What | Where |
 |------|-------|
-| Skills index | `agent/skills/README.md` |
-| All skills | `agent/skills/*.md` |
+| Skills & agents registry | `.claude/README.md` |
+| All skills | `.claude/skills/*.md` |
+| All agents | `.claude/agents/*.md` |
 | Backlog | `docs/BACKLOG.md` |
 | Session log | `docs/SESSION_LOG.md` |
 | Project map | `docs/wireframes/PROJECT_MAP.md` |

@@ -1,6 +1,11 @@
-# Skill: Add to Gallery
+---
+name: gallery-add
+description: Add new components to the visual component gallery
+trigger: After creating a new component
+category: ui
+---
 
-> **Trigger:** After creating a new component.
+# Skill: Add to Gallery
 
 ## Context
 
@@ -49,6 +54,11 @@ The component gallery provides visual test cases for all UI components. This ena
 ## Reference Files
 
 - `src/pages/ComponentGallery.tsx` — Gallery page
+
+## Related Skills
+
+- [component](.claude/skills/component.md) — Component creation guidelines
+- [token-check](.claude/skills/token-check.md) — Verify design tokens
 
 ## Checklist
 
