@@ -244,7 +244,7 @@
        ========================================================================= */
 
     /* Surfaces */
-    --surface-card: var(--color-orange-alpha-150);
+    --surface-card: var(--color-orange-alpha-100);
     --surface-card-accent: var(--color-orange-alpha-400);
     --surface-cta: var(--color-orange-alpha-400);
     --surface-cta-hover: var(--color-orange-alpha-600);
@@ -272,6 +272,14 @@
     --surface-slider-thumb: var(--color-orange-alpha-900);
     --surface-slider-active: var(--color-orange-alpha-400);
     --surface-slider-inactive: var(--color-orange-alpha-050);
+    /* Input field surfaces */
+    --surface-input: var(--color-orange-alpha-100);
+    --surface-input-active: var(--color-orange-alpha-200);
+    --surface-input-disabled: var(--color-neutral-alpha-100);
+    /* Chip surfaces */
+    --surface-chip: var(--color-orange-alpha-400);
+    --surface-chip-selected: var(--color-green-alpha-100);
+    --surface-chip-unselected: var(--color-orange-alpha-050);
 
     /* Borders */
     --border-card: var(--color-orange-500);
@@ -287,13 +295,21 @@
     --border-error: var(--color-red-500);
     --border-info: var(--color-purple-500);
     --border-radio-select: var(--color-green-500);
-    --border-radio-unselected: var(--color-orange-900);
+    --border-radio-unselected: var(--color-orange-alpha-600);
     --border-radio-text-selected: var(--color-green-500);
-    --border-radio-text-unselected: var(--color-orange-900);
+    --border-radio-text-unselected: var(--color-orange-alpha-600);
     --border-disabled: var(--color-neutral-400);
     /* Slider borders */
     --border-slider: var(--color-orange-500);
     --border-slider-thumb: var(--color-orange-500);
+    /* Input field borders */
+    --border-input: var(--color-orange-alpha-500);
+    --border-input-active: var(--color-orange-alpha-700);
+    --border-input-disabled: var(--color-neutral-alpha-300);
+    /* Chip borders */
+    --border-chip: var(--color-orange-500);
+    --border-chip-selected: var(--color-green-500);
+    --border-chip-unselected: var(--color-orange-alpha-300);
 
     /* Text Colors */
     --text-header: var(--color-blue-300);
@@ -311,7 +327,14 @@
     --text-disabled: var(--color-neutral-400);
     --text-cta-disabled: var(--color-neutral-400);
     --text-radio-text-select: var(--color-green-900);
-    --text-radio-text-unselected: var(--color-orange-alpha-800);
+    --text-radio-text-unselected: var(--color-orange-100);
+    --text-input: var(--color-blue-100);
+    --text-input-placeholder: var(--color-blue-alpha-400);
+    --text-input-disabled: var(--color-neutral-400);
+    /* Chip text */
+    --text-chip: var(--color-blue-500);
+    --text-chip-selected: var(--color-green-500);
+    --text-chip-unselected: var(--color-orange-300);
     --text-color: #FFFFFF;
 
     /* Icons */
@@ -322,7 +345,14 @@
     --icon-error: var(--color-red-900);
     --icon-info: var(--color-purple-900);
     --icon-radio-selected: var(--color-green-500);
-    --icon-radio-unselected: var(--color-orange-500);
+    --icon-radio-unselected: var(--color-orange-100);
+    /* Input field icons */
+    --icon-input: var(--color-blue-400);
+    --icon-input-disabled: var(--color-neutral-400);
+    /* Chip icons */
+    --icon-chip: var(--color-blue-500);
+    --icon-chip-selected: var(--color-green-500);
+    --icon-chip-unselected: var(--color-orange-300);
 
     /* Widths (semantic spacing) */
     --width-none: var(--spacing-0);
@@ -375,7 +405,7 @@
      ========================================================================= */
   [data-theme="blue"] {
     /* Surfaces */
-    --surface-card: var(--color-blue-alpha-150);
+    --surface-card: var(--color-blue-alpha-100);
     --surface-card-accent: var(--color-blue-alpha-400);
     --surface-cta: var(--color-blue-alpha-400);
     --surface-cta-hover: var(--color-blue-alpha-600);
@@ -392,13 +422,19 @@
     --surface-slider-thumb: var(--color-blue-alpha-900);
     --surface-slider-active: var(--color-blue-alpha-400);
     --surface-slider-inactive: var(--color-blue-alpha-050);
+    /* Input field surfaces - blue theme */
+    --surface-input: var(--color-blue-alpha-100);
+    --surface-input-active: var(--color-blue-alpha-200);
+    /* Chip surfaces - blue theme */
+    --surface-chip: var(--color-blue-alpha-400);
+    --surface-chip-unselected: var(--color-blue-alpha-050);
 
     /* Borders */
     --border-card: var(--color-blue-500);
     --border-cta: var(--color-blue-500);
     --border-cta-hover: var(--color-blue-600);
-    --border-radio-unselected: var(--color-blue-900);
-    --border-radio-text-unselected: var(--color-blue-900);
+    --border-radio-unselected: var(--color-blue-alpha-600);
+    --border-radio-text-unselected: var(--color-blue-alpha-600);
     /* CTA Button borders - blue theme */
     --border-cta-primary: var(--color-blue-500);
     --border-cta-primary-hover: var(--color-blue-400);
@@ -407,6 +443,12 @@
     /* Slider borders - blue theme */
     --border-slider: var(--color-blue-500);
     --border-slider-thumb: var(--color-blue-500);
+    /* Input field borders - blue theme */
+    --border-input: var(--color-blue-alpha-500);
+    --border-input-active: var(--color-blue-alpha-700);
+    /* Chip borders - blue theme */
+    --border-chip: var(--color-blue-500);
+    --border-chip-unselected: var(--color-blue-alpha-300);
 
     /* Text Colors */
     --text-header: var(--color-orange-300);
@@ -415,12 +457,23 @@
     --text-cta-hover: var(--color-orange-500);
     --text-label-info: var(--color-orange-100);
     --text-label-unselected: var(--color-orange-100);
-    --text-radio-text-unselected: var(--color-blue-50);
+    --text-radio-text-unselected: var(--color-blue-100);
+    /* Input field text - blue theme */
+    --text-input: var(--color-orange-100);
+    --text-input-placeholder: var(--color-orange-alpha-400);
+    /* Chip text - blue theme */
+    --text-chip: var(--color-orange-500);
+    --text-chip-unselected: var(--color-blue-300);
 
     /* Icons */
     --icon-cta: var(--color-orange-500);
     --icon-cta-hover: var(--color-orange-500);
-    --icon-radio-unselected: var(--color-blue-500);
+    --icon-radio-unselected: var(--color-blue-100);
+    /* Input field icons - blue theme */
+    --icon-input: var(--color-orange-400);
+    /* Chip icons - blue theme */
+    --icon-chip: var(--color-orange-500);
+    --icon-chip-unselected: var(--color-blue-300);
 
     /* Legacy mappings for blue theme */
     --primary: var(--color-blue-500);
@@ -852,26 +905,31 @@
     font-family: var(--font-label);
     font-size: var(--label-xs-size);
     line-height: var(--label-xs-line-height);
+    font-weight: 700;
   }
   .text-label-sm {
     font-family: var(--font-label);
     font-size: var(--label-sm-size);
     line-height: var(--label-sm-line-height);
+    font-weight: 700;
   }
   .text-label-md {
     font-family: var(--font-label);
     font-size: var(--label-md-size);
     line-height: var(--label-md-line-height);
+    font-weight: 700;
   }
   .text-label-lg {
     font-family: var(--font-label);
     font-size: var(--label-lg-size);
     line-height: var(--label-lg-line-height);
+    font-weight: 700;
   }
   .text-label-xl {
     font-family: var(--font-label);
     font-size: var(--label-xl-size);
     line-height: var(--label-xl-line-height);
+    font-weight: 700;
   }
 
   /* ----- Tab (Oxanium) ----- */

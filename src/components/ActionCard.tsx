@@ -77,7 +77,7 @@ export function ActionCard({
           {/* Content */}
           <div className="flex-1">
             <p
-              className="font-display text-xl font-bold"
+              className="text-heading-h4 font-bold"
               style={{ color: "var(--text-cta)" }}
             >
               {children}

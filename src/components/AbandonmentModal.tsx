@@ -14,16 +14,16 @@ export const AbandonmentModal = ({ workoutDate, onResume, onAbandon }: Abandonme
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
       <div className="glass-card p-6 mx-4 max-w-sm w-full text-center">
-        <h2 className="font-display text-xl font-bold uppercase tracking-wider text-foreground mb-2">
+        <h2 className="text-heading-h4 font-bold uppercase tracking-wider text-foreground mb-2">
           Incomplete Workout
         </h2>
-        <p className="text-sm text-muted-foreground mb-6">
+        <p className="text-paragraph-sm text-muted-foreground mb-6">
           You have an unfinished workout from {workoutDate}. Would you like to continue or start fresh?
         </p>
         <div className="space-y-2">
           <button
             onClick={onResume}
-            className="w-full py-3 bg-clear-orange text-background font-display text-sm uppercase tracking-wider hover:bg-clear-orange/90 transition-colors"
+            className="w-full py-3 bg-clear-orange text-background text-cta-sm hover:bg-clear-orange/90 transition-colors"
           >
             Resume Workout
           </button>

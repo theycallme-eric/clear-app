@@ -16,7 +16,7 @@ export const ReviewHeader = ({ onBack, onMenuClick }: ReviewHeaderProps) => {
         <ArrowLeft size={24} />
       </button>
       
-      <h1 className="font-display text-3xl font-bold tracking-wider text-foreground">
+      <h1 className="text-heading-h2 font-bold tracking-wider text-foreground">
         CLEAR
       </h1>
       

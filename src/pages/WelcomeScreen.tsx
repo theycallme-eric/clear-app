@@ -11,12 +11,12 @@ export const WelcomeScreen = ({ onSignIn, onCreateAccount }: WelcomeScreenProps)
     <div className="min-h-screen grain-overlay flex flex-col items-center justify-center px-6">
       <div className="flex flex-col items-center text-center max-w-sm">
         {/* Logo */}
-        <h1 className="font-display text-6xl font-bold tracking-wider text-foreground mb-4">
+        <h1 className="text-heading-h1 font-bold tracking-wider text-foreground mb-4">
           CLEAR
         </h1>
 
         {/* Tagline */}
-        <p className="text-lg text-foreground/70 mb-12">
+        <p className="text-paragraph-lg text-foreground/70 mb-12">
           Strength training, simplified.
         </p>
 

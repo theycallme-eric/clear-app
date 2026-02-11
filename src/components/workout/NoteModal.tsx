@@ -42,7 +42,7 @@ export const NoteModal = ({
       <div className="relative w-full max-w-md glass-card animate-in slide-in-from-bottom duration-300">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border/30">
-          <h3 className="font-display text-lg font-bold uppercase text-clear-orange">
+          <h3 className="text-heading-h5 font-bold uppercase text-clear-orange">
             {title}
           </h3>
           <button 

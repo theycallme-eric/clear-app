@@ -75,31 +75,31 @@ export const SummaryScreen = ({
     <div className="min-h-screen grain-overlay">
       <div className="max-w-md mx-auto px-4 py-8 pb-32">
         {/* Header */}
-        <h1 className="font-display text-xl font-bold text-foreground uppercase tracking-wider mb-6">
+        <h1 className="text-heading-h4 font-bold text-foreground uppercase tracking-wider mb-6">
           Workout Complete
         </h1>
 
         {/* Celebration */}
         <div className="text-center mb-6">
           <div className="text-6xl mb-2">🎉</div>
-          <h2 className="font-display text-3xl font-bold text-foreground uppercase tracking-wide">
+          <h2 className="text-heading-h2 font-bold text-foreground uppercase tracking-wide">
             Nice Work!
           </h2>
         </div>
 
         {/* Workout Summary Card */}
         <div className="glass-card p-4 mb-6 text-center">
-          <p className="font-display text-lg font-semibold text-foreground uppercase tracking-wide">
+          <p className="text-heading-h5 font-medium text-foreground uppercase tracking-wide">
             {workout.anchor} &bull; Intensity {workout.intensity}
           </p>
-          <p className="text-muted-foreground text-sm mt-1">
+          <p className="text-muted-foreground text-paragraph-sm mt-1">
             {formatDuration(totalTime)} &bull; {workout.sections.length} sections
           </p>
         </div>
 
         {/* Mood Tracker */}
         <div className="mb-6">
-          <h3 className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-3">
+          <h3 className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3">
             How Do You Feel?
           </h3>
           <div className="flex justify-between gap-2">
@@ -123,7 +123,7 @@ export const SummaryScreen = ({
 
         {/* Session Notes */}
         <div className="mb-6">
-          <h3 className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-3">
+          <h3 className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3">
             Session Notes (Optional)
           </h3>
           <div className="glass-card p-4">
@@ -138,25 +138,25 @@ export const SummaryScreen = ({
 
         {/* Streak Update */}
         <div className="glass-card p-4">
-          <h3 className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-4">
+          <h3 className="text-label-xs uppercase tracking-widest text-muted-foreground mb-4">
             Streak
           </h3>
 
           {/* Streak increment */}
           <div className="text-center mb-4">
-            <span className="font-display text-3xl font-bold text-muted-foreground">
+            <span className="text-heading-h2 font-bold text-muted-foreground">
               {streakData.currentStreak}
             </span>
-            <span className="font-display text-3xl font-bold text-clear-orange mx-2">
+            <span className="text-heading-h2 font-bold text-clear-orange mx-2">
               →
             </span>
-            <span className="font-display text-4xl font-bold text-foreground">
+            <span className="text-heading-h1 font-bold text-foreground">
               {newStreak}
             </span>
             <span className="text-2xl ml-2">
               <Flame className="inline w-7 h-7 text-clear-orange" />
             </span>
-            <p className="font-mono text-sm text-muted-foreground mt-1">days</p>
+            <p className="text-label-sm text-muted-foreground mt-1">days</p>
           </div>
 
           {/* Week view */}
@@ -176,7 +176,7 @@ export const SummaryScreen = ({
                 >
                   {day.status === "workout" ? "●" : day.status === "rest" ? "◐" : "○"}
                 </div>
-                <span className="font-mono text-xs text-muted-foreground">
+                <span className="text-label-xs text-muted-foreground">
                   {day.label}
                 </span>
               </div>

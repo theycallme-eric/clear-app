@@ -92,10 +92,10 @@ export const HomeScreen = ({
             onClick={onGenerateWorkout}
             className="w-full glass-card p-6 text-left group hover:border-clear-orange/60 transition-all"
           >
-            <h2 className="font-display text-2xl font-bold uppercase tracking-wider text-foreground mb-2">
+            <h2 className="text-heading-h2 font-bold uppercase tracking-wider text-foreground mb-2">
               Generate Workout
             </h2>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-paragraph-sm">
               Set intensity, anchor, and build your session
             </p>
           </button>
@@ -108,16 +108,16 @@ export const HomeScreen = ({
           >
             <div className="flex items-center gap-2 mb-2">
               <Zap className="w-5 h-5 text-clear-orange" />
-              <span className="font-display text-lg font-semibold uppercase tracking-wider text-foreground">
+              <span className="text-heading-h5 font-medium uppercase tracking-wider text-foreground">
                 Quick Start
               </span>
             </div>
             {hasHistory ? (
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-paragraph-sm">
                 Intensity: {suggestedIntensity} &bull; Anchor: {suggestedAnchor}
               </p>
             ) : (
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-paragraph-sm">
                 Start your first workout
               </p>
             )}
@@ -125,19 +125,19 @@ export const HomeScreen = ({
 
           {/* Streak Tracker */}
           <div className="glass-card p-4">
-            <h3 className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-4">
+            <h3 className="text-label-xs uppercase tracking-widest text-muted-foreground mb-4">
               Streak
             </h3>
 
             {/* Big streak number */}
             <div className="text-center mb-4">
-              <span className="font-display text-5xl font-bold text-foreground">
+              <span className="text-heading-h1 font-bold text-foreground">
                 {streakData.currentStreak}
               </span>
               <span className="text-2xl ml-2">
                 <Flame className="inline w-8 h-8 text-clear-orange" />
               </span>
-              <p className="font-mono text-sm text-muted-foreground mt-1">days</p>
+              <p className="text-label-sm text-muted-foreground mt-1">days</p>
             </div>
 
             {/* Week view */}
@@ -155,7 +155,7 @@ export const HomeScreen = ({
                   >
                     {day.status === "workout" ? "●" : day.status === "rest" ? "◐" : "○"}
                   </div>
-                  <span className="font-mono text-xs text-muted-foreground">
+                  <span className="text-label-xs text-muted-foreground">
                     {day.label}
                   </span>
                 </div>
@@ -175,7 +175,7 @@ export const HomeScreen = ({
 
           {/* Recent Workouts */}
           <div>
-            <h3 className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-3 px-1">
+            <h3 className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3 px-1">
               Recent
             </h3>
 
@@ -202,10 +202,10 @@ export const HomeScreen = ({
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="font-display text-sm font-semibold text-foreground uppercase tracking-wide">
+                          <p className="text-label-sm text-foreground uppercase tracking-wide">
                             {formatDate(workout.date)} &bull; {workout.anchor} &bull; Int. {workout.intensity}
                           </p>
-                          <p className="text-muted-foreground text-sm flex items-center gap-1 mt-1">
+                          <p className="text-muted-foreground text-paragraph-sm flex items-center gap-1 mt-1">
                             <Clock className="w-3 h-3" />
                             {workout.duration} min
                           </p>
@@ -217,7 +217,7 @@ export const HomeScreen = ({
 
                 <button
                   onClick={onViewHistory}
-                  className="w-full mt-3 py-2 text-center text-clear-orange text-sm font-medium hover:text-clear-orange/80 transition-colors"
+                  className="w-full mt-3 py-2 text-center text-clear-orange text-paragraph-sm font-medium hover:text-clear-orange/80 transition-colors"
                 >
                   View All History
                 </button>

@@ -22,6 +22,55 @@ Living document to capture progress, decisions, and learnings across sessions. T
 
 ## Session Entries
 
+### Session: 2026-02-10 - Auth System Refactor
+
+**Duration:** ~30 min
+**Mode:** Claude Code
+
+#### What Got Done
+- Created unified `AuthContext` to replace fragmented auth hooks
+- Eliminated 3-4x redundant profile fetches on app init (now fetched once)
+- Replaced ambiguous `onboardingComplete: boolean | null` with explicit `status: 'loading' | 'unauthenticated' | 'authenticated'`
+- Simplified `useHomeData` to only fetch history/streak (no more profile fetching)
+- Simplified `useOnboardingFlow` to use `AuthContext.completeOnboarding`
+- Updated `Index.tsx` navigation to use clean status-based routing
+- Deleted `useAuth.ts` and `usePreferencesSync.ts` (merged into AuthContext)
+- Removed AbortError workaround from `supabase.ts` (no longer needed)
+
+#### Files Created
+- `src/contexts/AuthContext.tsx` — Single source of truth for auth state
+
+#### Files Modified
+- `src/main.tsx` — Wrapped app with AuthProvider
+- `src/hooks/useHomeData.ts` — Removed preferences, added mounted checks
+- `src/hooks/useOnboardingFlow.ts` — Uses AuthContext instead of direct Supabase
+- `src/pages/Index.tsx` — Uses AuthContext, cleaner navigation logic
+- `src/lib/supabase.ts` — Removed AbortError workaround
+
+#### Files Deleted
+- `src/hooks/useAuth.ts` — Replaced by AuthContext
+- `src/hooks/usePreferencesSync.ts` — Merged into AuthContext
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Single AuthContext vs multiple hooks | Eliminates race conditions, single source of truth |
+| Explicit status enum vs boolean flags | Clearer state transitions, no ambiguous null states |
+| Profile + locations fetched together | Reduces roundtrips, ensures consistency |
+
+#### Technical Notes
+```
+New auth flow:
+  AuthProvider → getSession() → fetchUserData() → setState()
+                 ↓
+  onAuthStateChange → fetchUserData() → setState()
+
+Profile fetched exactly once per auth event.
+useHomeData only handles workout history + streak.
+```
+
+---
+
 ### Session: [Date] - [Brief Title]
 
 **Duration:** [Approx time]  

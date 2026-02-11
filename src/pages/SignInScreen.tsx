@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ArrowLeft, ArrowRight, Loader2, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/sonner";
 import { CTAButton } from "@/components/CTAButton";
 
 interface SignInScreenProps {
@@ -73,7 +73,7 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
 
       <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full">
         {/* Title */}
-        <h1 className="font-display text-4xl font-bold tracking-wider text-foreground mb-2">
+        <h1 className="text-heading-h1 font-bold tracking-wider text-foreground mb-2">
           Sign In
         </h1>
         <p className="text-foreground/60 mb-8">
@@ -84,7 +84,7 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Email */}
           <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm font-medium text-foreground/80">
+            <label htmlFor="email" className="block text-paragraph-sm font-medium text-foreground/80">
               Email
             </label>
             <input
@@ -100,7 +100,7 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
 
           {/* Password */}
           <div className="space-y-2">
-            <label htmlFor="password" className="block text-sm font-medium text-foreground/80">
+            <label htmlFor="password" className="block text-paragraph-sm font-medium text-foreground/80">
               Password
             </label>
             <div className="relative">

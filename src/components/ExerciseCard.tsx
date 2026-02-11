@@ -15,14 +15,14 @@ export const ExerciseCard = ({ exercise, onEditClick }: ExerciseCardProps) => {
         <h4 className="exercise-card-title">
           {exercise.name}
           {exercise.equipment && (
-            <span className="ml-2 text-xs font-normal text-muted-foreground uppercase tracking-wider bg-secondary/10 px-1.5 py-0.5 rounded">
+            <span className="ml-2 text-label-xs font-normal text-muted-foreground uppercase tracking-wider bg-secondary/10 px-1.5 py-0.5 rounded">
               {exercise.equipment.replace(/_/g, ' ')}
             </span>
           )}
         </h4>
       </button>
 
-      <div className="flex flex-wrap gap-2 text-sm">
+      <div className="flex flex-wrap gap-2 text-paragraph-sm">
         <span className="text-foreground">
           {exercise.sets ? `${exercise.sets} × ` : ''}{exercise.reps}
           {exercise.effort && ` @ ${exercise.effort}`}
@@ -40,13 +40,13 @@ export const ExerciseCard = ({ exercise, onEditClick }: ExerciseCardProps) => {
       </div>
 
       {exercise.lastWeight && (
-        <p className="text-sm text-clear-orange">
+        <p className="text-paragraph-sm text-clear-orange">
           Last: {exercise.lastWeight}
         </p>
       )}
 
       {exercise.coachingCues && (
-        <p className="text-sm italic text-foreground/70">
+        <p className="text-paragraph-sm italic text-foreground/70">
           [{Array.isArray(exercise.coachingCues)
             ? exercise.coachingCues.join('. ')
             : String(exercise.coachingCues)}]
@@ -55,7 +55,7 @@ export const ExerciseCard = ({ exercise, onEditClick }: ExerciseCardProps) => {
 
       {/* Regression/Progression inside the card */}
       {(exercise.regression || exercise.progression) && (
-        <div className="text-sm space-y-1 pt-2 border-t border-clear-orange/30">
+        <div className="text-paragraph-sm space-y-1 pt-2 border-t border-clear-orange/30">
           {exercise.regression && (
             <p className="text-foreground/80">
               <span className="text-muted-foreground">Regression:</span> {exercise.regression}

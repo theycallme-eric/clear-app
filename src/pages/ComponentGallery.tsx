@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Dumbbell, Zap, AlertCircle } from "lucide-react";
+import { ArrowLeft, Dumbbell, Zap, AlertCircle, User, HelpCircle, Maximize2, Pencil } from "lucide-react";
 
 // shadcn/ui components
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,8 @@ import { ActionButton } from "@/components/ActionButton";
 import { ActionCard } from "@/components/ActionCard";
 import { Card as ChamferedCard } from "@/components/Card";
 import { CTAButton } from "@/components/CTAButton";
+import { RadioButton } from "@/components/RadioButton";
+import { Chip } from "@/components/Chip";
 import { toast } from "@/components/ui/sonner";
 
 interface ComponentGalleryProps {
@@ -47,9 +49,11 @@ interface ComponentGalleryProps {
 export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
   // Local state for interactive demos (no app side effects)
   const [intensityValue, setIntensityValue] = useState(7);
-  const [anchorValue, setAnchorValue] = useState<AnchorType | null>("SQUAT");
+  const [anchorValue, setAnchorValue] = useState<AnchorType | null>("LOWER BODY");
   const [sliderValue, setSliderValue] = useState([50]);
   const [switchOn, setSwitchOn] = useState(true);
+  const [radioTextSelected, setRadioTextSelected] = useState<string | null>("Option A");
+  const [radioIconSelected, setRadioIconSelected] = useState<number | null>(1);
 
   const sampleLocations = [
     { id: "1", name: "Home Gym", tier: "home" as const, equipment: ["Dumbbells", "Bench"] },
@@ -68,7 +72,7 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
           >
             <ArrowLeft size={24} />
           </button>
-          <h1 className="font-display text-xl font-bold tracking-wider text-foreground uppercase">
+          <h1 className="text-heading-h4 font-bold tracking-wider text-foreground uppercase">
             Component Gallery
           </h1>
           <div className="w-10" />
@@ -77,20 +81,50 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
         <div className="px-4 space-y-8">
 
           {/* ─── TYPOGRAPHY ─── */}
-          <Section title="Typography">
+          <Section title="Typography — Headings (Rajdhani)">
             <div className="space-y-3">
-              <p className="font-display text-2xl font-bold uppercase tracking-wider text-foreground">
-                Display / font-display
-              </p>
-              <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-                Mono Label / font-mono
-              </p>
-              <p className="font-body text-sm text-foreground">
-                Body text / font-body — used for paragraph content and descriptions.
-              </p>
-              <p className="text-muted-foreground text-sm">
-                Muted text — secondary information
-              </p>
+              <p className="text-heading-h1 font-bold text-foreground">Heading H1</p>
+              <p className="text-heading-h2 font-bold text-foreground">Heading H2</p>
+              <p className="text-heading-h3 font-bold text-foreground">Heading H3</p>
+              <p className="text-heading-h4 font-bold text-foreground">Heading H4</p>
+              <p className="text-heading-h5 font-medium text-foreground">Heading H5</p>
+              <p className="text-heading-h6 font-medium text-foreground">Heading H6</p>
+            </div>
+          </Section>
+
+          <Section title="Typography — Paragraph (Space Grotesk)">
+            <div className="space-y-3">
+              <p className="text-paragraph-xl text-foreground">Paragraph XL — for large body text</p>
+              <p className="text-paragraph-lg text-foreground">Paragraph LG — for emphasized text</p>
+              <p className="text-paragraph-md text-foreground">Paragraph MD — default body text</p>
+              <p className="text-paragraph-sm text-muted-foreground">Paragraph SM — secondary text</p>
+              <p className="text-paragraph-xs text-muted-foreground">Paragraph XS — smallest body text</p>
+            </div>
+          </Section>
+
+          <Section title="Typography — Label (Oxanium)">
+            <div className="space-y-3">
+              <p className="text-label-xl uppercase tracking-wider text-foreground">Label XL — large labels</p>
+              <p className="text-label-lg uppercase tracking-wider text-foreground">Label LG — section labels</p>
+              <p className="text-label-md uppercase tracking-wider text-foreground">Label MD — standard labels</p>
+              <p className="text-label-sm uppercase tracking-wider text-muted-foreground">Label SM — small labels</p>
+              <p className="text-label-xs uppercase tracking-widest text-muted-foreground">Label XS — tiny labels</p>
+            </div>
+          </Section>
+
+          <Section title="Typography — CTA (Oxanium uppercase)">
+            <div className="space-y-3">
+              <p className="text-cta-lg font-bold text-foreground">CTA LG — large buttons</p>
+              <p className="text-cta-md font-bold text-foreground">CTA MD — standard buttons</p>
+              <p className="text-cta-sm font-bold text-foreground">CTA SM — small buttons</p>
+              <p className="text-cta-xs font-bold text-foreground">CTA XS — tiny buttons</p>
+            </div>
+          </Section>
+
+          <Section title="Typography — Time (Oxanium)">
+            <div className="space-y-3">
+              <p className="text-time-xl font-bold text-foreground">12:34 — Time XL</p>
+              <p className="text-time-lg font-bold text-foreground">12:34 — Time LG</p>
             </div>
           </Section>
 
@@ -109,63 +143,6 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
           </Section>
 
           {/* ─── BUTTONS ─── */}
-          <Section title="Buttons — shadcn/ui">
-            <div className="space-y-4">
-              <Subsection label="Variants">
-                <div className="flex flex-wrap gap-2">
-                  <Button variant="default">Default</Button>
-                  <Button variant="secondary">Secondary</Button>
-                  <Button variant="destructive">Destructive</Button>
-                  <Button variant="outline">Outline</Button>
-                  <Button variant="ghost">Ghost</Button>
-                  <Button variant="link">Link</Button>
-                </div>
-              </Subsection>
-
-              <Subsection label="Sizes">
-                <div className="flex items-center gap-2">
-                  <Button size="sm">Small</Button>
-                  <Button size="default">Default</Button>
-                  <Button size="lg">Large</Button>
-                  <Button size="icon"><Zap className="w-4 h-4" /></Button>
-                </div>
-              </Subsection>
-
-              <Subsection label="States">
-                <div className="flex gap-2">
-                  <Button disabled>Disabled</Button>
-                  <Button variant="outline" disabled>Disabled Outline</Button>
-                </div>
-              </Subsection>
-            </div>
-          </Section>
-
-          <Section title="Buttons — App Custom">
-            <div className="space-y-4">
-              <Subsection label="glow-button">
-                <button className="glow-button w-full py-3 font-display text-sm font-bold uppercase tracking-wider text-foreground">
-                  Glow Button
-                </button>
-              </Subsection>
-
-              <Subsection label="CTAButton secondary (replaces ghost-button)">
-                <CTAButton variant="secondary" fullWidth>
-                  Secondary Button
-                </CTAButton>
-              </Subsection>
-
-              <Subsection label="selection-active / inactive">
-                <div className="flex gap-2">
-                  <button className="selection-active px-4 py-2 font-display text-sm font-semibold uppercase">
-                    Active
-                  </button>
-                  <button className="selection-inactive px-4 py-2 font-display text-sm font-semibold uppercase text-foreground/90">
-                    Inactive
-                  </button>
-                </div>
-              </Subsection>
-            </div>
-          </Section>
 
           <Section title="ActionButton — Figma Design System">
             <div className="space-y-4">
@@ -235,6 +212,109 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
             </div>
           </Section>
 
+          {/* ─── RADIO BUTTON ─── */}
+          <Section title="RadioButton — Selection Component">
+            <div className="space-y-4">
+              <Subsection label="Text variant (selected vs unselected)">
+                <div className="flex flex-wrap gap-3">
+                  <RadioButton
+                    selected={radioTextSelected === "Option A"}
+                    onClick={() => setRadioTextSelected("Option A")}
+                    label="Option A"
+                  />
+                  <RadioButton
+                    selected={radioTextSelected === "Option B"}
+                    onClick={() => setRadioTextSelected("Option B")}
+                    label="Option B"
+                  />
+                  <RadioButton
+                    selected={radioTextSelected === "Option C"}
+                    onClick={() => setRadioTextSelected("Option C")}
+                    label="Option C"
+                  />
+                </div>
+              </Subsection>
+
+              <Subsection label="Icon variant (selected vs unselected)">
+                <div className="flex gap-3">
+                  <RadioButton
+                    selected={radioIconSelected === 1}
+                    onClick={() => setRadioIconSelected(1)}
+                    icon={<Dumbbell size={24} />}
+                  />
+                  <RadioButton
+                    selected={radioIconSelected === 2}
+                    onClick={() => setRadioIconSelected(2)}
+                    icon={<Zap size={24} />}
+                  />
+                  <RadioButton
+                    selected={radioIconSelected === 3}
+                    onClick={() => setRadioIconSelected(3)}
+                    icon={<AlertCircle size={24} />}
+                  />
+                </div>
+              </Subsection>
+
+              <Subsection label="Full width (for grids)">
+                <div className="grid grid-cols-2 gap-3">
+                  <RadioButton
+                    selected={true}
+                    onClick={() => {}}
+                    label="SELECTED"
+                    className="w-full"
+                  />
+                  <RadioButton
+                    selected={false}
+                    onClick={() => {}}
+                    label="UNSELECTED"
+                    className="w-full"
+                  />
+                </div>
+              </Subsection>
+            </div>
+          </Section>
+
+          {/* ─── CHIP ─── */}
+          <Section title="Chip — Chamfered Selection Chips">
+            <div className="space-y-4">
+              <Subsection label="Label variant (display-only)">
+                <div className="flex flex-wrap gap-2">
+                  <Chip variant="label">Equipment</Chip>
+                  <Chip variant="label">Strength</Chip>
+                  <Chip variant="label">Cardio</Chip>
+                </div>
+              </Subsection>
+
+              <Subsection label="Selectable variant (selected vs unselected)">
+                <div className="flex flex-wrap gap-2">
+                  <Chip variant="selectable" selected={true} onClick={() => {}}>
+                    Dumbbells
+                  </Chip>
+                  <Chip variant="selectable" selected={true} onClick={() => {}}>
+                    Barbell
+                  </Chip>
+                  <Chip variant="selectable" selected={false} onClick={() => {}}>
+                    Kettlebells
+                  </Chip>
+                  <Chip variant="selectable" selected={false} onClick={() => {}}>
+                    Cable Machine
+                  </Chip>
+                </div>
+              </Subsection>
+
+              <Subsection label="Disabled state">
+                <div className="flex flex-wrap gap-2">
+                  <Chip variant="selectable" selected={true} disabled>
+                    Bodyweight
+                  </Chip>
+                  <Chip variant="selectable" selected={false} disabled>
+                    Unavailable
+                  </Chip>
+                </div>
+              </Subsection>
+            </div>
+          </Section>
+
           {/* ─── CHAMFERED FRAME EXAMPLES ─── */}
           <Section title="ChamferedFrame Example">
             <div className="space-y-6">
@@ -266,10 +346,10 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
 
               <Subsection label="Default (with left accent column)">
                 <ChamferedCard>
-                  <p className="font-display text-sm font-semibold text-foreground uppercase tracking-wide">
+                  <p className="text-cta-sm font-medium text-foreground">
                     Universal Card
                   </p>
-                  <p className="text-muted-foreground text-sm mt-1">
+                  <p className="text-paragraph-sm text-muted-foreground mt-1">
                     Uses ChamferedFrame + LeftColumn pattern
                   </p>
                 </ChamferedCard>
@@ -278,13 +358,13 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
               <Subsection label="Corner sizes">
                 <div className="space-y-3">
                   <ChamferedCard cornerSize="sm">
-                    <span className="font-display text-sm">Small (8px chamfer)</span>
+                    <span className="text-paragraph-sm">Small (8px chamfer)</span>
                   </ChamferedCard>
                   <ChamferedCard cornerSize="md">
-                    <span className="font-display text-sm">Medium (12px chamfer)</span>
+                    <span className="text-paragraph-sm">Medium (12px chamfer)</span>
                   </ChamferedCard>
                   <ChamferedCard cornerSize="lg">
-                    <span className="font-display text-sm">Large (24px chamfer)</span>
+                    <span className="text-paragraph-sm">Large (24px chamfer)</span>
                   </ChamferedCard>
                 </div>
               </Subsection>
@@ -292,26 +372,26 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
               <Subsection label="Padding sizes">
                 <div className="space-y-3">
                   <ChamferedCard padding="sm">
-                    <span className="font-display text-sm">Small padding</span>
+                    <span className="text-paragraph-sm">Small padding</span>
                   </ChamferedCard>
                   <ChamferedCard padding="md">
-                    <span className="font-display text-sm">Medium padding (default)</span>
+                    <span className="text-paragraph-sm">Medium padding (default)</span>
                   </ChamferedCard>
                   <ChamferedCard padding="lg">
-                    <span className="font-display text-sm">Large padding</span>
+                    <span className="text-paragraph-sm">Large padding</span>
                   </ChamferedCard>
                 </div>
               </Subsection>
 
               <Subsection label="Interactive (onClick)">
                 <ChamferedCard onClick={() => toast.info("Card clicked!")}>
-                  <span className="font-display text-sm">Click me</span>
+                  <span className="text-paragraph-sm">Click me</span>
                 </ChamferedCard>
               </Subsection>
 
               <Subsection label="Without left column (for nesting)">
                 <ChamferedCard showLeftColumn={false}>
-                  <span className="font-display text-sm">No accent column</span>
+                  <span className="text-paragraph-sm">No accent column</span>
                 </ChamferedCard>
               </Subsection>
 
@@ -319,34 +399,54 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
           </Section>
 
           {/* ─── INPUTS ─── */}
-          <Section title="Inputs — shadcn/ui">
+          <Section title="Inputs — Design System">
             <div className="space-y-4">
-              <Subsection label="Input">
+              <Subsection label="Input states">
                 <div className="space-y-2">
                   <Input placeholder="Placeholder text" />
-                  <Input defaultValue="With value" />
+                  <Input defaultValue="With value (active on focus)" />
                   <Input disabled placeholder="Disabled" />
                 </div>
               </Subsection>
 
-              <Subsection label="Textarea">
+              <Subsection label="Input with icons">
                 <div className="space-y-2">
-                  <Textarea placeholder="Placeholder text..." />
-                  <Textarea disabled placeholder="Disabled" />
+                  <Input
+                    placeholder="Username"
+                    iconLeft={<User size={20} />}
+                    iconRight={<HelpCircle size={20} />}
+                  />
+                  <Input
+                    placeholder="Search..."
+                    iconLeft={<Zap size={20} />}
+                  />
+                  <Input
+                    placeholder="Disabled with icons"
+                    iconLeft={<User size={20} />}
+                    iconRight={<HelpCircle size={20} />}
+                    disabled
+                  />
                 </div>
               </Subsection>
 
-              <Subsection label="Slider">
-                <Slider value={sliderValue} onValueChange={setSliderValue} max={100} step={1} />
-                <p className="text-xs text-muted-foreground mt-1 font-mono">Value: {sliderValue[0]}</p>
+              <Subsection label="Textarea states">
+                <div className="space-y-2">
+                  <Textarea placeholder="Enter your message here..." />
+                  <Textarea defaultValue="Some existing content that can be edited" />
+                  <Textarea disabled placeholder="Disabled textarea" />
+                </div>
               </Subsection>
 
-              <Subsection label="Switch">
-                <div className="flex items-center gap-4">
-                  <Switch checked={switchOn} onCheckedChange={setSwitchOn} />
-                  <span className="text-sm text-muted-foreground">{switchOn ? "On" : "Off"}</span>
-                  <Switch disabled />
-                  <span className="text-sm text-muted-foreground">Disabled</span>
+              <Subsection label="Textarea with icon (for expand/edit)">
+                <div className="space-y-2">
+                  <Textarea
+                    placeholder="Notes..."
+                    iconRight={<Maximize2 size={20} />}
+                  />
+                  <Textarea
+                    defaultValue="Tap the icon to edit or expand this note field."
+                    iconRight={<Pencil size={20} />}
+                  />
                 </div>
               </Subsection>
             </div>
@@ -355,35 +455,6 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
           {/* ─── FEEDBACK ─── */}
           <Section title="Feedback">
             <div className="space-y-4">
-              <Subsection label="Badge variants">
-                <div className="flex flex-wrap gap-2">
-                  <Badge variant="default">Default</Badge>
-                  <Badge variant="secondary">Secondary</Badge>
-                  <Badge variant="destructive">Destructive</Badge>
-                  <Badge variant="outline">Outline</Badge>
-                </div>
-              </Subsection>
-
-              <Subsection label="Progress">
-                <div className="space-y-2">
-                  <Progress value={25} />
-                  <Progress value={66} />
-                  <Progress value={100} />
-                </div>
-              </Subsection>
-
-              <Subsection label="LoadingSpinner (sizes)">
-                <div className="flex items-center gap-6">
-                  <LoadingSpinner size="sm" />
-                  <LoadingSpinner size="md" message="Loading" />
-                  <LoadingSpinner size="lg" />
-                </div>
-              </Subsection>
-
-              <Subsection label="SkeletonCard">
-                <SkeletonCard />
-              </Subsection>
-
               <Subsection label="LoadingSkeleton (count=2)">
                 <LoadingSkeleton count={2} />
               </Subsection>
@@ -425,25 +496,13 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
             <div className="space-y-4">
               <Subsection label="glass-card">
                 <div className="glass-card p-4">
-                  <p className="font-display text-sm font-semibold text-foreground uppercase tracking-wide">
+                  <p className="text-cta-sm font-medium text-foreground">
                     Glass Card
                   </p>
-                  <p className="text-muted-foreground text-sm mt-1">
+                  <p className="text-paragraph-sm text-muted-foreground mt-1">
                     Used throughout the app for content sections
                   </p>
                 </div>
-              </Subsection>
-
-              <Subsection label="Card (shadcn/ui)">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Card Title</CardTitle>
-                    <CardDescription>Card description text</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm">Card content goes here.</p>
-                  </CardContent>
-                </Card>
               </Subsection>
             </div>
           </Section>
@@ -519,6 +578,127 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
             </div>
           </Section>
 
+          {/* ════════════════════════════════════════════════════════════════════ */}
+          {/* ═══ UNUSED COMPONENTS — Not actively used in the app ═══════════════ */}
+          {/* ════════════════════════════════════════════════════════════════════ */}
+
+          <div className="mt-16 pt-8 border-t-2 border-destructive/30">
+            <p className="text-label-lg text-destructive uppercase tracking-widest mb-2">
+              Unused Components
+            </p>
+            <p className="text-paragraph-sm text-muted-foreground mb-8">
+              These components are not actively used in the app and may be removed in a future cleanup.
+            </p>
+          </div>
+
+          <Section title="Unused — shadcn/ui Buttons">
+            <div className="space-y-4">
+              <Subsection label="Variants">
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="default">Default</Button>
+                  <Button variant="secondary">Secondary</Button>
+                  <Button variant="destructive">Destructive</Button>
+                  <Button variant="outline">Outline</Button>
+                  <Button variant="ghost">Ghost</Button>
+                  <Button variant="link">Link</Button>
+                </div>
+              </Subsection>
+
+              <Subsection label="Sizes">
+                <div className="flex items-center gap-2">
+                  <Button size="sm">Small</Button>
+                  <Button size="default">Default</Button>
+                  <Button size="lg">Large</Button>
+                  <Button size="icon"><Zap className="w-4 h-4" /></Button>
+                </div>
+              </Subsection>
+            </div>
+          </Section>
+
+          <Section title="Unused — Legacy Button Styles">
+            <div className="space-y-4">
+              <Subsection label="glow-button">
+                <button className="glow-button w-full py-3 text-cta-sm font-bold text-foreground">
+                  Glow Button
+                </button>
+              </Subsection>
+
+              <Subsection label="selection-active / inactive">
+                <div className="flex gap-2">
+                  <button className="selection-active px-4 py-2 text-cta-sm font-medium">
+                    Active
+                  </button>
+                  <button className="selection-inactive px-4 py-2 text-cta-sm font-medium text-foreground/90">
+                    Inactive
+                  </button>
+                </div>
+              </Subsection>
+            </div>
+          </Section>
+
+          <Section title="Unused — shadcn/ui Inputs">
+            <div className="space-y-4">
+              <Subsection label="Slider">
+                <Slider value={sliderValue} onValueChange={setSliderValue} max={100} step={1} />
+                <p className="text-label-xs text-muted-foreground mt-1">Value: {sliderValue[0]}</p>
+              </Subsection>
+
+              <Subsection label="Switch">
+                <div className="flex items-center gap-4">
+                  <Switch checked={switchOn} onCheckedChange={setSwitchOn} />
+                  <span className="text-paragraph-sm text-muted-foreground">{switchOn ? "On" : "Off"}</span>
+                  <Switch disabled />
+                  <span className="text-paragraph-sm text-muted-foreground">Disabled</span>
+                </div>
+              </Subsection>
+            </div>
+          </Section>
+
+          <Section title="Unused — shadcn/ui Feedback">
+            <div className="space-y-4">
+              <Subsection label="Badge variants">
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="default">Default</Badge>
+                  <Badge variant="secondary">Secondary</Badge>
+                  <Badge variant="destructive">Destructive</Badge>
+                  <Badge variant="outline">Outline</Badge>
+                </div>
+              </Subsection>
+
+              <Subsection label="Progress">
+                <div className="space-y-2">
+                  <Progress value={25} />
+                  <Progress value={66} />
+                  <Progress value={100} />
+                </div>
+              </Subsection>
+
+              <Subsection label="LoadingSpinner (sizes)">
+                <div className="flex items-center gap-6">
+                  <LoadingSpinner size="sm" />
+                  <LoadingSpinner size="md" message="Loading" />
+                  <LoadingSpinner size="lg" />
+                </div>
+              </Subsection>
+
+              <Subsection label="SkeletonCard">
+                <SkeletonCard />
+              </Subsection>
+            </div>
+          </Section>
+
+          <Section title="Unused — shadcn/ui Card">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-heading-h5">Card Title</CardTitle>
+                <CardDescription>Card description text</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-paragraph-sm">Card content goes here.</p>
+              </CardContent>
+            </Card>
+          </Section>
+
         </div>
       </div>
     </div >
@@ -530,7 +710,7 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h2 className="font-mono text-xs uppercase tracking-widest text-clear-orange mb-3 border-b border-clear-orange/20 pb-2">
+      <h2 className="text-label-xs uppercase tracking-widest text-clear-orange mb-3 border-b border-clear-orange/20 pb-2">
         {title}
       </h2>
       {children}
@@ -541,7 +721,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Subsection({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
+      <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-2" style={{ fontSize: '10px' }}>
         {label}
       </p>
       {children}
@@ -553,7 +733,7 @@ function ColorSwatch({ name, className }: { name: string; className: string }) {
   return (
     <div className="text-center">
       <div className={`w-full aspect-square rounded ${className}`} />
-      <p className="font-mono text-[9px] text-muted-foreground mt-1">{name}</p>
+      <p className="text-label-xs text-muted-foreground mt-1" style={{ fontSize: '9px' }}>{name}</p>
     </div>
   );
 }

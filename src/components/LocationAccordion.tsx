@@ -3,6 +3,7 @@ import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserLocation } from "@/types/workout";
 import { Card } from "./Card";
+import { RadioButton } from "./RadioButton";
 
 interface LocationAccordionProps {
   selected: string;
@@ -24,13 +25,13 @@ export const LocationAccordion = ({ selected, onSelect, locations }: LocationAcc
       >
         <div>
           <span
-            className="font-mono text-xs uppercase tracking-widest block mb-1"
+            className="text-label-xs uppercase tracking-widest block mb-1"
             style={{ color: "var(--text-paragraph)" }}
           >
             Location
           </span>
           <span
-            className="font-display text-lg font-semibold"
+            className="text-heading-h5 font-medium"
             style={{ color: "var(--text-header)" }}
           >
             {displayName}
@@ -53,23 +54,18 @@ export const LocationAccordion = ({ selected, onSelect, locations }: LocationAcc
         )}
       >
         <div className="overflow-hidden">
-          <div className="px-4 pb-4 space-y-2">
+          <div className="px-4 pb-4 flex flex-col gap-2">
             {locations.map((location) => (
-              <button
+              <RadioButton
                 key={location.id}
+                selected={selected === location.name}
                 onClick={() => {
                   onSelect(location.name);
                   setIsOpen(false);
                 }}
-                className={cn(
-                  "w-full text-left px-3 py-2 rounded font-body text-sm transition-colors",
-                  selected === location.name
-                    ? "bg-accent/20 text-accent"
-                    : "text-foreground/80 hover:bg-secondary/10 hover:text-foreground"
-                )}
-              >
-                {location.name}
-              </button>
+                label={location.name}
+                className="w-full"
+              />
             ))}
           </div>
         </div>

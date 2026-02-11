@@ -16,7 +16,7 @@ export const SupersetCard = ({ exercises, onLog, onComplete, completedIds }: Str
             {/* Connecting Line and Label */}
             <div className="absolute left-0 top-4 bottom-4 w-0.5 bg-gradient-to-b from-clear-orange via-clear-orange/50 to-clear-orange rounded-full" />
             <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-background py-2">
-                <div className="text-[10px] font-bold text-clear-orange uppercase tracking-widest writing-vertical-lr rotate-180">
+                <div className="text-label-xs font-bold text-clear-orange uppercase tracking-widest writing-vertical-lr rotate-180">
                     Superset
                 </div>
             </div>
@@ -43,7 +43,7 @@ export const CircuitCard = ({ exercises, onLog, onComplete, completedIds, struct
     return (
         <div className="space-y-3">
             <div className="flex items-center justify-between px-1">
-                <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                <span className="text-label-xs font-bold text-muted-foreground uppercase tracking-widest">
                     {rounds ? `${rounds} Rounds` : 'Circuit'}
                 </span>
             </div>

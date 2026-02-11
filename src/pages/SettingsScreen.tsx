@@ -15,7 +15,7 @@ import {
   WORKOUT_SECTIONS,
   SECTIONS_BY_GOAL,
 } from "@/types/workout";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/sonner";
 
 interface SettingsScreenProps {
   userPreferences: UserPreferences;
@@ -276,7 +276,7 @@ export const SettingsScreen = ({
           >
             <ArrowLeft size={24} />
           </button>
-          <h1 className="font-display text-xl font-bold tracking-wider text-foreground uppercase">
+          <h1 className="text-heading-h4 font-bold tracking-wider text-foreground uppercase">
             {getTitle()}
           </h1>
           <div className="w-10" />
@@ -288,7 +288,7 @@ export const SettingsScreen = ({
             <div className="space-y-6">
               {/* Workout Setup Section */}
               <div>
-                <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-3">
+                <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3">
                   Workout Setup
                 </p>
                 <div className="space-y-2">
@@ -299,10 +299,10 @@ export const SettingsScreen = ({
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-display text-sm font-semibold text-foreground">
+                        <p className="text-label-sm text-foreground">
                           Locations / Equipment
                         </p>
-                        <p className="text-muted-foreground text-sm mt-0.5">
+                        <p className="text-muted-foreground text-paragraph-sm mt-0.5">
                           {defaultLocation?.name || "Not set"}
                         </p>
                       </div>
@@ -320,10 +320,10 @@ export const SettingsScreen = ({
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-display text-sm font-semibold text-foreground">
+                        <p className="text-label-sm text-foreground">
                           Experience Level
                         </p>
-                        <p className="text-muted-foreground text-sm mt-0.5">
+                        <p className="text-muted-foreground text-paragraph-sm mt-0.5">
                           {EXPERIENCE_LEVELS.find(l => l.value === preferences.experienceLevel)?.label || "Not set"}
                         </p>
                       </div>
@@ -344,10 +344,10 @@ export const SettingsScreen = ({
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-display text-sm font-semibold text-foreground">
+                        <p className="text-label-sm text-foreground">
                           Workout Structure
                         </p>
-                        <p className="text-muted-foreground text-sm mt-0.5">
+                        <p className="text-muted-foreground text-paragraph-sm mt-0.5">
                           {GOAL_PRESETS.find(g => g.value === preferences.goal)?.label || "Not set"} • {preferences.sections.length} sections
                         </p>
                       </div>
@@ -365,10 +365,10 @@ export const SettingsScreen = ({
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-display text-sm font-semibold text-foreground">
+                        <p className="text-label-sm text-foreground">
                           Limitations
                         </p>
-                        <p className="text-muted-foreground text-sm mt-0.5 truncate max-w-[250px]">
+                        <p className="text-muted-foreground text-paragraph-sm mt-0.5 truncate max-w-[250px]">
                           {preferences.limitations ? `"${preferences.limitations.slice(0, 30)}${preferences.limitations.length > 30 ? '...' : ''}"` : "None set"}
                         </p>
                       </div>
@@ -380,7 +380,7 @@ export const SettingsScreen = ({
 
               {/* About Section */}
               <div>
-                <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-3">
+                <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3">
                   About
                 </p>
                 <div className="space-y-2">
@@ -389,7 +389,7 @@ export const SettingsScreen = ({
                     className="w-full glass-card p-4 text-left hover:border-clear-orange/60 transition-all"
                   >
                     <div className="flex items-center justify-between">
-                      <p className="font-display text-sm font-semibold text-foreground">
+                      <p className="text-label-sm text-foreground">
                         Send Feedback
                       </p>
                       <ChevronRight className="w-5 h-5 text-muted-foreground" />
@@ -399,10 +399,10 @@ export const SettingsScreen = ({
                   <div className="glass-card p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-display text-sm font-semibold text-foreground">
+                        <p className="text-label-sm text-foreground">
                           About Clear
                         </p>
-                        <p className="text-muted-foreground text-sm mt-0.5">
+                        <p className="text-muted-foreground text-paragraph-sm mt-0.5">
                           Version 1.0.0
                         </p>
                       </div>
@@ -414,7 +414,7 @@ export const SettingsScreen = ({
               {/* Developer Section */}
               {onOpenDeveloper && (
                 <div>
-                  <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-3">
+                  <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3">
                     Developer
                   </p>
                   <div className="space-y-2">
@@ -424,10 +424,10 @@ export const SettingsScreen = ({
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="font-display text-sm font-semibold text-foreground">
+                          <p className="text-label-sm text-foreground">
                             Component Gallery
                           </p>
-                          <p className="text-muted-foreground text-sm mt-0.5">
+                          <p className="text-muted-foreground text-paragraph-sm mt-0.5">
                             Audit design system components
                           </p>
                         </div>
@@ -463,7 +463,7 @@ export const SettingsScreen = ({
                         )}
                       </div>
                       <div>
-                        <p className="font-display text-sm font-semibold text-foreground">
+                        <p className="text-label-sm text-foreground">
                           {location.name}
                         </p>
                         <p className="text-muted-foreground text-xs mt-1">
@@ -486,7 +486,7 @@ export const SettingsScreen = ({
                 onClick={startAddLocation}
                 className="w-full glass-card p-4 text-center hover:border-clear-orange/60 transition-all"
               >
-                <span className="font-display text-sm font-semibold text-clear-orange">
+                <span className="text-label-sm text-clear-orange">
                   + Add Location
                 </span>
               </button>
@@ -498,7 +498,7 @@ export const SettingsScreen = ({
             <div className="space-y-6">
               {/* Location Name */}
               <div>
-                <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-2">
                   Location Name
                 </p>
                 <div className="glass-card p-4">
@@ -514,7 +514,7 @@ export const SettingsScreen = ({
 
               {/* Equipment Type */}
               <div>
-                <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-2">
                   Equipment Type
                 </p>
                 <div className="space-y-2">
@@ -543,7 +543,7 @@ export const SettingsScreen = ({
                           )}
                         </div>
                         <div>
-                          <p className="font-display text-sm font-semibold uppercase tracking-wide text-foreground">
+                          <p className="text-label-sm uppercase tracking-wide text-foreground">
                             {tier.label}
                           </p>
                           <p className="text-muted-foreground text-xs">
@@ -562,7 +562,7 @@ export const SettingsScreen = ({
                   onClick={() => setEquipmentAccordionOpen(!equipmentAccordionOpen)}
                   className="w-full p-4 flex items-center justify-between"
                 >
-                  <span className="font-display text-sm font-semibold uppercase tracking-wide text-foreground">
+                  <span className="text-label-sm uppercase tracking-wide text-foreground">
                     Customize Equipment
                   </span>
                   {equipmentAccordionOpen ? (
@@ -585,7 +585,7 @@ export const SettingsScreen = ({
                             onClick={() => !isBodyweight && handleEquipmentToggle(equipment)}
                             disabled={isBodyweight}
                             className={cn(
-                              "px-2 py-1 text-xs font-mono uppercase tracking-wide transition-all",
+                              "px-2 py-1 text-label-xs uppercase tracking-wide transition-all",
                               isSelected
                                 ? "bg-clear-lime/20 border border-clear-lime text-clear-lime"
                                 : "bg-transparent border border-muted-foreground/30 text-muted-foreground hover:border-clear-orange/50"
@@ -619,7 +619,7 @@ export const SettingsScreen = ({
           {/* Experience Level */}
           {currentView === "experience" && (
             <div className="space-y-6">
-              <h2 className="font-display text-xl font-bold uppercase tracking-wider text-foreground">
+              <h2 className="text-heading-h4 font-bold uppercase tracking-wider text-foreground">
                 How Familiar Are You<br />With the Gym?
               </h2>
 
@@ -649,10 +649,10 @@ export const SettingsScreen = ({
                         )}
                       </div>
                       <div>
-                        <p className="font-display text-lg font-semibold uppercase tracking-wide text-foreground">
+                        <p className="text-heading-h5 font-medium uppercase tracking-wide text-foreground">
                           {level.label}
                         </p>
-                        <p className="text-muted-foreground text-sm mt-1">
+                        <p className="text-muted-foreground text-paragraph-sm mt-1">
                           {level.description}
                         </p>
                       </div>
@@ -667,7 +667,7 @@ export const SettingsScreen = ({
           {currentView === "structure" && (
             <div className="space-y-6">
               <div>
-                <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-3">
+                <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3">
                   Goal
                 </p>
                 <div className="space-y-2">
@@ -696,7 +696,7 @@ export const SettingsScreen = ({
                           )}
                         </div>
                         <div>
-                          <p className="font-display text-sm font-semibold uppercase tracking-wide text-foreground">
+                          <p className="text-label-sm uppercase tracking-wide text-foreground">
                             {preset.label}
                           </p>
                           <p className="text-muted-foreground text-xs">
@@ -716,7 +716,7 @@ export const SettingsScreen = ({
                     onClick={() => setSectionsAccordionOpen(!sectionsAccordionOpen)}
                     className="w-full p-4 flex items-center justify-between"
                   >
-                    <span className="font-display text-sm font-semibold uppercase tracking-wide text-foreground">
+                    <span className="text-label-sm uppercase tracking-wide text-foreground">
                       Customize Sections
                     </span>
                     {sectionsAccordionOpen ? (
@@ -741,7 +741,7 @@ export const SettingsScreen = ({
                               onClick={() => !isDisabled && handleSectionToggle(section.id)}
                               disabled={isDisabled}
                               className={cn(
-                                "px-2 py-1 text-xs font-mono uppercase tracking-wide transition-all",
+                                "px-2 py-1 text-label-xs uppercase tracking-wide transition-all",
                                 isSelected
                                   ? "bg-clear-lime/20 border border-clear-lime text-clear-lime"
                                   : isDisabled
@@ -773,10 +773,10 @@ export const SettingsScreen = ({
                         <div className="space-y-3 pt-2 border-t border-muted-foreground/20">
                           {WORKOUT_SECTIONS.map((section) => (
                             <div key={section.id}>
-                              <p className="font-mono text-xs uppercase tracking-wide text-clear-orange">
+                              <p className="text-label-xs uppercase tracking-wide text-clear-orange">
                                 {section.name}
                               </p>
-                              <p className="text-muted-foreground text-sm">
+                              <p className="text-muted-foreground text-paragraph-sm">
                                 {section.description}
                               </p>
                             </div>
@@ -794,10 +794,10 @@ export const SettingsScreen = ({
           {currentView === "limitations" && (
             <div className="space-y-6">
               <div>
-                <h2 className="font-display text-xl font-bold uppercase tracking-wider text-foreground">
+                <h2 className="text-heading-h4 font-bold uppercase tracking-wider text-foreground">
                   Anything We Should<br />Work Around?
                 </h2>
-                <p className="text-muted-foreground text-sm mt-2">
+                <p className="text-muted-foreground text-paragraph-sm mt-2">
                   Old injuries, problem areas, or movements you want to avoid.
                 </p>
               </div>

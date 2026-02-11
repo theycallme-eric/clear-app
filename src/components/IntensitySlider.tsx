@@ -13,7 +13,7 @@ export const IntensitySlider = ({ value, onChange }: IntensitySliderProps) => {
   return (
     <Card cornerSize="md" padding="lg">
       <label
-        className="font-mono text-xs uppercase tracking-widest mb-4 block"
+        className="text-label-xs uppercase tracking-widest mb-4 block"
         style={{ color: "var(--text-paragraph)" }}
       >
         Intensity Level
@@ -36,7 +36,7 @@ export const IntensitySlider = ({ value, onChange }: IntensitySliderProps) => {
           </div>
 
           <div
-            className="flex justify-between mt-2 text-xs font-mono"
+            className="flex justify-between mt-2 text-label-xs"
             style={{ color: "var(--text-paragraph)" }}
           >
             <span>1</span>
@@ -55,7 +55,7 @@ export const IntensitySlider = ({ value, onChange }: IntensitySliderProps) => {
         >
           <div className="flex items-center justify-center h-full">
             <span
-              className="font-display text-4xl font-bold"
+              className="text-heading-h1 font-bold"
               style={{ color: "var(--text-header)" }}
             >
               {value}

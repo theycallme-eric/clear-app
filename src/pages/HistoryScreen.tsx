@@ -97,7 +97,7 @@ export const HistoryScreen = ({
           >
             <ArrowLeft size={24} />
           </button>
-          <h1 className="font-display text-xl font-bold tracking-wider text-foreground uppercase">
+          <h1 className="text-heading-h4 font-bold tracking-wider text-foreground uppercase">
             History
           </h1>
           <button
@@ -112,7 +112,7 @@ export const HistoryScreen = ({
         <div className="px-4">
           {/* Filter Section */}
           <div className="mb-6">
-            <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-3">
+            <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3">
               Filter By
             </p>
             <div className="flex gap-2">
@@ -227,7 +227,7 @@ export const HistoryScreen = ({
             <div className="space-y-6">
               {Object.entries(groupedByMonth).map(([month, workouts]) => (
                 <div key={month}>
-                  <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-3">
+                  <h2 className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3">
                     {month}
                   </h2>
                   <div className="space-y-2">
@@ -237,10 +237,10 @@ export const HistoryScreen = ({
                         onClick={() => onSelectWorkout(workout.id)}
                         className="w-full glass-card p-4 text-left hover:border-clear-orange/60 transition-all"
                       >
-                        <p className="font-display text-sm font-semibold text-foreground uppercase tracking-wide">
+                        <p className="text-label-sm text-foreground uppercase tracking-wide">
                           {formatDate(workout.date)} &bull; {workout.anchor} &bull; Int. {workout.intensity}
                         </p>
-                        <p className="text-muted-foreground text-sm flex items-center gap-1 mt-1">
+                        <p className="text-muted-foreground text-paragraph-sm flex items-center gap-1 mt-1">
                           <Clock className="w-3 h-3" />
                           {workout.duration} min
                         </p>

@@ -69,6 +69,11 @@ export default {
         },
       },
       fontFamily: {
+        // Figma-aligned naming
+        headings: ["Rajdhani", "sans-serif"],
+        paragraph: ["Space Grotesk", "sans-serif"],
+        label: ["Oxanium", "monospace"],
+        // Legacy aliases (for backward compatibility during migration)
         display: ["Rajdhani", "sans-serif"],
         body: ["Space Grotesk", "sans-serif"],
         mono: ["Oxanium", "monospace"],

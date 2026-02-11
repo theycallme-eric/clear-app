@@ -48,6 +48,7 @@ Skills are Standard Operating Procedures (SOPs) that guide specific tasks.
 | Skill | Trigger | Description |
 |-------|---------|-------------|
 | [`backlog`](skills/backlog.md) | Adding/completing tasks | Manage `docs/BACKLOG.md` |
+| [`todo-board`](skills/todo-board.md) | Checking or updating todo board | Process informal notes in `docs/todo/` |
 | [`project-map`](skills/project-map.md) | Major architecture change | Update `docs/wireframes/PROJECT_MAP.md` |
 
 ---
@@ -81,6 +82,7 @@ Session End:    close-session → backlog → project-map (if needed)
     ├── supabase-workflow.md
     ├── debug.md
     ├── backlog.md
+    ├── todo-board.md
     └── project-map.md
 ```
 

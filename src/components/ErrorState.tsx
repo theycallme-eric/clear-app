@@ -18,13 +18,13 @@ export const ErrorState = ({
 }: ErrorStateProps) => {
   return (
     <div className={cn("glass-card p-6 text-center", className)}>
-      <p className="text-foreground font-display text-sm uppercase tracking-wide mb-2">
+      <p className="text-foreground text-label-sm uppercase tracking-wide mb-2">
         {message}
       </p>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="inline-flex items-center gap-2 mt-2 px-4 py-2 text-sm font-mono text-clear-orange hover:text-clear-orange/80 transition-colors"
+          className="inline-flex items-center gap-2 mt-2 px-4 py-2 text-label-sm text-clear-orange hover:text-clear-orange/80 transition-colors"
         >
           <RefreshCw className="w-4 h-4" />
           Try Again

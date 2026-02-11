@@ -28,7 +28,7 @@ export const WorkoutHeader = ({
         {/* A: Section info - left side, stacked vertically, centered */}
         <div className="flex flex-col items-center">
           <span
-            className="text-xs font-display uppercase tracking-wider px-2 py-0.5"
+            className="text-label-xs uppercase tracking-wider px-2 py-0.5"
             style={{
               color: "var(--text-paragraph)",
               border: "1px solid var(--border-card)",
@@ -36,14 +36,14 @@ export const WorkoutHeader = ({
           >
             {sectionName}
           </span>
-          <span className="text-xs mt-1" style={{ color: "var(--text-paragraph)" }}>
+          <span className="text-paragraph-xs mt-1" style={{ color: "var(--text-paragraph)" }}>
             ({currentSection + 1}/{totalSections})
           </span>
         </div>
 
         {/* C: Timer - centered */}
         <span
-          className="font-mono text-3xl font-bold tracking-wider"
+          className="text-time-lg font-bold tracking-wider"
           style={{ color: "var(--color-green-500)" }}
         >
           {formatTime(sectionTime)}

@@ -15,87 +15,112 @@ import { ComponentGallery } from "@/pages/ComponentGallery";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { AbandonmentModal } from "@/components/AbandonmentModal";
 import { supabase } from "@/lib/supabase";
-import { toast } from "sonner";
-import { useAuth } from "@/hooks/useAuth";
+import { toast } from "@/components/ui/sonner";
+import { useAuthContext } from "@/contexts/AuthContext";
 import { useHomeData } from "@/hooks/useHomeData";
 import { useAppNavigation } from "@/hooks/useAppNavigation";
 import { useOnboardingFlow } from "@/hooks/useOnboardingFlow";
 import { useWorkoutFlow } from "@/hooks/useWorkoutFlow";
 import { useHistoryDetail } from "@/hooks/useHistoryDetail";
-import { usePreferencesSync } from "@/hooks/usePreferencesSync";
 
 const Index = () => {
-  const { isLoading: authLoading, isAuthenticated, onboardingComplete, userId } = useAuth();
+  const {
+    status,
+    user,
+    profile,
+    locations,
+    updateProfile,
+    updateLocations
+  } = useAuthContext();
+
   const { currentScreen, navigateTo } = useAppNavigation();
 
   const {
     workoutHistory,
     streakData,
-    userPreferences,
     incompleteSession,
     isLoading: isLoadingHomeData,
     hasError: homeDataError,
     loadHomeData,
     checkForIncompleteSession,
     clearIncompleteSession,
-    setUserPreferences,
-  } = useHomeData(userId);
+  } = useHomeData(user?.id || null);
 
-  // Initialize hooks
-  const { handleOnboardingComplete } = useOnboardingFlow(async () => {
-    await loadHomeData();
+  // Build UserPreferences from AuthContext for components that need it
+  const userPreferences = {
+    onboardingComplete: profile?.onboardingComplete || false,
+    locations,
+    defaultLocationId: profile?.defaultLocationId || null,
+    experienceLevel: profile?.experienceLevel || null,
+    goal: profile?.goal || null,
+    sections: profile?.enabledSections || [],
+    limitations: profile?.limitations || '',
+  };
+
+  const { handleOnboardingComplete } = useOnboardingFlow(() => {
+    loadHomeData();
     navigateTo("home");
   });
 
   const workoutFlow = useWorkoutFlow(userPreferences, loadHomeData, workoutHistory);
   const historyDetail = useHistoryDetail();
-  const { handleSavePreferences } = usePreferencesSync(userPreferences, setUserPreferences);
 
-  // React to auth state changes and initial navigation routing
+  // Navigation based on auth status
   useEffect(() => {
-    // If we're already checking auth or loading, wait
-    if (authLoading) return;
-
-    // Component Gallery Direct Access handled in hook, but we need to respect it if set
+    // Component Gallery direct access
     if (currentScreen === 'componentGallery') return;
 
-    // Guard: Auth Check
-    if (!isAuthenticated) {
-      if (currentScreen !== 'welcome' && currentScreen !== 'signIn' && currentScreen !== 'createAccount') {
-        navigateTo("welcome");
+    // Loading - wait
+    if (status === 'loading') {
+      if (currentScreen !== 'loading') navigateTo('loading');
+      return;
+    }
+
+    // Not authenticated - show welcome
+    if (status === 'unauthenticated') {
+      if (!['welcome', 'signIn', 'createAccount'].includes(currentScreen)) {
+        navigateTo('welcome');
       }
       return;
     }
 
-    // Screens that indicate user is past onboarding (app flow screens)
-    const postOnboardingScreens = ['generation', 'review', 'workout', 'summary', 'home', 'history', 'historyDetail', 'settings'];
-
-    // Guard: Onboarding Check
-    // Don't redirect to onboarding if we're already on a post-onboarding screen
-    // (This handles the case where DB was updated but useAuth hasn't refreshed yet)
-    if (isAuthenticated && onboardingComplete === false) {
-      if (!postOnboardingScreens.includes(currentScreen)) {
-        navigateTo("onboarding");
+    // Authenticated - check onboarding
+    if (status === 'authenticated') {
+      if (!profile?.onboardingComplete) {
+        if (currentScreen !== 'onboarding') {
+          navigateTo('onboarding');
+        }
         return;
       }
-    }
 
-    // Guard: Home (Authenticated & Onboarded)
-    // Navigate to home if we are currently at a "pre-auth" screen
-    if (isAuthenticated && (onboardingComplete === true || postOnboardingScreens.includes(currentScreen))) {
+      // Onboarding complete - go to home if on auth screens
       if (['loading', 'welcome', 'signIn', 'createAccount', 'onboarding'].includes(currentScreen)) {
         loadHomeData();
         checkForIncompleteSession();
-        navigateTo("home");
+        navigateTo('home');
       }
     }
-  }, [authLoading, isAuthenticated, onboardingComplete, currentScreen]);
+  }, [status, profile?.onboardingComplete, currentScreen]);
+
+  // Handle preferences save (for SettingsScreen)
+  const handleSavePreferences = async (newPreferences: typeof userPreferences) => {
+    await updateProfile({
+      experienceLevel: newPreferences.experienceLevel,
+      goal: newPreferences.goal,
+      limitations: newPreferences.limitations,
+      enabledSections: newPreferences.sections,
+      defaultLocationId: newPreferences.defaultLocationId,
+    });
+    await updateLocations(newPreferences.locations);
+  };
 
   // Auth handlers
   const handleSignInSuccess = async (onboardingComplete: boolean) => {
+    // Auth listener will handle state update
+    // Just navigate based on onboarding status
     if (onboardingComplete) {
-      await loadHomeData();
-      await checkForIncompleteSession();
+      loadHomeData();
+      checkForIncompleteSession();
       navigateTo("home");
     } else {
       navigateTo("onboarding");
@@ -105,7 +130,6 @@ const Index = () => {
   // Abandonment handlers
   const handleAbandonIncomplete = async () => {
     if (!incompleteSession) return;
-    // Delete the incomplete session
     await supabase
       .from('workout_sessions')
       .delete()
@@ -127,7 +151,6 @@ const Index = () => {
   };
 
   const handleMarkRestDay = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
     try {

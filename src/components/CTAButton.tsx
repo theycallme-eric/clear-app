@@ -48,25 +48,25 @@ export function CTAButton({
   const isTransparent = variant === "transparent";
   const isPrimary = variant === "primary";
 
-  // Size configurations
+  // Size configurations - using Figma CTA typography tokens
   const sizeConfig = {
     sm: {
       height: "h-10",
-      text: "text-sm",
+      text: "text-cta-sm",
       icon: "size-5",
       padding: "px-3 py-2",
       leftColSize: "sm" as const,
     },
     md: {
       height: "h-10",
-      text: "text-base",
+      text: "text-cta-md",
       icon: "size-6",
       padding: "px-3 py-2",
       leftColSize: "sm" as const,
     },
     lg: {
       height: "h-14",
-      text: "text-lg",
+      text: "text-cta-lg",
       icon: "size-6",
       padding: "px-4 py-3",
       leftColSize: "sm" as const,
@@ -86,8 +86,8 @@ export function CTAButton({
           "group inline-flex items-center justify-center gap-2",
           currentSize.height,
           currentSize.padding,
-          "font-display font-bold uppercase tracking-wider",
           currentSize.text,
+          "font-bold",
           "transition-colors",
           disabled
             ? "text-[var(--text-disabled)] cursor-not-allowed"
@@ -109,7 +109,7 @@ export function CTAButton({
             {iconLeft}
           </span>
         )}
-        <span>{children}</span>
+        <span className="uppercase">{children}</span>
         {iconRight && (
           <span
             className={cn(
@@ -204,8 +204,8 @@ export function CTAButton({
           )}
           <span
             className={cn(
-              "font-display font-bold uppercase tracking-wider whitespace-nowrap transition-colors",
               currentSize.text,
+              "font-bold whitespace-nowrap uppercase transition-colors",
               disabled
                 ? "text-[var(--text-disabled)]"
                 : "text-[var(--text-cta)] group-hover:text-[var(--text-cta-hover)]"

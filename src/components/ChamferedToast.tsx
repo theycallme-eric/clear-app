@@ -10,6 +10,7 @@ interface ChamferedToastProps {
   id: string | number;
   variant: ToastVariant;
   title: string;
+  description?: string;
   icon?: ReactNode;
 }
 
@@ -27,6 +28,7 @@ function ChamferedToast({
   id,
   variant,
   title,
+  description,
   icon,
 }: ChamferedToastProps) {
   const variantConfig = {
@@ -57,7 +59,7 @@ function ChamferedToast({
 
   return (
     <div
-      className="flex items-stretch w-[349px] h-[68px] cursor-pointer"
+      className={`flex items-stretch w-[calc(100vw-32px)] sm:w-[349px] cursor-pointer ${description ? 'min-h-[68px]' : 'h-[68px]'}`}
       onClick={() => toast.dismiss(id)}
     >
       {/* Left accent column - 12px wide */}
@@ -85,10 +87,17 @@ function ChamferedToast({
             {icon || config.defaultIcon}
           </span>
 
-          {/* Title */}
-          <p className="font-label text-base font-medium">
-            {title}
-          </p>
+          {/* Title + Description */}
+          <div className="flex flex-col justify-center">
+            <p className="font-label text-base font-medium">
+              {title}
+            </p>
+            {description && (
+              <p className="font-label text-sm opacity-80">
+                {description}
+              </p>
+            )}
+          </div>
         </div>
       </ChamferedFrame>
     </div>
@@ -99,34 +108,37 @@ function ChamferedToast({
  * Toast helper functions
  */
 export const chamferedToast = {
-  success: (title: string, options?: { icon?: ReactNode }) => {
+  success: (title: string, options?: { description?: string; icon?: ReactNode }) => {
     return toast.custom((id) => (
       <ChamferedToast
         id={id}
         variant="success"
         title={title}
+        description={options?.description}
         icon={options?.icon}
       />
     ));
   },
 
-  error: (title: string, options?: { icon?: ReactNode }) => {
+  error: (title: string, options?: { description?: string; icon?: ReactNode }) => {
     return toast.custom((id) => (
       <ChamferedToast
         id={id}
         variant="error"
         title={title}
+        description={options?.description}
         icon={options?.icon}
       />
     ));
   },
 
-  info: (title: string, options?: { icon?: ReactNode }) => {
+  info: (title: string, options?: { description?: string; icon?: ReactNode }) => {
     return toast.custom((id) => (
       <ChamferedToast
         id={id}
         variant="info"
         title={title}
+        description={options?.description}
         icon={options?.icon}
       />
     ));

@@ -44,7 +44,7 @@ export const WorkoutExerciseItem = ({
           <h3 className="exercise-card-title">
             {exercise.name}
           </h3>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-paragraph-sm text-muted-foreground mt-1">
             {exercise.sets} × {exercise.reps}
             {exercise.effort && ` @ ${exercise.effort}`}
           </p>
@@ -62,17 +62,17 @@ export const WorkoutExerciseItem = ({
       {isExpanded && (
         <div className="mt-3 pt-3 border-t border-clear-orange/30 space-y-2">
           {exercise.tempo && (
-            <p className="text-sm text-foreground/80">
+            <p className="text-paragraph-sm text-foreground/80">
               <span className="text-muted-foreground">Tempo:</span> {exercise.tempo}
             </p>
           )}
           {exercise.rest && (
-            <p className="text-sm text-foreground/80">
+            <p className="text-paragraph-sm text-foreground/80">
               <span className="text-muted-foreground">Rest:</span> {exercise.rest}
             </p>
           )}
           {exercise.coachingCues && (
-            <p className="text-sm italic text-foreground/70">
+            <p className="text-paragraph-sm italic text-foreground/70">
               {exercise.coachingCues}
             </p>
           )}
@@ -81,12 +81,12 @@ export const WorkoutExerciseItem = ({
           {(exercise.regression || exercise.progression) && (
             <div className="pt-3 border-t border-clear-orange/30 space-y-1">
               {exercise.regression && (
-                <p className="text-sm text-foreground/80">
+                <p className="text-paragraph-sm text-foreground/80">
                   <span className="text-muted-foreground">Regression:</span> {exercise.regression}
                 </p>
               )}
               {exercise.progression && (
-                <p className="text-sm text-foreground/80">
+                <p className="text-paragraph-sm text-foreground/80">
                   <span className="text-muted-foreground">Progression:</span> {exercise.progression}
                 </p>
               )}
@@ -96,7 +96,7 @@ export const WorkoutExerciseItem = ({
           {/* Notes Section */}
           <div className="pt-3 border-t border-clear-orange/30">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground lowercase">{exercise.name}.</span>
+              <span className="text-paragraph-sm text-muted-foreground lowercase">{exercise.name}.</span>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -124,7 +124,7 @@ export const WorkoutExerciseItem = ({
                     }
                   }}
                   placeholder="Add a note..."
-                  className="w-full bg-background/50 border border-clear-orange/30 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-clear-orange"
+                  className="w-full bg-background/50 border border-clear-orange/30 px-3 py-2 text-paragraph-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-clear-orange"
                   autoFocus
                   onClick={(e) => e.stopPropagation()}
                 />
@@ -134,7 +134,7 @@ export const WorkoutExerciseItem = ({
                       e.stopPropagation();
                       handleAddNote();
                     }}
-                    className="text-xs text-clear-orange hover:text-clear-orange/80"
+                    className="text-label-xs text-clear-orange hover:text-clear-orange/80"
                   >
                     Save
                   </button>
@@ -144,7 +144,7 @@ export const WorkoutExerciseItem = ({
                       setIsAddingNote(false);
                       setNewNote("");
                     }}
-                    className="text-xs text-muted-foreground hover:text-foreground"
+                    className="text-label-xs text-muted-foreground hover:text-foreground"
                   >
                     Cancel
                   </button>
@@ -156,9 +156,9 @@ export const WorkoutExerciseItem = ({
             {notes.length > 0 && (
               <div className="mt-2 space-y-1">
                 {notes.map((note, index) => (
-                  <div key={index} className="text-sm">
+                  <div key={index} className="text-paragraph-sm">
                     <span className="text-clear-lime">{note.text}</span>
-                    <span className="text-muted-foreground text-xs ml-2">
+                    <span className="text-muted-foreground text-label-xs ml-2">
                       {formatTimestamp(note.timestamp)}
                     </span>
                   </div>

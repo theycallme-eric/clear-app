@@ -18,7 +18,7 @@ export const WorkoutSectionCard = ({ section, onRandomize }: WorkoutSectionCardP
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between p-4 text-left"
       >
-        <span className="font-display text-sm font-bold uppercase tracking-wider text-clear-orange">
+        <span className="text-cta-sm font-bold text-clear-orange">
           {section.name}
         </span>
         {isExpanded ? (
@@ -36,12 +36,12 @@ export const WorkoutSectionCard = ({ section, onRandomize }: WorkoutSectionCardP
               <p className="exercise-card-title">
                 {exercise.name}
                 {exercise.equipment && (
-                  <span className="ml-2 text-xs font-normal text-muted-foreground uppercase tracking-wider">
+                  <span className="ml-2 text-label-xs font-normal text-muted-foreground uppercase tracking-wider">
                     {exercise.equipment.replace(/_/g, ' ')}
                   </span>
                 )}
               </p>
-              <p className="text-sm text-foreground">
+              <p className="text-paragraph-sm text-foreground">
                 ({exercise.sets ? `${exercise.sets}×` : ''}{exercise.reps})
               </p>
             </div>
@@ -68,7 +68,7 @@ export const WorkoutSectionCard = ({ section, onRandomize }: WorkoutSectionCardP
             className="w-full flex items-center justify-center gap-2 py-3 border border-clear-orange/30 text-clear-orange hover:bg-clear-orange/10 transition-colors"
           >
             <RefreshCw size={16} />
-            <span className="text-sm font-medium">Randomize Section</span>
+            <span className="text-paragraph-sm font-medium">Randomize Section</span>
           </button>
         </div>
       )}

@@ -68,7 +68,7 @@ export const SectionTimer = ({
             <div className="flex flex-col items-center gap-3 p-4">
             {label && (
                 <span
-                    className="text-xs font-bold uppercase tracking-wider"
+                    className="text-label-xs font-bold uppercase tracking-wider"
                     style={{ color: "var(--text-paragraph)" }}
                 >
                     {label}
@@ -101,9 +101,10 @@ export const SectionTimer = ({
 
                 {/* Time Display */}
                 <div className="flex flex-col items-center z-10">
-                    <span className={cn("text-4xl font-mono font-bold tracking-tight title-text",
+                    <span className={cn("text-time-xl font-bold tracking-tight",
                         timeLeft <= 10 && mode === 'countdown' && isActive ? "text-destructive animate-pulse" : ""
-                    )}>
+                    )}
+                    style={{ color: "var(--text-header)" }}>
                         {formatTime(timeLeft)}
                     </span>
                 </div>

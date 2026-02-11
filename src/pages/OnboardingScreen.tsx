@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { ArrowLeft, ChevronDown, ChevronUp, Check } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CTAButton } from "@/components/CTAButton";
+import { Card } from "@/components/Card";
+import { RadioButton } from "@/components/RadioButton";
+import { Chip } from "@/components/Chip";
 import {
   UserPreferences,
   EquipmentTier,
@@ -136,7 +139,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
           ) : (
             <div className="w-10" />
           )}
-          <h1 className="font-display text-3xl font-bold tracking-wider text-foreground">
+          <h1 className="text-heading-h2 font-bold tracking-wider text-foreground">
             CLEAR
           </h1>
           <div className="w-10" />
@@ -146,56 +149,40 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
           {/* Step 1: Equipment/Location */}
           {step === 1 && (
             <div className="space-y-6">
-              <h2 className="font-display text-2xl font-bold uppercase tracking-wider text-foreground">
+              <h2 className="text-heading-h2 font-bold uppercase tracking-wider text-foreground">
                 What's Your Gym Setup?
               </h2>
 
-              <div className="space-y-3">
-                {TIER_OPTIONS.map((tier) => (
-                  <button
-                    key={tier.value}
-                    onClick={() => handleTierSelect(tier.value)}
-                    className={cn(
-                      "w-full glass-card p-4 text-left transition-all",
-                      selectedTier === tier.value
-                        ? "border-clear-orange"
-                        : "hover:border-clear-orange/40"
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={cn(
-                          "w-5 h-5 rounded-full border-2 flex items-center justify-center",
-                          selectedTier === tier.value
-                            ? "border-clear-orange bg-clear-orange"
-                            : "border-muted-foreground"
-                        )}
-                      >
-                        {selectedTier === tier.value && (
-                          <div className="w-2 h-2 bg-background rounded-full" />
-                        )}
-                      </div>
-                      <div>
-                        <p className="font-display text-lg font-semibold uppercase tracking-wide text-foreground">
-                          {tier.label}
-                        </p>
-                        <p className="text-muted-foreground text-sm">
-                          {tier.description}
-                        </p>
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
+              <Card cornerSize="md" padding="lg">
+                <label
+                  className="text-label-xs uppercase tracking-widest mb-4 block"
+                  style={{ color: "var(--text-paragraph)" }}
+                >
+                  Location Type
+                </label>
+
+                <div className="flex flex-col gap-2">
+                  {TIER_OPTIONS.map((tier) => (
+                    <RadioButton
+                      key={tier.value}
+                      selected={selectedTier === tier.value}
+                      onClick={() => handleTierSelect(tier.value)}
+                      label={tier.label}
+                      description={tier.description}
+                      className="w-full"
+                    />
+                  ))}
+                </div>
+              </Card>
 
               {/* Equipment Accordion */}
               {selectedTier && (
-                <div className="glass-card">
+                <Card cornerSize="md" padding="none">
                   <button
                     onClick={() => setEquipmentAccordionOpen(!equipmentAccordionOpen)}
                     className="w-full p-4 flex items-center justify-between"
                   >
-                    <span className="font-display text-sm font-semibold uppercase tracking-wide text-foreground">
+                    <span className="text-cta-sm font-medium text-foreground">
                       Customize Equipment
                     </span>
                     {equipmentAccordionOpen ? (
@@ -214,31 +201,24 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                           const isBodyweight = equipment === 'Bodyweight';
 
                           return (
-                            <button
+                            <Chip
                               key={equipment}
-                              onClick={() => !isBodyweight && handleEquipmentToggle(equipment)}
-                              disabled={isBodyweight}
-                              className={cn(
-                                "px-3 py-1.5 text-xs font-mono uppercase tracking-wide transition-all",
-                                isSelected
-                                  ? "bg-clear-lime/20 border border-clear-lime text-clear-lime"
-                                  : isAvailable
-                                  ? "bg-transparent border border-muted-foreground/30 text-muted-foreground hover:border-clear-orange/50"
-                                  : "bg-transparent border border-muted-foreground/20 text-muted-foreground/40 cursor-not-allowed"
-                              )}
+                              variant="selectable"
+                              selected={isSelected}
+                              onClick={() => handleEquipmentToggle(equipment)}
+                              disabled={isBodyweight || !isAvailable}
                             >
-                              {isSelected && <Check className="w-3 h-3 inline mr-1" />}
                               {equipment}
-                            </button>
+                            </Chip>
                           );
                         })}
                       </div>
                     </div>
                   )}
-                </div>
+                </Card>
               )}
 
-              <p className="text-muted-foreground text-sm text-center">
+              <p className="text-muted-foreground text-paragraph-sm text-center">
                 You can add more locations later
               </p>
             </div>
@@ -248,10 +228,10 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
           {step === 2 && (
             <div className="space-y-6">
               <div>
-                <h2 className="font-display text-2xl font-bold uppercase tracking-wider text-foreground">
+                <h2 className="text-heading-h2 font-bold uppercase tracking-wider text-foreground">
                   Workout Sections
                 </h2>
-                <p className="text-muted-foreground text-sm mt-2">
+                <p className="text-muted-foreground text-paragraph-sm mt-2">
                   Choose which parts to include in your workouts.
                 </p>
               </div>
@@ -264,33 +244,26 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                   const isDisabled = isAccessory && primaryOff;
 
                   return (
-                    <button
+                    <Chip
                       key={section.id}
-                      onClick={() => !isDisabled && handleSectionToggle(section.id)}
+                      variant="selectable"
+                      selected={isSelected}
+                      onClick={() => handleSectionToggle(section.id)}
                       disabled={isDisabled}
-                      className={cn(
-                        "px-4 py-2 text-sm font-mono uppercase tracking-wide transition-all",
-                        isSelected
-                          ? "bg-clear-lime/20 border border-clear-lime text-clear-lime"
-                          : isDisabled
-                          ? "bg-transparent border border-muted-foreground/20 text-muted-foreground/40 cursor-not-allowed"
-                          : "bg-transparent border border-muted-foreground/30 text-muted-foreground hover:border-clear-orange/50"
-                      )}
                     >
-                      {isSelected && <Check className="w-3 h-3 inline mr-1" />}
                       {section.name}
-                    </button>
+                    </Chip>
                   );
                 })}
               </div>
 
               {/* Legend */}
-              <div className="glass-card">
+              <Card cornerSize="md" padding="none">
                 <button
                   onClick={() => setLegendOpen(!legendOpen)}
                   className="w-full p-4 flex items-center justify-between text-sm"
                 >
-                  <span className="font-display text-sm font-semibold uppercase tracking-wide text-foreground">
+                  <span className="text-cta-sm font-medium text-foreground">
                     What do these mean?
                   </span>
                   {legendOpen ? (
@@ -304,19 +277,19 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                   <div className="px-4 pb-4 space-y-3 border-t border-muted-foreground/20 pt-3">
                     {WORKOUT_SECTIONS.map((section) => (
                       <div key={section.id}>
-                        <p className="font-mono text-xs uppercase tracking-wide text-clear-orange">
+                        <p className="text-label-xs uppercase tracking-wide text-clear-orange">
                           {section.name}
                         </p>
-                        <p className="text-muted-foreground text-sm">
+                        <p className="text-muted-foreground text-paragraph-sm">
                           {section.description}
                         </p>
                       </div>
                     ))}
                   </div>
                 )}
-              </div>
+              </Card>
 
-              <p className="text-muted-foreground text-sm text-center">
+              <p className="text-muted-foreground text-paragraph-sm text-center">
                 You can change this anytime in settings
               </p>
             </div>
@@ -326,10 +299,10 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
           {step === 3 && (
             <div className="space-y-6">
               <div>
-                <h2 className="font-display text-2xl font-bold uppercase tracking-wider text-foreground">
+                <h2 className="text-heading-h2 font-bold uppercase tracking-wider text-foreground">
                   Anything We Should<br />Work Around?
                 </h2>
-                <p className="text-muted-foreground text-sm mt-2">
+                <p className="text-muted-foreground text-paragraph-sm mt-2">
                   Old injuries, problem areas, or movements you want to avoid.
                 </p>
               </div>
@@ -348,7 +321,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
           {/* Step 4: Confirmation */}
           {step === 4 && (
             <div className="space-y-6">
-              <h2 className="font-display text-2xl font-bold uppercase tracking-wider text-foreground">
+              <h2 className="text-heading-h2 font-bold uppercase tracking-wider text-foreground">
                 Here's Your Setup
               </h2>
 
@@ -356,13 +329,13 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
               <div className="glass-card p-4">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-1">
+                    <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-1">
                       Location
                     </p>
                     <p className="font-display text-lg font-semibold text-foreground">
                       {TIER_OPTIONS.find(t => t.value === selectedTier)?.label}
                     </p>
-                    <p className="text-muted-foreground text-sm mt-1">
+                    <p className="text-muted-foreground text-paragraph-sm mt-1">
                       {selectedEquipment.slice(0, 5).join(', ')}
                       {selectedEquipment.length > 5 && ` +${selectedEquipment.length - 5} more`}
                     </p>
@@ -380,13 +353,13 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
               <div className="glass-card p-4">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-1">
+                    <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-1">
                       Workout Sections
                     </p>
                     <p className="font-display text-lg font-semibold text-foreground">
                       {sections.length} sections
                     </p>
-                    <p className="text-muted-foreground text-sm mt-1">
+                    <p className="text-muted-foreground text-paragraph-sm mt-1">
                       {sections.slice(0, 4).map(s =>
                         WORKOUT_SECTIONS.find(ws => ws.id === s)?.name
                       ).join(', ')}
@@ -406,7 +379,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
               <div className="glass-card p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1 mr-4">
-                    <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-1">
+                    <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-1">
                       Limitations
                     </p>
                     <p className="font-display text-lg font-semibold text-foreground">
@@ -453,7 +426,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                 size="lg"
                 fullWidth
               >
-                Generate First Workout
+                Complete
               </CTAButton>
             ) : (
               <CTAButton
@@ -466,7 +439,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
               </CTAButton>
             )}
 
-            <p className="text-center text-muted-foreground text-sm">
+            <p className="text-center text-muted-foreground text-paragraph-sm">
               Step {step} of 4
             </p>
           </div>

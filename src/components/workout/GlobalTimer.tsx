@@ -38,7 +38,7 @@ export const GlobalTimer = ({ isRunning, onTimeUpdate, startTime }: GlobalTimerP
     return (
         <div className="sticky top-0 z-10 flex items-center justify-center gap-2 py-2 mb-4 backdrop-blur-md bg-background/80 border-b border-border/50 transition-all duration-300">
             <Clock size={16} className="text-clear-orange animate-pulse" />
-            <span className="font-mono text-xl font-bold tracking-widest text-foreground">
+            <span className="text-time-lg font-bold tracking-widest text-foreground">
                 {formatTime(elapsedSeconds)}
             </span>
         </div>

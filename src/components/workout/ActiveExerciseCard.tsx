@@ -58,7 +58,7 @@ export const ActiveExerciseCard = ({
                 {/* Info */}
                 <div className="flex-1 space-y-1">
                     <div className="flex justify-between items-start">
-                        <h3 className={cn("font-bold text-lg leading-tight", isCompleted && "line-through text-muted-foreground")}>
+                        <h3 className={cn("text-paragraph-lg font-bold leading-tight", isCompleted && "line-through text-muted-foreground")}>
                             {exercise.name}
                         </h3>
                         <button
@@ -69,7 +69,7 @@ export const ActiveExerciseCard = ({
                         </button>
                     </div>
 
-                    <div className="text-sm text-muted-foreground flex flex-wrap gap-x-3 gap-y-1">
+                    <div className="text-paragraph-sm text-muted-foreground flex flex-wrap gap-x-3 gap-y-1">
                         {exercise.sets && <span>{exercise.sets} sets</span>}
                         <span>{exercise.reps} reps</span>
                         {exercise.tempo && <span>Tempo: {exercise.tempo}</span>}
@@ -84,7 +84,7 @@ export const ActiveExerciseCard = ({
 
                     {/* Coaching Cues */}
                     {exercise.coachingCues && (
-                        <div className="text-sm bg-secondary/50 p-3 rounded-lg text-foreground/80 italic flex gap-2">
+                        <div className="text-paragraph-sm bg-secondary/50 p-3 rounded-lg text-foreground/80 italic flex gap-2">
                             <Info size={16} className="text-clear-orange shrink-0 mt-0.5" />
                             <p>
                                 {Array.isArray(exercise.coachingCues)
@@ -97,7 +97,7 @@ export const ActiveExerciseCard = ({
                     {/* Logging Inputs */}
                     <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1.5">
-                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                            <label className="text-label-xs text-muted-foreground uppercase tracking-wider">
                                 Weight
                             </label>
                             <input
@@ -105,11 +105,11 @@ export const ActiveExerciseCard = ({
                                 value={weight}
                                 onChange={(e) => handleWeightChange(e.target.value)}
                                 placeholder={exercise.lastWeight || "lbs/kg"}
-                                className="w-full bg-background/50 border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-clear-orange"
+                                className="w-full bg-background/50 border border-border rounded-lg px-3 py-2 text-paragraph-sm focus:outline-none focus:ring-1 focus:ring-clear-orange"
                             />
                         </div>
                         <div className="space-y-1.5">
-                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                            <label className="text-label-xs text-muted-foreground uppercase tracking-wider">
                                 Reps
                             </label>
                             <input
@@ -117,7 +117,7 @@ export const ActiveExerciseCard = ({
                                 value={reps}
                                 onChange={(e) => handleRepsChange(e.target.value)}
                                 placeholder={exercise.reps} // Use target reps as placeholder
-                                className="w-full bg-background/50 border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-clear-orange"
+                                className="w-full bg-background/50 border border-border rounded-lg px-3 py-2 text-paragraph-sm focus:outline-none focus:ring-1 focus:ring-clear-orange"
                             />
                         </div>
                     </div>

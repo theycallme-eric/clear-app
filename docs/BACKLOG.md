@@ -36,11 +36,19 @@ Capture everything that comes up during work that isn't being addressed immediat
 ### High Priority
 Items that should be addressed soon, possibly before V1.
 
-- [ ] **Refactor Index.tsx** - Split the 864-line "traffic controller" into smaller, focused modules
+- [x] **Auth System Refactor** - Single AuthContext replaces multi-hook auth system
+  - Priority: High
+  - Type: Tech Debt
+  - Added: 2026-02-10
+  - Completed: 2026-02-10
+  - Context: Profile was fetched 3-4 times on init. Multiple hooks (useAuth, usePreferencesSync, useHomeData) independently managed auth state causing race conditions. Fixed with unified AuthContext. Index.tsx reduced from 280 to cleaner status-based navigation.
+
+- [x] **Refactor Index.tsx** - Extract auth state into React Context
   - Priority: High
   - Type: Tech Debt
   - Added: 2026-02-02
-  - Context: Index.tsx handles ALL screen routing, state management, and data fetching in one file. Flagged by Antigravity audit. Risk: increasingly difficult to add features without breaking unrelated code. Suggested fix: extract routing, move data fetching to custom hooks, consider React Context for shared state.
+  - Completed: 2026-02-10
+  - Context: Index.tsx now uses AuthContext for auth state. Auth-related useEffects simplified to single status-based navigation. Remaining: could still extract more screen-specific logic, but auth/profile handling is now clean.
 
 ---
 

@@ -1,4 +1,4 @@
-import { toast } from "sonner";
+import { toast } from "@/components/ui/sonner";
 import { ReviewHeader } from "@/components/ReviewHeader";
 import { WorkoutOverview } from "@/components/WorkoutOverview";
 import { WorkoutSectionCard } from "@/components/WorkoutSectionCard";

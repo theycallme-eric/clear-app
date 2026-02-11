@@ -50,7 +50,7 @@ export function ActionButton({
         className={cn(
           "group inline-flex items-center justify-between gap-2",
           "px-2 py-2",
-          "font-label text-base font-medium",
+          "text-cta-md font-medium",
           "transition-colors",
           disabled
             ? "text-[var(--text-disabled)] cursor-not-allowed"
@@ -181,7 +181,7 @@ export function ActionButton({
           )}
           <span
             className={cn(
-              "font-label text-base font-medium whitespace-nowrap flex-1 text-center",
+              "text-cta-md font-medium whitespace-nowrap flex-1 text-center",
               disabled
                 ? "text-[var(--text-disabled)]"
                 : "text-[var(--text-cta)] group-hover:text-[var(--text-cta-hover)]"

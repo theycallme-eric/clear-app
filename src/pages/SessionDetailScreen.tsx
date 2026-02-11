@@ -50,7 +50,7 @@ export const SessionDetailScreen = ({
           >
             <ArrowLeft size={24} />
           </button>
-          <span className="font-display text-sm font-bold tracking-wider text-foreground uppercase">
+          <span className="text-cta-sm font-bold tracking-wider text-foreground uppercase">
             Back
           </span>
           <button
@@ -68,16 +68,16 @@ export const SessionDetailScreen = ({
           ) : (
           <>
           {/* Date Title */}
-          <h1 className="font-display text-xl font-bold tracking-wider text-foreground mb-2">
+          <h1 className="text-heading-h4 font-bold tracking-wider text-foreground mb-2">
             {formatDateTitle(workout.date)}
           </h1>
 
           {/* Summary */}
           <div className="mb-6">
-            <p className="font-display text-lg font-semibold text-foreground uppercase tracking-wide">
+            <p className="text-heading-h5 font-medium text-foreground uppercase tracking-wide">
               {workout.anchor} &bull; Intensity {workout.intensity}
             </p>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-paragraph-sm">
               {workout.duration} min {workout.goal && `• ${workout.goal}`}
             </p>
             {workout.mood && (
@@ -90,17 +90,17 @@ export const SessionDetailScreen = ({
             <div className="space-y-4">
               {workout.sections.map((section) => (
                 <div key={section.id} className="glass-card p-4">
-                  <h2 className="font-mono text-xs uppercase tracking-widest text-clear-orange mb-3">
+                  <h2 className="text-label-xs uppercase tracking-widest text-clear-orange mb-3">
                     {section.name}
                   </h2>
                   <div className="space-y-3">
                     {section.exercises.map((exercise) => (
                       <div key={exercise.id}>
                         <div className="flex items-start justify-between">
-                          <p className="font-display text-sm font-semibold text-foreground">
+                          <p className="text-label-sm text-foreground">
                             {exercise.name}
                           </p>
-                          <p className="font-mono text-xs text-muted-foreground">
+                          <p className="text-label-xs text-muted-foreground">
                             {exercise.sets} × {formatReps(exercise.reps)}
                             {exercise.weight && ` @ ${exercise.weight}`}
                           </p>
@@ -119,7 +119,7 @@ export const SessionDetailScreen = ({
             </div>
           ) : (
             <div className="glass-card p-4 text-center">
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-paragraph-sm">
                 No detailed workout data available
               </p>
             </div>
@@ -128,7 +128,7 @@ export const SessionDetailScreen = ({
           {/* Session Notes */}
           {workout.sessionNotes && (
             <div className="glass-card p-4 mt-4">
-              <h2 className="font-mono text-xs uppercase tracking-widest text-clear-orange mb-3">
+              <h2 className="text-label-xs uppercase tracking-widest text-clear-orange mb-3">
                 Session Notes
               </h2>
               <p className="text-foreground text-sm">
