@@ -1,6 +1,7 @@
 import { ArrowLeft, Menu, FileText } from "lucide-react";
 import { WorkoutHistoryEntry } from "@/types/workout";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
+import { Card } from "@/components/Card";
 
 interface SessionDetailScreenProps {
   workout: WorkoutHistoryEntry | null;
@@ -89,7 +90,7 @@ export const SessionDetailScreen = ({
           {workout.sections && workout.sections.length > 0 ? (
             <div className="space-y-4">
               {workout.sections.map((section) => (
-                <div key={section.id} className="glass-card p-4">
+                <Card key={section.id} padding="md">
                   <h2 className="text-label-xs uppercase tracking-widest text-clear-orange mb-3">
                     {section.name}
                   </h2>
@@ -114,27 +115,27 @@ export const SessionDetailScreen = ({
                       </div>
                     ))}
                   </div>
-                </div>
+                </Card>
               ))}
             </div>
           ) : (
-            <div className="glass-card p-4 text-center">
+            <Card padding="md" className="text-center">
               <p className="text-muted-foreground text-paragraph-sm">
                 No detailed workout data available
               </p>
-            </div>
+            </Card>
           )}
 
           {/* Session Notes */}
           {workout.sessionNotes && (
-            <div className="glass-card p-4 mt-4">
+            <Card padding="md" className="mt-4">
               <h2 className="text-label-xs uppercase tracking-widest text-clear-orange mb-3">
                 Session Notes
               </h2>
               <p className="text-foreground text-sm">
                 "{workout.sessionNotes}"
               </p>
-            </div>
+            </Card>
           )}
           </>
           )}

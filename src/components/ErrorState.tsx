@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { RefreshCw } from "lucide-react";
+import { Card } from "./ui/Card";
 
 interface ErrorStateProps {
   message?: string;
@@ -17,7 +18,7 @@ export const ErrorState = ({
   className,
 }: ErrorStateProps) => {
   return (
-    <div className={cn("glass-card p-6 text-center", className)}>
+    <Card className={cn("p-6 text-center", className)}>
       <p className="text-foreground text-label-sm uppercase tracking-wide mb-2">
         {message}
       </p>
@@ -30,6 +31,6 @@ export const ErrorState = ({
           Try Again
         </button>
       )}
-    </div>
+    </Card>
   );
 };

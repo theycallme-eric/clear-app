@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Card } from "./Card";
 
 interface SkeletonCardProps {
   className?: string;
@@ -6,14 +7,14 @@ interface SkeletonCardProps {
 
 /**
  * Individual skeleton card placeholder.
- * Componentized for easy future styling/animation customization.
+ * Uses chamfered Card for consistent design system treatment.
  */
 export const SkeletonCard = ({ className }: SkeletonCardProps) => {
   return (
-    <div className={cn("glass-card p-4 animate-pulse", className)}>
-      <div className="h-4 bg-muted-foreground/10 rounded w-3/4 mb-2" />
-      <div className="h-3 bg-muted-foreground/10 rounded w-1/2" />
-    </div>
+    <Card className={cn("animate-pulse", className)} cornerSize="sm" padding="md">
+      <div className="h-4 bg-muted-foreground/10 w-3/4 mb-2" />
+      <div className="h-3 bg-muted-foreground/10 w-1/2" />
+    </Card>
   );
 };
 

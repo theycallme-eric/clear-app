@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ArrowLeft, Menu, Clock, ChevronDown, Dumbbell } from "lucide-react";
 import { WorkoutHistoryEntry, MovementPattern } from "@/types/workout";
 import { EmptyState } from "@/components/EmptyState";
+import { Card } from "@/components/Card";
 import { cn } from "@/lib/utils";
 
 interface HistoryScreenProps {
@@ -151,7 +152,7 @@ export const HistoryScreen = ({
                 </button>
 
                 {anchorDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-1 z-10 glass-card p-2 min-w-[140px]">
+                  <Card padding="sm" showLeftColumn={false} className="absolute top-full left-0 mt-1 z-10 min-w-[140px]">
                     {ANCHOR_OPTIONS.map((option) => (
                       <button
                         key={option.value}
@@ -169,7 +170,7 @@ export const HistoryScreen = ({
                         {option.label}
                       </button>
                     ))}
-                  </div>
+                  </Card>
                 )}
               </div>
 
@@ -192,7 +193,7 @@ export const HistoryScreen = ({
                 </button>
 
                 {intensityDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-1 z-10 glass-card p-2 min-w-[140px]">
+                  <Card padding="sm" showLeftColumn={false} className="absolute top-full left-0 mt-1 z-10 min-w-[140px]">
                     {INTENSITY_OPTIONS.map((option) => (
                       <button
                         key={option.value}
@@ -210,7 +211,7 @@ export const HistoryScreen = ({
                         {option.label}
                       </button>
                     ))}
-                  </div>
+                  </Card>
                 )}
               </div>
             </div>
@@ -232,10 +233,10 @@ export const HistoryScreen = ({
                   </h2>
                   <div className="space-y-2">
                     {workouts.map((workout) => (
-                      <button
+                      <Card
                         key={workout.id}
                         onClick={() => onSelectWorkout(workout.id)}
-                        className="w-full glass-card p-4 text-left hover:border-clear-orange/60 transition-all"
+                        padding="md"
                       >
                         <p className="text-label-sm text-foreground uppercase tracking-wide">
                           {formatDate(workout.date)} &bull; {workout.anchor} &bull; Int. {workout.intensity}
@@ -244,7 +245,7 @@ export const HistoryScreen = ({
                           <Clock className="w-3 h-3" />
                           {workout.duration} min
                         </p>
-                      </button>
+                      </Card>
                     ))}
                   </div>
                 </div>

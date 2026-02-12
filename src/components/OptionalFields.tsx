@@ -1,3 +1,6 @@
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
+
 interface OptionalFieldsProps {
   time: string;
   notes: string;
@@ -13,29 +16,26 @@ export const OptionalFields = ({
 }: OptionalFieldsProps) => {
   return (
     <div className="space-y-4">
-      <div>
-        <label className="text-label-xs uppercase tracking-widest text-muted-foreground mb-2 block">
+      <div className="space-y-2">
+        <label className="block text-paragraph-sm text-foreground">
           Duration
         </label>
-        <input
-          type="text"
+        <Input
           value={time}
           onChange={(e) => onTimeChange(e.target.value)}
           placeholder="45 min"
-          className="glass-input w-full px-4 py-3 text-paragraph-md placeholder:text-muted-foreground/50"
         />
       </div>
-      
-      <div>
-        <label className="text-label-xs uppercase tracking-widest text-muted-foreground mb-2 block">
+
+      <div className="space-y-2">
+        <label className="block text-paragraph-sm text-foreground">
           Notes
         </label>
-        <textarea
+        <Textarea
           value={notes}
           onChange={(e) => onNotesChange(e.target.value)}
           placeholder="Any notes or modifications..."
-          rows={3}
-          className="glass-input w-full px-4 py-3 text-paragraph-md placeholder:text-muted-foreground/50 resize-none"
+          className="min-h-[85px]"
         />
       </div>
     </div>

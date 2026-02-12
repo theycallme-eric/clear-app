@@ -24,7 +24,8 @@ Skills are Standard Operating Procedures (SOPs) that guide specific tasks.
 
 | Skill | Trigger | Description |
 |-------|---------|-------------|
-| [`handoff`](skills/handoff.md) | Receiving a session plan | **START HERE.** Parse tasks, load context, check for relevant skills |
+| [`execute-plan`](skills/execute-plan.md) | `/execute` or after plan approval | **AUTOMATED.** Parse plan, execute tasks, track progress, validate acceptance |
+| [`handoff`](skills/handoff.md) | Receiving a session plan | **MANUAL.** Parse tasks, load context, check for relevant skills |
 | [`close-session`](skills/close-session.md) | All tasks complete | **END HERE.** Log work, update backlog, notify user |
 
 ### UI Skills
@@ -56,12 +57,38 @@ Skills are Standard Operating Procedures (SOPs) that guide specific tasks.
 ## Quick Reference
 
 ```
-Session Start:  handoff
+Session Start:  execute-plan (automated) OR handoff (manual)
 UI Work:        component → chamfered-component (if needed) → gallery-add → token-check
 Backend Work:   supabase-workflow
 Errors:         debug
 Session End:    close-session → backlog → project-map (if needed)
 ```
+
+---
+
+## Guard Rails
+
+### Before Building New Components
+
+**STOP and CHECK before creating any new UI component:**
+
+1. **Check ComponentGallery.tsx** — Does a similar component already exist?
+2. **Check src/components/ui/** — Are there shadcn components already styled for this?
+3. **Check src/components/** — Is there a custom component that does this?
+
+**If a component looks similar to a Figma reference, ASK:**
+> "Should I use the existing [X] component, or do you need something new?"
+
+**Only build new when:**
+- No existing component serves the purpose
+- User explicitly confirms a new component is needed
+
+### Figma References
+
+When user shares a Figma screenshot:
+1. Identify what UI element is shown
+2. Check if it matches an existing component in the gallery
+3. If unsure, ask before building
 
 ---
 
@@ -72,7 +99,14 @@ Session End:    close-session → backlog → project-map (if needed)
 ├── README.md              ← You are here (central registry)
 ├── agents/
 │   └── figma-ui-implementer.md
+├── commands/
+│   ├── execute.md         ← /execute [plan-name]
+│   ├── process-inbox.md
+│   └── todo.md
+├── plans/
+│   └── SESSION_PLAN_*.md  ← Session plans to execute
 └── skills/
+    ├── execute-plan.md    ← Automated plan execution
     ├── handoff.md
     ├── close-session.md
     ├── component.md
@@ -122,4 +156,4 @@ color: purple | blue | green | etc.
 
 ---
 
-*Last updated: February 2025*
+*Last updated: February 2026*

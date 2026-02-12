@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState, useCallback, ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 import { UserLocation, SectionType, ExperienceLevel, GoalPreset, EquipmentTier } from '@/types/workout';
 
 // Types
@@ -71,6 +72,40 @@ const DB_TO_SECTION: Record<string, SectionType> = {
   cooldown: 'cooldown',
 };
 
+// Auth configuration - can be adjusted based on observed performance
+const AUTH_CONFIG = {
+  sessionTimeoutMs: 8000,  // Increased from 5s for slow networks
+  maxRetries: 2,
+  retryDelayMs: 1000,
+};
+
+// Retry utility with exponential backoff
+async function withRetry<T>(
+  operation: () => Promise<T>,
+  options: { maxRetries: number; delayMs: number; operationName: string }
+): Promise<T> {
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= options.maxRetries + 1; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error as Error;
+      logger.auth.warn(`${options.operationName} attempt ${attempt} failed`, {
+        error: lastError.message,
+        willRetry: attempt <= options.maxRetries,
+      });
+
+      if (attempt <= options.maxRetries) {
+        const delay = options.delayMs * attempt;  // Linear backoff
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+
+  throw lastError;
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>({
     status: 'loading',
@@ -83,8 +118,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const mountedRef = useRef(true);
   const initializingRef = useRef(false);
 
+  // Operation lock prevents fetchUserData from running during write operations
+  // This prevents TOKEN_REFRESHED from reading stale data during completeOnboarding
+  const operationLockRef = useRef<string | null>(null);
+
   // Fetch profile and locations for a user
   const fetchUserData = useCallback(async (userId: string): Promise<{ profile: Profile; locations: UserLocation[] } | null> => {
+    logger.auth.debug('fetchUserData started', { userId });
+    const startTime = performance.now();
+
     try {
       // Fetch profile and locations in parallel
       const [profileResult, locationsResult] = await Promise.all([
@@ -93,7 +135,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       ]);
 
       if (profileResult.error) {
-        console.error('Profile fetch error:', profileResult.error);
+        logger.auth.error('Profile fetch error', { error: profileResult.error.message, userId });
         return null;
       }
 
@@ -119,35 +161,88 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         equipment: loc.equipment || [],
       }));
 
+      logger.auth.info('fetchUserData completed', {
+        userId,
+        durationMs: Math.round(performance.now() - startTime),
+        locationsCount: locations.length,
+        onboardingComplete: profile.onboardingComplete,
+      });
       return { profile, locations };
     } catch (err) {
-      console.error('Error fetching user data:', err);
+      logger.auth.error('fetchUserData exception', {
+        userId,
+        error: err instanceof Error ? err.message : String(err),
+        durationMs: Math.round(performance.now() - startTime),
+      });
       return null;
     }
   }, []);
 
   // Initialize auth state
   const initialize = useCallback(async () => {
-    if (initializingRef.current) return;
+    if (initializingRef.current) {
+      logger.auth.debug('initialize skipped - already in progress');
+      return;
+    }
     initializingRef.current = true;
+    logger.auth.info('initialize started');
+    const startTime = performance.now();
 
     try {
-      // Timeout after 5 seconds to prevent infinite loading
-      const timeoutPromise = new Promise<{ data: { session: null }, error: { message: string } }>((resolve) => {
-        setTimeout(() => resolve({
-          data: { session: null },
-          error: { message: 'Auth initialization timed out' }
-        }), 5000);
-      });
+      // Use a timeout flag instead of Promise.race to avoid AbortError
+      // The request continues but we move on if it takes too long
+      let timedOut = false;
+      const timeoutId = setTimeout(() => {
+        timedOut = true;
+        if (mountedRef.current) {
+          logger.auth.warn('getSession timed out', {
+            timeoutMs: AUTH_CONFIG.sessionTimeoutMs,
+            durationMs: Math.round(performance.now() - startTime),
+          });
+          // Fall back to unauthenticated on timeout - user can retry
+          setState({
+            status: 'unauthenticated',
+            user: null,
+            profile: null,
+            locations: [],
+            error: 'Connection timed out. Please try again.',
+          });
+        }
+      }, AUTH_CONFIG.sessionTimeoutMs);
 
-      const { data: { session }, error } = await Promise.race([
-        supabase.auth.getSession(),
-        timeoutPromise,
-      ]);
+      const { data: { session }, error } = await supabase.auth.getSession();
+      clearTimeout(timeoutId);
+
+      // If we already timed out and set state, don't overwrite
+      if (timedOut) {
+        // Request completed late - if there's a session, update state
+        if (session && mountedRef.current) {
+          logger.auth.info('Late session received after timeout, updating state', { userId: session.user.id });
+          const userData = await fetchUserData(session.user.id);
+          if (mountedRef.current) {
+            setState({
+              status: 'authenticated',
+              user: { id: session.user.id, email: session.user.email || '' },
+              profile: userData?.profile || {
+                onboardingComplete: false,
+                experienceLevel: null,
+                goal: null,
+                limitations: '',
+                enabledSections: [],
+                defaultLocationId: null,
+              },
+              locations: userData?.locations || [],
+              error: userData ? null : 'Failed to load profile',
+            });
+          }
+        }
+        return;
+      }
 
       if (!mountedRef.current) return;
 
       if (error || !session) {
+        logger.auth.info('initialize: no session', { error: error?.message });
         setState({
           status: 'unauthenticated',
           user: null,
@@ -183,6 +278,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
+      logger.auth.info('initialize completed successfully', {
+        userId: session.user.id,
+        onboardingComplete: userData.profile.onboardingComplete,
+        durationMs: Math.round(performance.now() - startTime),
+      });
       setState({
         status: 'authenticated',
         user: { id: session.user.id, email: session.user.email || '' },
@@ -191,7 +291,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         error: null,
       });
     } catch (err) {
-      console.error('Auth initialization error:', err);
+      logger.auth.error('initialize exception', { error: err instanceof Error ? err.message : String(err) });
       if (mountedRef.current) {
         setState(prev => ({
           ...prev,
@@ -212,9 +312,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        logger.auth.debug('onAuthStateChange', { event, hasSession: !!session });
+
         if (!mountedRef.current) return;
 
         if (event === 'SIGNED_OUT' || !session) {
+          logger.auth.info('Auth state: signed out');
           setState({
             status: 'unauthenticated',
             user: null,
@@ -226,7 +329,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
 
         if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-          const userData = await fetchUserData(session.user.id);
+          // Skip fetch if a write operation is in progress to prevent race conditions
+          if (operationLockRef.current) {
+            logger.auth.info('Skipping fetchUserData due to operation lock', { lock: operationLockRef.current, event });
+            return;
+          }
+
+          // Fetch user data with retry for resilience against transient failures
+          let userData: { profile: Profile; locations: UserLocation[] } | null = null;
+          try {
+            userData = await withRetry(
+              () => fetchUserData(session.user.id),
+              {
+                maxRetries: AUTH_CONFIG.maxRetries,
+                delayMs: AUTH_CONFIG.retryDelayMs,
+                operationName: 'fetchUserData (auth event)',
+              }
+            );
+          } catch {
+            // withRetry exhausted - userData will be null, handled below
+            logger.auth.error('fetchUserData failed after retries', { event });
+          }
 
           if (!mountedRef.current) return;
 
@@ -260,12 +383,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const updateProfile = useCallback(async (updates: Partial<Profile>) => {
-    if (!state.user) return;
+    if (!state.user) {
+      logger.auth.warn('updateProfile called without user');
+      return;
+    }
+
+    logger.auth.debug('updateProfile started', { updates: Object.keys(updates) });
+
+    // Save previous state for rollback on error
+    const previousProfile = state.profile;
 
     // Optimistic update
     setState(prev => ({
       ...prev,
       profile: prev.profile ? { ...prev.profile, ...updates } : null,
+      error: null,
     }));
 
     // Prepare database update
@@ -285,26 +417,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .eq('id', state.user.id);
 
     if (error) {
-      console.error('Profile update error:', error);
+      logger.auth.error('updateProfile failed, rolling back', { error: error.message });
+      // Rollback optimistic update on failure
+      if (mountedRef.current) {
+        setState(prev => ({
+          ...prev,
+          profile: previousProfile,
+          error: 'Failed to save profile changes',
+        }));
+      }
+      throw error;  // Let caller know it failed
+    } else {
+      logger.auth.info('updateProfile succeeded');
     }
-  }, [state.user]);
+  }, [state.user, state.profile]);
 
   const updateLocations = useCallback(async (newLocations: UserLocation[]) => {
-    if (!state.user) return;
+    if (!state.user) {
+      logger.auth.warn('updateLocations called without user');
+      return;
+    }
 
-    const oldLocations = state.locations;
-    const oldIds = new Set(oldLocations.map(l => l.id));
+    // Save previous state for rollback on error
+    const previousLocations = state.locations;
+
+    const oldIds = new Set(previousLocations.map(l => l.id));
     const newIds = new Set(newLocations.map(l => l.id));
 
+    const toDelete = previousLocations.filter(l => !newIds.has(l.id));
+    const toCreate = newLocations.filter(l => !oldIds.has(l.id));
+    const toUpdate = newLocations.filter(l => oldIds.has(l.id));
+
+    logger.auth.debug('updateLocations started', {
+      toDelete: toDelete.length,
+      toCreate: toCreate.length,
+      toUpdate: toUpdate.length,
+    });
+
     // Optimistic update
-    setState(prev => ({ ...prev, locations: newLocations }));
+    setState(prev => ({ ...prev, locations: newLocations, error: null }));
 
     try {
       // Delete removed locations
-      for (const oldLoc of oldLocations) {
-        if (!newIds.has(oldLoc.id)) {
-          await supabase.from('locations').delete().eq('id', oldLoc.id);
-        }
+      for (const oldLoc of toDelete) {
+        const { error } = await supabase.from('locations').delete().eq('id', oldLoc.id);
+        if (error) throw error;
       }
 
       // Upsert new/updated locations
@@ -315,13 +472,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (oldIds.has(loc.id)) {
           // Update existing
-          await supabase
+          const { error } = await supabase
             .from('locations')
             .update({ name: loc.name, tier: loc.tier, equipment: equipmentForDb })
             .eq('id', loc.id);
+          if (error) throw error;
         } else {
           // Create new
-          const { data } = await supabase
+          const { data, error } = await supabase
             .from('locations')
             .insert({
               user_id: state.user.id,
@@ -331,6 +489,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             })
             .select('id')
             .single();
+
+          if (error) throw error;
 
           // Update local state with real ID
           if (data && mountedRef.current) {
@@ -343,55 +503,69 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
         }
       }
+      logger.auth.info('updateLocations succeeded');
     } catch (err) {
-      console.error('Location update error:', err);
+      logger.auth.error('updateLocations failed, rolling back', { error: err instanceof Error ? err.message : String(err) });
+      // Rollback optimistic update on failure
+      if (mountedRef.current) {
+        setState(prev => ({
+          ...prev,
+          locations: previousLocations,
+          error: 'Failed to save location changes',
+        }));
+      }
+      throw err;  // Let caller know it failed
     }
   }, [state.user, state.locations]);
 
   const completeOnboarding = useCallback(async (data: OnboardingData) => {
-    if (!state.user) return;
+    if (!state.user) {
+      logger.auth.warn('completeOnboarding called without user');
+      return;
+    }
+
+    logger.auth.info('completeOnboarding started', { userId: state.user.id });
+    const startTime = performance.now();
+
+    // Acquire lock to prevent TOKEN_REFRESHED from interfering
+    if (operationLockRef.current) {
+      const err = `Cannot complete onboarding: ${operationLockRef.current} in progress`;
+      logger.auth.error('completeOnboarding lock conflict', { existingLock: operationLockRef.current });
+      throw new Error(err);
+    }
+    operationLockRef.current = 'completeOnboarding';
+    logger.auth.debug('Operation lock acquired', { lock: 'completeOnboarding' });
 
     const equipmentForDb = data.location.equipment.map(e =>
       e.toLowerCase().replace(/ /g, '_').replace(/[()\/]/g, '')
     );
+    const enabledSectionsForDb = data.sections.map(s => SECTION_TO_DB[s] || s);
 
     try {
-      // 1. Create location
-      const { data: newLocation, error: locError } = await supabase
-        .from('locations')
-        .upsert({
-          user_id: state.user.id,
-          name: data.location.name,
-          tier: data.location.tier,
-          equipment: equipmentForDb,
-          is_default: true,
-        }, {
-          onConflict: 'user_id,name',
-          ignoreDuplicates: false,
-        })
-        .select('id')
-        .single();
+      // Use atomic RPC to create location + update profile in single transaction
+      // This prevents race conditions where TOKEN_REFRESHED could read stale data
+      const { data: locationId, error: rpcError } = await supabase.rpc('complete_onboarding', {
+        p_user_id: state.user.id,
+        p_location_name: data.location.name,
+        p_location_tier: data.location.tier,
+        p_equipment: equipmentForDb,
+        p_experience_level: data.experienceLevel,
+        p_goal_preset: data.goal,
+        p_sections: enabledSectionsForDb,
+        p_limitations: data.limitations || null,
+      });
 
-      if (locError) throw locError;
+      if (rpcError) {
+        logger.auth.error('completeOnboarding RPC failed', { error: rpcError.message });
+        throw rpcError;
+      }
 
-      // 2. Update profile
-      const enabledSectionsForDb = data.sections.map(s => SECTION_TO_DB[s] || s);
+      logger.auth.info('completeOnboarding RPC succeeded', {
+        locationId,
+        durationMs: Math.round(performance.now() - startTime),
+      });
 
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({
-          onboarding_completed: true,
-          experience_level: data.experienceLevel,
-          goal_preset: data.goal,
-          limitations: data.limitations || null,
-          enabled_sections: enabledSectionsForDb,
-          default_location_id: newLocation.id,
-        })
-        .eq('id', state.user.id);
-
-      if (profileError) throw profileError;
-
-      // 3. Update local state (no re-fetch needed!)
+      // Update local state with returned location ID
       if (mountedRef.current) {
         setState(prev => ({
           ...prev,
@@ -401,10 +575,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             goal: data.goal,
             limitations: data.limitations,
             enabledSections: data.sections,
-            defaultLocationId: newLocation.id,
+            defaultLocationId: locationId,
           },
           locations: [{
-            id: newLocation.id,
+            id: locationId,
             name: data.location.name,
             tier: data.location.tier,
             equipment: data.location.equipment,
@@ -412,8 +586,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }));
       }
     } catch (err) {
-      console.error('Onboarding error:', err);
+      logger.auth.error('completeOnboarding exception', {
+        error: err instanceof Error ? err.message : String(err),
+        durationMs: Math.round(performance.now() - startTime),
+      });
       throw err;
+    } finally {
+      // Always release lock
+      operationLockRef.current = null;
+      logger.auth.debug('Operation lock released', { lock: 'completeOnboarding' });
     }
   }, [state.user]);
 

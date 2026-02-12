@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { CTAButton } from "../CTAButton";
+import { Textarea } from "../ui/textarea";
+import { Card } from "../ui/Card";
 
 interface NoteModalProps {
   isOpen: boolean;
@@ -39,7 +41,7 @@ export const NoteModal = ({
       />
       
       {/* Modal */}
-      <div className="relative w-full max-w-md glass-card animate-in slide-in-from-bottom duration-300">
+      <Card className="relative w-full max-w-md animate-in slide-in-from-bottom duration-300">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border/30">
           <h3 className="text-heading-h5 font-bold uppercase text-clear-orange">
@@ -55,12 +57,12 @@ export const NoteModal = ({
         
         {/* Content */}
         <div className="p-4">
-          <textarea
+          <Textarea
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="185lbs x 8,8,8,7"
-            className="w-full h-32 p-4 glass-input rounded-none text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-1 focus:ring-clear-orange"
             autoFocus
+            className="min-h-[120px]"
           />
         </div>
         
@@ -82,7 +84,7 @@ export const NoteModal = ({
             Save
           </CTAButton>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };

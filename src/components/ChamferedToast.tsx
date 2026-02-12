@@ -59,15 +59,16 @@ function ChamferedToast({
 
   return (
     <div
-      className={`flex items-stretch w-[calc(100vw-32px)] sm:w-[349px] cursor-pointer ${description ? 'min-h-[68px]' : 'h-[68px]'}`}
+      className={`grid w-[calc(100vw-32px)] sm:w-[349px] cursor-pointer ${description ? 'min-h-[68px]' : 'h-[68px]'}`}
+      style={{ gridTemplateColumns: '10px 1fr' }}
       onClick={() => toast.dismiss(id)}
     >
-      {/* Left accent column - 12px wide */}
+      {/* Left accent column - 12px wide, overlaps 2px into next column */}
       <LeftColumn
         size="sm"
         surfaceColor={config.accent}
         borderColor={config.border}
-        className="relative z-10 !w-[12px]"
+        className="relative z-10 h-full !w-[12px]"
       />
 
       {/* Main body with chamfered corner */}
@@ -76,7 +77,7 @@ function ChamferedToast({
         surfaceColor={config.surface}
         borderColor={config.border}
         hasLeftBorder={false}
-        className="flex-1 -ml-[2px] h-full"
+        className="h-full"
       >
         <div
           className="flex items-center gap-2 h-full px-3"

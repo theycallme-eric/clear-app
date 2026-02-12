@@ -1,5 +1,6 @@
 import { Header } from "@/components/Header";
 import { CTAButton } from "@/components/CTAButton";
+import { Card } from "@/components/Card";
 import { Zap, Clock, Flame, Dumbbell } from "lucide-react";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import { ErrorState } from "@/components/ErrorState";
@@ -88,23 +89,20 @@ export const HomeScreen = ({
 
         <div className="px-4 space-y-6">
           {/* Hero CTA - Generate Workout */}
-          <button
-            onClick={onGenerateWorkout}
-            className="w-full glass-card p-6 text-left group hover:border-clear-orange/60 transition-all"
-          >
+          <Card onClick={onGenerateWorkout} padding="lg">
             <h2 className="text-heading-h2 font-bold uppercase tracking-wider text-foreground mb-2">
               Generate Workout
             </h2>
             <p className="text-muted-foreground text-paragraph-sm">
               Set intensity, anchor, and build your session
             </p>
-          </button>
+          </Card>
 
           {/* Quick Start */}
-          <button
-            onClick={() => hasHistory && onQuickStart(suggestedIntensity, suggestedAnchor)}
-            className="w-full glass-card p-4 text-left group hover:border-clear-orange/60 transition-all"
-            disabled={!hasHistory}
+          <Card
+            onClick={hasHistory ? () => onQuickStart(suggestedIntensity, suggestedAnchor) : undefined}
+            padding="md"
+            className={!hasHistory ? "opacity-50 cursor-not-allowed" : ""}
           >
             <div className="flex items-center gap-2 mb-2">
               <Zap className="w-5 h-5 text-clear-orange" />
@@ -121,10 +119,10 @@ export const HomeScreen = ({
                 Start your first workout
               </p>
             )}
-          </button>
+          </Card>
 
           {/* Streak Tracker */}
-          <div className="glass-card p-4">
+          <Card padding="md">
             <h3 className="text-label-xs uppercase tracking-widest text-muted-foreground mb-4">
               Streak
             </h3>
@@ -171,7 +169,7 @@ export const HomeScreen = ({
             >
               Mark Rest Day
             </CTAButton>
-          </div>
+          </Card>
 
           {/* Recent Workouts */}
           <div>
@@ -195,10 +193,10 @@ export const HomeScreen = ({
               <>
                 <div className="space-y-2">
                   {workoutHistory.slice(0, 3).map((workout) => (
-                    <button
+                    <Card
                       key={workout.id}
                       onClick={() => onViewWorkoutDetail(workout.id)}
-                      className="w-full glass-card p-4 text-left hover:border-clear-orange/60 transition-all"
+                      padding="md"
                     >
                       <div className="flex items-center justify-between">
                         <div>
@@ -211,7 +209,7 @@ export const HomeScreen = ({
                           </p>
                         </div>
                       </div>
-                    </button>
+                    </Card>
                   ))}
                 </div>
 

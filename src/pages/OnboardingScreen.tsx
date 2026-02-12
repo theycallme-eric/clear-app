@@ -5,6 +5,7 @@ import { CTAButton } from "@/components/CTAButton";
 import { Card } from "@/components/Card";
 import { RadioButton } from "@/components/RadioButton";
 import { Chip } from "@/components/Chip";
+import { Textarea } from "@/components/ui/textarea";
 import {
   UserPreferences,
   EquipmentTier,
@@ -206,7 +207,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                               variant="selectable"
                               selected={isSelected}
                               onClick={() => handleEquipmentToggle(equipment)}
-                              disabled={isBodyweight || !isAvailable}
+                              disabled={isBodyweight}
                             >
                               {equipment}
                             </Chip>
@@ -236,26 +237,28 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                {WORKOUT_SECTIONS.map((section) => {
-                  const isSelected = sections.includes(section.id);
-                  const isAccessory = section.id === 'accessory';
-                  const primaryOff = !sections.includes('primary');
-                  const isDisabled = isAccessory && primaryOff;
+              <Card cornerSize="md" padding="md">
+                <div className="flex flex-wrap gap-2">
+                  {WORKOUT_SECTIONS.map((section) => {
+                    const isSelected = sections.includes(section.id);
+                    const isAccessory = section.id === 'accessory';
+                    const primaryOff = !sections.includes('primary');
+                    const isDisabled = isAccessory && primaryOff;
 
-                  return (
-                    <Chip
-                      key={section.id}
-                      variant="selectable"
-                      selected={isSelected}
-                      onClick={() => handleSectionToggle(section.id)}
-                      disabled={isDisabled}
-                    >
-                      {section.name}
-                    </Chip>
-                  );
-                })}
-              </div>
+                    return (
+                      <Chip
+                        key={section.id}
+                        variant="selectable"
+                        selected={isSelected}
+                        onClick={() => handleSectionToggle(section.id)}
+                        disabled={isDisabled}
+                      >
+                        {section.name}
+                      </Chip>
+                    );
+                  })}
+                </div>
+              </Card>
 
               {/* Legend */}
               <Card cornerSize="md" padding="none">
@@ -307,14 +310,12 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                 </p>
               </div>
 
-              <div className="glass-card p-4">
-                <textarea
-                  value={limitations}
-                  onChange={(e) => setLimitations(e.target.value)}
-                  placeholder="Bad left shoulder from years ago. Overhead press feels sketchy sometimes."
-                  className="w-full h-32 bg-transparent text-foreground placeholder:text-muted-foreground/50 resize-none focus:outline-none"
-                />
-              </div>
+              <Textarea
+                value={limitations}
+                onChange={(e) => setLimitations(e.target.value)}
+                placeholder="Bad left shoulder from years ago. Overhead press feels sketchy sometimes."
+                className="min-h-[120px]"
+              />
             </div>
           )}
 
@@ -326,7 +327,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
               </h2>
 
               {/* Location */}
-              <div className="glass-card p-4">
+              <Card padding="md">
                 <div className="flex items-start justify-between">
                   <div>
                     <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-1">
@@ -347,10 +348,10 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                     Edit
                   </button>
                 </div>
-              </div>
+              </Card>
 
               {/* Workout Sections */}
-              <div className="glass-card p-4">
+              <Card padding="md">
                 <div className="flex items-start justify-between">
                   <div>
                     <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-1">
@@ -373,10 +374,10 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                     Edit
                   </button>
                 </div>
-              </div>
+              </Card>
 
               {/* Limitations */}
-              <div className="glass-card p-4">
+              <Card padding="md">
                 <div className="flex items-start justify-between">
                   <div className="flex-1 mr-4">
                     <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-1">
@@ -393,7 +394,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                     Edit
                   </button>
                 </div>
-              </div>
+              </Card>
             </div>
           )}
         </div>

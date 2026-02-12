@@ -518,30 +518,16 @@ serve(async (req: Request) => {
       );
     }
 
-    // Initialize Supabase client
+    // Initialize Supabase clients
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const authHeader = req.headers.get('Authorization');
 
     console.log('Auth header exists:', !!authHeader);
 
-    // Extract user ID from JWT - Supabase has already verified the token
-    // (we deploy without --no-verify-jwt, so invalid tokens are rejected before reaching here)
-    let userId: string;
-    if (authHeader) {
-      try {
-        const token = authHeader.replace('Bearer ', '');
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        userId = payload.sub;
-        console.log('Extracted userId from JWT:', userId);
-      } catch (e) {
-        console.log('Failed to parse JWT:', e);
-        return new Response(
-          JSON.stringify({ error: 'Invalid token format' }),
-          { status: 401, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } }
-        );
-      }
-    } else {
+    // Verify authorization header exists
+    if (!authHeader) {
       console.log('No auth header present');
       return new Response(
         JSON.stringify({ error: 'Authorization required' }),
@@ -549,9 +535,28 @@ serve(async (req: Request) => {
       );
     }
 
-    // Create service client for database operations (bypasses RLS)
+    // Create authenticated client to properly verify the JWT
+    // This verifies the signature, expiry, and extracts the user
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    // getUser() verifies the JWT and returns the authenticated user
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
+
+    if (authError || !user) {
+      console.log('Auth verification failed:', authError?.message || 'No user');
+      return new Response(
+        JSON.stringify({ error: 'Invalid or expired token' }),
+        { status: 401, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } }
+      );
+    }
+
+    console.log('Verified userId:', user.id);
+
+    // Create service client for database operations that need to bypass RLS
+    // (e.g., fetching exercise definitions which are read-only for all users)
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    const user = { id: userId };
 
     // Fetch user profile (optional - can use request overrides)
     let profile: UserProfile = {

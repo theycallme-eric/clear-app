@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
+import { Card } from "./ui/Card";
 
 interface EmptyStateProps {
   icon?: LucideIcon;
@@ -23,7 +24,7 @@ export const EmptyState = ({
   className,
 }: EmptyStateProps) => {
   return (
-    <div className={cn("glass-card p-8 text-center", className)}>
+    <Card className={cn("p-8 text-center", className)}>
       {Icon && (
         <Icon className="w-10 h-10 mx-auto mb-4 text-muted-foreground/50" />
       )}
@@ -43,6 +44,6 @@ export const EmptyState = ({
           {actionLabel}
         </button>
       )}
-    </div>
+    </Card>
   );
 };

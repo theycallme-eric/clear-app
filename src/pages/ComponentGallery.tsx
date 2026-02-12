@@ -494,15 +494,15 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
           {/* ─── CARDS & CONTAINERS ─── */}
           <Section title="Cards & Containers">
             <div className="space-y-4">
-              <Subsection label="glass-card">
-                <div className="glass-card p-4">
+              <Subsection label="ChamferedCard">
+                <ChamferedCard padding="md">
                   <p className="text-cta-sm font-medium text-foreground">
-                    Glass Card
+                    Chamfered Card
                   </p>
                   <p className="text-paragraph-sm text-muted-foreground mt-1">
                     Used throughout the app for content sections
                   </p>
-                </div>
+                </ChamferedCard>
               </Subsection>
             </div>
           </Section>
@@ -573,25 +573,25 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
           </Section>
 
           <Section title="App — LoadingScreen">
-            <div className="glass-card overflow-hidden h-48 relative">
+            <ChamferedCard padding="none" className="overflow-hidden h-48 relative">
               <LoadingScreen message="CLEAR" subtitle="Loading your data..." className="min-h-0 h-full" />
-            </div>
+            </ChamferedCard>
           </Section>
 
           {/* ════════════════════════════════════════════════════════════════════ */}
-          {/* ═══ UNUSED COMPONENTS — Not actively used in the app ═══════════════ */}
+          {/* ═══ MUSEUM — Legacy components preserved for reference ═════════════ */}
           {/* ════════════════════════════════════════════════════════════════════ */}
 
-          <div className="mt-16 pt-8 border-t-2 border-destructive/30">
-            <p className="text-label-lg text-destructive uppercase tracking-widest mb-2">
-              Unused Components
+          <div className="mt-16 pt-8 border-t-2 border-muted-foreground/30">
+            <p className="text-label-lg text-muted-foreground uppercase tracking-widest mb-2">
+              Museum
             </p>
             <p className="text-paragraph-sm text-muted-foreground mb-8">
-              These components are not actively used in the app and may be removed in a future cleanup.
+              Legacy shadcn/ui components preserved for reference. These are not used in the app and will be removed in a future cleanup.
             </p>
           </div>
 
-          <Section title="Unused — shadcn/ui Buttons">
+          <Section title="Museum — shadcn/ui Buttons">
             <div className="space-y-4">
               <Subsection label="Variants">
                 <div className="flex flex-wrap gap-2">
@@ -615,28 +615,7 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
             </div>
           </Section>
 
-          <Section title="Unused — Legacy Button Styles">
-            <div className="space-y-4">
-              <Subsection label="glow-button">
-                <button className="glow-button w-full py-3 text-cta-sm font-bold text-foreground">
-                  Glow Button
-                </button>
-              </Subsection>
-
-              <Subsection label="selection-active / inactive">
-                <div className="flex gap-2">
-                  <button className="selection-active px-4 py-2 text-cta-sm font-medium">
-                    Active
-                  </button>
-                  <button className="selection-inactive px-4 py-2 text-cta-sm font-medium text-foreground/90">
-                    Inactive
-                  </button>
-                </div>
-              </Subsection>
-            </div>
-          </Section>
-
-          <Section title="Unused — shadcn/ui Inputs">
+          <Section title="Museum — shadcn/ui Inputs">
             <div className="space-y-4">
               <Subsection label="Slider">
                 <Slider value={sliderValue} onValueChange={setSliderValue} max={100} step={1} />
@@ -654,7 +633,7 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
             </div>
           </Section>
 
-          <Section title="Unused — shadcn/ui Feedback">
+          <Section title="Museum — shadcn/ui Feedback">
             <div className="space-y-4">
               <Subsection label="Badge variants">
                 <div className="flex flex-wrap gap-2">
@@ -687,7 +666,7 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
             </div>
           </Section>
 
-          <Section title="Unused — shadcn/ui Card">
+          <Section title="Museum — shadcn/ui Card">
             <Card>
               <CardHeader>
                 <CardTitle className="text-heading-h5">Card Title</CardTitle>

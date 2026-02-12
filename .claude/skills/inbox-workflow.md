@@ -82,6 +82,12 @@ Where should this go?
 
 4. **If session plan found:** Ask before executing, don't auto-start
 
+5. **If user says yes to execute:**
+   - Read `.claude/skills/execute-plan.md`
+   - Follow the skill to execute the plan systematically
+   - Track progress with TodoWrite
+   - Validate acceptance criteria for each task
+
 ---
 
 ## Filename Normalization
@@ -121,6 +127,7 @@ echo "*\n!.gitignore" > .claude/inbox/.gitignore
 ## Related
 
 - `.claude/commands/process-inbox.md` — The slash command that triggers this
+- `.claude/skills/execute-plan.md` — Execute session plans after filing
 - `.claude/skills/` — Destination for skill files
 - `.claude/agents/` — Destination for agent files
 - `.claude/plans/` — Destination for session plans

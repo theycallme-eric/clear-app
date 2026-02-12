@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { ArrowLeft, ArrowRight, Loader2, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { logger } from "@/lib/logger";
 import { toast } from "@/components/ui/sonner";
 import { CTAButton } from "@/components/CTAButton";
+import { Input } from "@/components/ui/input";
 
 interface SignInScreenProps {
   onBack: () => void;
-  onSuccess: (onboardingComplete: boolean) => void;
+  onSuccess: () => void;  // No longer passes onboardingComplete - AuthContext handles navigation
   onForgotPassword: () => void;
 }
 
@@ -25,6 +27,7 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
     }
 
     setIsLoading(true);
+    logger.auth.info('Sign-in attempt started', { email });
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -33,6 +36,7 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
       });
 
       if (error) {
+        logger.auth.error('Sign-in failed', { error: error.message });
         toast.error("Sign in failed", {
           description: error.message,
         });
@@ -40,21 +44,16 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
       }
 
       if (data.user) {
-        // Check if onboarding is complete
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("onboarding_completed")
-          .eq("id", data.user.id)
-          .single();
-
-        const onboardingComplete = profile?.onboarding_completed ?? false;
-
+        // Don't fetch profile here - AuthContext handles it via SIGNED_IN event
+        // This prevents a race condition where both SignInScreen and AuthContext
+        // fetch the profile simultaneously
+        logger.auth.info('Sign-in succeeded, AuthContext will handle profile fetch', { userId: data.user.id });
         toast.success("Welcome back!");
-        onSuccess(onboardingComplete);
+        onSuccess();
       }
     } catch (err) {
+      logger.auth.error('Sign-in exception', { error: err instanceof Error ? err.message : String(err) });
       toast.error("An unexpected error occurred");
-      console.error(err);
     } finally {
       setIsLoading(false);
     }
@@ -84,43 +83,39 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Email */}
           <div className="space-y-2">
-            <label htmlFor="email" className="block text-paragraph-sm font-medium text-foreground/80">
+            <label className="block text-paragraph-sm text-foreground">
               Email
             </label>
-            <input
-              id="email"
+            <Input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="glass-input w-full h-12 px-4 text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-accent"
               disabled={isLoading}
             />
           </div>
 
           {/* Password */}
           <div className="space-y-2">
-            <label htmlFor="password" className="block text-paragraph-sm font-medium text-foreground/80">
+            <label className="block text-paragraph-sm text-foreground">
               Password
             </label>
-            <div className="relative">
-              <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                className="glass-input w-full h-12 px-4 pr-12 text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-accent"
-                disabled={isLoading}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/50 hover:text-foreground transition-colors"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
+            <Input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              disabled={isLoading}
+              iconRight={
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="hover:opacity-80"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              }
+            />
           </div>
 
           {/* Forgot Password */}

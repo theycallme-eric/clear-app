@@ -558,7 +558,19 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      complete_onboarding: {
+        Args: {
+          p_user_id: string
+          p_location_name: string
+          p_location_tier: Database["public"]["Enums"]["equipment_tier"]
+          p_equipment: string[]
+          p_experience_level: Database["public"]["Enums"]["experience_level"]
+          p_goal_preset: Database["public"]["Enums"]["goal_preset"]
+          p_sections: Database["public"]["Enums"]["section_type"][]
+          p_limitations?: string | null
+        }
+        Returns: string
+      }
     }
     Enums: {
       anchor_type:

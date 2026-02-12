@@ -2,6 +2,7 @@
 // Calls the generate-workout Supabase Edge Function
 
 import { supabase } from './supabase';
+import { logger } from './logger';
 import type {
   GenerateWorkoutRequest,
   GenerateWorkoutResponse,
@@ -93,17 +94,23 @@ export function transformAPIWorkoutToFrontend(
 export async function generateWorkout(
   request: GenerateWorkoutRequest
 ): Promise<GenerateWorkoutResponse | GenerationError> {
+  logger.workout.info('generateWorkout started', {
+    anchor: request.anchor,
+    intensity: request.intensity,
+    durationMins: request.duration_mins,
+  });
+  const startTime = performance.now();
+
   try {
     // Get current session for auth
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
-    console.log('Session check:', { hasSession: !!session, error: sessionError });
-
     if (sessionError || !session) {
+      logger.workout.error('generateWorkout: not authenticated', { error: sessionError?.message });
       return { error: 'Not authenticated', details: 'Please sign in to generate workouts' };
     }
 
-    console.log('Calling Edge Function with token:', session.access_token.substring(0, 20) + '...');
+    logger.workout.debug('Calling Edge Function');
 
     // Call the Edge Function with explicit auth header
     const { data, error } = await supabase.functions.invoke('generate-workout', {
@@ -113,23 +120,30 @@ export async function generateWorkout(
       },
     });
 
-    console.log('Edge Function response:', { data, error });
-    console.log('Error details:', error ? JSON.stringify(error, null, 2) : 'no error');
+    const durationMs = Math.round(performance.now() - startTime);
 
     if (error) {
-      // Check if it's an auth error from the function itself
       const errorMsg = data?.error || error.message || 'Unknown error';
-      console.log('Error message:', errorMsg);
+      logger.workout.error('generateWorkout Edge Function error', { error: errorMsg, durationMs });
       return {
         error: 'Failed to generate workout',
         details: errorMsg,
       };
     }
 
+    logger.workout.info('generateWorkout succeeded', {
+      durationMs,
+      workoutTitle: data?.workout?.title,
+      sectionsCount: data?.workout?.sections?.length,
+    });
     return data as GenerateWorkoutResponse;
 
   } catch (err) {
-    console.error('generateWorkout error:', err);
+    const durationMs = Math.round(performance.now() - startTime);
+    logger.workout.error('generateWorkout exception', {
+      error: err instanceof Error ? err.message : String(err),
+      durationMs,
+    });
     return {
       error: 'Network error',
       details: err instanceof Error ? err.message : 'Unknown error occurred',
@@ -138,7 +152,12 @@ export async function generateWorkout(
 }
 
 /**
- * Save a generated workout to the database
+ * Save a generated workout to the database using atomic RPC
+ *
+ * Uses save_generated_workout RPC to ensure all-or-nothing save:
+ * - Session, sections, and exercises are saved in a single transaction
+ * - If any part fails, the entire operation rolls back
+ * - No orphaned data from partial saves
  *
  * @param workout - The generated workout response
  * @param locationId - The location ID for this session
@@ -148,86 +167,75 @@ export async function saveGeneratedWorkout(
   workout: GenerateWorkoutResponse,
   locationId: string
 ): Promise<{ sessionId: string } | GenerationError> {
+  logger.workout.info('saveGeneratedWorkout started (atomic RPC)', { locationId });
+  const startTime = performance.now();
+
   try {
     const { data: { user }, error: userError } = await supabase.auth.getUser();
 
     if (userError || !user) {
+      logger.workout.error('saveGeneratedWorkout: not authenticated');
       return { error: 'Not authenticated' };
     }
 
-    // Create workout session
-    const sessionInsert = {
-      user_id: user.id,
-      location_id: locationId,
-      date: new Date().toISOString().split('T')[0],
-      anchor: workout.metadata.request.anchor,
-      intensity: workout.metadata.request.intensity,
-      time_target_mins: workout.metadata.request.duration_mins,
-      prompt_version: workout.metadata.prompt_version,
-    };
-    console.log('Inserting workout_session:', sessionInsert);
-
-    const { data: session, error: sessionError } = await supabase
-      .from('workout_sessions')
-      .insert(sessionInsert)
-      .select('id')
-      .single();
-
-    if (sessionError || !session) {
-      console.error('workout_sessions insert error:', sessionError);
-      return {
-        error: 'Failed to save workout session',
-        details: sessionError?.message,
-      };
-    }
-    console.log('Session created with ID:', session.id);
-
-    // Create sections and exercises
-    for (let sectionIndex = 0; sectionIndex < workout.workout.sections.length; sectionIndex++) {
-      const section = workout.workout.sections[sectionIndex];
-
-      const { data: sectionData, error: sectionError } = await supabase
-        .from('workout_sections')
-        .insert({
-          session_id: session.id,
-          section_type: section.section_type as any,
-          order_index: sectionIndex,
-          section_notes: section.section_notes,
-        })
-        .select('id')
-        .single();
-
-      if (sectionError || !sectionData) {
-        console.error('Failed to save section:', sectionError);
-        continue;
-      }
-
-      // Create exercises for this section
-      const exerciseInserts = section.exercises.map((exercise, exerciseIndex) => ({
-        section_id: sectionData.id,
+    // Transform sections to RPC format
+    const sectionsForRpc = workout.workout.sections.map((section, sectionIndex) => ({
+      section_type: section.section_type,
+      order_index: sectionIndex,
+      section_notes: section.section_notes || null,
+      exercises: section.exercises.map((exercise, exerciseIndex) => ({
         exercise_id: exercise.exercise_id,
-        equipment_used: exercise.equipment || null,
+        equipment_used: exercise.equipment || 'bodyweight',
         sets: exercise.sets || null,
-        reps: exercise.reps || null,
+        reps: exercise.reps || '1',
         effort_percent: exercise.effort_percent || null,
         tempo: exercise.tempo || null,
         rest_seconds: exercise.rest_seconds || null,
         coaching_cues: exercise.coaching_cues?.join('\n') || null,
         order_index: exerciseIndex,
-      }));
+      })),
+    }));
 
-      const { error: exercisesError } = await supabase
-        .from('exercises')
-        .insert(exerciseInserts);
+    // Single atomic RPC call - all or nothing
+    const { data: sessionId, error: rpcError } = await supabase.rpc('save_generated_workout', {
+      p_user_id: user.id,
+      p_location_id: locationId,
+      p_date: new Date().toISOString().split('T')[0],
+      p_anchor: workout.metadata.request.anchor,
+      p_intensity: workout.metadata.request.intensity,
+      p_time_target_mins: workout.metadata.request.duration_mins || null,
+      p_prompt_version: workout.metadata.prompt_version || null,
+      p_sections: sectionsForRpc,
+    });
 
-      if (exercisesError) {
-        console.error('Failed to save exercises:', exercisesError);
-      }
+    const durationMs = Math.round(performance.now() - startTime);
+
+    if (rpcError) {
+      logger.workout.error('saveGeneratedWorkout RPC failed', {
+        error: rpcError.message,
+        durationMs,
+      });
+      return {
+        error: 'Failed to save workout',
+        details: rpcError.message,
+      };
     }
 
-    return { sessionId: session.id };
+    logger.workout.info('saveGeneratedWorkout completed (atomic)', {
+      sessionId,
+      sectionsCount: sectionsForRpc.length,
+      exercisesCount: sectionsForRpc.reduce((sum, s) => sum + s.exercises.length, 0),
+      durationMs,
+    });
+
+    return { sessionId };
 
   } catch (err) {
+    const durationMs = Math.round(performance.now() - startTime);
+    logger.workout.error('saveGeneratedWorkout exception', {
+      error: err instanceof Error ? err.message : String(err),
+      durationMs,
+    });
     return {
       error: 'Failed to save workout',
       details: err instanceof Error ? err.message : 'Unknown error',

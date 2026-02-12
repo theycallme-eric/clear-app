@@ -4,6 +4,7 @@ import { GeneratedWorkout, StreakData } from "@/types/workout";
 import { WorkoutNotes } from "./WorkoutScreen";
 import { cn } from "@/lib/utils";
 import { CTAButton } from "@/components/CTAButton";
+import { Card } from "@/components/Card";
 
 interface SummaryScreenProps {
   workout: GeneratedWorkout;
@@ -88,14 +89,14 @@ export const SummaryScreen = ({
         </div>
 
         {/* Workout Summary Card */}
-        <div className="glass-card p-4 mb-6 text-center">
+        <Card padding="md" className="mb-6 text-center">
           <p className="text-heading-h5 font-medium text-foreground uppercase tracking-wide">
             {workout.anchor} &bull; Intensity {workout.intensity}
           </p>
           <p className="text-muted-foreground text-paragraph-sm mt-1">
             {formatDuration(totalTime)} &bull; {workout.sections.length} sections
           </p>
-        </div>
+        </Card>
 
         {/* Mood Tracker */}
         <div className="mb-6">
@@ -126,18 +127,18 @@ export const SummaryScreen = ({
           <h3 className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3">
             Session Notes (Optional)
           </h3>
-          <div className="glass-card p-4">
+          <Card padding="md">
             <textarea
               value={sessionNotes}
               onChange={(e) => setSessionNotes(e.target.value)}
               placeholder="Add any notes about this workout..."
               className="w-full h-24 bg-transparent text-foreground placeholder:text-muted-foreground/50 resize-none focus:outline-none text-sm"
             />
-          </div>
+          </Card>
         </div>
 
         {/* Streak Update */}
-        <div className="glass-card p-4">
+        <Card padding="md">
           <h3 className="text-label-xs uppercase tracking-widest text-muted-foreground mb-4">
             Streak
           </h3>
@@ -182,7 +183,7 @@ export const SummaryScreen = ({
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* Fixed Bottom Action */}

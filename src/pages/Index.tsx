@@ -115,16 +115,10 @@ const Index = () => {
   };
 
   // Auth handlers
-  const handleSignInSuccess = async (onboardingComplete: boolean) => {
-    // Auth listener will handle state update
-    // Just navigate based on onboarding status
-    if (onboardingComplete) {
-      loadHomeData();
-      checkForIncompleteSession();
-      navigateTo("home");
-    } else {
-      navigateTo("onboarding");
-    }
+  const handleSignInSuccess = () => {
+    // Auth listener (AuthContext) will handle fetching profile and updating state
+    // The useEffect above will then navigate based on profile.onboardingComplete
+    // This prevents race conditions from having two simultaneous profile fetches
   };
 
   // Abandonment handlers

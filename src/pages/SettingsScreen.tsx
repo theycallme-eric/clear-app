@@ -2,6 +2,10 @@ import { useState } from "react";
 import { ArrowLeft, ChevronRight, ChevronDown, ChevronUp, Check, Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CTAButton } from "@/components/CTAButton";
+import { Card } from "@/components/Card";
+import { Chip } from "@/components/Chip";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   UserPreferences,
   UserLocation,
@@ -293,10 +297,7 @@ export const SettingsScreen = ({
                 </p>
                 <div className="space-y-2">
                   {/* Locations */}
-                  <button
-                    onClick={() => setCurrentView("locations")}
-                    className="w-full glass-card p-4 text-left hover:border-clear-orange/60 transition-all"
-                  >
+                  <Card onClick={() => setCurrentView("locations")} padding="md">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-label-sm text-foreground">
@@ -308,15 +309,15 @@ export const SettingsScreen = ({
                       </div>
                       <ChevronRight className="w-5 h-5 text-muted-foreground" />
                     </div>
-                  </button>
+                  </Card>
 
                   {/* Experience Level */}
-                  <button
+                  <Card
                     onClick={() => {
                       setSelectedExperience(preferences.experienceLevel);
                       setCurrentView("experience");
                     }}
-                    className="w-full glass-card p-4 text-left hover:border-clear-orange/60 transition-all"
+                    padding="md"
                   >
                     <div className="flex items-center justify-between">
                       <div>
@@ -329,10 +330,10 @@ export const SettingsScreen = ({
                       </div>
                       <ChevronRight className="w-5 h-5 text-muted-foreground" />
                     </div>
-                  </button>
+                  </Card>
 
                   {/* Workout Structure */}
-                  <button
+                  <Card
                     onClick={() => {
                       setSelectedGoal(preferences.goal);
                       setSelectedSections([...preferences.sections]);
@@ -340,7 +341,7 @@ export const SettingsScreen = ({
                       setLegendOpen(false);
                       setCurrentView("structure");
                     }}
-                    className="w-full glass-card p-4 text-left hover:border-clear-orange/60 transition-all"
+                    padding="md"
                   >
                     <div className="flex items-center justify-between">
                       <div>
@@ -353,15 +354,15 @@ export const SettingsScreen = ({
                       </div>
                       <ChevronRight className="w-5 h-5 text-muted-foreground" />
                     </div>
-                  </button>
+                  </Card>
 
                   {/* Limitations */}
-                  <button
+                  <Card
                     onClick={() => {
                       setLimitations(preferences.limitations);
                       setCurrentView("limitations");
                     }}
-                    className="w-full glass-card p-4 text-left hover:border-clear-orange/60 transition-all"
+                    padding="md"
                   >
                     <div className="flex items-center justify-between">
                       <div>
@@ -374,7 +375,7 @@ export const SettingsScreen = ({
                       </div>
                       <ChevronRight className="w-5 h-5 text-muted-foreground" />
                     </div>
-                  </button>
+                  </Card>
                 </div>
               </div>
 
@@ -384,19 +385,16 @@ export const SettingsScreen = ({
                   About
                 </p>
                 <div className="space-y-2">
-                  <button
-                    onClick={() => toast.info("Feedback form coming soon!")}
-                    className="w-full glass-card p-4 text-left hover:border-clear-orange/60 transition-all"
-                  >
+                  <Card onClick={() => toast.info("Feedback form coming soon!")} padding="md">
                     <div className="flex items-center justify-between">
                       <p className="text-label-sm text-foreground">
                         Send Feedback
                       </p>
                       <ChevronRight className="w-5 h-5 text-muted-foreground" />
                     </div>
-                  </button>
+                  </Card>
 
-                  <div className="glass-card p-4">
+                  <Card padding="md">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-label-sm text-foreground">
@@ -407,7 +405,7 @@ export const SettingsScreen = ({
                         </p>
                       </div>
                     </div>
-                  </div>
+                  </Card>
                 </div>
               </div>
 
@@ -418,10 +416,7 @@ export const SettingsScreen = ({
                     Developer
                   </p>
                   <div className="space-y-2">
-                    <button
-                      onClick={onOpenDeveloper}
-                      className="w-full glass-card p-4 text-left hover:border-clear-orange/60 transition-all"
-                    >
+                    <Card onClick={onOpenDeveloper} padding="md">
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="text-label-sm text-foreground">
@@ -433,7 +428,7 @@ export const SettingsScreen = ({
                         </div>
                         <ChevronRight className="w-5 h-5 text-muted-foreground" />
                       </div>
-                    </button>
+                    </Card>
                   </div>
                 </div>
               )}
@@ -444,7 +439,7 @@ export const SettingsScreen = ({
           {currentView === "locations" && (
             <div className="space-y-4">
               {preferences.locations.map((location) => (
-                <div key={location.id} className="glass-card p-4">
+                <Card key={location.id} padding="md">
                   <div className="flex items-start justify-between">
                     <button
                       onClick={() => setDefaultLocation(location.id)}
@@ -479,17 +474,14 @@ export const SettingsScreen = ({
                       <Pencil className="w-4 h-4" />
                     </button>
                   </div>
-                </div>
+                </Card>
               ))}
 
-              <button
-                onClick={startAddLocation}
-                className="w-full glass-card p-4 text-center hover:border-clear-orange/60 transition-all"
-              >
+              <Card onClick={startAddLocation} padding="md" className="text-center">
                 <span className="text-label-sm text-clear-orange">
                   + Add Location
                 </span>
-              </button>
+              </Card>
             </div>
           )}
 
@@ -497,19 +489,15 @@ export const SettingsScreen = ({
           {(currentView === "editLocation" || currentView === "addLocation") && (
             <div className="space-y-6">
               {/* Location Name */}
-              <div>
-                <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-2">
+              <div className="space-y-2">
+                <label className="block text-paragraph-sm text-foreground">
                   Location Name
-                </p>
-                <div className="glass-card p-4">
-                  <input
-                    type="text"
-                    value={locationName}
-                    onChange={(e) => setLocationName(e.target.value)}
-                    placeholder="My Gym"
-                    className="w-full bg-transparent text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
-                  />
-                </div>
+                </label>
+                <Input
+                  value={locationName}
+                  onChange={(e) => setLocationName(e.target.value)}
+                  placeholder="My Gym"
+                />
               </div>
 
               {/* Equipment Type */}
@@ -519,15 +507,11 @@ export const SettingsScreen = ({
                 </p>
                 <div className="space-y-2">
                   {TIER_OPTIONS.map((tier) => (
-                    <button
+                    <Card
                       key={tier.value}
                       onClick={() => handleTierSelect(tier.value)}
-                      className={cn(
-                        "w-full glass-card p-3 text-left transition-all",
-                        selectedTier === tier.value
-                          ? "border-clear-orange"
-                          : "hover:border-clear-orange/40"
-                      )}
+                      padding="sm"
+                      borderColor={selectedTier === tier.value ? "var(--color-clear-orange)" : undefined}
                     >
                       <div className="flex items-center gap-3">
                         <div
@@ -551,18 +535,18 @@ export const SettingsScreen = ({
                           </p>
                         </div>
                       </div>
-                    </button>
+                    </Card>
                   ))}
                 </div>
               </div>
 
               {/* Equipment Accordion */}
-              <div className="glass-card">
+              <Card cornerSize="md" padding="none">
                 <button
                   onClick={() => setEquipmentAccordionOpen(!equipmentAccordionOpen)}
                   className="w-full p-4 flex items-center justify-between"
                 >
-                  <span className="text-label-sm uppercase tracking-wide text-foreground">
+                  <span className="text-cta-sm font-medium text-foreground">
                     Customize Equipment
                   </span>
                   {equipmentAccordionOpen ? (
@@ -580,26 +564,21 @@ export const SettingsScreen = ({
                         const isBodyweight = equipment === 'Bodyweight';
 
                         return (
-                          <button
+                          <Chip
                             key={equipment}
-                            onClick={() => !isBodyweight && handleEquipmentToggle(equipment)}
+                            variant="selectable"
+                            selected={isSelected}
+                            onClick={() => handleEquipmentToggle(equipment)}
                             disabled={isBodyweight}
-                            className={cn(
-                              "px-2 py-1 text-label-xs uppercase tracking-wide transition-all",
-                              isSelected
-                                ? "bg-clear-lime/20 border border-clear-lime text-clear-lime"
-                                : "bg-transparent border border-muted-foreground/30 text-muted-foreground hover:border-clear-orange/50"
-                            )}
                           >
-                            {isSelected && <Check className="w-3 h-3 inline mr-1" />}
                             {equipment}
-                          </button>
+                          </Chip>
                         );
                       })}
                     </div>
                   </div>
                 )}
-              </div>
+              </Card>
 
               {/* Delete Location (only for editing existing) */}
               {currentView === "editLocation" && preferences.locations.length > 1 && (
@@ -625,15 +604,11 @@ export const SettingsScreen = ({
 
               <div className="space-y-3">
                 {EXPERIENCE_LEVELS.map((level) => (
-                  <button
+                  <Card
                     key={level.value}
                     onClick={() => setSelectedExperience(level.value)}
-                    className={cn(
-                      "w-full glass-card p-4 text-left transition-all",
-                      selectedExperience === level.value
-                        ? "border-clear-orange"
-                        : "hover:border-clear-orange/40"
-                    )}
+                    padding="md"
+                    borderColor={selectedExperience === level.value ? "var(--color-clear-orange)" : undefined}
                   >
                     <div className="flex items-start gap-3">
                       <div
@@ -657,7 +632,7 @@ export const SettingsScreen = ({
                         </p>
                       </div>
                     </div>
-                  </button>
+                  </Card>
                 ))}
               </div>
             </div>
@@ -672,15 +647,11 @@ export const SettingsScreen = ({
                 </p>
                 <div className="space-y-2">
                   {GOAL_PRESETS.map((preset) => (
-                    <button
+                    <Card
                       key={preset.value}
                       onClick={() => handleGoalSelect(preset.value)}
-                      className={cn(
-                        "w-full glass-card p-3 text-left transition-all",
-                        selectedGoal === preset.value
-                          ? "border-clear-orange"
-                          : "hover:border-clear-orange/40"
-                      )}
+                      padding="sm"
+                      borderColor={selectedGoal === preset.value ? "var(--color-clear-orange)" : undefined}
                     >
                       <div className="flex items-center gap-3">
                         <div
@@ -704,14 +675,14 @@ export const SettingsScreen = ({
                           </p>
                         </div>
                       </div>
-                    </button>
+                    </Card>
                   ))}
                 </div>
               </div>
 
               {/* Sections Accordion */}
               {selectedGoal && (
-                <div className="glass-card">
+                <Card padding="none">
                   <button
                     onClick={() => setSectionsAccordionOpen(!sectionsAccordionOpen)}
                     className="w-full p-4 flex items-center justify-between"
@@ -785,7 +756,7 @@ export const SettingsScreen = ({
                       )}
                     </div>
                   )}
-                </div>
+                </Card>
               )}
             </div>
           )}
@@ -802,14 +773,12 @@ export const SettingsScreen = ({
                 </p>
               </div>
 
-              <div className="glass-card p-4">
-                <textarea
-                  value={limitations}
-                  onChange={(e) => setLimitations(e.target.value)}
-                  placeholder="Bad left shoulder from years ago. Overhead press feels sketchy sometimes."
-                  className="w-full h-32 bg-transparent text-foreground placeholder:text-muted-foreground/50 resize-none focus:outline-none"
-                />
-              </div>
+              <Textarea
+                value={limitations}
+                onChange={(e) => setLimitations(e.target.value)}
+                placeholder="Bad left shoulder from years ago. Overhead press feels sketchy sometimes."
+                className="min-h-[120px]"
+              />
 
               {limitations && (
                 <CTAButton

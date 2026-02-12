@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronDown, ChevronUp, RefreshCw } from "lucide-react";
 import { WorkoutSection } from "@/types/workout";
 import { ExerciseCard } from "./ExerciseCard";
+import { Card } from "./ui/Card";
 
 interface WorkoutSectionCardProps {
   section: WorkoutSection;
@@ -12,7 +13,7 @@ export const WorkoutSectionCard = ({ section, onRandomize }: WorkoutSectionCardP
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="glass-card overflow-hidden">
+    <Card className="overflow-hidden">
       {/* Header - always visible */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
@@ -72,6 +73,6 @@ export const WorkoutSectionCard = ({ section, onRandomize }: WorkoutSectionCardP
           </button>
         </div>
       )}
-    </div>
+    </Card>
   );
 };
