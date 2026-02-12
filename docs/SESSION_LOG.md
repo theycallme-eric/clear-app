@@ -22,6 +22,65 @@ Living document to capture progress, decisions, and learnings across sessions. T
 
 ## Session Entries
 
+### Session: 2026-02-12 - UI Cleanup: RadioButton & Card Standardization
+
+**Duration:** ~45 min
+**Mode:** Claude Code
+
+#### What Got Done
+- Fixed RadioButton layout issue (button wasn't flex container, so ChamferedFrame didn't fill height)
+- Standardized all RadioButton stack gaps to gap-2 (8px)
+- Added accent bar to Focus Area card (AnchorGrid)
+- Fixed Location Type padding in OnboardingScreen
+- Refactored SettingsScreen: wrapped sections in Cards, used RadioButton for equipment/goal/locations
+- Hidden Experience Level from settings UI
+- Wrapped sign-up/log-in inputs in Card containers (not individual ChamferedFrames)
+- Added chamfered corners to Input and Textarea components
+- Fixed Streak card width overflow (flex → grid layout)
+- Made settings card titles uppercase
+- Wrapped Limitations textarea in Card
+- Migrated 6 components from shadcn Card to chamfered Card (EmptyState, ErrorState, WorkoutSectionCard, NoteModal, ActiveExerciseCard, AbandonmentModal)
+- Changed RadioButton font from text-label-md (16px) to text-label-sm (14px)
+- Updated chamfered-component.md skill docs with "Container Pattern" section
+
+#### Files Modified
+- `src/components/RadioButton.tsx` — Fixed flex layout, added onEdit prop, smaller font
+- `src/components/AnchorGrid.tsx` — Added accent bar, gap-2
+- `src/components/LocationAccordion.tsx` — gap-2
+- `src/components/ui/input.tsx` — Chamfered corners
+- `src/components/ui/textarea.tsx` — Chamfered corners
+- `src/pages/SettingsScreen.tsx` — Card wrappers, RadioButtons, uppercase titles, gap-2
+- `src/pages/OnboardingScreen.tsx` — Padding fix, gap-2
+- `src/pages/SignInScreen.tsx` — Card container for inputs
+- `src/pages/CreateAccountScreen.tsx` — Card container for inputs
+- `src/pages/HomeScreen.tsx` — Streak card grid fix
+- `src/components/EmptyState.tsx` — Chamfered Card migration
+- `src/components/ErrorState.tsx` — Chamfered Card migration
+- `src/components/workout/WorkoutSectionCard.tsx` — Chamfered Card migration
+- `src/components/workout/NoteModal.tsx` — Chamfered Card migration
+- `src/components/workout/ActiveExerciseCard.tsx` — Chamfered Card migration
+- `src/components/workout/AbandonmentModal.tsx` — Chamfered Card migration
+- `.claude/skills/chamfered-component.md` — Container pattern docs
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Button needs `display: flex` for child to stretch | `h-full` on child doesn't work with inline-block parent |
+| gap-2 (8px) for RadioButton stacks | Consistent spacing across all selection lists |
+| Container pattern (single Card wrapping multiple inputs) | Better visual grouping than individual ChamferedFrames |
+
+#### Technical Notes
+```
+RadioButton fix:
+  Before: button (inline-block) > ChamferedFrame (h-full) — doesn't stretch
+  After:  button (flex) > ChamferedFrame (flex-1) — fills container
+
+RadioButton stacks updated in:
+  - LocationAccordion, AnchorGrid, OnboardingScreen, SettingsScreen (3 places)
+```
+
+---
+
 ### Session: 2026-02-10 - Auth System Refactor
 
 **Duration:** ~30 min

@@ -66,6 +66,7 @@ export function RadioButton({
       type="button"
       onClick={onClick}
       className={cn(
+        "flex",
         hasDescription ? "min-h-[64px]" : "h-[40px]",
         isIconVariant ? "w-[40px]" : "min-w-[49px]",
         className
@@ -76,7 +77,7 @@ export function RadioButton({
         surfaceColor={surfaceColor}
         borderColor={borderColor}
         hasLeftBorder={true}
-        className="h-full"
+        className="flex-1"
       >
         <div
           className={cn(

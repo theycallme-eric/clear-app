@@ -30,7 +30,7 @@ export const AnchorGrid = ({ selected, onSelect }: AnchorGridProps) => {
       </label>
 
       {/* Stacked single column layout */}
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-2">
         {ANCHORS.map((anchor) => (
           <RadioButton
             key={anchor}

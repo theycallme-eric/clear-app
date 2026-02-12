@@ -404,7 +404,7 @@ export const SettingsScreen = ({
                 <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-4">
                   Default Location
                 </p>
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-2">
                   {preferences.locations.map((location) => {
                     // Filter out Bodyweight and take first 3 items for display
                     const displayEquipment = location.equipment
@@ -458,7 +458,7 @@ export const SettingsScreen = ({
                   <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-2">
                     Equipment Type
                   </p>
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-2">
                     {TIER_OPTIONS.map((tier) => (
                       <RadioButton
                         key={tier.value}
@@ -537,7 +537,7 @@ export const SettingsScreen = ({
                   <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-2">
                     Goal
                   </p>
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-2">
                     {GOAL_PRESETS.map((preset) => (
                       <RadioButton
                         key={preset.value}
