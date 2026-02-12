@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChamferedFrame } from "./ChamferedFrame";
 
@@ -15,6 +16,8 @@ interface RadioButtonProps {
   icon?: ReactNode;
   /** Additional className for the container */
   className?: string;
+  /** Optional edit handler - shows pencil icon when provided */
+  onEdit?: () => void;
 }
 
 /**
@@ -25,7 +28,7 @@ interface RadioButtonProps {
  * - Corner cut: 8px (bottom-right)
  * - Border: 2px
  * - Icon size: 24px
- * - Font: Oxanium medium 16px (text-label-md)
+ * - Font: Oxanium medium 14px (text-label-sm)
  *
  * Usage:
  * - Text variant: <RadioButton selected={true} onClick={fn} label="Option" />
@@ -39,6 +42,7 @@ export function RadioButton({
   description,
   icon,
   className,
+  onEdit,
 }: RadioButtonProps) {
   const isIconVariant = !!icon && !label;
   const hasDescription = !!description;
@@ -78,29 +82,31 @@ export function RadioButton({
           className={cn(
             "h-full flex px-3",
             hasDescription
-              ? "flex-col justify-center items-start py-2"
+              ? "flex-row justify-between items-center py-2"
               : "items-center justify-center"
           )}
         >
-          {label && (
-            <span
-              className={cn(
-                "text-label-md uppercase",
-                !hasDescription && "whitespace-nowrap"
-              )}
-              style={{ color: textColor }}
-            >
-              {label}
-            </span>
-          )}
-          {description && (
-            <span
-              className="text-paragraph-sm"
-              style={{ color: textColor, opacity: 0.8 }}
-            >
-              {description}
-            </span>
-          )}
+          <div className={cn(hasDescription && "flex flex-col items-start")}>
+            {label && (
+              <span
+                className={cn(
+                  "text-label-sm uppercase",
+                  !hasDescription && "whitespace-nowrap"
+                )}
+                style={{ color: textColor }}
+              >
+                {label}
+              </span>
+            )}
+            {description && (
+              <span
+                className="text-paragraph-sm"
+                style={{ color: textColor, opacity: 0.8 }}
+              >
+                {description}
+              </span>
+            )}
+          </div>
           {icon && (
             <div
               className="w-6 h-6 flex items-center justify-center"
@@ -108,6 +114,19 @@ export function RadioButton({
             >
               {icon}
             </div>
+          )}
+          {onEdit && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit();
+              }}
+              className="p-1 hover:opacity-80 transition-opacity"
+              style={{ color: textColor }}
+            >
+              <Pencil className="w-4 h-4" />
+            </button>
           )}
         </div>
       </ChamferedFrame>

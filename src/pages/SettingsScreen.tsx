@@ -1,20 +1,19 @@
 import { useState } from "react";
-import { ArrowLeft, ChevronRight, ChevronDown, ChevronUp, Check, Pencil } from "lucide-react";
+import { ArrowLeft, ChevronRight, ChevronDown, ChevronUp, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CTAButton } from "@/components/CTAButton";
 import { Card } from "@/components/Card";
 import { Chip } from "@/components/Chip";
+import { RadioButton } from "@/components/RadioButton";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   UserPreferences,
   UserLocation,
   EquipmentTier,
-  ExperienceLevel,
   GoalPreset,
   SectionType,
   EQUIPMENT_BY_TIER,
-  EXPERIENCE_LEVELS,
   GOAL_PRESETS,
   WORKOUT_SECTIONS,
   SECTIONS_BY_GOAL,
@@ -33,7 +32,6 @@ type SettingsView =
   | "locations"
   | "editLocation"
   | "addLocation"
-  | "experience"
   | "structure"
   | "limitations";
 
@@ -66,8 +64,6 @@ export const SettingsScreen = ({
   const [sectionsAccordionOpen, setSectionsAccordionOpen] = useState(false);
   const [legendOpen, setLegendOpen] = useState(false);
 
-  // Experience editing state
-  const [selectedExperience, setSelectedExperience] = useState<ExperienceLevel | null>(preferences.experienceLevel);
 
   // Limitations editing state
   const [limitations, setLimitations] = useState(preferences.limitations);
@@ -195,18 +191,6 @@ export const SettingsScreen = ({
     onSavePreferences(updatedPrefs);
   };
 
-  // Save experience level
-  const saveExperience = () => {
-    const updatedPrefs = {
-      ...preferences,
-      experienceLevel: selectedExperience,
-    };
-    setPreferences(updatedPrefs);
-    onSavePreferences(updatedPrefs);
-    toast.success("Experience level updated");
-    setCurrentView("hub");
-  };
-
   // Save workout structure
   const saveStructure = () => {
     const updatedPrefs = {
@@ -259,7 +243,6 @@ export const SettingsScreen = ({
       case "locations": return "Locations";
       case "editLocation": return "Edit Location";
       case "addLocation": return "Add Location";
-      case "experience": return "Experience Level";
       case "structure": return "Workout Structure";
       case "limitations": return "Limitations";
     }
@@ -300,32 +283,11 @@ export const SettingsScreen = ({
                   <Card onClick={() => setCurrentView("locations")} padding="md">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-label-sm text-foreground">
+                        <p className="text-label-sm text-foreground uppercase">
                           Locations / Equipment
                         </p>
                         <p className="text-muted-foreground text-paragraph-sm mt-0.5">
                           {defaultLocation?.name || "Not set"}
-                        </p>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground" />
-                    </div>
-                  </Card>
-
-                  {/* Experience Level */}
-                  <Card
-                    onClick={() => {
-                      setSelectedExperience(preferences.experienceLevel);
-                      setCurrentView("experience");
-                    }}
-                    padding="md"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-label-sm text-foreground">
-                          Experience Level
-                        </p>
-                        <p className="text-muted-foreground text-paragraph-sm mt-0.5">
-                          {EXPERIENCE_LEVELS.find(l => l.value === preferences.experienceLevel)?.label || "Not set"}
                         </p>
                       </div>
                       <ChevronRight className="w-5 h-5 text-muted-foreground" />
@@ -345,7 +307,7 @@ export const SettingsScreen = ({
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-label-sm text-foreground">
+                        <p className="text-label-sm text-foreground uppercase">
                           Workout Structure
                         </p>
                         <p className="text-muted-foreground text-paragraph-sm mt-0.5">
@@ -366,7 +328,7 @@ export const SettingsScreen = ({
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-label-sm text-foreground">
+                        <p className="text-label-sm text-foreground uppercase">
                           Limitations
                         </p>
                         <p className="text-muted-foreground text-paragraph-sm mt-0.5 truncate max-w-[250px]">
@@ -387,7 +349,7 @@ export const SettingsScreen = ({
                 <div className="space-y-2">
                   <Card onClick={() => toast.info("Feedback form coming soon!")} padding="md">
                     <div className="flex items-center justify-between">
-                      <p className="text-label-sm text-foreground">
+                      <p className="text-label-sm text-foreground uppercase">
                         Send Feedback
                       </p>
                       <ChevronRight className="w-5 h-5 text-muted-foreground" />
@@ -397,7 +359,7 @@ export const SettingsScreen = ({
                   <Card padding="md">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-label-sm text-foreground">
+                        <p className="text-label-sm text-foreground uppercase">
                           About Clear
                         </p>
                         <p className="text-muted-foreground text-paragraph-sm mt-0.5">
@@ -419,7 +381,7 @@ export const SettingsScreen = ({
                     <Card onClick={onOpenDeveloper} padding="md">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-label-sm text-foreground">
+                          <p className="text-label-sm text-foreground uppercase">
                             Component Gallery
                           </p>
                           <p className="text-muted-foreground text-paragraph-sm mt-0.5">
@@ -438,44 +400,34 @@ export const SettingsScreen = ({
           {/* Locations List */}
           {currentView === "locations" && (
             <div className="space-y-4">
-              {preferences.locations.map((location) => (
-                <Card key={location.id} padding="md">
-                  <div className="flex items-start justify-between">
-                    <button
-                      onClick={() => setDefaultLocation(location.id)}
-                      className="flex items-start gap-3 flex-1 text-left"
-                    >
-                      <div
-                        className={cn(
-                          "w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5",
-                          preferences.defaultLocationId === location.id
-                            ? "border-clear-orange bg-clear-orange"
-                            : "border-muted-foreground"
-                        )}
-                      >
-                        {preferences.defaultLocationId === location.id && (
-                          <div className="w-2 h-2 bg-background rounded-full" />
-                        )}
-                      </div>
-                      <div>
-                        <p className="text-label-sm text-foreground">
-                          {location.name}
-                        </p>
-                        <p className="text-muted-foreground text-xs mt-1">
-                          {location.equipment.slice(0, 4).join(', ')}
-                          {location.equipment.length > 4 && ` +${location.equipment.length - 4} more`}
-                        </p>
-                      </div>
-                    </button>
-                    <button
-                      onClick={() => startEditLocation(location)}
-                      className="p-2 text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      <Pencil className="w-4 h-4" />
-                    </button>
-                  </div>
-                </Card>
-              ))}
+              <Card cornerSize="md" padding="md">
+                <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-4">
+                  Default Location
+                </p>
+                <div className="flex flex-col gap-1">
+                  {preferences.locations.map((location) => {
+                    // Filter out Bodyweight and take first 3 items for display
+                    const displayEquipment = location.equipment
+                      .filter(e => e !== 'Bodyweight')
+                      .slice(0, 3);
+                    const remainingCount = location.equipment.length - displayEquipment.length - (location.equipment.includes('Bodyweight') ? 1 : 0);
+                    const equipmentDesc = displayEquipment.join(', ') +
+                      (remainingCount > 0 ? ` +${remainingCount} more` : '');
+
+                    return (
+                      <RadioButton
+                        key={location.id}
+                        selected={preferences.defaultLocationId === location.id}
+                        onClick={() => setDefaultLocation(location.id)}
+                        label={location.name}
+                        description={equipmentDesc}
+                        className="w-full"
+                        onEdit={() => startEditLocation(location)}
+                      />
+                    );
+                  })}
+                </div>
+              </Card>
 
               <Card onClick={startAddLocation} padding="md" className="text-center">
                 <span className="text-label-sm text-clear-orange">
@@ -488,96 +440,77 @@ export const SettingsScreen = ({
           {/* Edit/Add Location */}
           {(currentView === "editLocation" || currentView === "addLocation") && (
             <div className="space-y-6">
-              {/* Location Name */}
-              <div className="space-y-2">
-                <label className="block text-paragraph-sm text-foreground">
-                  Location Name
-                </label>
-                <Input
-                  value={locationName}
-                  onChange={(e) => setLocationName(e.target.value)}
-                  placeholder="My Gym"
-                />
-              </div>
-
-              {/* Equipment Type */}
-              <div>
-                <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-2">
-                  Equipment Type
-                </p>
-                <div className="space-y-2">
-                  {TIER_OPTIONS.map((tier) => (
-                    <Card
-                      key={tier.value}
-                      onClick={() => handleTierSelect(tier.value)}
-                      padding="sm"
-                      borderColor={selectedTier === tier.value ? "var(--color-clear-orange)" : undefined}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={cn(
-                            "w-4 h-4 rounded-full border-2 flex items-center justify-center",
-                            selectedTier === tier.value
-                              ? "border-clear-orange bg-clear-orange"
-                              : "border-muted-foreground"
-                          )}
-                        >
-                          {selectedTier === tier.value && (
-                            <div className="w-1.5 h-1.5 bg-background rounded-full" />
-                          )}
-                        </div>
-                        <div>
-                          <p className="text-label-sm uppercase tracking-wide text-foreground">
-                            {tier.label}
-                          </p>
-                          <p className="text-muted-foreground text-xs">
-                            {tier.description}
-                          </p>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
+              <Card cornerSize="md" padding="md">
+                {/* Location Name */}
+                <div className="space-y-2 mb-6">
+                  <label className="block text-paragraph-sm text-foreground">
+                    Location Name
+                  </label>
+                  <Input
+                    value={locationName}
+                    onChange={(e) => setLocationName(e.target.value)}
+                    placeholder="My Gym"
+                  />
                 </div>
-              </div>
 
-              {/* Equipment Accordion */}
-              <Card cornerSize="md" padding="none">
-                <button
-                  onClick={() => setEquipmentAccordionOpen(!equipmentAccordionOpen)}
-                  className="w-full p-4 flex items-center justify-between"
-                >
-                  <span className="text-cta-sm font-medium text-foreground">
-                    Customize Equipment
-                  </span>
-                  {equipmentAccordionOpen ? (
-                    <ChevronUp className="w-5 h-5 text-muted-foreground" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                  )}
-                </button>
-
-                {equipmentAccordionOpen && (
-                  <div className="px-4 pb-4">
-                    <div className="flex flex-wrap gap-2">
-                      {EQUIPMENT_BY_TIER.full.map((equipment) => {
-                        const isSelected = selectedEquipment.includes(equipment);
-                        const isBodyweight = equipment === 'Bodyweight';
-
-                        return (
-                          <Chip
-                            key={equipment}
-                            variant="selectable"
-                            selected={isSelected}
-                            onClick={() => handleEquipmentToggle(equipment)}
-                            disabled={isBodyweight}
-                          >
-                            {equipment}
-                          </Chip>
-                        );
-                      })}
-                    </div>
+                {/* Equipment Type */}
+                <div className="mb-4">
+                  <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-2">
+                    Equipment Type
+                  </p>
+                  <div className="flex flex-col gap-1">
+                    {TIER_OPTIONS.map((tier) => (
+                      <RadioButton
+                        key={tier.value}
+                        selected={selectedTier === tier.value}
+                        onClick={() => handleTierSelect(tier.value)}
+                        label={tier.label}
+                        description={tier.description}
+                        className="w-full"
+                      />
+                    ))}
                   </div>
-                )}
+                </div>
+
+                {/* Customize Equipment Accordion */}
+                <div className="border-t border-muted-foreground/20 pt-4 -mx-4 px-4">
+                  <button
+                    onClick={() => setEquipmentAccordionOpen(!equipmentAccordionOpen)}
+                    className="w-full flex items-center justify-between"
+                  >
+                    <span className="text-cta-sm font-medium text-foreground">
+                      Customize Equipment
+                    </span>
+                    {equipmentAccordionOpen ? (
+                      <ChevronUp className="w-5 h-5 text-muted-foreground" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5 text-muted-foreground" />
+                    )}
+                  </button>
+
+                  {equipmentAccordionOpen && (
+                    <div className="pt-4">
+                      <div className="flex flex-wrap gap-2">
+                        {EQUIPMENT_BY_TIER.full.map((equipment) => {
+                          const isSelected = selectedEquipment.includes(equipment);
+                          const isBodyweight = equipment === 'Bodyweight';
+
+                          return (
+                            <Chip
+                              key={equipment}
+                              variant="selectable"
+                              selected={isSelected}
+                              onClick={() => handleEquipmentToggle(equipment)}
+                              disabled={isBodyweight}
+                            >
+                              {equipment}
+                            </Chip>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </Card>
 
               {/* Delete Location (only for editing existing) */}
@@ -595,110 +528,48 @@ export const SettingsScreen = ({
             </div>
           )}
 
-          {/* Experience Level */}
-          {currentView === "experience" && (
-            <div className="space-y-6">
-              <h2 className="text-heading-h4 font-bold uppercase tracking-wider text-foreground">
-                How Familiar Are You<br />With the Gym?
-              </h2>
-
-              <div className="space-y-3">
-                {EXPERIENCE_LEVELS.map((level) => (
-                  <Card
-                    key={level.value}
-                    onClick={() => setSelectedExperience(level.value)}
-                    padding="md"
-                    borderColor={selectedExperience === level.value ? "var(--color-clear-orange)" : undefined}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div
-                        className={cn(
-                          "w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5",
-                          selectedExperience === level.value
-                            ? "border-clear-orange bg-clear-orange"
-                            : "border-muted-foreground"
-                        )}
-                      >
-                        {selectedExperience === level.value && (
-                          <div className="w-2 h-2 bg-background rounded-full" />
-                        )}
-                      </div>
-                      <div>
-                        <p className="text-heading-h5 font-medium uppercase tracking-wide text-foreground">
-                          {level.label}
-                        </p>
-                        <p className="text-muted-foreground text-paragraph-sm mt-1">
-                          {level.description}
-                        </p>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Workout Structure */}
           {currentView === "structure" && (
             <div className="space-y-6">
-              <div>
-                <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3">
-                  Goal
-                </p>
-                <div className="space-y-2">
-                  {GOAL_PRESETS.map((preset) => (
-                    <Card
-                      key={preset.value}
-                      onClick={() => handleGoalSelect(preset.value)}
-                      padding="sm"
-                      borderColor={selectedGoal === preset.value ? "var(--color-clear-orange)" : undefined}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={cn(
-                            "w-4 h-4 rounded-full border-2 flex items-center justify-center",
-                            selectedGoal === preset.value
-                              ? "border-clear-orange bg-clear-orange"
-                              : "border-muted-foreground"
-                          )}
-                        >
-                          {selectedGoal === preset.value && (
-                            <div className="w-1.5 h-1.5 bg-background rounded-full" />
-                          )}
-                        </div>
-                        <div>
-                          <p className="text-label-sm uppercase tracking-wide text-foreground">
-                            {preset.label}
-                          </p>
-                          <p className="text-muted-foreground text-xs">
-                            {preset.description}
-                          </p>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
+              <Card cornerSize="md" padding="md">
+                {/* Goal Selection */}
+                <div className="mb-4">
+                  <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-2">
+                    Goal
+                  </p>
+                  <div className="flex flex-col gap-1">
+                    {GOAL_PRESETS.map((preset) => (
+                      <RadioButton
+                        key={preset.value}
+                        selected={selectedGoal === preset.value}
+                        onClick={() => handleGoalSelect(preset.value)}
+                        label={preset.label}
+                        description={preset.description}
+                        className="w-full"
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              {/* Sections Accordion */}
-              {selectedGoal && (
-                <Card padding="none">
-                  <button
-                    onClick={() => setSectionsAccordionOpen(!sectionsAccordionOpen)}
-                    className="w-full p-4 flex items-center justify-between"
-                  >
-                    <span className="text-label-sm uppercase tracking-wide text-foreground">
-                      Customize Sections
-                    </span>
-                    {sectionsAccordionOpen ? (
-                      <ChevronUp className="w-5 h-5 text-muted-foreground" />
-                    ) : (
-                      <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                    )}
-                  </button>
+                {/* Sections Accordion */}
+                {selectedGoal && (
+                  <div className="border-t border-muted-foreground/20 pt-4 -mx-4 px-4">
+                    <button
+                      onClick={() => setSectionsAccordionOpen(!sectionsAccordionOpen)}
+                      className="w-full flex items-center justify-between"
+                    >
+                      <span className="text-cta-sm font-medium text-foreground">
+                        Customize Sections
+                      </span>
+                      {sectionsAccordionOpen ? (
+                        <ChevronUp className="w-5 h-5 text-muted-foreground" />
+                      ) : (
+                        <ChevronDown className="w-5 h-5 text-muted-foreground" />
+                      )}
+                    </button>
 
-                  {sectionsAccordionOpen && (
-                    <div className="px-4 pb-4 space-y-4">
+                    {sectionsAccordionOpen && (
+                      <div className="pt-4 space-y-4">
                       <div className="flex flex-wrap gap-2">
                         {WORKOUT_SECTIONS.map((section) => {
                           const isSelected = selectedSections.includes(section.id);
@@ -756,29 +627,32 @@ export const SettingsScreen = ({
                       )}
                     </div>
                   )}
-                </Card>
-              )}
+                  </div>
+                )}
+              </Card>
             </div>
           )}
 
           {/* Limitations */}
           {currentView === "limitations" && (
             <div className="space-y-6">
-              <div>
-                <h2 className="text-heading-h4 font-bold uppercase tracking-wider text-foreground">
-                  Anything We Should<br />Work Around?
-                </h2>
-                <p className="text-muted-foreground text-paragraph-sm mt-2">
-                  Old injuries, problem areas, or movements you want to avoid.
-                </p>
-              </div>
+              <Card cornerSize="md" padding="md">
+                <div className="mb-4">
+                  <h2 className="text-heading-h4 font-bold uppercase tracking-wider text-foreground">
+                    Anything We Should<br />Work Around?
+                  </h2>
+                  <p className="text-muted-foreground text-paragraph-sm mt-2">
+                    Old injuries, problem areas, or movements you want to avoid.
+                  </p>
+                </div>
 
-              <Textarea
-                value={limitations}
-                onChange={(e) => setLimitations(e.target.value)}
-                placeholder="Bad left shoulder from years ago. Overhead press feels sketchy sometimes."
-                className="min-h-[120px]"
-              />
+                <Textarea
+                  value={limitations}
+                  onChange={(e) => setLimitations(e.target.value)}
+                  placeholder="Bad left shoulder from years ago. Overhead press feels sketchy sometimes."
+                  className="min-h-[120px]"
+                />
+              </Card>
 
               {limitations && (
                 <CTAButton
@@ -796,16 +670,13 @@ export const SettingsScreen = ({
 
         {/* Fixed Bottom Save Button */}
         {(currentView === "editLocation" || currentView === "addLocation" ||
-          currentView === "experience" || currentView === "structure" ||
-          currentView === "limitations") && (
+          currentView === "structure" || currentView === "limitations") && (
           <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background to-transparent">
             <div className="max-w-md mx-auto">
               <CTAButton
                 onClick={() => {
                   if (currentView === "editLocation" || currentView === "addLocation") {
                     saveLocation();
-                  } else if (currentView === "experience") {
-                    saveExperience();
                   } else if (currentView === "structure") {
                     saveStructure();
                   } else if (currentView === "limitations") {

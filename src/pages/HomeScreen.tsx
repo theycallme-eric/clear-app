@@ -139,11 +139,11 @@ export const HomeScreen = ({
             </div>
 
             {/* Week view */}
-            <div className="flex justify-between gap-1 mb-4">
+            <div className="grid grid-cols-7 gap-1 mb-4">
               {weekDays.map((day, index) => (
                 <div key={index} className="flex flex-col items-center gap-1">
                   <div
-                    className={`w-10 h-10 flex items-center justify-center border ${
+                    className={`aspect-square w-full max-w-10 flex items-center justify-center border ${
                       day.status === "workout"
                         ? "bg-clear-lime/20 border-clear-lime text-clear-lime"
                         : day.status === "rest"

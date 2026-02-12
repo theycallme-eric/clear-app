@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
-import { Card } from "./ui/Card";
+import { Card } from "./Card";
+import { CTAButton } from "./CTAButton";
 
 interface EmptyStateProps {
   icon?: LucideIcon;
@@ -24,7 +25,7 @@ export const EmptyState = ({
   className,
 }: EmptyStateProps) => {
   return (
-    <Card className={cn("p-8 text-center", className)}>
+    <Card padding="lg" className={cn("text-center", className)}>
       {Icon && (
         <Icon className="w-10 h-10 mx-auto mb-4 text-muted-foreground/50" />
       )}
@@ -37,12 +38,9 @@ export const EmptyState = ({
         </p>
       )}
       {actionLabel && onAction && (
-        <button
-          onClick={onAction}
-          className="px-6 py-2 bg-clear-orange text-background text-cta-sm hover:bg-clear-orange/90 transition-colors"
-        >
+        <CTAButton onClick={onAction} size="sm">
           {actionLabel}
-        </button>
+        </CTAButton>
       )}
     </Card>
   );

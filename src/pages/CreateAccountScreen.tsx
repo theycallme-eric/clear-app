@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, Loader2, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "@/components/ui/sonner";
 import { CTAButton } from "@/components/CTAButton";
+import { Card } from "@/components/Card";
 import { Input } from "@/components/ui/input";
 
 interface CreateAccountScreenProps {
@@ -93,65 +94,67 @@ export const CreateAccountScreen = ({ onBack, onSuccess }: CreateAccountScreenPr
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Email */}
-          <div className="space-y-2">
-            <label className="block text-paragraph-sm text-foreground">
-              Email
-            </label>
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              disabled={isLoading}
-            />
-          </div>
+          <Card cornerSize="md" padding="md">
+            {/* Email */}
+            <div className="space-y-2 mb-4">
+              <label className="block text-paragraph-sm text-foreground">
+                Email
+              </label>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                disabled={isLoading}
+              />
+            </div>
 
-          {/* Password */}
-          <div className="space-y-2">
-            <label className="block text-paragraph-sm text-foreground">
-              Password
-            </label>
-            <Input
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 6 characters"
-              disabled={isLoading}
-              iconRight={
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="hover:opacity-80"
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              }
-            />
-          </div>
+            {/* Password */}
+            <div className="space-y-2 mb-4">
+              <label className="block text-paragraph-sm text-foreground">
+                Password
+              </label>
+              <Input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="At least 6 characters"
+                disabled={isLoading}
+                iconRight={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="hover:opacity-80"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                }
+              />
+            </div>
 
-          {/* Confirm Password */}
-          <div className="space-y-2">
-            <label className="block text-paragraph-sm text-foreground">
-              Confirm Password
-            </label>
-            <Input
-              type={showConfirmPassword ? "text" : "password"}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Re-enter your password"
-              disabled={isLoading}
-              iconRight={
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="hover:opacity-80"
-                >
-                  {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              }
-            />
-          </div>
+            {/* Confirm Password */}
+            <div className="space-y-2">
+              <label className="block text-paragraph-sm text-foreground">
+                Confirm Password
+              </label>
+              <Input
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Re-enter your password"
+                disabled={isLoading}
+                iconRight={
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="hover:opacity-80"
+                  >
+                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                }
+              />
+            </div>
+          </Card>
 
           {/* Submit Button */}
           <CTAButton

@@ -21,7 +21,7 @@ interface AnchorGridProps {
 
 export const AnchorGrid = ({ selected, onSelect }: AnchorGridProps) => {
   return (
-    <Card cornerSize="md" padding="lg" showLeftColumn={false}>
+    <Card cornerSize="md" padding="md">
       <label
         className="text-label-xs uppercase tracking-widest mb-4 block"
         style={{ color: "var(--text-paragraph)" }}
@@ -30,7 +30,7 @@ export const AnchorGrid = ({ selected, onSelect }: AnchorGridProps) => {
       </label>
 
       {/* Stacked single column layout */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1">
         {ANCHORS.map((anchor) => (
           <RadioButton
             key={anchor}

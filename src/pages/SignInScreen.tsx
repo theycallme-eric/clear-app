@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { logger } from "@/lib/logger";
 import { toast } from "@/components/ui/sonner";
 import { CTAButton } from "@/components/CTAButton";
+import { Card } from "@/components/Card";
 import { Input } from "@/components/ui/input";
 
 interface SignInScreenProps {
@@ -81,42 +82,44 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Email */}
-          <div className="space-y-2">
-            <label className="block text-paragraph-sm text-foreground">
-              Email
-            </label>
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              disabled={isLoading}
-            />
-          </div>
+          <Card cornerSize="md" padding="md">
+            {/* Email */}
+            <div className="space-y-2 mb-4">
+              <label className="block text-paragraph-sm text-foreground">
+                Email
+              </label>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                disabled={isLoading}
+              />
+            </div>
 
-          {/* Password */}
-          <div className="space-y-2">
-            <label className="block text-paragraph-sm text-foreground">
-              Password
-            </label>
-            <Input
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              disabled={isLoading}
-              iconRight={
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="hover:opacity-80"
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              }
-            />
-          </div>
+            {/* Password */}
+            <div className="space-y-2">
+              <label className="block text-paragraph-sm text-foreground">
+                Password
+              </label>
+              <Input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                disabled={isLoading}
+                iconRight={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="hover:opacity-80"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                }
+              />
+            </div>
+          </Card>
 
           {/* Forgot Password */}
           <button

@@ -54,7 +54,7 @@ export const LocationAccordion = ({ selected, onSelect, locations }: LocationAcc
         )}
       >
         <div className="overflow-hidden">
-          <div className="px-4 pb-4 flex flex-col gap-2">
+          <div className="px-4 pb-4 flex flex-col gap-1">
             {locations.map((location) => (
               <RadioButton
                 key={location.id}

@@ -99,6 +99,37 @@ import { ChamferedFrame } from "./ChamferedFrame";
 </ChamferedFrame>
 ```
 
+#### Grouping Elements (Container Pattern)
+
+When grouping form fields or related UI elements, wrap them in a **Card** container.
+Do NOT wrap each individual element in its own ChamferedFrame.
+
+**DO: Use Card as a container**
+```tsx
+import { Card } from "./Card";
+
+<Card cornerSize="md" padding="md">
+  <Input label="Email" ... />
+  <Input label="Password" ... />
+  <Textarea ... />
+</Card>
+```
+
+**DON'T: Wrap each element individually**
+```tsx
+// WRONG - Don't do this
+<ChamferedFrame><Input ... /></ChamferedFrame>
+<ChamferedFrame><Input ... /></ChamferedFrame>
+```
+
+Use this pattern for:
+- Sign in / Sign up forms
+- Settings sections with multiple inputs
+- Any group of related form fields
+
+The Card component provides the chamfered frame with left accent bar.
+The elements inside keep their own styling.
+
 ---
 
 ### Step 3: Hover States (if needed)

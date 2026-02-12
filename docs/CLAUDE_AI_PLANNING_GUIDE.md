@@ -1,213 +1,312 @@
-# Claude.ai Planning Guide
+# Claude Code Planning Guide
 
-**Purpose:** Reference for Claude.ai when creating implementation plans for Antigravity.
+**Purpose:** Reference for creating and executing implementation plans in the Clear project.
 
 ---
 
-## How Antigravity Works
+## Overview
 
-Antigravity is a code implementation agent that follows structured "skills" (SOPs) located in `.claude/skills/`. When you hand off a plan, Antigravity will:
+This project uses a structured **skill and agent system** for Claude Code. Before doing any work:
 
-1. Read `.claude/README.md` to find relevant skills
-2. Load skills that match the task type
-3. Follow the steps in each skill
-4. Use checklists to verify work
+1. **Read `CLAUDE.md`** at project root (entry point)
+2. **Read `.claude/README.md`** for the skill/agent registry
+3. **Match your task** to the appropriate skill
+4. **Follow the skill steps** for consistent execution
 
-**Your job:** Create clear implementation plans that Antigravity can execute without ambiguity.
+---
+
+## How the System Works
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  CLAUDE.md (Entry Point)                                         │
+│  - Quick start guide                                             │
+│  - Decision tree for skill selection                             │
+│  - Critical rules (git safety, design tokens)                    │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  .claude/README.md (Registry)                                    │
+│  - All skills listed with triggers                               │
+│  - All agents listed with use cases                              │
+│  - Commands reference                                            │
+│  - Skill chains and workflows                                    │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+         ┌────────────────────┼────────────────────┐
+         ▼                    ▼                    ▼
+    ┌─────────┐         ┌─────────┐          ┌─────────┐
+    │ Skills  │         │ Agents  │          │Commands │
+    │  (SOPs) │         │(Experts)│          │(/slash) │
+    └─────────┘         └─────────┘          └─────────┘
+```
+
+**Skills** = Step-by-step procedures (like `component.md`, `pr-workflow.md`)
+**Agents** = Specialized personas (like `figma-ui-implementer`, `code-reviewer`)
+**Commands** = Shortcuts (like `/pr`, `/execute`)
+
+---
+
+## Creating Session Plans
+
+Session plans live in `.claude/plans/SESSION_PLAN_*.md`. Use this template:
+
+```markdown
+# Session Plan: [Brief Title]
+
+## Session Goal
+
+[One sentence describing what this session accomplishes]
+
+## Context
+
+- Reference: `path/to/file.tsx` — [why it's relevant]
+- Reference: `path/to/file.tsx` — [why it's relevant]
+
+## Tasks
+
+### Task 1: [Title]
+
+**Do:**
+- [Specific action]
+- [Specific action]
+
+**Acceptance:**
+- [ ] [How to verify it's done]
+- [ ] [How to verify it's done]
+
+---
+
+### Task 2: [Title]
+
+**Do:**
+- [Specific action]
+
+**Acceptance:**
+- [ ] [Verification criteria]
+
+---
+
+## Notes
+
+- [Constraints or decisions]
+- [Gotchas to watch for]
+```
+
+### Plan Guidelines
+
+**Always include:**
+- **Specific file paths** — Not "the component", but `src/components/WorkoutCard.tsx`
+- **Acceptance criteria** — Clear definition of done
+- **Design decisions** — Don't leave ambiguity
+
+**Avoid:**
+- **Vague instructions** — "Make it better" vs "Add loading state with spinner"
+- **Multiple options** — Decide before creating the plan
+- **Missing context** — Include relevant background
+
+---
+
+## Executing Plans
+
+### Automated Execution
+
+```
+/execute [plan-name]
+```
+
+This runs the `execute-plan.md` skill which:
+1. Loads the plan file
+2. Reads all context files
+3. Maps tasks to relevant skills
+4. Initializes TodoWrite progress tracking
+5. Executes tasks sequentially
+6. Validates acceptance criteria
+7. Runs `close-session.md` at the end
+
+### Manual Execution
+
+For plans received via chat (not files):
+1. Load `handoff.md` skill
+2. Parse the plan structure
+3. Load context files
+4. Execute tasks
+5. Run `close-session.md`
 
 ---
 
 ## Skill Categories
 
-| Category | Skills | When Antigravity Uses Them |
-|----------|--------|---------------------------|
-| **Workflow** | `handoff`, `close-session` | Start/end of every session |
+| Category | Skills | When to Use |
+|----------|--------|-------------|
+| **Workflow** | `execute-plan`, `handoff`, `close-session`, `pr-workflow` | Session management, merging code |
 | **UI** | `component`, `chamfered-component`, `gallery-add`, `token-check` | Creating/modifying components |
-| **Backend** | `supabase-workflow`, `debug` | Database, auth, API work |
-| **Documentation** | `backlog`, `project-map` | Updating project docs |
+| **Backend** | `supabase-workflow`, `debug` | Database, auth, API, error fixing |
+| **Documentation** | `backlog`, `todo-board`, `project-map` | Project docs |
 
 ---
 
-## Implementation Plan Template
+## Agents Available
 
-When handing off to Antigravity, use this structure:
+| Agent | When to Use | Model |
+|-------|-------------|-------|
+| `figma-ui-implementer` | Implementing pixel-perfect UI from Figma | opus |
+| `code-reviewer` | Reviewing code before PR | haiku |
 
-```markdown
-# Session Plan: [Brief Title]
+Invoke agents via the Task tool with `subagent_type` matching the agent name.
 
-## Goal
-[One sentence describing what this session accomplishes]
+---
 
-## Context Files
-Read these before starting:
-- `path/to/file.tsx` — [why it's relevant]
-- `path/to/file.tsx` — [why it's relevant]
+## Code Review & Merging
 
-## Tasks
+**Critical:** All code changes must go through pull request review.
 
-### Task 1: [Title]
-**Skill:** [component.md / supabase_workflow.md / etc.]
+### What's Blocked (Automated)
 
-**What to do:**
-- [Specific action]
-- [Specific action]
+The `git-safety-check.sh` hook blocks:
+- `git push origin main` — Direct push to main
+- `git merge main` — Local merge to main
+- `git push --force` — Force push
 
-**Acceptance Criteria:**
-- [ ] [How to know it's done]
-- [ ] [How to know it's done]
+### Correct Workflow
 
-### Task 2: [Title]
-...
+```bash
+# 1. Create feature branch
+git checkout -b feature/my-feature
 
-## Notes
-- [Any constraints or gotchas]
-- [Design decisions already made]
+# 2. Make changes and commit
+git add -A && git commit -m "Add feature"
 
-## After Completion
-- Update backlog
-- [Any other follow-up]
+# 3. Push feature branch
+git push -u origin feature/my-feature
+
+# 4. Create PR (with code review)
+/pr
+# Or: gh pr create
+
+# 5. After approval, merge via PR
+gh pr merge --squash --delete-branch
 ```
 
----
+### The /pr Command
 
-## What Antigravity Needs to Know
-
-### Always Include
-
-1. **Specific file paths** — Not "the main component", but `src/components/WorkoutCard.tsx`
-2. **Which skill applies** — Speeds up Antigravity's context loading
-3. **Acceptance criteria** — Clear definition of done
-4. **Design decisions** — Don't make Antigravity guess; tell it what you decided
-
-### Avoid
-
-1. **Vague instructions** — "Make it better" vs "Add loading state with spinner"
-2. **Multiple options** — Decide before handoff, or explicitly ask Antigravity to decide
-3. **Missing context** — If it references a Figma design, include the relevant details
-4. **Assuming knowledge** — Each session starts fresh; include necessary background
+| Command | What It Does |
+|---------|--------------|
+| `/pr` | Review code + create PR (recommended) |
+| `/pr create` | Create PR immediately (skip review) |
+| `/pr review` | Review only (no PR created) |
 
 ---
 
 ## Key Project Constraints
 
-Remind Antigravity of these when relevant:
-
 | Constraint | Details |
 |------------|---------|
 | **Index.tsx Monolith** | Extract components OUT of `src/pages/Index.tsx`, don't add to it |
-| **Design Tokens** | No hardcoded hex colors; use CSS variables from `src/index.css` |
+| **Design Tokens** | No hardcoded colors/spacing; use CSS variables from `src/index.css` |
 | **Type Safety** | Regenerate types after DB changes: `npx supabase gen types...` |
 | **SPA Architecture** | No server components; data fetching in useEffect/handlers |
-| **Equipment Display Names** | Use `equipment_display_names` field for exercise names |
+| **PR Workflow** | All changes through PRs; direct merges blocked |
 
 ---
 
-## Example Handoffs
+## Example Plans
 
 ### Example 1: UI Component
 
 ```markdown
 # Session Plan: Workout Card Redesign
 
-## Goal
+## Session Goal
+
 Update WorkoutCard to show equipment-specific exercise names.
 
-## Context Files
-- `src/components/WorkoutCard.tsx` — Current implementation
-- `src/types/database.ts` — ExerciseDefinition type with equipment_display_names
-- `docs/architecture/Clear_-_Exercise_Library.md` — Equipment display names section
+## Context
+
+- Reference: `src/components/WorkoutCard.tsx` — Current implementation
+- Reference: `src/types/database.ts` — ExerciseDefinition type
 
 ## Tasks
 
 ### Task 1: Update Exercise Name Display
-**Skill:** component.md
 
-**What to do:**
-- Import ExerciseDefinition type
+**Do:**
 - Add helper function to resolve display name from equipment_display_names
 - Update exercise name rendering to use resolved name
 
-**Acceptance Criteria:**
-- [ ] "Dumbbell Bench Press" shows instead of "Bench Press" when equipment is dumbbells
+**Acceptance:**
+- [ ] "Dumbbell Bench Press" shows when equipment is dumbbells
 - [ ] Falls back to base name if equipment_display_names is null
 - [ ] No TypeScript errors
-
-## Notes
-- equipment_display_names is a Record<string, string> | null
-- Lookup key is the equipment_used field from the exercise
 ```
 
 ### Example 2: Backend Change
 
 ```markdown
-# Session Plan: Add Weight Recommendation Field
+# Session Plan: Add Weight Recommendation
 
-## Goal
-Add weight_recommendation field to exercise output from AI.
+## Session Goal
 
-## Context Files
-- `supabase/functions/generate-workout/index.ts` — Edge function
-- `src/types/workout.ts` — Frontend types
+Add weight_recommendation field to exercise output.
+
+## Context
+
+- Reference: `supabase/functions/generate-workout/index.ts`
+- Reference: `src/types/workout.ts`
 
 ## Tasks
 
-### Task 1: Update Edge Function Response
-**Skill:** supabase_workflow.md
+### Task 1: Update Edge Function
 
-**What to do:**
+**Do:**
 - Add weight_recommendation to GeneratedExercise interface
-- Update SYSTEM_PROMPT to instruct AI to include weight recommendations
-- Add to OUTPUT FORMAT section in prompt
+- Update SYSTEM_PROMPT to include weight recommendations
 
-**Acceptance Criteria:**
+**Acceptance:**
 - [ ] AI returns weight_recommendation in response
-- [ ] Field is optional (some exercises may not have it)
+- [ ] Field is optional
 - [ ] Build passes
 
 ### Task 2: Update Frontend Types
-**Skill:** supabase_workflow.md
 
-**What to do:**
-- Add weight_recommendation to Exercise type in workout.ts
+**Do:**
+- Add weight_recommendation to Exercise type
 
-**Acceptance Criteria:**
+**Acceptance:**
 - [ ] Type matches Edge Function output
 - [ ] No TypeScript errors
 ```
 
 ---
 
-## Workflow Summary
-
-```
-Claude.ai                          Antigravity
-─────────────────────────────────────────────────────
-1. Research & plan          →
-2. Make design decisions    →
-3. Create implementation    →      4. Read handoff.md skill
-   plan using template      →      5. Load context files
-                            →      6. Load relevant skills
-                            →      7. Execute tasks
-                            →      8. Run close_session.md skill
-                            ←      9. Report completion
-10. Review & plan next      ←
-```
-
----
-
-## Quick Reference: File Locations
+## Quick Reference
 
 | What | Where |
 |------|-------|
-| Skills & agents registry | `.claude/README.md` |
+| Entry point | `CLAUDE.md` |
+| Skill/agent registry | `.claude/README.md` |
 | All skills | `.claude/skills/*.md` |
 | All agents | `.claude/agents/*.md` |
+| Session plans | `.claude/plans/SESSION_PLAN_*.md` |
+| Commands | `.claude/commands/*.md` |
 | Backlog | `docs/BACKLOG.md` |
 | Session log | `docs/SESSION_LOG.md` |
-| Project map | `docs/wireframes/PROJECT_MAP.md` |
-| Design tokens | `src/index.css`, `docs/frontend/figma-design-tokens.json` |
-| Database types | `src/types/database.ts` |
-| Exercise library | `docs/architecture/Clear_-_Exercise_Library.md` |
+| Design tokens | `src/index.css` |
+
+---
+
+## Workflow Summary
+
+```
+1. Read CLAUDE.md          → Understand the system
+2. Read .claude/README.md  → Find relevant skills
+3. Load skill files        → Follow the steps
+4. Execute tasks           → Track with TodoWrite
+5. Validate acceptance     → Verify each criterion
+6. Run /pr                 → Create PR with review
+7. Run close-session.md    → Log completed work
+```
 
 ---
 

@@ -154,7 +154,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                 What's Your Gym Setup?
               </h2>
 
-              <Card cornerSize="md" padding="lg">
+              <Card cornerSize="md" padding="md">
                 <label
                   className="text-label-xs uppercase tracking-widest mb-4 block"
                   style={{ color: "var(--text-paragraph)" }}
@@ -162,7 +162,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                   Location Type
                 </label>
 
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-1">
                   {TIER_OPTIONS.map((tier) => (
                     <RadioButton
                       key={tier.value}

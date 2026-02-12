@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { CTAButton } from "../CTAButton";
 import { Textarea } from "../ui/textarea";
-import { Card } from "../ui/Card";
+import { Card } from "../Card";
 
 interface NoteModalProps {
   isOpen: boolean;
@@ -12,12 +12,12 @@ interface NoteModalProps {
   onClose: () => void;
 }
 
-export const NoteModal = ({ 
-  isOpen, 
-  title, 
-  initialNote = "", 
-  onSave, 
-  onClose 
+export const NoteModal = ({
+  isOpen,
+  title,
+  initialNote = "",
+  onSave,
+  onClose
 }: NoteModalProps) => {
   const [note, setNote] = useState(initialNote);
 
@@ -35,13 +35,13 @@ export const NoteModal = ({
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center">
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-background/80 backdrop-blur-sm"
         onClick={onClose}
       />
-      
+
       {/* Modal */}
-      <Card className="relative w-full max-w-md animate-in slide-in-from-bottom duration-300">
+      <Card padding="none" className="relative w-full max-w-md animate-in slide-in-from-bottom duration-300">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border/30">
           <h3 className="text-heading-h5 font-bold uppercase text-clear-orange">

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Check, ChevronDown, ChevronUp, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Exercise } from "@/types/workout";
-import { Card } from "../ui/Card";
+import { Card } from "../Card";
 
 interface ActiveExerciseCardProps {
     exercise: Exercise;
@@ -36,11 +36,15 @@ export const ActiveExerciseCard = ({
     };
 
     return (
-        <Card className={cn(
-            "overflow-hidden transition-all duration-300",
-            isCompleted ? "opacity-60 bg-secondary/30" : "border-l-4 border-l-clear-orange",
-            className
-        )}>
+        <Card
+            padding="none"
+            showLeftColumn={!isCompleted}
+            className={cn(
+                "overflow-hidden transition-all duration-300",
+                isCompleted && "opacity-60",
+                className
+            )}
+        >
             {/* Header / Main Row */}
             <div className="p-4 flex items-start gap-3">
                 {/* Checkbox */}
