@@ -1,4 +1,4 @@
-import { WorkoutSection, Exercise } from "@/types/workout";
+import { WorkoutSection, Exercise, SectionType } from "@/types/workout";
 import { ActiveExerciseCard } from "./ActiveExerciseCard";
 import { SupersetCard, CircuitCard } from "./StructureCards";
 import { SectionTimer } from "./SectionTimer";
@@ -108,6 +108,7 @@ export const SectionRenderer = ({
                                 onComplete={onComplete}
                                 completedIds={completedExercises}
                                 structure={item.structure}
+                                sectionType={section.type}
                             />
                         );
                     } else {
@@ -119,6 +120,7 @@ export const SectionRenderer = ({
                                 onComplete={onComplete}
                                 completedIds={completedExercises}
                                 structure={item.structure}
+                                sectionType={section.type}
                             />
                         );
                     }
@@ -132,6 +134,8 @@ export const SectionRenderer = ({
                             onLog={onLog}
                             onComplete={onComplete}
                             isCompleted={completedExercises.has(ex.id)}
+                            sectionType={section.type}
+                            showSectionLabel={idx === 0}
                         />
                     );
                 }

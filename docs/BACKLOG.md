@@ -93,7 +93,11 @@ Improvements to existing features.
 ### 🚀 Features
 New functionality to build.
 
-- [ ] 
+- [ ] **Exercise Intensity/Load Field** - Add "heavy", "moderate", "light" field to Exercise type
+  - Priority: Medium
+  - Type: Feature
+  - Added: 2026-02-12
+  - Context: Figma designs show "heavy" chips on exercise cards. Need to add this field to Exercise interface in workout.ts, update API/generation to include intensity data, and add visual display to exercise cards. Part of workout card experience overhaul. 
 
 ---
 

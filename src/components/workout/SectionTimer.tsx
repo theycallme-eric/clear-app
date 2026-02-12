@@ -1,27 +1,37 @@
 import { useEffect, useState } from "react";
 import { Play, Pause, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Card } from "../Card";
+import { ChamferedFrame } from "../ChamferedFrame";
 
 interface SectionTimerProps {
     mode: 'countdown' | 'countup';
-    initialSeconds?: number; // Target duration for countdown, or starting point for countup
+    initialSeconds?: number;
     onComplete?: () => void;
     autoStart?: boolean;
     label?: string;
     className?: string;
+    /** Compact mode - just the timer display without controls */
+    compact?: boolean;
 }
 
+/**
+ * SectionTimer - Green chamfered timer display for timed workout sections.
+ *
+ * Figma design: Green background with chamfered corner, large digital display,
+ * optional START button below.
+ */
 export const SectionTimer = ({
     mode,
     initialSeconds = 0,
     onComplete,
     autoStart = false,
     label,
-    className
+    className,
+    compact = false
 }: SectionTimerProps) => {
     const [timeLeft, setTimeLeft] = useState(mode === 'countdown' ? initialSeconds : 0);
     const [isActive, setIsActive] = useState(autoStart);
+    const [hasStarted, setHasStarted] = useState(autoStart);
 
     useEffect(() => {
         let interval: NodeJS.Timeout;
@@ -47,91 +57,126 @@ export const SectionTimer = ({
         return () => clearInterval(interval);
     }, [isActive, mode, onComplete]);
 
+    const startTimer = () => {
+        setIsActive(true);
+        setHasStarted(true);
+    };
+
     const toggleTimer = () => setIsActive(!isActive);
+
     const resetTimer = () => {
         setIsActive(false);
+        setHasStarted(false);
         setTimeLeft(mode === 'countdown' ? initialSeconds : 0);
     };
 
     const formatTime = (seconds: number) => {
         const m = Math.floor(seconds / 60);
         const s = seconds % 60;
-        return `${m}:${s.toString().padStart(2, '0')}`;
+        return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     };
 
-    const progressPercent = mode === 'countdown' && initialSeconds > 0
-        ? ((initialSeconds - timeLeft) / initialSeconds) * 100
-        : 0;
+    const isLowTime = timeLeft <= 10 && mode === 'countdown' && isActive;
+    const isComplete = mode === 'countdown' && timeLeft === 0 && hasStarted;
 
     return (
-        <Card cornerSize="md" padding="none" className={className}>
-            <div className="flex flex-col items-center gap-3 p-4">
-            {label && (
-                <span
-                    className="text-label-xs font-bold uppercase tracking-wider"
-                    style={{ color: "var(--text-paragraph)" }}
-                >
-                    {label}
-                </span>
-            )}
-
-            <div className="relative flex items-center justify-center w-32 h-32">
-                {/* Progress Ring Background */}
-                <svg className="absolute w-full h-full transform -rotate-90">
-                    <circle
-                        cx="64"
-                        cy="64"
-                        r="60"
-                        className="stroke-muted/20 fill-none"
-                        strokeWidth="6"
-                    />
-                    {mode === 'countdown' && (
-                        <circle
-                            cx="64"
-                            cy="64"
-                            r="60"
-                            className="stroke-clear-orange fill-none transition-all duration-1000 ease-linear"
-                            strokeWidth="6"
-                            strokeDasharray={377}
-                            strokeDashoffset={377 - (377 * progressPercent) / 100}
-                            strokeLinecap="round"
-                        />
+        <div className={cn("space-y-3", className)}>
+            {/* Timer Display */}
+            <ChamferedFrame
+                cornerSize="md"
+                surfaceColor={isComplete ? "var(--color-orange-alpha-200)" : "var(--color-green-alpha-200)"}
+                borderColor={isComplete ? "var(--color-orange-500)" : "var(--color-green-500)"}
+                hasLeftBorder={true}
+            >
+                <div className="flex flex-col items-center justify-center py-4 px-6">
+                    {label && (
+                        <span
+                            className="text-label-xs font-bold uppercase tracking-wider mb-2"
+                            style={{ color: isComplete ? "var(--color-orange-500)" : "var(--color-green-600)" }}
+                        >
+                            {label}
+                        </span>
                     )}
-                </svg>
 
-                {/* Time Display */}
-                <div className="flex flex-col items-center z-10">
-                    <span className={cn("text-time-xl font-bold tracking-tight",
-                        timeLeft <= 10 && mode === 'countdown' && isActive ? "text-destructive animate-pulse" : ""
-                    )}
-                    style={{ color: "var(--text-header)" }}>
+                    <span
+                        className={cn(
+                            "text-time-xl font-bold tracking-tight",
+                            isLowTime && "animate-pulse"
+                        )}
+                        style={{
+                            color: isLowTime
+                                ? "var(--color-red-500)"
+                                : isComplete
+                                    ? "var(--color-orange-500)"
+                                    : "var(--color-neutral-900)",
+                            fontFamily: "var(--font-label)",
+                            fontSize: "3rem",
+                            lineHeight: 1
+                        }}
+                    >
                         {formatTime(timeLeft)}
                     </span>
-                </div>
-            </div>
 
-            {/* Controls */}
-            <div className="flex items-center gap-4 mt-2">
-                <button
-                    onClick={toggleTimer}
-                    className={cn(
-                        "flex items-center justify-center w-12 h-12 rounded-full transition-all",
-                        isActive
-                            ? "bg-secondary text-foreground hover:bg-secondary/80"
-                            : "bg-clear-orange text-white hover:bg-clear-orange/90 shadow-lg shadow-clear-orange/20"
+                    {/* Inline controls when active */}
+                    {hasStarted && !compact && (
+                        <div className="flex items-center gap-3 mt-3">
+                            <button
+                                onClick={toggleTimer}
+                                className="flex items-center justify-center w-10 h-10 rounded-full transition-all"
+                                style={{
+                                    backgroundColor: isActive
+                                        ? "var(--color-neutral-200)"
+                                        : "var(--color-green-500)",
+                                    color: isActive
+                                        ? "var(--color-neutral-700)"
+                                        : "white"
+                                }}
+                            >
+                                {isActive ? (
+                                    <Pause size={20} fill="currentColor" />
+                                ) : (
+                                    <Play size={20} fill="currentColor" className="ml-0.5" />
+                                )}
+                            </button>
+
+                            <button
+                                onClick={resetTimer}
+                                className="flex items-center justify-center w-8 h-8 rounded-full transition-colors"
+                                style={{
+                                    backgroundColor: "var(--color-neutral-200)",
+                                    color: "var(--color-neutral-600)"
+                                }}
+                            >
+                                <RefreshCw size={14} />
+                            </button>
+                        </div>
                     )}
-                >
-                    {isActive ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" className="ml-1" />}
-                </button>
+                </div>
+            </ChamferedFrame>
 
-                <button
-                    onClick={resetTimer}
-                    className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary/50 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+            {/* START Button - shown before timer starts */}
+            {!hasStarted && !compact && (
+                <ChamferedFrame
+                    cornerSize="sm"
+                    surfaceColor="var(--color-blue-400)"
+                    borderColor="var(--color-blue-500)"
+                    hasLeftBorder={true}
+                    className="cursor-pointer hover:opacity-90 transition-opacity"
+                    onClick={startTimer}
                 >
-                    <RefreshCw size={18} />
-                </button>
-            </div>
-            </div>
-        </Card>
+                    <button
+                        onClick={startTimer}
+                        className="w-full py-3 text-center"
+                    >
+                        <span
+                            className="text-cta-md font-bold uppercase tracking-wider"
+                            style={{ color: "white" }}
+                        >
+                            Start
+                        </span>
+                    </button>
+                </ChamferedFrame>
+            )}
+        </div>
     );
 };

@@ -29,6 +29,14 @@ import { RadioButton } from "@/components/RadioButton";
 import { Chip } from "@/components/Chip";
 import { toast } from "@/components/ui/sonner";
 
+// Workout components
+import { ExercisePreviewCard } from "@/components/workout/ExercisePreviewCard";
+import { ActiveExerciseCard } from "@/components/workout/ActiveExerciseCard";
+import { SectionLabel } from "@/components/workout/SectionLabel";
+import { SectionTimer } from "@/components/workout/SectionTimer";
+import { TimedSectionCard } from "@/components/workout/TimedSectionCard";
+import { SupersetCard, CircuitCard } from "@/components/workout/StructureCards";
+
 interface ComponentGalleryProps {
   onBack: () => void;
 }
@@ -576,6 +584,146 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
             <ChamferedCard padding="none" className="overflow-hidden h-48 relative">
               <LoadingScreen message="CLEAR" subtitle="Loading your data..." className="min-h-0 h-full" />
             </ChamferedCard>
+          </Section>
+
+          {/* ─── WORKOUT COMPONENTS ─── */}
+          <Section title="Workout — Section Labels">
+            <div className="flex flex-wrap gap-4">
+              <SectionLabel type="warmup" />
+              <SectionLabel type="anchor" />
+              <SectionLabel type="accessory" />
+              <SectionLabel type="conditioning" />
+              <SectionLabel type="core" />
+              <SectionLabel type="mobility" />
+            </div>
+          </Section>
+
+          <Section title="Workout — Exercise Preview Card">
+            <div className="space-y-4">
+              <Subsection label="Standard exercise (Review screen)">
+                <ExercisePreviewCard
+                  exercise={{
+                    id: "1",
+                    name: "Bench Press",
+                    sets: 5,
+                    reps: "5",
+                    rest: "90sec",
+                    equipment: "barbell",
+                    coachingCues: ["Keep shoulder blades retracted", "Drive through heels"],
+                    regression: "Dumbbell Press"
+                  }}
+                  sectionType="primary"
+                  showSectionLabel={true}
+                />
+              </Subsection>
+            </div>
+          </Section>
+
+          <Section title="Workout — Active Exercise Card">
+            <div className="space-y-4">
+              <Subsection label="Active state (Workout screen)">
+                <ActiveExerciseCard
+                  exercise={{
+                    id: "2",
+                    name: "Goblet Squat",
+                    sets: 3,
+                    reps: "12",
+                    rest: "60s",
+                    equipment: "dumbbell",
+                    coachingCues: ["Elbows inside knees", "Full depth"]
+                  }}
+                  onLog={() => {}}
+                  onComplete={() => {}}
+                  isCompleted={false}
+                  sectionType="accessory"
+                  showSectionLabel={true}
+                />
+              </Subsection>
+              <Subsection label="Completed state">
+                <ActiveExerciseCard
+                  exercise={{
+                    id: "3",
+                    name: "Pull-ups",
+                    sets: 3,
+                    reps: "8",
+                    rest: "90s",
+                    equipment: "bodyweight"
+                  }}
+                  onLog={() => {}}
+                  onComplete={() => {}}
+                  isCompleted={true}
+                />
+              </Subsection>
+            </div>
+          </Section>
+
+          <Section title="Workout — Section Timer">
+            <div className="space-y-4">
+              <Subsection label="Countdown (EMOM/AMRAP)">
+                <SectionTimer
+                  mode="countdown"
+                  initialSeconds={600}
+                  label="EMOM"
+                />
+              </Subsection>
+            </div>
+          </Section>
+
+          <Section title="Workout — Timed Section Card">
+            <div className="space-y-4">
+              <Subsection label="EMOM Preview">
+                <TimedSectionCard
+                  exercises={[
+                    { id: "t1", name: "Burpees", sets: null, reps: "10" },
+                  ]}
+                  structure={{ type: "emom", minutes: 10 }}
+                  sectionType="conditioning"
+                />
+              </Subsection>
+              <Subsection label="AMRAP with ladder">
+                <TimedSectionCard
+                  exercises={[
+                    { id: "t2", name: "DB Strict Press", sets: null, reps: "5" },
+                    { id: "t3", name: "DB Push Press", sets: null, reps: "5" },
+                  ]}
+                  structure={{ type: "amrap", minutes: 10 }}
+                  sectionType="conditioning"
+                  repScheme="20 - 16 - 12 - 10 - 8 - 6 - 4 - 2"
+                />
+              </Subsection>
+            </div>
+          </Section>
+
+          <Section title="Workout — Structure Cards">
+            <div className="space-y-4">
+              <Subsection label="Superset Card">
+                <SupersetCard
+                  exercises={[
+                    { id: "s1", name: "Dumbbell Chest Press", sets: 3, reps: "10", equipment: "dumbbell" },
+                    { id: "s2", name: "Dumbbell Rows", sets: 3, reps: "10", equipment: "dumbbell" },
+                  ]}
+                  onLog={() => {}}
+                  onComplete={() => {}}
+                  completedIds={new Set()}
+                  structure={{ type: "superset", paired_with: "s2" }}
+                  sectionType="accessory"
+                />
+              </Subsection>
+              <Subsection label="Circuit Card">
+                <CircuitCard
+                  exercises={[
+                    { id: "c1", name: "Squats", sets: null, reps: "15" },
+                    { id: "c2", name: "Push-ups", sets: null, reps: "10" },
+                    { id: "c3", name: "Lunges", sets: null, reps: "10 each" },
+                  ]}
+                  onLog={() => {}}
+                  onComplete={() => {}}
+                  completedIds={new Set()}
+                  structure={{ type: "circuit", circuit_id: "c1", rounds: 3 }}
+                  sectionType="conditioning"
+                />
+              </Subsection>
+            </div>
           </Section>
 
           {/* ════════════════════════════════════════════════════════════════════ */}

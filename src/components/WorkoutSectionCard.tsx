@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { ChevronDown, ChevronUp, RefreshCw } from "lucide-react";
 import { WorkoutSection } from "@/types/workout";
-import { ExerciseCard } from "./ExerciseCard";
+import { ExercisePreviewCard } from "./workout/ExercisePreviewCard";
 import { Card } from "./Card";
+import { SectionLabel } from "./workout/SectionLabel";
 
 interface WorkoutSectionCardProps {
   section: WorkoutSection;
@@ -13,50 +14,82 @@ export const WorkoutSectionCard = ({ section, onRandomize }: WorkoutSectionCardP
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <Card padding="none" className="overflow-hidden">
+    <Card
+      padding="none"
+      cornerSize="md"
+      surfaceColor="var(--color-orange-alpha-050)"
+      className="overflow-hidden"
+    >
       {/* Header - always visible */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between p-4 text-left"
       >
-        <span className="text-cta-sm font-bold text-clear-orange">
+        <span
+          className="text-cta-sm font-bold uppercase"
+          style={{ color: "var(--color-orange-500)" }}
+        >
           {section.name}
         </span>
         {isExpanded ? (
-          <ChevronUp size={20} className="text-foreground/60" />
+          <ChevronUp size={20} style={{ color: "var(--color-orange-500)" }} />
         ) : (
-          <ChevronDown size={20} className="text-foreground/60" />
+          <ChevronDown size={20} style={{ color: "var(--color-orange-500)" }} />
         )}
       </button>
 
-      {/* Collapsed preview - show all exercises */}
+      {/* Collapsed preview - show all exercises in compact form */}
       {!isExpanded && section.exercises.length > 0 && (
         <div className="px-4 pb-4 space-y-3">
-          {section.exercises.map((exercise) => (
-            <div key={exercise.id} className="exercise-card">
-              <p className="exercise-card-title">
-                {exercise.name}
-                {exercise.equipment && (
-                  <span className="ml-2 text-label-xs font-normal text-muted-foreground uppercase tracking-wider">
-                    {exercise.equipment.replace(/_/g, ' ')}
-                  </span>
-                )}
-              </p>
-              <p className="text-paragraph-sm text-foreground">
-                ({exercise.sets ? `${exercise.sets}×` : ''}{exercise.reps})
-              </p>
-            </div>
-          ))}
+          {section.exercises.map((exercise, index) => {
+            // Build metadata
+            const metadataParts: string[] = [];
+            if (exercise.equipment) {
+              metadataParts.push(exercise.equipment.toLowerCase().replace(/_/g, " "));
+            }
+            if (exercise.sets && exercise.reps) {
+              metadataParts.push(`${exercise.sets}×${exercise.reps}`);
+            } else if (exercise.reps) {
+              metadataParts.push(exercise.reps);
+            }
+
+            return (
+              <div
+                key={exercise.id}
+                className="py-2"
+                style={{
+                  borderBottom: index < section.exercises.length - 1
+                    ? "1px solid var(--color-orange-alpha-200)"
+                    : "none"
+                }}
+              >
+                <p
+                  className="text-heading-h5 font-bold uppercase"
+                  style={{ color: "var(--text-header)" }}
+                >
+                  {exercise.name}
+                </p>
+                <p
+                  className="text-paragraph-sm"
+                  style={{ color: "var(--color-blue-300)" }}
+                >
+                  ({metadataParts.join(" • ")})
+                </p>
+              </div>
+            );
+          })}
         </div>
       )}
 
-      {/* Expanded view */}
+      {/* Expanded view - full exercise preview cards */}
       {isExpanded && (
         <div className="px-4 pb-4 space-y-4">
-          {section.exercises.map((exercise) => (
-            <ExerciseCard
+          {section.exercises.map((exercise, index) => (
+            <ExercisePreviewCard
               key={exercise.id}
               exercise={exercise}
+              sectionType={section.type}
+              showSectionLabel={index === 0}
             />
           ))}
 
@@ -66,7 +99,11 @@ export const WorkoutSectionCard = ({ section, onRandomize }: WorkoutSectionCardP
               e.stopPropagation();
               onRandomize?.();
             }}
-            className="w-full flex items-center justify-center gap-2 py-3 border border-clear-orange/30 text-clear-orange hover:bg-clear-orange/10 transition-colors"
+            className="w-full flex items-center justify-center gap-2 py-3 transition-colors"
+            style={{
+              border: "1px solid var(--color-orange-alpha-300)",
+              color: "var(--color-orange-500)"
+            }}
           >
             <RefreshCw size={16} />
             <span className="text-paragraph-sm font-medium">Randomize Section</span>
