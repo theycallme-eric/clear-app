@@ -36,6 +36,8 @@ import { SectionLabel } from "@/components/workout/SectionLabel";
 import { SectionTimer } from "@/components/workout/SectionTimer";
 import { TimedSectionCard } from "@/components/workout/TimedSectionCard";
 import { SupersetCard, CircuitCard } from "@/components/workout/StructureCards";
+import { TimedIntervalCard } from "@/components/workout/TimedSectionCard";
+import { WorkoutSectionCard } from "@/components/WorkoutSectionCard";
 
 interface ComponentGalleryProps {
   onBack: () => void;
@@ -586,105 +588,250 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
             </ChamferedCard>
           </Section>
 
-          {/* ─── WORKOUT COMPONENTS ─── */}
-          <Section title="Workout — Section Labels">
+          {/* ════════════════════════════════════════════════════════════════════ */}
+          {/* ═══ WORKOUT CARD SHOWCASE — All variations from preview to completion */}
+          {/* ════════════════════════════════════════════════════════════════════ */}
+
+          <div className="mt-16 pt-8 border-t-2 border-clear-orange/30">
+            <p className="text-label-lg text-clear-orange uppercase tracking-widest mb-2">
+              Workout Card Showcase
+            </p>
+            <p className="text-paragraph-sm text-muted-foreground mb-8">
+              Comprehensive view of all workout card variations across the user journey: Review → Active Workout → Completion
+            </p>
+          </div>
+
+          {/* ─── BUILDING BLOCKS ─── */}
+          <Section title="Building Blocks — Section Labels">
+            <p className="text-paragraph-sm text-muted-foreground mb-4">
+              Labels that identify the workout section type. Used inside cards.
+            </p>
             <div className="flex flex-wrap gap-4">
               <SectionLabel type="warmup" />
+              <SectionLabel type="primary" />
               <SectionLabel type="anchor" />
               <SectionLabel type="accessory" />
               <SectionLabel type="conditioning" />
               <SectionLabel type="core" />
               <SectionLabel type="mobility" />
+              <SectionLabel type="cooldown" />
             </div>
           </Section>
 
-          <Section title="Workout — Exercise Preview Card">
+          {/* ─── REVIEW SCREEN CARDS ─── */}
+          <Section title="Review Screen — Section Card (Collapsed)">
+            <p className="text-paragraph-sm text-muted-foreground mb-4">
+              How sections appear on the Review screen before starting workout. Click to expand.
+            </p>
+            <WorkoutSectionCard
+              section={{
+                id: "primary",
+                name: "Primary Lift",
+                type: "primary",
+                status: "not_started",
+                exercises: [
+                  { id: "p1", name: "Barbell Back Squat", sets: 4, reps: "6", rest: "180s", equipment: "barbell", coachingCues: ["Brace core", "Break at hips and knees together"] },
+                ]
+              }}
+            />
+          </Section>
+
+          <Section title="Review Screen — Preview Cards">
             <div className="space-y-4">
-              <Subsection label="Standard exercise (Review screen)">
+              <Subsection label="Standard Exercise (with all fields)">
                 <ExercisePreviewCard
                   exercise={{
-                    id: "1",
-                    name: "Bench Press",
-                    sets: 5,
-                    reps: "5",
-                    rest: "90sec",
+                    id: "ex1",
+                    name: "Barbell Back Squat",
+                    sets: 4,
+                    reps: "6",
+                    rest: "180sec",
                     equipment: "barbell",
-                    coachingCues: ["Keep shoulder blades retracted", "Drive through heels"],
-                    regression: "Dumbbell Press"
+                    effort: "75%",
+                    lastWeight: "185-205lbs",
+                    coachingCues: ["Brace core before descent", "Break at hips and knees together", "Drive through whole foot"],
+                    regression: "Goblet Squat"
                   }}
                   sectionType="primary"
                   showSectionLabel={true}
                 />
               </Subsection>
+
+              <Subsection label="Minimal Exercise (name + reps only)">
+                <ExercisePreviewCard
+                  exercise={{
+                    id: "ex2",
+                    name: "Cat-Cow Stretch",
+                    sets: 2,
+                    reps: "10"
+                  }}
+                  sectionType="warmup"
+                  showSectionLabel={true}
+                />
+              </Subsection>
+
+              <Subsection label="Without Section Label">
+                <ExercisePreviewCard
+                  exercise={{
+                    id: "ex3",
+                    name: "Face Pulls",
+                    sets: 3,
+                    reps: "15",
+                    rest: "45s",
+                    equipment: "cable"
+                  }}
+                  showSectionLabel={false}
+                />
+              </Subsection>
             </div>
           </Section>
 
-          <Section title="Workout — Active Exercise Card">
+          {/* ─── STRUCTURE TYPE PREVIEWS ─── */}
+          <Section title="Review Screen — Standard Exercises">
             <div className="space-y-4">
-              <Subsection label="Active state (Workout screen)">
-                <ActiveExerciseCard
+              <Subsection label="Anchor/Primary (heavy compound)">
+                <ExercisePreviewCard
                   exercise={{
-                    id: "2",
-                    name: "Goblet Squat",
-                    sets: 3,
-                    reps: "12",
-                    rest: "60s",
-                    equipment: "dumbbell",
-                    coachingCues: ["Elbows inside knees", "Full depth"]
+                    id: "anchor1",
+                    name: "Conventional Deadlift",
+                    sets: 4,
+                    reps: "5",
+                    rest: "180sec",
+                    equipment: "barbell",
+                    effort: "80%",
+                    lastWeight: "225lbs",
+                    coachingCues: ["Neutral spine throughout", "Push floor away"]
                   }}
-                  onLog={() => {}}
-                  onComplete={() => {}}
-                  isCompleted={false}
+                  sectionType="primary"
+                  showSectionLabel={true}
+                />
+              </Subsection>
+
+              <Subsection label="Accessory (supporting work)">
+                <ExercisePreviewCard
+                  exercise={{
+                    id: "acc1",
+                    name: "Romanian Deadlift",
+                    sets: 3,
+                    reps: "10",
+                    rest: "90sec",
+                    equipment: "barbell",
+                    coachingCues: ["Soft knee bend", "Hinge at hips"]
+                  }}
                   sectionType="accessory"
                   showSectionLabel={true}
                 />
               </Subsection>
-              <Subsection label="Completed state">
-                <ActiveExerciseCard
+
+              <Subsection label="Core work">
+                <ExercisePreviewCard
                   exercise={{
-                    id: "3",
-                    name: "Pull-ups",
+                    id: "core1",
+                    name: "Dead Bug",
                     sets: 3,
-                    reps: "8",
-                    rest: "90s",
-                    equipment: "bodyweight"
+                    reps: "8 each",
+                    rest: "45s",
+                    equipment: "bodyweight",
+                    coachingCues: ["Press lower back into floor", "Exhale as you extend"]
                   }}
-                  onLog={() => {}}
-                  onComplete={() => {}}
-                  isCompleted={true}
+                  sectionType="core"
+                  showSectionLabel={true}
                 />
               </Subsection>
             </div>
           </Section>
 
-          <Section title="Workout — Section Timer">
-            <div className="space-y-4">
-              <Subsection label="Countdown (EMOM/AMRAP)">
-                <SectionTimer
-                  mode="countdown"
-                  initialSeconds={600}
-                  label="EMOM"
-                />
-              </Subsection>
-            </div>
+          <Section title="Review Screen — Superset Preview">
+            <p className="text-paragraph-sm text-muted-foreground mb-4">
+              Two exercises performed back-to-back with minimal rest between.
+            </p>
+            <SupersetCard
+              exercises={[
+                { id: "ss1", name: "Dumbbell Bench Press", sets: 3, reps: "10", equipment: "dumbbell" },
+                { id: "ss2", name: "Bent Over Rows", sets: 3, reps: "10", equipment: "dumbbell" },
+              ]}
+              onLog={() => {}}
+              onComplete={() => {}}
+              completedIds={new Set()}
+              structure={{ type: "superset", paired_with: "ss2" }}
+              sectionType="accessory"
+            />
           </Section>
 
-          <Section title="Workout — Timed Section Card">
+          <Section title="Review Screen — Circuit Preview">
+            <p className="text-paragraph-sm text-muted-foreground mb-4">
+              Multiple exercises performed in sequence, repeated for rounds.
+            </p>
+            <CircuitCard
+              exercises={[
+                { id: "cir1", name: "Goblet Squat", sets: null, reps: "12" },
+                { id: "cir2", name: "Push-ups", sets: null, reps: "10" },
+                { id: "cir3", name: "Bent Over Row", sets: null, reps: "10 each" },
+                { id: "cir4", name: "Plank", sets: null, reps: "30sec" },
+              ]}
+              onLog={() => {}}
+              onComplete={() => {}}
+              completedIds={new Set()}
+              structure={{ type: "circuit", circuit_id: "c1", rounds: 3 }}
+              sectionType="conditioning"
+            />
+          </Section>
+
+          <Section title="Review Screen — EMOM Variations">
             <div className="space-y-4">
-              <Subsection label="EMOM Preview">
+              <Subsection label="Simple EMOM (single exercise)">
                 <TimedSectionCard
                   exercises={[
-                    { id: "t1", name: "Burpees", sets: null, reps: "10" },
+                    { id: "emom1", name: "Kettlebell Swings", sets: null, reps: "15" },
                   ]}
                   structure={{ type: "emom", minutes: 10 }}
                   sectionType="conditioning"
                 />
               </Subsection>
-              <Subsection label="AMRAP with ladder">
+
+              <Subsection label="Alternating EMOM (multiple exercises)">
                 <TimedSectionCard
                   exercises={[
-                    { id: "t2", name: "DB Strict Press", sets: null, reps: "5" },
-                    { id: "t3", name: "DB Push Press", sets: null, reps: "5" },
+                    { id: "emom2", name: "Burpees", sets: null, reps: "8" },
+                    { id: "emom3", name: "Box Jumps", sets: null, reps: "10" },
+                  ]}
+                  structure={{ type: "emom", minutes: 12 }}
+                  sectionType="conditioning"
+                />
+              </Subsection>
+
+              <Subsection label="EMOM with ladder scheme">
+                <TimedSectionCard
+                  exercises={[
+                    { id: "emom4", name: "Thrusters", sets: null, reps: "6 + 1 each round" },
+                  ]}
+                  structure={{ type: "emom", minutes: 10 }}
+                  sectionType="conditioning"
+                  repScheme="6 + 1 each round"
+                />
+              </Subsection>
+            </div>
+          </Section>
+
+          <Section title="Review Screen — AMRAP Variations">
+            <div className="space-y-4">
+              <Subsection label="Standard AMRAP">
+                <TimedSectionCard
+                  exercises={[
+                    { id: "amrap1", name: "Pull-ups", sets: null, reps: "5" },
+                    { id: "amrap2", name: "Push-ups", sets: null, reps: "10" },
+                    { id: "amrap3", name: "Air Squats", sets: null, reps: "15" },
+                  ]}
+                  structure={{ type: "amrap", minutes: 15 }}
+                  sectionType="conditioning"
+                />
+              </Subsection>
+
+              <Subsection label="AMRAP with ladder/rep scheme">
+                <TimedSectionCard
+                  exercises={[
+                    { id: "amrap4", name: "DB Strict Press", sets: null, reps: "ladder" },
+                    { id: "amrap5", name: "DB Push Press", sets: null, reps: "ladder" },
                   ]}
                   structure={{ type: "amrap", minutes: 10 }}
                   sectionType="conditioning"
@@ -694,37 +841,223 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
             </div>
           </Section>
 
-          <Section title="Workout — Structure Cards">
+          <Section title="Review Screen — For Time">
             <div className="space-y-4">
-              <Subsection label="Superset Card">
+              <Subsection label="Standard For Time">
+                <TimedSectionCard
+                  exercises={[
+                    { id: "ft1", name: "Thrusters", sets: null, reps: "21-15-9" },
+                    { id: "ft2", name: "Pull-ups", sets: null, reps: "21-15-9" },
+                  ]}
+                  structure={{ type: "for_time", time_cap_mins: 12 }}
+                  sectionType="conditioning"
+                />
+              </Subsection>
+
+              <Subsection label="For Time with ladder">
+                <TimedSectionCard
+                  exercises={[
+                    { id: "ft3", name: "DB Strict Press", sets: null, reps: "5" },
+                    { id: "ft4", name: "1x DB Strict Press", sets: null, reps: "5" },
+                    { id: "ft5", name: "2x DB Push Press", sets: null, reps: "5" },
+                    { id: "ft6", name: "1x DB Push Press", sets: null, reps: "5" },
+                  ]}
+                  structure={{ type: "for_time", time_cap_mins: 10 }}
+                  sectionType="conditioning"
+                  repScheme="Complete all exercises"
+                />
+              </Subsection>
+            </div>
+          </Section>
+
+          <Section title="Review Screen — Timed Interval">
+            <p className="text-paragraph-sm text-muted-foreground mb-4">
+              Work/rest intervals for the specified duration.
+            </p>
+            <TimedIntervalCard
+              exercises={[
+                { id: "ti1", name: "Forearm Plank", sets: null, reps: "" },
+                { id: "ti2", name: "Side Plank [R]", sets: null, reps: "" },
+                { id: "ti3", name: "Side Plank [L]", sets: null, reps: "" },
+              ]}
+              totalMinutes={10}
+              workSeconds={40}
+              restSeconds={20}
+              sectionType="core"
+            />
+          </Section>
+
+          {/* ─── ACTIVE WORKOUT CARDS ─── */}
+          <Section title="Active Workout — Exercise States">
+            <div className="space-y-4">
+              <Subsection label="Not started (ready for input)">
+                <ActiveExerciseCard
+                  exercise={{
+                    id: "active1",
+                    name: "Barbell Back Squat",
+                    sets: 4,
+                    reps: "6",
+                    rest: "180s",
+                    equipment: "barbell",
+                    lastWeight: "185lbs",
+                    coachingCues: ["Brace core", "Drive through whole foot"]
+                  }}
+                  onLog={() => {}}
+                  onComplete={() => {}}
+                  isCompleted={false}
+                  sectionType="primary"
+                  showSectionLabel={true}
+                />
+              </Subsection>
+
+              <Subsection label="Completed (checked off)">
+                <ActiveExerciseCard
+                  exercise={{
+                    id: "active2",
+                    name: "Romanian Deadlift",
+                    sets: 3,
+                    reps: "10",
+                    rest: "90s",
+                    equipment: "barbell",
+                    weight_logged: "135lbs"
+                  }}
+                  onLog={() => {}}
+                  onComplete={() => {}}
+                  isCompleted={true}
+                  sectionType="accessory"
+                  showSectionLabel={false}
+                />
+              </Subsection>
+
+              <Subsection label="With coaching cues visible">
+                <ActiveExerciseCard
+                  exercise={{
+                    id: "active3",
+                    name: "Dead Bug",
+                    sets: 3,
+                    reps: "8 each",
+                    rest: "45s",
+                    equipment: "bodyweight",
+                    coachingCues: ["Press lower back into floor", "Exhale as you extend", "Move slowly and controlled"]
+                  }}
+                  onLog={() => {}}
+                  onComplete={() => {}}
+                  isCompleted={false}
+                  sectionType="core"
+                  showSectionLabel={true}
+                />
+              </Subsection>
+            </div>
+          </Section>
+
+          <Section title="Active Workout — Superset (In Progress)">
+            <div className="space-y-4">
+              <Subsection label="Neither completed">
                 <SupersetCard
                   exercises={[
-                    { id: "s1", name: "Dumbbell Chest Press", sets: 3, reps: "10", equipment: "dumbbell" },
-                    { id: "s2", name: "Dumbbell Rows", sets: 3, reps: "10", equipment: "dumbbell" },
+                    { id: "ss_a1", name: "Incline DB Press", sets: 3, reps: "10", equipment: "dumbbell" },
+                    { id: "ss_a2", name: "Cable Rows", sets: 3, reps: "10", equipment: "cable" },
                   ]}
                   onLog={() => {}}
                   onComplete={() => {}}
                   completedIds={new Set()}
-                  structure={{ type: "superset", paired_with: "s2" }}
+                  structure={{ type: "superset", paired_with: "ss_a2" }}
                   sectionType="accessory"
                 />
               </Subsection>
-              <Subsection label="Circuit Card">
-                <CircuitCard
+
+              <Subsection label="First exercise completed">
+                <SupersetCard
                   exercises={[
-                    { id: "c1", name: "Squats", sets: null, reps: "15" },
-                    { id: "c2", name: "Push-ups", sets: null, reps: "10" },
-                    { id: "c3", name: "Lunges", sets: null, reps: "10 each" },
+                    { id: "ss_b1", name: "Incline DB Press", sets: 3, reps: "10", equipment: "dumbbell" },
+                    { id: "ss_b2", name: "Cable Rows", sets: 3, reps: "10", equipment: "cable" },
                   ]}
                   onLog={() => {}}
                   onComplete={() => {}}
-                  completedIds={new Set()}
+                  completedIds={new Set(["ss_b1"])}
+                  structure={{ type: "superset", paired_with: "ss_b2" }}
+                  sectionType="accessory"
+                />
+              </Subsection>
+
+              <Subsection label="Both completed">
+                <SupersetCard
+                  exercises={[
+                    { id: "ss_c1", name: "Incline DB Press", sets: 3, reps: "10", equipment: "dumbbell" },
+                    { id: "ss_c2", name: "Cable Rows", sets: 3, reps: "10", equipment: "cable" },
+                  ]}
+                  onLog={() => {}}
+                  onComplete={() => {}}
+                  completedIds={new Set(["ss_c1", "ss_c2"])}
+                  structure={{ type: "superset", paired_with: "ss_c2" }}
+                  sectionType="accessory"
+                />
+              </Subsection>
+            </div>
+          </Section>
+
+          <Section title="Active Workout — Circuit (In Progress)">
+            <div className="space-y-4">
+              <Subsection label="Partially completed">
+                <CircuitCard
+                  exercises={[
+                    { id: "cir_a1", name: "Goblet Squat", sets: null, reps: "12" },
+                    { id: "cir_a2", name: "Push-ups", sets: null, reps: "10" },
+                    { id: "cir_a3", name: "Bent Over Row", sets: null, reps: "10 each" },
+                    { id: "cir_a4", name: "Plank", sets: null, reps: "30sec" },
+                  ]}
+                  onLog={() => {}}
+                  onComplete={() => {}}
+                  completedIds={new Set(["cir_a1", "cir_a2"])}
                   structure={{ type: "circuit", circuit_id: "c1", rounds: 3 }}
                   sectionType="conditioning"
                 />
               </Subsection>
             </div>
           </Section>
+
+          {/* ─── TIMERS ─── */}
+          <Section title="Active Workout — Section Timers">
+            <div className="space-y-4">
+              <Subsection label="Not started (with START button)">
+                <SectionTimer
+                  mode="countdown"
+                  initialSeconds={600}
+                  label="EMOM"
+                  autoStart={false}
+                />
+              </Subsection>
+
+              <Subsection label="Countdown mode (EMOM/AMRAP)">
+                <SectionTimer
+                  mode="countdown"
+                  initialSeconds={300}
+                  label="AMRAP"
+                  autoStart={true}
+                />
+              </Subsection>
+
+              <Subsection label="Countup mode (For Time)">
+                <SectionTimer
+                  mode="countup"
+                  initialSeconds={720}
+                  label="FOR TIME"
+                  autoStart={true}
+                />
+              </Subsection>
+
+              <Subsection label="Compact mode (inline display)">
+                <SectionTimer
+                  mode="countdown"
+                  initialSeconds={180}
+                  label="Rest"
+                  compact={true}
+                />
+              </Subsection>
+            </div>
+          </Section>
+
+          {/* ─── END OF WORKOUT SHOWCASE ─── */}
 
           {/* ════════════════════════════════════════════════════════════════════ */}
           {/* ═══ MUSEUM — Legacy components preserved for reference ═════════════ */}
