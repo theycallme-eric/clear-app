@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Clock } from "lucide-react";
 
 interface GlobalTimerProps {
     isRunning: boolean;
@@ -35,12 +34,36 @@ export const GlobalTimer = ({ isRunning, onTimeUpdate, startTime }: GlobalTimerP
         return `${minutes}:${seconds.toString().padStart(2, '0')}`;
     };
 
+    // Chamfered bottom-right corner clip paths
+    // Outer = border layer, inner = fill layer (inset 2px for border width)
+    const outerClip = 'polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%)';
+    const innerClip = 'polygon(0 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%)';
+
     return (
-        <div className="sticky top-0 z-10 flex items-center justify-center gap-2 py-2 mb-4 backdrop-blur-md bg-background/80 border-b border-border/50 transition-all duration-300">
-            <Clock size={16} className="text-clear-orange animate-pulse" />
-            <span className="text-time-lg font-bold tracking-widest text-foreground">
-                {formatTime(elapsedSeconds)}
-            </span>
+        <div className="sticky top-0 z-10 flex items-center justify-center px-5 py-3 backdrop-blur-md bg-background/80">
+            {/* Timer pill with chamfered corner */}
+            <div
+                className="relative"
+                style={{
+                    clipPath: outerClip,
+                    background: 'var(--border-radio-select)',
+                }}
+            >
+                <div
+                    className="bg-[var(--surface-radio-selected)]"
+                    style={{
+                        margin: '2px',
+                        clipPath: innerClip,
+                    }}
+                >
+                    <span
+                        className="block px-5 text-heading-h4 font-bold text-center"
+                        style={{ color: 'var(--text-radio-text-select)' }}
+                    >
+                        {formatTime(elapsedSeconds)}
+                    </span>
+                </div>
+            </div>
         </div>
     );
 };

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, ChevronDown, ChevronUp, Info } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Info, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Exercise } from "@/types/workout";
 import { Card } from "../Card";
@@ -24,6 +24,7 @@ export const ActiveExerciseCard = ({
     const [weight, setWeight] = useState(exercise.weight_logged || "");
     const [reps, setReps] = useState(exercise.reps || "");
     const [notes, setNotes] = useState("");
+    const [showNotes, setShowNotes] = useState(false);
 
     const handleWeightChange = (v: string) => {
         setWeight(v);
@@ -35,46 +36,65 @@ export const ActiveExerciseCard = ({
         onLog(exercise.id, { reps: v });
     };
 
+    const handleNotesChange = (v: string) => {
+        setNotes(v);
+        onLog(exercise.id, { notes: v });
+    };
+
     return (
         <Card
             padding="none"
             showLeftColumn={!isCompleted}
+            surfaceColor={isCompleted ? 'var(--color-neutral-alpha-100)' : undefined}
+            borderColor={isCompleted ? 'var(--color-neutral-alpha-300)' : undefined}
+            accentColor={isCompleted ? 'var(--color-neutral-alpha-300)' : undefined}
             className={cn(
                 "overflow-hidden transition-all duration-300",
-                isCompleted && "opacity-60",
                 className
             )}
         >
-            {/* Header / Main Row */}
+            {/* Header / Main Row - Always visible (glanceable) */}
             <div className="p-4 flex items-start gap-3">
                 {/* Checkbox */}
                 <button
                     onClick={() => onComplete(exercise.id, !isCompleted)}
                     className={cn(
-                        "mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors",
+                        "mt-1 w-6 h-6 border-2 flex items-center justify-center shrink-0 transition-colors",
                         isCompleted
-                            ? "bg-clear-orange border-clear-orange text-white"
-                            : "border-muted-foreground/30 hover:border-clear-orange"
+                            ? "bg-[var(--surface-success)] border-[var(--border-success)]"
+                            : "border-[var(--color-neutral-alpha-400)] hover:border-[var(--border-card)]"
                     )}
+                    style={{ color: isCompleted ? 'var(--text-success)' : undefined }}
                 >
                     {isCompleted && <Check size={14} strokeWidth={3} />}
                 </button>
 
                 {/* Info */}
-                <div className="flex-1 space-y-1">
-                    <div className="flex justify-between items-start">
-                        <h3 className={cn("text-paragraph-lg font-bold leading-tight", isCompleted && "line-through text-muted-foreground")}>
+                <div className="flex-1 min-w-0 space-y-1">
+                    <div className="flex justify-between items-start gap-2">
+                        <h3
+                            className={cn(
+                                "text-heading-h6 font-bold leading-tight",
+                                isCompleted && "line-through"
+                            )}
+                            style={{ color: isCompleted ? 'var(--text-disabled)' : 'var(--text-header)' }}
+                        >
                             {exercise.name}
                         </h3>
                         <button
                             onClick={() => setIsExpanded(!isExpanded)}
-                            className="text-muted-foreground hover:text-foreground p-1"
+                            className="p-1 shrink-0"
+                            style={{ color: 'var(--text-paragraph)' }}
                         >
                             {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                         </button>
                     </div>
 
-                    <div className="text-paragraph-sm text-muted-foreground flex flex-wrap gap-x-3 gap-y-1">
+                    {/* Rep scheme - always visible */}
+                    <div
+                        className="text-paragraph-sm flex flex-wrap gap-x-3 gap-y-1"
+                        style={{ color: 'var(--text-paragraph)' }}
+                    >
                         {exercise.sets && <span>{exercise.sets} sets</span>}
                         <span>{exercise.reps} reps</span>
                         {exercise.tempo && <span>Tempo: {exercise.tempo}</span>}
@@ -85,13 +105,20 @@ export const ActiveExerciseCard = ({
 
             {/* Expanded / Input Area */}
             {(isExpanded || !isCompleted) && (
-                <div className="px-4 pb-4 space-y-4">
+                <div className="px-4 pb-4 space-y-3">
 
                     {/* Coaching Cues */}
-                    {exercise.coachingCues && (
-                        <div className="text-paragraph-sm bg-secondary/50 p-3 rounded-lg text-foreground/80 italic flex gap-2">
-                            <Info size={16} className="text-clear-orange shrink-0 mt-0.5" />
-                            <p>
+                    {exercise.coachingCues && isExpanded && (
+                        <div
+                            className="text-paragraph-sm p-3 flex gap-2"
+                            style={{
+                                background: 'var(--color-neutral-alpha-100)',
+                                border: '1px solid var(--color-neutral-alpha-200)',
+                                color: 'var(--text-paragraph)',
+                            }}
+                        >
+                            <Info size={16} className="shrink-0 mt-0.5" style={{ color: 'var(--border-card)' }} />
+                            <p className="italic">
                                 {Array.isArray(exercise.coachingCues)
                                     ? exercise.coachingCues.join(". ")
                                     : String(exercise.coachingCues)}
@@ -99,33 +126,95 @@ export const ActiveExerciseCard = ({
                         </div>
                     )}
 
+                    {/* Regression / Progression */}
+                    {isExpanded && (exercise.regression || exercise.progression) && (
+                        <div
+                            className="text-paragraph-sm space-y-1 pt-2"
+                            style={{
+                                borderTop: '1px solid var(--color-neutral-alpha-200)',
+                                color: 'var(--text-paragraph)',
+                            }}
+                        >
+                            {exercise.regression && (
+                                <p><span style={{ color: 'var(--text-disabled)' }}>Easier:</span> {exercise.regression}</p>
+                            )}
+                            {exercise.progression && (
+                                <p><span style={{ color: 'var(--text-disabled)' }}>Harder:</span> {exercise.progression}</p>
+                            )}
+                        </div>
+                    )}
+
                     {/* Logging Inputs */}
-                    <div className="grid grid-cols-2 gap-3">
-                        <div className="space-y-1.5">
-                            <label className="text-label-xs text-muted-foreground uppercase tracking-wider">
-                                Weight
-                            </label>
-                            <input
-                                type="text"
-                                value={weight}
-                                onChange={(e) => handleWeightChange(e.target.value)}
-                                placeholder={exercise.lastWeight || "lbs/kg"}
-                                className="w-full bg-background/50 border border-border rounded-lg px-3 py-2 text-paragraph-sm focus:outline-none focus:ring-1 focus:ring-clear-orange"
-                            />
+                    {!isCompleted && (
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1.5">
+                                <label
+                                    className="text-label-xs uppercase tracking-wider"
+                                    style={{ color: 'var(--text-disabled)' }}
+                                >
+                                    Weight
+                                </label>
+                                <input
+                                    type="text"
+                                    value={weight}
+                                    onChange={(e) => handleWeightChange(e.target.value)}
+                                    placeholder={exercise.lastWeight || "lbs/kg"}
+                                    className="cyber-input w-full px-3 py-2 text-paragraph-sm"
+                                    style={{ color: 'var(--text-input)' }}
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label
+                                    className="text-label-xs uppercase tracking-wider"
+                                    style={{ color: 'var(--text-disabled)' }}
+                                >
+                                    Reps
+                                </label>
+                                <input
+                                    type="text"
+                                    value={reps}
+                                    onChange={(e) => handleRepsChange(e.target.value)}
+                                    placeholder={exercise.reps}
+                                    className="cyber-input w-full px-3 py-2 text-paragraph-sm"
+                                    style={{ color: 'var(--text-input)' }}
+                                />
+                            </div>
                         </div>
-                        <div className="space-y-1.5">
-                            <label className="text-label-xs text-muted-foreground uppercase tracking-wider">
-                                Reps
-                            </label>
-                            <input
-                                type="text"
-                                value={reps}
-                                onChange={(e) => handleRepsChange(e.target.value)}
-                                placeholder={exercise.reps} // Use target reps as placeholder
-                                className="w-full bg-background/50 border border-border rounded-lg px-3 py-2 text-paragraph-sm focus:outline-none focus:ring-1 focus:ring-clear-orange"
-                            />
+                    )}
+
+                    {/* Notes toggle + input */}
+                    {!isCompleted && (
+                        <div>
+                            {!showNotes ? (
+                                <button
+                                    onClick={() => setShowNotes(true)}
+                                    className="flex items-center gap-1.5 text-paragraph-sm"
+                                    style={{ color: 'var(--text-disabled)' }}
+                                >
+                                    <MessageSquare size={14} />
+                                    <span>Add note</span>
+                                </button>
+                            ) : (
+                                <div className="space-y-1.5">
+                                    <label
+                                        className="text-label-xs uppercase tracking-wider"
+                                        style={{ color: 'var(--text-disabled)' }}
+                                    >
+                                        Notes
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={notes}
+                                        onChange={(e) => handleNotesChange(e.target.value)}
+                                        placeholder="How did it feel?"
+                                        className="cyber-input w-full px-3 py-2 text-paragraph-sm"
+                                        style={{ color: 'var(--text-input)' }}
+                                        autoFocus
+                                    />
+                                </div>
+                            )}
                         </div>
-                    </div>
+                    )}
                 </div>
             )}
         </Card>

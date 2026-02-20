@@ -1,6 +1,6 @@
 import { ExerciseStructure, Exercise } from "@/types/workout";
 import { ActiveExerciseCard } from "./ActiveExerciseCard";
-import { cn } from "@/lib/utils";
+import { Card } from "../Card";
 
 interface StructureCardProps {
     exercises: Exercise[];
@@ -12,28 +12,38 @@ interface StructureCardProps {
 
 export const SupersetCard = ({ exercises, onLog, onComplete, completedIds }: StructureCardProps) => {
     return (
-        <div className="relative pl-3">
-            {/* Connecting Line and Label */}
-            <div className="absolute left-0 top-4 bottom-4 w-0.5 bg-gradient-to-b from-clear-orange via-clear-orange/50 to-clear-orange rounded-full" />
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-background py-2">
-                <div className="text-label-xs font-bold text-clear-orange uppercase tracking-widest writing-vertical-lr rotate-180">
-                    Superset
+        <Card
+            cornerSize="md"
+            padding="none"
+            surfaceColor="transparent"
+            borderColor="var(--border-card)"
+            accentColor="var(--surface-card-accent)"
+        >
+            <div className="p-1">
+                {/* Superset label */}
+                <div className="px-3 py-1.5">
+                    <span
+                        className="text-label-xs font-bold uppercase tracking-widest"
+                        style={{ color: 'var(--border-card)' }}
+                    >
+                        Superset
+                    </span>
+                </div>
+
+                {/* Grouped exercises */}
+                <div className="space-y-1">
+                    {exercises.map((exercise) => (
+                        <ActiveExerciseCard
+                            key={exercise.id}
+                            exercise={exercise}
+                            onLog={onLog}
+                            onComplete={onComplete}
+                            isCompleted={completedIds.has(exercise.id)}
+                        />
+                    ))}
                 </div>
             </div>
-
-            <div className="space-y-4">
-                {exercises.map((exercise) => (
-                    <ActiveExerciseCard
-                        key={exercise.id}
-                        exercise={exercise}
-                        onLog={onLog}
-                        onComplete={onComplete}
-                        isCompleted={completedIds.has(exercise.id)}
-                        className="border-l-0" // Remove individual card border since we have the superset line
-                    />
-                ))}
-            </div>
-        </div>
+        </Card>
     );
 };
 
@@ -41,30 +51,37 @@ export const CircuitCard = ({ exercises, onLog, onComplete, completedIds, struct
     const rounds = 'rounds' in structure ? structure.rounds : undefined;
 
     return (
-        <div className="space-y-3">
-            <div className="flex items-center justify-between px-1">
-                <span className="text-label-xs font-bold text-muted-foreground uppercase tracking-widest">
-                    {rounds ? `${rounds} Rounds` : 'Circuit'}
-                </span>
-            </div>
+        <Card
+            cornerSize="md"
+            padding="none"
+            surfaceColor="transparent"
+            borderColor="var(--border-card)"
+            accentColor="var(--surface-card-accent)"
+        >
+            <div className="p-1">
+                {/* Circuit header */}
+                <div className="px-3 py-1.5 flex items-center justify-between">
+                    <span
+                        className="text-label-xs font-bold uppercase tracking-widest"
+                        style={{ color: 'var(--border-card)' }}
+                    >
+                        {rounds ? `Circuit · ${rounds} Rounds` : 'Circuit'}
+                    </span>
+                </div>
 
-            <div className="space-y-3">
-                {exercises.map((exercise, index) => (
-                    <div key={exercise.id} className="relative">
-                        {/* Simple connecting line for circuit flow */}
-                        {index !== exercises.length - 1 && (
-                            <div className="absolute left-6 bottom-[-12px] h-3 w-0.5 bg-border/50 z-0" />
-                        )}
+                {/* Exercises in circuit */}
+                <div className="space-y-1">
+                    {exercises.map((exercise) => (
                         <ActiveExerciseCard
+                            key={exercise.id}
                             exercise={exercise}
                             onLog={onLog}
                             onComplete={onComplete}
                             isCompleted={completedIds.has(exercise.id)}
-                            className="z-10 relative"
                         />
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
-        </div>
+        </Card>
     );
 };
