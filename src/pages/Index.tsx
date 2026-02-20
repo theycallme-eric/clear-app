@@ -12,6 +12,7 @@ import { WelcomeScreen } from "@/pages/WelcomeScreen";
 import { SignInScreen } from "@/pages/SignInScreen";
 import { CreateAccountScreen } from "@/pages/CreateAccountScreen";
 import { ComponentGallery } from "@/pages/ComponentGallery";
+import { TestWorkoutScreen } from "@/pages/TestWorkoutScreen";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { AbandonmentModal } from "@/components/AbandonmentModal";
 import { supabase } from "@/lib/supabase";
@@ -30,7 +31,8 @@ const Index = () => {
     profile,
     locations,
     updateProfile,
-    updateLocations
+    updateLocations,
+    signOut,
   } = useAuthContext();
 
   const { currentScreen, navigateTo } = useAppNavigation();
@@ -67,8 +69,8 @@ const Index = () => {
 
   // Navigation based on auth status
   useEffect(() => {
-    // Component Gallery direct access
-    if (currentScreen === 'componentGallery') return;
+    // Developer screens bypass auth
+    if (currentScreen === 'componentGallery' || currentScreen === 'testWorkout') return;
 
     // Loading - wait
     if (status === 'loading') {
@@ -284,10 +286,15 @@ const Index = () => {
           onSavePreferences={handleSavePreferences}
           onBack={() => navigateTo("home")}
           onOpenDeveloper={() => navigateTo("componentGallery")}
+          onLaunchTestWorkout={() => navigateTo("testWorkout")}
+          onSignOut={signOut}
         />
       )}
       {currentScreen === "componentGallery" && (
         <ComponentGallery onBack={() => navigateTo("settings")} />
+      )}
+      {currentScreen === "testWorkout" && (
+        <TestWorkoutScreen onBack={() => navigateTo("settings")} />
       )}
     </>
   );

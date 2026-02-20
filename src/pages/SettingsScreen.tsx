@@ -19,12 +19,15 @@ import {
   SECTIONS_BY_GOAL,
 } from "@/types/workout";
 import { toast } from "@/components/ui/sonner";
+import { SignOutConfirmModal } from "@/components/SignOutConfirmModal";
 
 interface SettingsScreenProps {
   userPreferences: UserPreferences;
   onSavePreferences: (preferences: UserPreferences) => void;
   onBack: () => void;
   onOpenDeveloper?: () => void;
+  onLaunchTestWorkout?: () => void;
+  onSignOut: () => void;
 }
 
 type SettingsView =
@@ -47,8 +50,11 @@ export const SettingsScreen = ({
   onSavePreferences,
   onBack,
   onOpenDeveloper,
+  onLaunchTestWorkout,
+  onSignOut,
 }: SettingsScreenProps) => {
   const [currentView, setCurrentView] = useState<SettingsView>("hub");
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const [preferences, setPreferences] = useState<UserPreferences>({ ...userPreferences });
 
   // Location editing state
@@ -372,28 +378,60 @@ export const SettingsScreen = ({
               </div>
 
               {/* Developer Section */}
-              {onOpenDeveloper && (
+              {(onOpenDeveloper || onLaunchTestWorkout) && (
                 <div>
                   <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3">
                     Developer
                   </p>
                   <div className="space-y-2">
-                    <Card onClick={onOpenDeveloper} padding="md">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-label-sm text-foreground uppercase">
-                            Component Gallery
-                          </p>
-                          <p className="text-muted-foreground text-paragraph-sm mt-0.5">
-                            Audit design system components
-                          </p>
+                    {onOpenDeveloper && (
+                      <Card onClick={onOpenDeveloper} padding="md">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-label-sm text-foreground uppercase">
+                              Component Gallery
+                            </p>
+                            <p className="text-muted-foreground text-paragraph-sm mt-0.5">
+                              Audit design system components
+                            </p>
+                          </div>
+                          <ChevronRight className="w-5 h-5 text-muted-foreground" />
                         </div>
-                        <ChevronRight className="w-5 h-5 text-muted-foreground" />
-                      </div>
-                    </Card>
+                      </Card>
+                    )}
+                    {onLaunchTestWorkout && (
+                      <Card onClick={onLaunchTestWorkout} padding="md">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-label-sm text-foreground uppercase">
+                              Test Workout
+                            </p>
+                            <p className="text-muted-foreground text-paragraph-sm mt-0.5">
+                              All structure types in one session
+                            </p>
+                          </div>
+                          <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                        </div>
+                      </Card>
+                    )}
                   </div>
                 </div>
               )}
+
+              {/* Sign Out */}
+              <div
+                className="pt-4"
+                style={{ '--text-cta': 'var(--color-red-400)', '--text-cta-hover': 'var(--color-red-300)' } as React.CSSProperties}
+              >
+                <CTAButton
+                  onClick={() => setShowSignOutConfirm(true)}
+                  variant="secondary"
+                  size="md"
+                  fullWidth
+                >
+                  Sign Out
+                </CTAButton>
+              </div>
             </div>
           )}
 
@@ -692,6 +730,16 @@ export const SettingsScreen = ({
           </div>
         )}
       </div>
+
+      {showSignOutConfirm && (
+        <SignOutConfirmModal
+          onConfirm={() => {
+            setShowSignOutConfirm(false);
+            onSignOut();
+          }}
+          onCancel={() => setShowSignOutConfirm(false)}
+        />
+      )}
     </div>
   );
 };
