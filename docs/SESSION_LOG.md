@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** [Date]
+**Last Session:** 2026-02-25
 
 ---
 
@@ -13,14 +13,102 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** [Phase name from roadmap]  
-**Current Task:** [Task name]  
-**Last Completed:** [What was finished last]  
-**Blocking Issues:** [None / Description]
+**Current Phase:** Auth UX
+**Current Task:** Auth session management
+**Last Completed:** Stay logged in checkbox + sign out button
+**Blocking Issues:** None
 
 ---
 
 ## Session Entries
+
+### Session: 2026-02-25 - Auth Session Management
+
+**Duration:** ~45 min
+**Mode:** Claude Code
+**Branch:** `feature/auth-session-management` (off `main`)
+
+#### What Got Done
+- Added "Stay logged in" checkbox to sign-in form (defaults to checked)
+  - Custom storage adapter (`src/lib/auth-storage.ts`) delegates to localStorage or sessionStorage based on preference
+  - Wired into Supabase client via `auth.storage` option
+- Added sign out button to Settings hub with confirmation modal
+  - Reusable `Checkbox` component (`src/components/Checkbox.tsx`) using ChamferedFrame design system
+  - `SignOutConfirmModal` component following AbandonmentModal pattern
+  - Sign out clears session preference so next login defaults to "stay logged in"
+- Created reusable `Checkbox` component matching chamfered design system (green checked, orange unchecked)
+
+#### What Came Up (Unexpected)
+- Initial implementation used native `<input type="checkbox">` — replaced with ChamferedFrame-based Checkbox to match design system after user feedback
+- Pre-existing uncommitted changes from `feature/workout-card-overhaul` carried over when branching — kept separate, only auth files staged
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Custom storage adapter (not recreating Supabase client) | Adapter reads preference flag dynamically per call, so singleton client works unchanged |
+| Preference flag always in localStorage | Must survive browser close so adapter knows which storage to read on reload |
+| Clear preference on sign out | Next sign-in defaults to "stay logged in" checked — user makes fresh choice each time |
+| Reusable Checkbox component | User requested it for future use; follows RadioButton pattern with ChamferedFrame |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/lib/auth-storage.ts` | Created — storage adapter + preference helpers |
+| `src/lib/supabase.ts` | Modified — pass adapter to createClient |
+| `src/components/Checkbox.tsx` | Created — reusable chamfered checkbox |
+| `src/components/SignOutConfirmModal.tsx` | Created — confirmation modal |
+| `src/pages/SignInScreen.tsx` | Modified — added checkbox + wired preference |
+| `src/pages/SettingsScreen.tsx` | Modified — added onSignOut prop + button + modal |
+| `src/pages/Index.tsx` | Modified — pass signOut to SettingsScreen |
+| `src/contexts/AuthContext.tsx` | Modified — clear preference on sign out |
+
+#### Status
+- TypeScript compiles clean, build passes
+- Not yet committed — ready for review and PR
+
+---
+
+### Session: 2026-02-19 - Auth Deadlock Fix
+
+**Duration:** ~30 min
+**Mode:** Claude Code
+
+#### What Got Done
+- Diagnosed and fixed auth initialization deadlock causing infinite spinner on app load
+- Root cause: circular `await` between supabase-js `initializePromise` and `onAuthStateChange` callback
+- Fix: 6-line addition to skip `onAuthStateChange` handler during initialization (`initializingRef.current` check)
+
+#### What Came Up (Unexpected)
+- `supabase.from()` internally calls `auth.getSession()` to get the Bearer token — this hidden dependency created a circular await that was invisible at the application level
+- The 8s timeout added in the previous auth stabilization session was masking the real issue (deadlock, not slow network)
+- Auth service responded in <5ms via curl, confirming the hang was entirely client-side
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Skip `onAuthStateChange` during init, let `initialize()` handle it | Breaks the deadlock with minimal code change; `initialize()` already fetches profile after `getSession()` |
+| Keep the 8s timeout as safety net | Still useful for genuine network issues even though the deadlock was the primary cause |
+
+#### Technical Notes
+```
+Deadlock chain:
+  initializePromise
+    → _notifyAllSubscribers('SIGNED_IN')  [awaits callbacks]
+      → onAuthStateChange callback
+        → fetchUserData()
+          → supabase.from('profiles').select()
+            → _getAccessToken()
+              → auth.getSession()
+                → await initializePromise  ← CIRCULAR
+
+Fix: check initializingRef.current at top of SIGNED_IN/TOKEN_REFRESHED handler.
+During init, callback is a no-op. initialize() handles initial profile fetch.
+Post-init, callback works normally (initializePromise already resolved).
+
+File: src/contexts/AuthContext.tsx (lines 331-340)
+```
+
+---
 
 ### Session: 2026-02-12 - UI Cleanup: RadioButton & Card Standardization
 
