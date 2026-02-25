@@ -1,167 +1,141 @@
-import { useEffect, useState } from "react";
-import { Play, Pause, RefreshCw } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Card } from "../Card";
+import { useEffect, useState, useCallback } from "react";
+import { ChamferedFrame } from "@/components/ChamferedFrame";
+import { CTAButton } from "../CTAButton";
 
 interface SectionTimerProps {
     mode: 'countdown' | 'countup';
-    initialSeconds?: number; // Target duration for countdown, or starting point for countup
-    onComplete?: () => void;
-    autoStart?: boolean;
-    label?: string;
+    initialSeconds?: number;
+    onFinish?: (remainingSeconds: number) => void;
+    /** EMOM uses per-minute low-time warning instead of overall */
+    emom?: boolean;
     className?: string;
 }
+
+type TimerState = 'idle' | 'running' | 'paused' | 'complete';
 
 export const SectionTimer = ({
     mode,
     initialSeconds = 0,
-    onComplete,
-    autoStart = false,
-    label,
+    onFinish,
+    emom = false,
     className
 }: SectionTimerProps) => {
-    const [timeLeft, setTimeLeft] = useState(mode === 'countdown' ? initialSeconds : 0);
-    const [isActive, setIsActive] = useState(autoStart);
-    const isComplete = mode === 'countdown' && timeLeft === 0 && !isActive && initialSeconds > 0;
-    const isLowTime = mode === 'countdown' && isActive && timeLeft <= 10 && timeLeft > 0;
+    const [seconds, setSeconds] = useState(mode === 'countdown' ? initialSeconds : 0);
+    const [timerState, setTimerState] = useState<TimerState>('idle');
+
+    // EMOM: low-time triggers in the last 10s of each minute
+    // Others: low-time triggers in the last 10s overall
+    const isLowTime = timerState === 'running' && mode === 'countdown' && seconds > 0 && (
+        emom
+            ? (seconds % 60 > 0 && seconds % 60 <= 10)
+            : seconds <= 10
+    );
+    const isComplete = timerState === 'complete';
 
     useEffect(() => {
-        let interval: NodeJS.Timeout;
+        if (timerState !== 'running') return;
 
-        if (isActive) {
-            interval = setInterval(() => {
-                setTimeLeft((prev) => {
-                    if (mode === 'countdown') {
-                        if (prev <= 1) {
-                            clearInterval(interval);
-                            setIsActive(false);
-                            onComplete?.();
-                            return 0;
-                        }
-                        return prev - 1;
-                    } else {
-                        return prev + 1;
+        const interval = setInterval(() => {
+            setSeconds((prev) => {
+                if (mode === 'countdown') {
+                    if (prev <= 1) {
+                        setTimerState('complete');
+                        return 0;
                     }
-                });
-            }, 1000);
-        }
+                    return prev - 1;
+                }
+                return prev + 1;
+            });
+        }, 1000);
 
         return () => clearInterval(interval);
-    }, [isActive, mode, onComplete]);
+    }, [timerState, mode]);
 
-    const toggleTimer = () => setIsActive(!isActive);
-    const resetTimer = () => {
-        setIsActive(false);
-        setTimeLeft(mode === 'countdown' ? initialSeconds : 0);
+    const handleStart = () => setTimerState('running');
+    const handlePause = () => setTimerState('paused');
+    const handleResume = () => setTimerState('running');
+
+    const handleFinish = useCallback(() => {
+        setTimerState('complete');
+        onFinish?.(seconds);
+    }, [seconds, onFinish]);
+
+    const formatTime = (totalSeconds: number) => {
+        const m = Math.floor(totalSeconds / 60);
+        const s = totalSeconds % 60;
+        return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     };
 
-    const formatTime = (seconds: number) => {
-        const m = Math.floor(seconds / 60);
-        const s = seconds % 60;
-        return `${m}:${s.toString().padStart(2, '0')}`;
-    };
+    // Token mapping based on state
+    const surfaceColor = isLowTime
+        ? 'var(--surface-error)'
+        : 'var(--surface-radio-selected)';
 
-    const progressPercent = mode === 'countdown' && initialSeconds > 0
-        ? ((initialSeconds - timeLeft) / initialSeconds) * 100
-        : 0;
+    const borderColor = isLowTime
+        ? 'var(--border-error)'
+        : 'var(--border-radio-select)';
 
-    // Timer ring colors based on state
-    const ringColor = isLowTime
-        ? 'var(--color-red-500)'
-        : isComplete
-            ? 'var(--color-green-500)'
-            : 'var(--border-card)';
-
-    const timeColor = isLowTime
-        ? 'var(--color-red-400)'
-        : isComplete
-            ? 'var(--color-green-400)'
-            : 'var(--text-header)';
+    const textColor = isLowTime
+        ? 'var(--text-error)'
+        : 'var(--text-radio-text-select)';
 
     return (
-        <Card cornerSize="md" padding="none" className={className}>
-            <div className="flex flex-col items-center gap-3 p-4">
-            {label && (
-                <span
-                    className="text-label-xs font-bold uppercase tracking-wider"
-                    style={{ color: "var(--text-paragraph)" }}
-                >
-                    {label}
-                </span>
-            )}
-
-            <div className="relative flex items-center justify-center w-32 h-32">
-                {/* Progress Ring Background */}
-                <svg className="absolute w-full h-full transform -rotate-90">
-                    <circle
-                        cx="64"
-                        cy="64"
-                        r="60"
-                        className="fill-none"
-                        style={{ stroke: 'var(--color-neutral-alpha-200)' }}
-                        strokeWidth="6"
-                    />
-                    {mode === 'countdown' && (
-                        <circle
-                            cx="64"
-                            cy="64"
-                            r="60"
-                            className="fill-none transition-all duration-1000 ease-linear"
-                            style={{ stroke: ringColor }}
-                            strokeWidth="6"
-                            strokeDasharray={377}
-                            strokeDashoffset={377 - (377 * progressPercent) / 100}
-                            strokeLinecap="square"
-                        />
-                    )}
-                </svg>
-
-                {/* Time Display */}
-                <div className="flex flex-col items-center z-10">
+        <div className={className}>
+            {/* Timer display */}
+            <ChamferedFrame
+                cornerSize="sm"
+                surfaceColor={surfaceColor}
+                borderColor={borderColor}
+                hasLeftBorder={true}
+            >
+                <div className="flex flex-col items-center py-3">
                     <span
-                        className={cn(
-                            "text-time-xl font-bold tracking-tight",
-                            isLowTime && "animate-pulse"
-                        )}
-                        style={{ color: timeColor }}
+                        className="text-time-xl font-bold text-center tracking-tight"
+                        style={{ color: textColor, transition: 'color 1s ease' }}
                     >
-                        {formatTime(timeLeft)}
+                        {formatTime(seconds)}
                     </span>
                     {isComplete && (
                         <span
                             className="text-label-xs font-bold uppercase"
-                            style={{ color: 'var(--color-green-500)' }}
+                            style={{ color: textColor }}
                         >
                             Done
                         </span>
                     )}
                 </div>
-            </div>
+            </ChamferedFrame>
 
             {/* Controls */}
-            <div className="flex items-center gap-4 mt-2">
-                <button
-                    onClick={toggleTimer}
-                    className={cn(
-                        "flex items-center justify-center w-12 h-12 transition-all border-2",
-                        isActive
-                            ? "border-[var(--color-neutral-alpha-400)] bg-[var(--color-neutral-alpha-200)]"
-                            : "border-[var(--border-card)] bg-[var(--surface-cta-primary)]"
-                    )}
-                    style={{ color: isActive ? 'var(--text-paragraph)' : 'var(--text-cta)' }}
-                >
-                    {isActive ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" className="ml-1" />}
-                </button>
+            <div className="flex gap-3 mt-3">
+                {timerState === 'idle' && (
+                    <CTAButton onClick={handleStart} size="md" fullWidth>
+                        Start
+                    </CTAButton>
+                )}
 
-                <button
-                    onClick={resetTimer}
-                    className="flex items-center justify-center w-10 h-10 border border-[var(--color-neutral-alpha-300)] bg-[var(--color-neutral-alpha-100)] transition-colors hover:bg-[var(--color-neutral-alpha-200)]"
-                    style={{ color: 'var(--text-paragraph)' }}
-                >
-                    <RefreshCw size={18} />
-                </button>
+                {timerState === 'running' && (
+                    <>
+                        <CTAButton onClick={handlePause} size="md" fullWidth>
+                            Pause
+                        </CTAButton>
+                        <CTAButton onClick={handleFinish} variant="secondary" size="md" fullWidth>
+                            Finish
+                        </CTAButton>
+                    </>
+                )}
+
+                {timerState === 'paused' && (
+                    <>
+                        <CTAButton onClick={handleResume} size="md" fullWidth>
+                            Resume
+                        </CTAButton>
+                        <CTAButton onClick={handleFinish} variant="secondary" size="md" fullWidth>
+                            Finish
+                        </CTAButton>
+                    </>
+                )}
             </div>
-            </div>
-        </Card>
+        </div>
     );
 };

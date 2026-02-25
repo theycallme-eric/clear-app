@@ -306,6 +306,9 @@
     --border-input: var(--color-orange-alpha-500);
     --border-input-active: var(--color-orange-alpha-700);
     --border-input-disabled: var(--color-neutral-alpha-300);
+    /* Spacer */
+    --border-spacer: var(--color-orange-alpha-500);
+
     /* Chip borders */
     --border-chip: var(--color-orange-500);
     --border-chip-selected: var(--color-green-500);
@@ -314,6 +317,7 @@
     /* Text Colors */
     --text-header: var(--color-blue-300);
     --text-paragraph: var(--color-blue-100);
+    --text-card-label: var(--color-orange-100);
     --text-cta: var(--color-blue-100);
     --text-cta-hover: var(--color-blue-500);
     --text-timer: var(--color-green-400);
@@ -446,6 +450,9 @@
     /* Input field borders - blue theme */
     --border-input: var(--color-blue-alpha-500);
     --border-input-active: var(--color-blue-alpha-700);
+    /* Spacer - blue theme */
+    --border-spacer: var(--color-blue-alpha-500);
+
     /* Chip borders - blue theme */
     --border-chip: var(--color-blue-500);
     --border-chip-unselected: var(--color-blue-alpha-300);
@@ -453,6 +460,7 @@
     /* Text Colors */
     --text-header: var(--color-orange-300);
     --text-paragraph: var(--color-orange-100);
+    --text-card-label: var(--color-blue-100);
     --text-cta: var(--color-orange-100);
     --text-cta-hover: var(--color-orange-500);
     --text-label-info: var(--color-orange-100);
@@ -581,18 +589,6 @@
     color: var(--text-header);
   }
 
-  /* Glass Input - same treatment as cards */
-  .glass-input {
-    background: rgba(23, 23, 23, 0.6);
-    backdrop-filter: blur(20px);
-    border: 1.5px solid var(--color-orange-alpha-400);
-    border-radius: var(--radius);
-  }
-
-  [data-theme="blue"] .glass-input {
-    border-color: var(--color-blue-alpha-400);
-  }
-
   /* Ghost/Outline Button */
   .ghost-button {
     background: transparent;
@@ -614,20 +610,6 @@
   [data-theme="blue"] .ghost-button:hover {
     border-color: var(--border-cta);
     box-shadow: inset 0 0 12px var(--color-blue-alpha-200);
-  }
-
-  /* Input with accent stripe */
-  .cyber-input {
-    background: var(--color-neutral-alpha-100);
-    border: 1px solid var(--color-neutral-alpha-200);
-    border-left: 3px solid var(--color-green-500);
-    transition: all 0.2s ease;
-  }
-
-  .cyber-input:focus {
-    outline: none;
-    border-color: var(--color-neutral-alpha-300);
-    box-shadow: 0 0 8px var(--color-green-alpha-200);
   }
 
   /* Grain texture overlay - subtle, sits between dark overlay and content */

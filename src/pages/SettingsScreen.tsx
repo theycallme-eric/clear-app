@@ -511,7 +511,7 @@ export const SettingsScreen = ({
                 </div>
 
                 {/* Customize Equipment Accordion */}
-                <div className="border-t border-muted-foreground/20 pt-4 -mx-4 px-4">
+                <div className="pt-4 -mx-4 px-4" style={{ borderTop: '2px solid var(--border-spacer)' }}>
                   <button
                     onClick={() => setEquipmentAccordionOpen(!equipmentAccordionOpen)}
                     className="w-full flex items-center justify-between"
@@ -591,7 +591,7 @@ export const SettingsScreen = ({
 
                 {/* Sections Accordion */}
                 {selectedGoal && (
-                  <div className="border-t border-muted-foreground/20 pt-4 -mx-4 px-4">
+                  <div className="pt-4 -mx-4 px-4" style={{ borderTop: '2px solid var(--border-spacer)' }}>
                     <button
                       onClick={() => setSectionsAccordionOpen(!sectionsAccordionOpen)}
                       className="w-full flex items-center justify-between"
@@ -650,7 +650,7 @@ export const SettingsScreen = ({
                       </button>
 
                       {legendOpen && (
-                        <div className="space-y-3 pt-2 border-t border-muted-foreground/20">
+                        <div className="space-y-3 pt-2" style={{ borderTop: '2px solid var(--border-spacer)' }}>
                           {WORKOUT_SECTIONS.map((section) => (
                             <div key={section.id}>
                               <p className="text-label-xs uppercase tracking-wide text-clear-orange">

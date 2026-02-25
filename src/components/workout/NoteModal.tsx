@@ -43,7 +43,7 @@ export const NoteModal = ({
       {/* Modal */}
       <Card padding="none" className="relative w-full max-w-md animate-in slide-in-from-bottom duration-300">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border/30">
+        <div className="flex items-center justify-between p-4" style={{ borderBottom: '2px solid var(--border-spacer)' }}>
           <h3 className="text-heading-h5 font-bold uppercase text-clear-orange">
             {title}
           </h3>
@@ -67,7 +67,7 @@ export const NoteModal = ({
         </div>
         
         {/* Actions */}
-        <div className="flex gap-3 p-4 border-t border-border/30">
+        <div className="flex gap-3 p-4" style={{ borderTop: '2px solid var(--border-spacer)' }}>
           <CTAButton
             onClick={onClose}
             variant="secondary"

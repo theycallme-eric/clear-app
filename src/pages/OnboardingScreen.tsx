@@ -277,7 +277,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                 </button>
 
                 {legendOpen && (
-                  <div className="px-4 pb-4 space-y-3 border-t border-muted-foreground/20 pt-3">
+                  <div className="px-4 pb-4 space-y-3 pt-3" style={{ borderTop: '2px solid var(--border-spacer)' }}>
                     {WORKOUT_SECTIONS.map((section) => (
                       <div key={section.id}>
                         <p className="text-label-xs uppercase tracking-wide text-clear-orange">

@@ -60,7 +60,7 @@ export const WorkoutExerciseItem = ({
       </div>
       
       {isExpanded && (
-        <div className="mt-3 pt-3 border-t border-clear-orange/30 space-y-2">
+        <div className="mt-3 pt-3 space-y-2" style={{ borderTop: '2px solid var(--border-spacer)' }}>
           {exercise.tempo && (
             <p className="text-paragraph-sm text-foreground/80">
               <span className="text-muted-foreground">Tempo:</span> {exercise.tempo}
@@ -79,7 +79,7 @@ export const WorkoutExerciseItem = ({
           
           {/* Regression & Progression */}
           {(exercise.regression || exercise.progression) && (
-            <div className="pt-3 border-t border-clear-orange/30 space-y-1">
+            <div className="pt-3 space-y-1" style={{ borderTop: '2px solid var(--border-spacer)' }}>
               {exercise.regression && (
                 <p className="text-paragraph-sm text-foreground/80">
                   <span className="text-muted-foreground">Regression:</span> {exercise.regression}
@@ -94,7 +94,7 @@ export const WorkoutExerciseItem = ({
           )}
           
           {/* Notes Section */}
-          <div className="pt-3 border-t border-clear-orange/30">
+          <div className="pt-3" style={{ borderTop: '2px solid var(--border-spacer)' }}>
             <div className="flex items-center justify-between">
               <span className="text-paragraph-sm text-muted-foreground lowercase">{exercise.name}.</span>
               <button

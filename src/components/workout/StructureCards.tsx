@@ -5,82 +5,73 @@ import { Card } from "../Card";
 interface StructureCardProps {
     exercises: Exercise[];
     onLog: (id: string, data: { weight?: string; reps?: string; notes?: string }) => void;
-    onComplete: (id: string, completed: boolean) => void;
-    completedIds: Set<string>;
-    structure: ExerciseStructure; // Context for the group
+    sectionType?: string;
+    structure: ExerciseStructure;
 }
 
-export const SupersetCard = ({ exercises, onLog, onComplete, completedIds }: StructureCardProps) => {
+export const SupersetCard = ({ exercises, onLog, sectionType }: StructureCardProps) => {
     return (
         <Card
             cornerSize="md"
             padding="none"
-            surfaceColor="transparent"
-            borderColor="var(--border-card)"
-            accentColor="var(--surface-card-accent)"
         >
-            <div className="p-1">
-                {/* Superset label */}
-                <div className="px-3 py-1.5">
-                    <span
-                        className="text-label-xs font-bold uppercase tracking-widest"
-                        style={{ color: 'var(--border-card)' }}
-                    >
-                        Superset
-                    </span>
-                </div>
-
-                {/* Grouped exercises */}
-                <div className="space-y-1">
-                    {exercises.map((exercise) => (
+            <div className="px-4 pt-3 pb-1">
+                <span
+                    className="text-label-xs font-bold uppercase tracking-widest"
+                    style={{ color: 'var(--text-card-label)' }}
+                >
+                    Superset
+                </span>
+            </div>
+            <div>
+                {exercises.map((exercise, i) => (
+                    <div key={exercise.id}>
+                        {i > 0 && (
+                            <div className="mx-4" style={{ borderTop: '2px solid var(--border-spacer)' }} />
+                        )}
                         <ActiveExerciseCard
-                            key={exercise.id}
                             exercise={exercise}
                             onLog={onLog}
-                            onComplete={onComplete}
-                            isCompleted={completedIds.has(exercise.id)}
+                            sectionType={sectionType}
+                            bare
                         />
-                    ))}
-                </div>
+                    </div>
+                ))}
             </div>
         </Card>
     );
 };
 
-export const CircuitCard = ({ exercises, onLog, onComplete, completedIds, structure }: StructureCardProps) => {
+export const CircuitCard = ({ exercises, onLog, sectionType, structure }: StructureCardProps) => {
     const rounds = 'rounds' in structure ? structure.rounds : undefined;
 
     return (
         <Card
             cornerSize="md"
             padding="none"
-            surfaceColor="transparent"
-            borderColor="var(--border-card)"
-            accentColor="var(--surface-card-accent)"
         >
-            <div className="p-1">
-                {/* Circuit header */}
-                <div className="px-3 py-1.5 flex items-center justify-between">
-                    <span
-                        className="text-label-xs font-bold uppercase tracking-widest"
-                        style={{ color: 'var(--border-card)' }}
-                    >
-                        {rounds ? `Circuit · ${rounds} Rounds` : 'Circuit'}
-                    </span>
-                </div>
-
-                {/* Exercises in circuit */}
-                <div className="space-y-1">
-                    {exercises.map((exercise) => (
+            <div className="px-4 pt-3 pb-1">
+                <span
+                    className="text-label-xs font-bold uppercase tracking-widest"
+                    style={{ color: 'var(--text-card-label)' }}
+                >
+                    {rounds ? `Circuit · ${rounds} Rounds` : 'Circuit'}
+                </span>
+            </div>
+            <div>
+                {exercises.map((exercise, i) => (
+                    <div key={exercise.id}>
+                        {i > 0 && (
+                            <div className="mx-4" style={{ borderTop: '2px solid var(--border-spacer)' }} />
+                        )}
                         <ActiveExerciseCard
-                            key={exercise.id}
                             exercise={exercise}
                             onLog={onLog}
-                            onComplete={onComplete}
-                            isCompleted={completedIds.has(exercise.id)}
+                            sectionType={sectionType}
+                            bare
                         />
-                    ))}
-                </div>
+                    </div>
+                ))}
             </div>
         </Card>
     );

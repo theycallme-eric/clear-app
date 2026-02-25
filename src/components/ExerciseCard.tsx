@@ -55,7 +55,7 @@ export const ExerciseCard = ({ exercise, onEditClick }: ExerciseCardProps) => {
 
       {/* Regression/Progression inside the card */}
       {(exercise.regression || exercise.progression) && (
-        <div className="text-paragraph-sm space-y-1 pt-2 border-t border-clear-orange/30">
+        <div className="text-paragraph-sm space-y-1 pt-2" style={{ borderTop: '2px solid var(--border-spacer)' }}>
           {exercise.regression && (
             <p className="text-foreground/80">
               <span className="text-muted-foreground">Regression:</span> {exercise.regression}

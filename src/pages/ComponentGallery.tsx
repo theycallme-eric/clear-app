@@ -689,7 +689,7 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h2 className="text-label-xs uppercase tracking-widest text-clear-orange mb-3 border-b border-clear-orange/20 pb-2">
+      <h2 className="text-label-xs uppercase tracking-widest text-clear-orange mb-3 pb-2" style={{ borderBottom: '2px solid var(--border-spacer)' }}>
         {title}
       </h2>
       {children}
