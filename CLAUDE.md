@@ -147,6 +147,8 @@ Every bandaid becomes tech debt. Tech debt compounds. A 5-minute bandaid today b
 | `/pr review` | Review code only (no PR) |
 | `/todo` | Check the todo board |
 | `/process-inbox` | Process files in `.claude/inbox/` |
+| `/process-plans` | Import plans from `~/.claude/plans/` to project |
+| `/close-session` | Log session work and update backlog |
 
 ---
 
@@ -176,8 +178,7 @@ This automatically: loads context → maps skills → tracks progress → valida
 
 1. Verify all acceptance criteria pass
 2. Run `/pr` to create PR (code review included)
-3. Run `close-session.md` to log work
-4. Update `docs/BACKLOG.md` with completed items
+3. Run `/close-session` to log work and update backlog
 
 ---
 

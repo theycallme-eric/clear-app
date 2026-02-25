@@ -176,6 +176,8 @@ User-invocable shortcuts. Files in `.claude/commands/`.
 | `/pr` | `[create\|review]` | PR workflow (default: review + create) |
 | `/todo` | | Check the todo board |
 | `/process-inbox` | | Process files in inbox folder |
+| `/process-plans` | | Move plans from ~/.claude/plans/ to project |
+| `/close-session` | | Log session work and update backlog |
 
 ---
 
@@ -263,6 +265,8 @@ debug.md → [fix] → token-check.md (if UI) → pr-workflow.md
 │   ├── execute.md         ← /execute [plan-name]
 │   ├── pr.md              ← /pr [create|review]
 │   ├── process-inbox.md
+│   ├── process-plans.md   ← /process-plans (import from ~/.claude/plans/)
+│   ├── close-session.md   ← /close-session (log work, update backlog)
 │   └── todo.md
 │
 ├── hooks/
