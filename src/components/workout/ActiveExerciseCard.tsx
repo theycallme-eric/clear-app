@@ -1,29 +1,37 @@
 import { useState } from "react";
-import { Check, ChevronDown, ChevronUp, Info } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Exercise } from "@/types/workout";
 import { Card } from "../Card";
+import { Input } from "../ui/input";
+import { ExerciseNotes } from "./ExerciseNotes";
 
 interface ActiveExerciseCardProps {
     exercise: Exercise;
     onLog: (id: string, data: { weight?: string; reps?: string; notes?: string }) => void;
-    onComplete: (id: string, completed: boolean) => void;
-    isCompleted: boolean;
+    /** Section type — hides weight/reps for warmup, cooldown, mobility */
+    sectionType?: string;
+    /** Render without Card wrapper (for use inside structure cards like Superset/Circuit) */
+    bare?: boolean;
     className?: string;
 }
+
+const HIDE_INPUTS_SECTIONS = ['warmup', 'cooldown', 'mobility'];
 
 export const ActiveExerciseCard = ({
     exercise,
     onLog,
-    onComplete,
-    isCompleted,
+    sectionType,
+    bare = false,
     className
 }: ActiveExerciseCardProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
-    // Local state for inputs to avoid excessive re-renders/lag, flush on blur/change
     const [weight, setWeight] = useState(exercise.weight_logged || "");
     const [reps, setReps] = useState(exercise.reps || "");
-    const [notes, setNotes] = useState("");
+    const [note, setNote] = useState("");
+
+    const showInputs = !sectionType || !HIDE_INPUTS_SECTIONS.includes(sectionType);
+    const isBodyweight = !exercise.equipment || exercise.equipment.toLowerCase() === 'bodyweight';
 
     const handleWeightChange = (v: string) => {
         setWeight(v);
@@ -35,99 +43,119 @@ export const ActiveExerciseCard = ({
         onLog(exercise.id, { reps: v });
     };
 
+    const handleNoteSave = (v: string) => {
+        setNote(v);
+        onLog(exercise.id, { notes: v });
+    };
+
+    const Wrapper = bare ? 'div' : Card;
+    const wrapperProps = bare
+        ? { className: cn("overflow-hidden", className) }
+        : { padding: "none" as const, className: cn("overflow-hidden", className) };
+
     return (
-        <Card
-            padding="none"
-            showLeftColumn={!isCompleted}
-            className={cn(
-                "overflow-hidden transition-all duration-300",
-                isCompleted && "opacity-60",
-                className
-            )}
-        >
-            {/* Header / Main Row */}
-            <div className="p-4 flex items-start gap-3">
-                {/* Checkbox */}
-                <button
-                    onClick={() => onComplete(exercise.id, !isCompleted)}
-                    className={cn(
-                        "mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors",
-                        isCompleted
-                            ? "bg-clear-orange border-clear-orange text-white"
-                            : "border-muted-foreground/30 hover:border-clear-orange"
-                    )}
-                >
-                    {isCompleted && <Check size={14} strokeWidth={3} />}
-                </button>
-
-                {/* Info */}
-                <div className="flex-1 space-y-1">
-                    <div className="flex justify-between items-start">
-                        <h3 className={cn("text-paragraph-lg font-bold leading-tight", isCompleted && "line-through text-muted-foreground")}>
-                            {exercise.name}
-                        </h3>
-                        <button
-                            onClick={() => setIsExpanded(!isExpanded)}
-                            className="text-muted-foreground hover:text-foreground p-1"
-                        >
-                            {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                        </button>
-                    </div>
-
-                    <div className="text-paragraph-sm text-muted-foreground flex flex-wrap gap-x-3 gap-y-1">
+        <Wrapper {...wrapperProps}>
+            {/* Header - Always visible (glanceable) */}
+            <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="w-full p-4 flex items-start gap-3 text-left"
+            >
+                <div className="flex-1 min-w-0 space-y-1">
+                    <h3
+                        className="text-heading-h6 font-bold leading-tight uppercase"
+                        style={{ color: 'var(--text-header)' }}
+                    >
+                        {exercise.name}
+                    </h3>
+                    <div
+                        className="text-paragraph-sm flex flex-wrap gap-x-3 gap-y-1"
+                        style={{ color: 'var(--text-paragraph)' }}
+                    >
                         {exercise.sets && <span>{exercise.sets} sets</span>}
                         <span>{exercise.reps} reps</span>
                         {exercise.tempo && <span>Tempo: {exercise.tempo}</span>}
                         {exercise.rest && <span>Rest: {exercise.rest}</span>}
                     </div>
                 </div>
-            </div>
+                <span className="p-1 shrink-0" style={{ color: 'var(--icon-cta)' }}>
+                    {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                </span>
+            </button>
 
-            {/* Expanded / Input Area */}
-            {(isExpanded || !isCompleted) && (
-                <div className="px-4 pb-4 space-y-4">
-
+            {/* Expanded Area */}
+            {isExpanded && (
+                <div className="px-4 pb-4 space-y-3">
                     {/* Coaching Cues */}
                     {exercise.coachingCues && (
-                        <div className="text-paragraph-sm bg-secondary/50 p-3 rounded-lg text-foreground/80 italic flex gap-2">
-                            <Info size={16} className="text-clear-orange shrink-0 mt-0.5" />
-                            <p>
-                                {Array.isArray(exercise.coachingCues)
-                                    ? exercise.coachingCues.join(". ")
-                                    : String(exercise.coachingCues)}
-                            </p>
+                        <p
+                            className="text-paragraph-sm italic"
+                            style={{ color: 'var(--text-paragraph)' }}
+                        >
+                            {Array.isArray(exercise.coachingCues)
+                                ? exercise.coachingCues.join(". ")
+                                : String(exercise.coachingCues)}
+                        </p>
+                    )}
+
+                    {/* Regression / Progression */}
+                    {(exercise.regression || exercise.progression) && (
+                        <div
+                            className="text-paragraph-sm space-y-1 pt-2"
+                            style={{
+                                borderTop: '2px solid var(--border-spacer)',
+                                color: 'var(--text-paragraph)',
+                            }}
+                        >
+                            {exercise.regression && (
+                                <p><span style={{ color: 'var(--text-disabled)' }}>Easier:</span> {exercise.regression}</p>
+                            )}
+                            {exercise.progression && (
+                                <p><span style={{ color: 'var(--text-disabled)' }}>Harder:</span> {exercise.progression}</p>
+                            )}
                         </div>
                     )}
 
-                    {/* Logging Inputs */}
-                    <div className="grid grid-cols-2 gap-3">
-                        <div className="space-y-1.5">
-                            <label className="text-label-xs text-muted-foreground uppercase tracking-wider">
-                                Weight
-                            </label>
-                            <input
-                                type="text"
-                                value={weight}
-                                onChange={(e) => handleWeightChange(e.target.value)}
-                                placeholder={exercise.lastWeight || "lbs/kg"}
-                                className="w-full bg-background/50 border border-border rounded-lg px-3 py-2 text-paragraph-sm focus:outline-none focus:ring-1 focus:ring-clear-orange"
-                            />
+                    {/* Weight / Reps Inputs */}
+                    {showInputs && (
+                        <div className={isBodyweight ? "" : "grid grid-cols-2 gap-3"}>
+                            {!isBodyweight && (
+                                <div className="space-y-1.5">
+                                    <label
+                                        className="text-label-xs uppercase tracking-wider"
+                                        style={{ color: 'var(--text-disabled)' }}
+                                    >
+                                        Weight
+                                    </label>
+                                    <Input
+                                        value={weight}
+                                        onChange={(e) => handleWeightChange(e.target.value)}
+                                        placeholder={exercise.lastWeight || "lbs/kg"}
+                                    />
+                                </div>
+                            )}
+                            <div className="space-y-1.5">
+                                <label
+                                    className="text-label-xs uppercase tracking-wider"
+                                    style={{ color: 'var(--text-disabled)' }}
+                                >
+                                    Reps
+                                </label>
+                                <Input
+                                    value={reps}
+                                    onChange={(e) => handleRepsChange(e.target.value)}
+                                    placeholder={exercise.reps}
+                                />
+                            </div>
                         </div>
-                        <div className="space-y-1.5">
-                            <label className="text-label-xs text-muted-foreground uppercase tracking-wider">
-                                Reps
-                            </label>
-                            <input
-                                type="text"
-                                value={reps}
-                                onChange={(e) => handleRepsChange(e.target.value)}
-                                placeholder={exercise.reps} // Use target reps as placeholder
-                                className="w-full bg-background/50 border border-border rounded-lg px-3 py-2 text-paragraph-sm focus:outline-none focus:ring-1 focus:ring-clear-orange"
-                            />
-                        </div>
-                    </div>
+                    )}
+
+                    {/* Notes */}
+                    <ExerciseNotes
+                        note={note}
+                        onSave={handleNoteSave}
+                    />
                 </div>
             )}
-        </Card>
+        </Wrapper>
     );
 };

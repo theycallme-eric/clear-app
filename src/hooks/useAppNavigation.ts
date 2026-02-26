@@ -14,15 +14,18 @@ export type Screen =
     | "history"
     | "sessionDetail"
     | "settings"
-    | "componentGallery";
+    | "componentGallery"
+    | "testWorkout";
 
 export const useAppNavigation = () => {
     const [currentScreen, setCurrentScreen] = useState<Screen>("loading");
 
-    // Allow direct access to Component Gallery via #gallery hash
+    // Allow direct access to Component Gallery / Test Workout via hash
     useEffect(() => {
         if (window.location.hash === '#gallery') {
             setCurrentScreen("componentGallery");
+        } else if (window.location.hash === '#test-workout') {
+            setCurrentScreen("testWorkout");
         }
     }, []);
 

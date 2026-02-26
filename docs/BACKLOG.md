@@ -55,22 +55,40 @@ Items that should be addressed soon, possibly before V1.
 ### Medium Priority
 Important but not blocking. Address after core features complete.
 
-- [ ] **[Title]** - [Description]
+- [ ] **Data persistence for exercise logging** - Weight/reps/notes entered during workout not saved to DB
   - Priority: Medium
-  - Type: [Type]
-  - Added: [Date]
-  - Context: [Context]
+  - Type: Feature
+  - Added: 2026-02-19
+  - Context: ActiveExerciseCard has inputs and onLog callbacks but data never persists to Supabase
+
+- [ ] **Timed intervals type gap** - `timed` structure (work_seconds/rest_seconds) missing from workout.ts ExerciseStructure
+  - Priority: Medium
+  - Type: Bug
+  - Added: 2026-02-19
+  - Context: Type exists in generation.ts but not workout.ts. SectionRenderer doesn't handle it. Timed intervals won't render properly
+
+- [ ] **Circuit auto-progress** - Circuits require manual checkbox tapping per exercise
+  - Priority: Medium
+  - Type: Enhancement
+  - Added: 2026-02-19
+  - Context: Should auto-advance to next exercise when one is completed, with round tracking. Current UX is too disruptive during circuit training
+
+- [ ] **EMOM/AMRAP/ForTime distinct UX** - Each timed section type should have unique interaction patterns
+  - Priority: Medium
+  - Type: Enhancement
+  - Added: 2026-02-19
+  - Context: EMOM needs per-minute intervals + GO prompt. AMRAP needs round counter. ForTime needs time cap warning + completion celebration. Currently all share same SectionTimer
 
 ---
 
 ### Low Priority
 Nice to have. Address when time permits or for future versions.
 
-- [ ] **[Title]** - [Description]
+- [ ] **Section Notes (per-section)** - Revisit ADD SECTION NOTE feature for workout sections
   - Priority: Low
-  - Type: [Type]
-  - Added: [Date]
-  - Context: [Context]
+  - Type: Feature
+  - Added: 2026-02-25
+  - Context: Hidden for now from WorkoutScreen. NoteModal component still exists. May want per-section notes separate from per-exercise notes. Revisit when exercise notes UX is settled.
 
 ---
 

@@ -91,7 +91,10 @@ export const SessionDetailScreen = ({
             <div className="space-y-4">
               {workout.sections.map((section) => (
                 <Card key={section.id} padding="md">
-                  <h2 className="text-label-xs uppercase tracking-widest text-clear-orange mb-3">
+                  <h2
+                    className="text-label-xs uppercase tracking-widest mb-3"
+                    style={{ color: 'var(--text-card-label)' }}
+                  >
                     {section.name}
                   </h2>
                   <div className="space-y-3">
@@ -107,7 +110,10 @@ export const SessionDetailScreen = ({
                           </p>
                         </div>
                         {exercise.note && (
-                          <p className="text-sm text-clear-lime mt-1 flex items-start gap-1">
+                          <p
+                            className="text-paragraph-sm mt-1 flex items-start gap-1"
+                            style={{ color: 'var(--text-timer)' }}
+                          >
                             <FileText className="w-3 h-3 mt-0.5 flex-shrink-0" />
                             "{exercise.note}"
                           </p>
@@ -129,10 +135,13 @@ export const SessionDetailScreen = ({
           {/* Session Notes */}
           {workout.sessionNotes && (
             <Card padding="md" className="mt-4">
-              <h2 className="text-label-xs uppercase tracking-widest text-clear-orange mb-3">
+              <h2
+                className="text-label-xs uppercase tracking-widest mb-3"
+                style={{ color: 'var(--text-card-label)' }}
+              >
                 Session Notes
               </h2>
-              <p className="text-foreground text-sm">
+              <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
                 "{workout.sessionNotes}"
               </p>
             </Card>

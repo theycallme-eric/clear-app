@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { ArrowLeft, ArrowRight, Loader2, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { getStayLoggedIn, setStayLoggedIn } from "@/lib/auth-storage";
 import { logger } from "@/lib/logger";
 import { toast } from "@/components/ui/sonner";
 import { CTAButton } from "@/components/CTAButton";
 import { Card } from "@/components/Card";
+import { Checkbox } from "@/components/Checkbox";
 import { Input } from "@/components/ui/input";
 
 interface SignInScreenProps {
@@ -18,6 +20,7 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [stayLoggedIn, setStayLoggedInState] = useState(getStayLoggedIn);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +31,7 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
     }
 
     setIsLoading(true);
+    setStayLoggedIn(stayLoggedIn);
     logger.auth.info('Sign-in attempt started', { email });
 
     try {
@@ -121,14 +125,30 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
             </div>
           </Card>
 
-          {/* Forgot Password */}
-          <button
-            type="button"
-            onClick={onForgotPassword}
-            className="text-sm text-accent hover:text-accent/80 transition-colors"
-          >
-            Forgot password?
-          </button>
+          {/* Stay logged in + Forgot Password */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                checked={stayLoggedIn}
+                onChange={(val) => {
+                  setStayLoggedInState(val);
+                  setStayLoggedIn(val);
+                }}
+                disabled={isLoading}
+              />
+              <span className="text-paragraph-sm text-foreground/70">
+                Stay logged in
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={onForgotPassword}
+              className="text-sm text-accent hover:text-accent/80 transition-colors"
+            >
+              Forgot password?
+            </button>
+          </div>
 
           {/* Submit Button */}
           <CTAButton

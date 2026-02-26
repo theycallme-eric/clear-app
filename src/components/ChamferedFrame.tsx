@@ -120,6 +120,7 @@ export function ChamferedFrame({
                         d={shapePath}
                         fill={surfaceColor}
                         stroke="none"
+                        style={{ transition: 'fill 1s ease' }}
                     />
 
                     {/* Stroke Layer - Double Width + Clipped = Perfect Inner Border */}
@@ -131,6 +132,7 @@ export function ChamferedFrame({
                         strokeLinecap="butt"
                         strokeLinejoin="miter"
                         clipPath={`url(#${clipId})`}
+                        style={{ transition: 'stroke 1s ease' }}
                     />
                 </svg>
             )}

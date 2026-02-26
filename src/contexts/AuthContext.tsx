@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState, useCallback, ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
+import { clearStayLoggedIn } from '@/lib/auth-storage';
 import { UserLocation, SectionType, ExperienceLevel, GoalPreset, EquipmentTier } from '@/types/workout';
 
 // Types
@@ -329,6 +330,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
 
         if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          // During initialization, skip this handler to avoid a deadlock:
+          // supabase.from() calls getSession() which awaits initializePromise,
+          // but _notifyAllSubscribers (which calls this callback) runs INSIDE
+          // initializePromise — creating a circular await that hangs forever.
+          // initialize() handles the initial profile fetch after getSession() resolves.
+          if (initializingRef.current) {
+            logger.auth.debug('Skipping auth event during initialization (deadlock prevention)', { event });
+            return;
+          }
+
           // Skip fetch if a write operation is in progress to prevent race conditions
           if (operationLockRef.current) {
             logger.auth.info('Skipping fetchUserData due to operation lock', { lock: operationLockRef.current, event });
@@ -380,6 +391,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Actions
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
+    clearStayLoggedIn();
   }, []);
 
   const updateProfile = useCallback(async (updates: Partial<Profile>) => {

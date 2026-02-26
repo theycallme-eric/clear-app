@@ -19,12 +19,15 @@ import {
   SECTIONS_BY_GOAL,
 } from "@/types/workout";
 import { toast } from "@/components/ui/sonner";
+import { SignOutConfirmModal } from "@/components/SignOutConfirmModal";
 
 interface SettingsScreenProps {
   userPreferences: UserPreferences;
   onSavePreferences: (preferences: UserPreferences) => void;
   onBack: () => void;
   onOpenDeveloper?: () => void;
+  onLaunchTestWorkout?: () => void;
+  onSignOut: () => void;
 }
 
 type SettingsView =
@@ -47,8 +50,11 @@ export const SettingsScreen = ({
   onSavePreferences,
   onBack,
   onOpenDeveloper,
+  onLaunchTestWorkout,
+  onSignOut,
 }: SettingsScreenProps) => {
   const [currentView, setCurrentView] = useState<SettingsView>("hub");
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const [preferences, setPreferences] = useState<UserPreferences>({ ...userPreferences });
 
   // Location editing state
@@ -372,28 +378,60 @@ export const SettingsScreen = ({
               </div>
 
               {/* Developer Section */}
-              {onOpenDeveloper && (
+              {(onOpenDeveloper || onLaunchTestWorkout) && (
                 <div>
                   <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3">
                     Developer
                   </p>
                   <div className="space-y-2">
-                    <Card onClick={onOpenDeveloper} padding="md">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-label-sm text-foreground uppercase">
-                            Component Gallery
-                          </p>
-                          <p className="text-muted-foreground text-paragraph-sm mt-0.5">
-                            Audit design system components
-                          </p>
+                    {onOpenDeveloper && (
+                      <Card onClick={onOpenDeveloper} padding="md">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-label-sm text-foreground uppercase">
+                              Component Gallery
+                            </p>
+                            <p className="text-muted-foreground text-paragraph-sm mt-0.5">
+                              Audit design system components
+                            </p>
+                          </div>
+                          <ChevronRight className="w-5 h-5 text-muted-foreground" />
                         </div>
-                        <ChevronRight className="w-5 h-5 text-muted-foreground" />
-                      </div>
-                    </Card>
+                      </Card>
+                    )}
+                    {onLaunchTestWorkout && (
+                      <Card onClick={onLaunchTestWorkout} padding="md">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-label-sm text-foreground uppercase">
+                              Test Workout
+                            </p>
+                            <p className="text-muted-foreground text-paragraph-sm mt-0.5">
+                              All structure types in one session
+                            </p>
+                          </div>
+                          <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                        </div>
+                      </Card>
+                    )}
                   </div>
                 </div>
               )}
+
+              {/* Sign Out */}
+              <div
+                className="pt-4"
+                style={{ '--text-cta': 'var(--color-red-400)', '--text-cta-hover': 'var(--color-red-300)' } as React.CSSProperties}
+              >
+                <CTAButton
+                  onClick={() => setShowSignOutConfirm(true)}
+                  variant="secondary"
+                  size="md"
+                  fullWidth
+                >
+                  Sign Out
+                </CTAButton>
+              </div>
             </div>
           )}
 
@@ -430,7 +468,7 @@ export const SettingsScreen = ({
               </Card>
 
               <Card onClick={startAddLocation} padding="md" className="text-center">
-                <span className="text-label-sm text-clear-orange">
+                <span className="text-label-sm" style={{ color: 'var(--icon-cta)' }}>
                   + Add Location
                 </span>
               </Card>
@@ -473,7 +511,7 @@ export const SettingsScreen = ({
                 </div>
 
                 {/* Customize Equipment Accordion */}
-                <div className="border-t border-muted-foreground/20 pt-4 -mx-4 px-4">
+                <div className="pt-4 -mx-4 px-4" style={{ borderTop: '2px solid var(--border-spacer)' }}>
                   <button
                     onClick={() => setEquipmentAccordionOpen(!equipmentAccordionOpen)}
                     className="w-full flex items-center justify-between"
@@ -553,7 +591,7 @@ export const SettingsScreen = ({
 
                 {/* Sections Accordion */}
                 {selectedGoal && (
-                  <div className="border-t border-muted-foreground/20 pt-4 -mx-4 px-4">
+                  <div className="pt-4 -mx-4 px-4" style={{ borderTop: '2px solid var(--border-spacer)' }}>
                     <button
                       onClick={() => setSectionsAccordionOpen(!sectionsAccordionOpen)}
                       className="w-full flex items-center justify-between"
@@ -585,10 +623,10 @@ export const SettingsScreen = ({
                               className={cn(
                                 "px-2 py-1 text-label-xs uppercase tracking-wide transition-all",
                                 isSelected
-                                  ? "bg-clear-lime/20 border border-clear-lime text-clear-lime"
+                                  ? "border text-[var(--text-label-selected)] border-[var(--border-chip-selected)] bg-[var(--color-green-alpha-200)]"
                                   : isDisabled
                                   ? "bg-transparent border border-muted-foreground/20 text-muted-foreground/40 cursor-not-allowed"
-                                  : "bg-transparent border border-muted-foreground/30 text-muted-foreground hover:border-clear-orange/50"
+                                  : "bg-transparent border border-muted-foreground/30 text-muted-foreground hover:border-[var(--border-chip)]"
                               )}
                             >
                               {isSelected && <Check className="w-3 h-3 inline mr-1" />}
@@ -612,10 +650,10 @@ export const SettingsScreen = ({
                       </button>
 
                       {legendOpen && (
-                        <div className="space-y-3 pt-2 border-t border-muted-foreground/20">
+                        <div className="space-y-3 pt-2" style={{ borderTop: '2px solid var(--border-spacer)' }}>
                           {WORKOUT_SECTIONS.map((section) => (
                             <div key={section.id}>
-                              <p className="text-label-xs uppercase tracking-wide text-clear-orange">
+                              <p className="text-label-xs uppercase tracking-wide" style={{ color: 'var(--text-card-label)' }}>
                                 {section.name}
                               </p>
                               <p className="text-muted-foreground text-paragraph-sm">
@@ -692,6 +730,16 @@ export const SettingsScreen = ({
           </div>
         )}
       </div>
+
+      {showSignOutConfirm && (
+        <SignOutConfirmModal
+          onConfirm={() => {
+            setShowSignOutConfirm(false);
+            onSignOut();
+          }}
+          onCancel={() => setShowSignOutConfirm(false)}
+        />
+      )}
     </div>
   );
 };

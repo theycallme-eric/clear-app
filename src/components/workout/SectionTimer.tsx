@@ -1,137 +1,141 @@
-import { useEffect, useState } from "react";
-import { Play, Pause, RefreshCw } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Card } from "../Card";
+import { useEffect, useState, useCallback } from "react";
+import { ChamferedFrame } from "@/components/ChamferedFrame";
+import { CTAButton } from "../CTAButton";
 
 interface SectionTimerProps {
     mode: 'countdown' | 'countup';
-    initialSeconds?: number; // Target duration for countdown, or starting point for countup
-    onComplete?: () => void;
-    autoStart?: boolean;
-    label?: string;
+    initialSeconds?: number;
+    onFinish?: (remainingSeconds: number) => void;
+    /** EMOM uses per-minute low-time warning instead of overall */
+    emom?: boolean;
     className?: string;
 }
+
+type TimerState = 'idle' | 'running' | 'paused' | 'complete';
 
 export const SectionTimer = ({
     mode,
     initialSeconds = 0,
-    onComplete,
-    autoStart = false,
-    label,
+    onFinish,
+    emom = false,
     className
 }: SectionTimerProps) => {
-    const [timeLeft, setTimeLeft] = useState(mode === 'countdown' ? initialSeconds : 0);
-    const [isActive, setIsActive] = useState(autoStart);
+    const [seconds, setSeconds] = useState(mode === 'countdown' ? initialSeconds : 0);
+    const [timerState, setTimerState] = useState<TimerState>('idle');
+
+    // EMOM: low-time triggers in the last 10s of each minute
+    // Others: low-time triggers in the last 10s overall
+    const isLowTime = timerState === 'running' && mode === 'countdown' && seconds > 0 && (
+        emom
+            ? (seconds % 60 > 0 && seconds % 60 <= 10)
+            : seconds <= 10
+    );
+    const isComplete = timerState === 'complete';
 
     useEffect(() => {
-        let interval: NodeJS.Timeout;
+        if (timerState !== 'running') return;
 
-        if (isActive) {
-            interval = setInterval(() => {
-                setTimeLeft((prev) => {
-                    if (mode === 'countdown') {
-                        if (prev <= 1) {
-                            clearInterval(interval);
-                            setIsActive(false);
-                            onComplete?.();
-                            return 0;
-                        }
-                        return prev - 1;
-                    } else {
-                        return prev + 1;
+        const interval = setInterval(() => {
+            setSeconds((prev) => {
+                if (mode === 'countdown') {
+                    if (prev <= 1) {
+                        setTimerState('complete');
+                        return 0;
                     }
-                });
-            }, 1000);
-        }
+                    return prev - 1;
+                }
+                return prev + 1;
+            });
+        }, 1000);
 
         return () => clearInterval(interval);
-    }, [isActive, mode, onComplete]);
+    }, [timerState, mode]);
 
-    const toggleTimer = () => setIsActive(!isActive);
-    const resetTimer = () => {
-        setIsActive(false);
-        setTimeLeft(mode === 'countdown' ? initialSeconds : 0);
+    const handleStart = () => setTimerState('running');
+    const handlePause = () => setTimerState('paused');
+    const handleResume = () => setTimerState('running');
+
+    const handleFinish = useCallback(() => {
+        setTimerState('complete');
+        onFinish?.(seconds);
+    }, [seconds, onFinish]);
+
+    const formatTime = (totalSeconds: number) => {
+        const m = Math.floor(totalSeconds / 60);
+        const s = totalSeconds % 60;
+        return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     };
 
-    const formatTime = (seconds: number) => {
-        const m = Math.floor(seconds / 60);
-        const s = seconds % 60;
-        return `${m}:${s.toString().padStart(2, '0')}`;
-    };
+    // Token mapping based on state
+    const surfaceColor = isLowTime
+        ? 'var(--surface-error)'
+        : 'var(--surface-radio-selected)';
 
-    const progressPercent = mode === 'countdown' && initialSeconds > 0
-        ? ((initialSeconds - timeLeft) / initialSeconds) * 100
-        : 0;
+    const borderColor = isLowTime
+        ? 'var(--border-error)'
+        : 'var(--border-radio-select)';
+
+    const textColor = isLowTime
+        ? 'var(--text-error)'
+        : 'var(--text-radio-text-select)';
 
     return (
-        <Card cornerSize="md" padding="none" className={className}>
-            <div className="flex flex-col items-center gap-3 p-4">
-            {label && (
-                <span
-                    className="text-label-xs font-bold uppercase tracking-wider"
-                    style={{ color: "var(--text-paragraph)" }}
-                >
-                    {label}
-                </span>
-            )}
-
-            <div className="relative flex items-center justify-center w-32 h-32">
-                {/* Progress Ring Background */}
-                <svg className="absolute w-full h-full transform -rotate-90">
-                    <circle
-                        cx="64"
-                        cy="64"
-                        r="60"
-                        className="stroke-muted/20 fill-none"
-                        strokeWidth="6"
-                    />
-                    {mode === 'countdown' && (
-                        <circle
-                            cx="64"
-                            cy="64"
-                            r="60"
-                            className="stroke-clear-orange fill-none transition-all duration-1000 ease-linear"
-                            strokeWidth="6"
-                            strokeDasharray={377}
-                            strokeDashoffset={377 - (377 * progressPercent) / 100}
-                            strokeLinecap="round"
-                        />
-                    )}
-                </svg>
-
-                {/* Time Display */}
-                <div className="flex flex-col items-center z-10">
-                    <span className={cn("text-time-xl font-bold tracking-tight",
-                        timeLeft <= 10 && mode === 'countdown' && isActive ? "text-destructive animate-pulse" : ""
-                    )}
-                    style={{ color: "var(--text-header)" }}>
-                        {formatTime(timeLeft)}
+        <div className={className}>
+            {/* Timer display */}
+            <ChamferedFrame
+                cornerSize="sm"
+                surfaceColor={surfaceColor}
+                borderColor={borderColor}
+                hasLeftBorder={true}
+            >
+                <div className="flex flex-col items-center py-3">
+                    <span
+                        className="text-time-xl font-bold text-center tracking-tight"
+                        style={{ color: textColor, transition: 'color 1s ease' }}
+                    >
+                        {formatTime(seconds)}
                     </span>
+                    {isComplete && (
+                        <span
+                            className="text-label-xs font-bold uppercase"
+                            style={{ color: textColor }}
+                        >
+                            Done
+                        </span>
+                    )}
                 </div>
-            </div>
+            </ChamferedFrame>
 
             {/* Controls */}
-            <div className="flex items-center gap-4 mt-2">
-                <button
-                    onClick={toggleTimer}
-                    className={cn(
-                        "flex items-center justify-center w-12 h-12 rounded-full transition-all",
-                        isActive
-                            ? "bg-secondary text-foreground hover:bg-secondary/80"
-                            : "bg-clear-orange text-white hover:bg-clear-orange/90 shadow-lg shadow-clear-orange/20"
-                    )}
-                >
-                    {isActive ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" className="ml-1" />}
-                </button>
+            <div className="flex gap-3 mt-3">
+                {timerState === 'idle' && (
+                    <CTAButton onClick={handleStart} size="md" fullWidth>
+                        Start
+                    </CTAButton>
+                )}
 
-                <button
-                    onClick={resetTimer}
-                    className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary/50 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-                >
-                    <RefreshCw size={18} />
-                </button>
+                {timerState === 'running' && (
+                    <>
+                        <CTAButton onClick={handlePause} size="md" fullWidth>
+                            Pause
+                        </CTAButton>
+                        <CTAButton onClick={handleFinish} variant="secondary" size="md" fullWidth>
+                            Finish
+                        </CTAButton>
+                    </>
+                )}
+
+                {timerState === 'paused' && (
+                    <>
+                        <CTAButton onClick={handleResume} size="md" fullWidth>
+                            Resume
+                        </CTAButton>
+                        <CTAButton onClick={handleFinish} variant="secondary" size="md" fullWidth>
+                            Finish
+                        </CTAButton>
+                    </>
+                )}
             </div>
-            </div>
-        </Card>
+        </div>
     );
 };

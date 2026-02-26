@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Clock } from "lucide-react";
+import { ChamferedFrame } from "@/components/ChamferedFrame";
 
 interface GlobalTimerProps {
     isRunning: boolean;
@@ -14,8 +14,6 @@ export const GlobalTimer = ({ isRunning, onTimeUpdate, startTime }: GlobalTimerP
         let interval: NodeJS.Timeout;
 
         if (isRunning) {
-            // If we have a startTime, calculate elapsed from that to handle background/tab switching
-            // Otherwise fallback to incremental (less accurate)
             const start = startTime || Date.now() - (elapsedSeconds * 1000);
 
             interval = setInterval(() => {
@@ -36,11 +34,20 @@ export const GlobalTimer = ({ isRunning, onTimeUpdate, startTime }: GlobalTimerP
     };
 
     return (
-        <div className="sticky top-0 z-10 flex items-center justify-center gap-2 py-2 mb-4 backdrop-blur-md bg-background/80 border-b border-border/50 transition-all duration-300">
-            <Clock size={16} className="text-clear-orange animate-pulse" />
-            <span className="text-time-lg font-bold tracking-widest text-foreground">
-                {formatTime(elapsedSeconds)}
-            </span>
+        <div className="sticky top-0 z-10 flex items-center justify-center px-5 py-3 backdrop-blur-md bg-background/80">
+            <ChamferedFrame
+                cornerSize="sm"
+                surfaceColor="var(--surface-radio-selected)"
+                borderColor="var(--border-radio-select)"
+                hasLeftBorder={true}
+            >
+                <span
+                    className="block px-5 py-1 text-heading-h4 font-bold text-center"
+                    style={{ color: 'var(--text-radio-text-select)' }}
+                >
+                    {formatTime(elapsedSeconds)}
+                </span>
+            </ChamferedFrame>
         </div>
     );
 };

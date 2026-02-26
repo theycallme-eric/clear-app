@@ -1,5 +1,6 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
+import { authStorageAdapter } from './auth-storage';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -13,7 +14,11 @@ declare global {
 }
 
 export const supabase =
-  globalThis.__supabase ?? createClient<Database>(supabaseUrl, supabaseAnonKey);
+  globalThis.__supabase ?? createClient<Database>(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      storage: authStorageAdapter,
+    },
+  });
 
 if (import.meta.hot) {
   globalThis.__supabase = supabase;
