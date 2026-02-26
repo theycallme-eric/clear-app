@@ -43,13 +43,14 @@ export function ExerciseNotes({ note, onSave, className }: ExerciseNotesProps) {
             <div className="flex items-center justify-between">
                 <span
                     className="text-label-sm font-bold uppercase tracking-wider"
-                    style={{ color: 'var(--text-color)' }}
+                    style={{ color: 'var(--text-paragraph)' }}
                 >
                     Notes:
                 </span>
                 {!isEditing && !hasNote && (
                     <button
                         onClick={handleOpen}
+                        aria-label="Add note"
                         style={{ color: 'var(--icon-cta)' }}
                     >
                         <Plus size={20} />

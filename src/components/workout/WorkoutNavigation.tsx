@@ -2,7 +2,6 @@ import { CTAButton } from "../CTAButton";
 
 interface WorkoutNavigationProps {
   currentSection: number;
-  totalSections: number;
   onBack: () => void;
   onNext: () => void;
   isLastSection: boolean;

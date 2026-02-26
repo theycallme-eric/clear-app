@@ -105,7 +105,6 @@ export const WorkoutScreen = ({ workout, onExit, onFinish }: WorkoutScreenProps)
 
       <WorkoutNavigation
         currentSection={currentSectionIndex}
-        totalSections={workout.sections.length}
         onBack={handleBack}
         onNext={handleNext}
         isLastSection={isLastSection}

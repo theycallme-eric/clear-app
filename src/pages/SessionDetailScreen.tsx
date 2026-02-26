@@ -93,7 +93,7 @@ export const SessionDetailScreen = ({
                 <Card key={section.id} padding="md">
                   <h2
                     className="text-label-xs uppercase tracking-widest mb-3"
-                    style={{ color: 'var(--border-card)' }}
+                    style={{ color: 'var(--text-card-label)' }}
                   >
                     {section.name}
                   </h2>
@@ -112,7 +112,7 @@ export const SessionDetailScreen = ({
                         {exercise.note && (
                           <p
                             className="text-paragraph-sm mt-1 flex items-start gap-1"
-                            style={{ color: 'var(--color-green-400)' }}
+                            style={{ color: 'var(--text-timer)' }}
                           >
                             <FileText className="w-3 h-3 mt-0.5 flex-shrink-0" />
                             "{exercise.note}"
@@ -137,7 +137,7 @@ export const SessionDetailScreen = ({
             <Card padding="md" className="mt-4">
               <h2
                 className="text-label-xs uppercase tracking-widest mb-3"
-                style={{ color: 'var(--border-card)' }}
+                style={{ color: 'var(--text-card-label)' }}
               >
                 Session Notes
               </h2>

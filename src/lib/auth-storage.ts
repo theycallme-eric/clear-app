@@ -31,21 +31,23 @@ export function clearStayLoggedIn(): void {
  */
 export const authStorageAdapter = {
   getItem(key: string): string | null {
-    const storage = getStayLoggedIn() ? localStorage : sessionStorage;
-    const value = storage.getItem(key);
+    const stayLoggedIn = getStayLoggedIn();
+    const primary = stayLoggedIn ? localStorage : sessionStorage;
+    const value = primary.getItem(key);
     if (value !== null) return value;
 
     // Fallback: check the other storage in case preference changed between sessions
-    const fallback = getStayLoggedIn() ? sessionStorage : localStorage;
+    const fallback = stayLoggedIn ? sessionStorage : localStorage;
     return fallback.getItem(key);
   },
 
   setItem(key: string, value: string): void {
-    const storage = getStayLoggedIn() ? localStorage : sessionStorage;
-    storage.setItem(key, value);
+    const stayLoggedIn = getStayLoggedIn();
+    const primary = stayLoggedIn ? localStorage : sessionStorage;
+    primary.setItem(key, value);
 
     // Clean up the other storage to prevent stale tokens
-    const other = getStayLoggedIn() ? sessionStorage : localStorage;
+    const other = stayLoggedIn ? sessionStorage : localStorage;
     other.removeItem(key);
   },
 

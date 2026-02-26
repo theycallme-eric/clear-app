@@ -7,7 +7,6 @@ import { Card } from "../Card";
 interface SectionRendererProps {
     section: WorkoutSection;
     onLog: (id: string, data: { weight?: string; reps?: string; notes?: string }) => void;
-    sectionStartedAt?: number;
 }
 
 const TIMED_TYPES = ['emom', 'amrap', 'for_time'];
