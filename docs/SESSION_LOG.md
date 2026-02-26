@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-02-25
+**Last Session:** 2026-02-26
 
 ---
 
@@ -13,14 +13,71 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Auth UX
-**Current Task:** Auth session management
-**Last Completed:** Stay logged in checkbox + sign out button
-**Blocking Issues:** None
+**Current Phase:** Workout UX
+**Current Task:** Structure clarity complete
+**Last Completed:** Workout structure clarity — all structure types overhauled
+**Blocking Issues:** Superset connector horizontal spacing needs fine-tuning (cosmetic)
 
 ---
 
 ## Session Entries
+
+### Session: 2026-02-26 - Workout Structure Clarity
+
+**Duration:** ~3 hours
+**Mode:** Claude Code
+**Branch:** `feature/workout-structure-clarity` → merged to `main` via PR #2
+
+#### What Got Done
+- **EMOM**: Minute tracking with active/inactive exercise highlighting, ODD/EVEN MIN labels, minute indicator color matches warning state
+- **AMRAP**: Round stepper completion UI with ChamferedFrame +/- buttons, "Each Round:" label for multi-exercise sections, partial round notes
+- **Ladder (For Time)**: Rung detection from rep patterns (`isLadderReps`, `parseRungs`), plain text display during workout, interactive chamfered frame display on cap reached, two completion paths (finished early vs cap reached), "Each Rung:" label, cross-structure support for non-timed sections
+- **Superset**: A1/A2 pairing labels, vertical connector line (flex-based for trimmed alignment), consolidated rest display ("Rest: 90s after both"), horizontal dividers removed
+- **Circuit**: Numbered exercises (1. 2. 3.), "Each Round:" label, consolidated rest ("60s rest between rounds"), dividers removed
+- **All cards**: Compact collapsed state (sets×reps format), tempo/rest moved to expanded only, weighted equipment whitelist (replaces bodyweight blacklist), Rest:0s suppression globally, consistent top/bottom card padding (pb-3 on all exercise wrappers)
+- **Layout**: Removed h1 section heading, subtitle changed to "ANCHOR • INTENSITY", card labels show "TYPE • MODIFIER" (fixed duplication bug with section.type vs section.name)
+- **Warmup/Mobility/Cooldown**: All exercises wrapped in single card with section label, dividers with breathing room (my-1)
+- **Standalone exercises**: Wrapped in card with section label, single exercise defaults expanded
+- **Timer**: Countup auto-complete at cap, updateState callback ordering fix (temporal dead zone)
+- **Progress bar**: 2px border weight to match cards, border-box sizing fix
+- **Spacing polish**: Iterative spacing refinements across all card types based on annotated screenshots
+
+#### What Came Up (Unexpected)
+- Two temporal dead zone bugs: `useCallback` declarations referenced before initialization crashed the app with blank screens. Pattern documented in memory.
+- `section.name` included structure type causing duplicate labels ("Primary Superset • Superset"). Fixed by using `section.type` instead.
+- Progress bar used `content-box` sizing, making it 6px wider than cards. Switching to border-box with adjusted height fixed it.
+- Bottom card padding required more space than top to look visually equal due to text size/line-height differences between label text and exercise text.
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Weighted equipment whitelist (not bodyweight blacklist) | More future-proof — new equipment types default to no weight field |
+| Ladder detection via rep pattern, not structure type | Ladders can appear in any section type (standard, circuit, accessory, core) |
+| Two ladder completion paths (finished early vs cap reached) | Different UX needs: early finish = all rungs done, cap reached = select highest rung |
+| Vertical connector as flex sibling (not border-l) | Allows trimming line to align with exercise text content |
+| pb-3 on all exercise wrappers | Visually balances bottom padding with pt-3 top label padding across all card types |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/components/workout/LadderRungs.tsx` | Created — ladder rung display (text + interactive modes) |
+| `src/components/workout/ActiveExerciseCard.tsx` | Modified — compact collapsed state, pairLabel, hideReps, defaultExpanded, bare padding, hasRest/formatPrescription helpers |
+| `src/components/workout/SectionRenderer.tsx` | Modified — major overhaul: timed section content, ladder detection, AMRAP completion, section wrapping, card labels, spacing |
+| `src/components/workout/SectionTimer.tsx` | Modified — countup auto-complete, callback ordering fix, hideControls prop |
+| `src/components/workout/StructureCards.tsx` | Modified — superset connector, A1/A2 labels, circuit numbering, consolidated rest, dividers removed |
+| `src/components/workout/ProgressTracker.tsx` | Modified — 2px border, border-box sizing |
+| `src/pages/WorkoutScreen.tsx` | Modified — removed h1 heading, anchor•intensity subtitle |
+| `src/types/workout.ts` | Modified — added is_interval_exercise field |
+| `docs/specs/Clear_-_Structure_Types_Spec.md` | Modified — ladder_fixed_interval rep scheme |
+| `docs/specs/Clear_-_Workout_Generation_Prompt_v2.md` | Modified — ladder_fixed_interval rep scheme |
+| `supabase/functions/generate-workout/index.ts` | Modified — ladder_fixed_interval rep scheme |
+
+#### Status
+- TypeScript compiles clean, build passes
+- Merged to main via PR #2, branch deleted
+- Remaining: superset connector horizontal spacing needs fine-tuning (cosmetic)
+
+---
 
 ### Session: 2026-02-25 - Auth Session Management
 

@@ -1,6 +1,6 @@
 # Backlog
 **Project:** Clear App (5-3-1 Workout Generator)
-**Last Updated:** 2026-02-02
+**Last Updated:** 2026-02-26
 
 ---
 
@@ -73,16 +73,23 @@ Important but not blocking. Address after core features complete.
   - Added: 2026-02-19
   - Context: Should auto-advance to next exercise when one is completed, with round tracking. Current UX is too disruptive during circuit training
 
-- [ ] **EMOM/AMRAP/ForTime distinct UX** - Each timed section type should have unique interaction patterns
+- [x] **EMOM/AMRAP/ForTime distinct UX** - Each timed section type should have unique interaction patterns
   - Priority: Medium
   - Type: Enhancement
   - Added: 2026-02-19
-  - Context: EMOM needs per-minute intervals + GO prompt. AMRAP needs round counter. ForTime needs time cap warning + completion celebration. Currently all share same SectionTimer
+  - Completed: 2026-02-26
+  - Context: EMOM: minute tracking + active/inactive highlighting + ODD/EVEN MIN labels. AMRAP: round stepper + partial notes. ForTime: countup auto-complete at cap + ladder detection with two completion paths.
 
 ---
 
 ### Low Priority
 Nice to have. Address when time permits or for future versions.
+
+- [ ] **Superset connector spacing** - Horizontal gap between vertical connector line and exercise text needs fine-tuning
+  - Priority: Low
+  - Type: Enhancement
+  - Added: 2026-02-26
+  - Context: ml-4 + pl-2 still feels off. Needs design review for the right balance between card edge → line → text.
 
 - [ ] **Section Notes (per-section)** - Revisit ADD SECTION NOTE feature for workout sections
   - Priority: Low
