@@ -13,25 +13,54 @@ interface ActiveExerciseCardProps {
     sectionType?: string;
     /** Render without Card wrapper (for use inside structure cards like Superset/Circuit) */
     bare?: boolean;
+    /** EMOM: 'active' highlights this exercise, 'inactive' dims it */
+    emomState?: 'active' | 'inactive';
+    /** EMOM minute assignment label (e.g. "ODD MIN", "EVEN MIN") */
+    minuteLabel?: string | null;
+    /** Pair/sequence label shown before exercise name (e.g. "A1", "A2", "1.", "2.") */
+    pairLabel?: string | null;
+    /** Hide reps from summary line (ladder sections show reps once at section level) */
+    hideReps?: boolean;
+    /** Start with the expanded detail area open */
+    defaultExpanded?: boolean;
     className?: string;
 }
 
 const HIDE_INPUTS_SECTIONS = ['warmup', 'cooldown', 'mobility'];
+
+/** Check if a rest value is meaningful (non-zero, non-empty) */
+const hasRest = (rest?: string): boolean => {
+    if (!rest) return false;
+    const cleaned = rest.toLowerCase().replace(/\s/g, '');
+    return cleaned !== '0s' && cleaned !== '0' && cleaned !== '';
+};
+
+/** Format sets×reps into compact prescription */
+const formatPrescription = (sets: number | null, reps: string): string => {
+    if (sets) return `${sets}×${reps}`;
+    return `${reps} reps`;
+};
 
 export const ActiveExerciseCard = ({
     exercise,
     onLog,
     sectionType,
     bare = false,
+    emomState,
+    minuteLabel,
+    pairLabel,
+    hideReps = false,
+    defaultExpanded = false,
     className
 }: ActiveExerciseCardProps) => {
-    const [isExpanded, setIsExpanded] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(defaultExpanded);
     const [weight, setWeight] = useState(exercise.weight_logged || "");
     const [reps, setReps] = useState(exercise.reps || "");
     const [note, setNote] = useState("");
 
     const showInputs = !sectionType || !HIDE_INPUTS_SECTIONS.includes(sectionType);
-    const isBodyweight = !exercise.equipment || exercise.equipment.toLowerCase() === 'bodyweight';
+    const WEIGHTED_EQUIPMENT = ['barbell', 'dumbbell', 'dumbbells', 'kettlebell', 'cable', 'machine', 'ez bar', 'trap bar', 'smith machine', 'plate'];
+    const hasWeight = exercise.equipment && WEIGHTED_EQUIPMENT.includes(exercise.equipment.toLowerCase());
 
     const handleWeightChange = (v: string) => {
         setWeight(v);
@@ -48,33 +77,61 @@ export const ActiveExerciseCard = ({
         onLog(exercise.id, { notes: v });
     };
 
+    const isEmomActive = emomState === 'active';
+    const isEmomInactive = emomState === 'inactive';
+
     const Wrapper = bare ? 'div' : Card;
     const wrapperProps = bare
-        ? { className: cn("overflow-hidden", className) }
-        : { padding: "none" as const, className: cn("overflow-hidden", className) };
+        ? { className: cn("overflow-hidden transition-opacity duration-200", isEmomInactive && "opacity-40", className) }
+        : { padding: "none" as const, className: cn("overflow-hidden transition-opacity duration-200", isEmomInactive && "opacity-40", className) };
 
     return (
         <Wrapper {...wrapperProps}>
+            {/* EMOM active accent bar */}
+            {isEmomActive && (
+                <div
+                    className="h-0.5"
+                    style={{ backgroundColor: 'var(--border-cta-primary)' }}
+                />
+            )}
             {/* Header - Always visible (glanceable) */}
             <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="w-full p-4 flex items-start gap-3 text-left"
+                className={cn("w-full flex items-start gap-3 text-left", bare ? "py-2 px-4" : "p-4")}
             >
                 <div className="flex-1 min-w-0 space-y-1">
-                    <h3
-                        className="text-heading-h6 font-bold leading-tight uppercase"
-                        style={{ color: 'var(--text-header)' }}
-                    >
-                        {exercise.name}
-                    </h3>
+                    <div className="flex items-center justify-between gap-2">
+                        <h3
+                            className="text-heading-h6 font-bold leading-tight uppercase"
+                            style={{ color: isEmomInactive ? 'var(--text-disabled)' : 'var(--text-header)' }}
+                        >
+                            {pairLabel && (
+                                <span
+                                    className="text-label-xs font-bold uppercase tracking-widest mr-2"
+                                    style={{ color: 'var(--text-header)' }}
+                                >
+                                    {pairLabel}
+                                </span>
+                            )}
+                            {exercise.name}
+                        </h3>
+                        {minuteLabel && (
+                            <span
+                                className="text-label-xs uppercase tracking-wider shrink-0"
+                                style={{ color: 'var(--text-paragraph)' }}
+                            >
+                                {minuteLabel}
+                            </span>
+                        )}
+                    </div>
+                    {/* Compact prescription */}
                     <div
                         className="text-paragraph-sm flex flex-wrap gap-x-3 gap-y-1"
                         style={{ color: 'var(--text-paragraph)' }}
                     >
-                        {exercise.sets && <span>{exercise.sets} sets</span>}
-                        <span>{exercise.reps} reps</span>
-                        {exercise.tempo && <span>Tempo: {exercise.tempo}</span>}
-                        {exercise.rest && <span>Rest: {exercise.rest}</span>}
+                        {!hideReps && (
+                            <span>{formatPrescription(exercise.sets, exercise.reps)}</span>
+                        )}
                     </div>
                 </div>
                 <span className="p-1 shrink-0" style={{ color: 'var(--icon-cta)' }}>
@@ -84,7 +141,18 @@ export const ActiveExerciseCard = ({
 
             {/* Expanded Area */}
             {isExpanded && (
-                <div className="px-4 pb-4 space-y-3">
+                <div className={cn("px-4 space-y-3", bare ? "pb-2" : "pb-4")}>
+                    {/* Tempo & Rest details */}
+                    {(exercise.tempo || hasRest(exercise.rest)) && (
+                        <div
+                            className="text-paragraph-sm flex flex-wrap gap-x-3 gap-y-1"
+                            style={{ color: 'var(--text-paragraph)' }}
+                        >
+                            {exercise.tempo && <span>Tempo: {exercise.tempo}</span>}
+                            {hasRest(exercise.rest) && <span>Rest: {exercise.rest}</span>}
+                        </div>
+                    )}
+
                     {/* Coaching Cues */}
                     {exercise.coachingCues && (
                         <p
@@ -101,10 +169,7 @@ export const ActiveExerciseCard = ({
                     {(exercise.regression || exercise.progression) && (
                         <div
                             className="text-paragraph-sm space-y-1 pt-2"
-                            style={{
-                                borderTop: '2px solid var(--border-spacer)',
-                                color: 'var(--text-paragraph)',
-                            }}
+                            style={{ color: 'var(--text-paragraph)' }}
                         >
                             {exercise.regression && (
                                 <p><span style={{ color: 'var(--text-disabled)' }}>Easier:</span> {exercise.regression}</p>
@@ -117,8 +182,8 @@ export const ActiveExerciseCard = ({
 
                     {/* Weight / Reps Inputs */}
                     {showInputs && (
-                        <div className={isBodyweight ? "" : "grid grid-cols-2 gap-3"}>
-                            {!isBodyweight && (
+                        <div className={hasWeight ? "grid grid-cols-2 gap-3" : ""}>
+                            {hasWeight && (
                                 <div className="space-y-1.5">
                                     <label
                                         className="text-label-xs uppercase tracking-wider"

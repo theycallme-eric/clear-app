@@ -17,10 +17,9 @@ export function ProgressTracker({ progress, className }: ProgressTrackerProps) {
         <div
             className={cn("w-full", className)}
             style={{
-                height: '4px',
-                border: '1px solid var(--border-slider)',
-                padding: '2px',
-                boxSizing: 'content-box',
+                height: '10px',
+                border: '2px solid var(--border-slider)',
+                padding: '1px',
             }}
         >
             <div

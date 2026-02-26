@@ -151,6 +151,7 @@ export interface Exercise {
   progression?: string;
   equipment?: string;
   structure?: ExerciseStructure;
+  is_interval_exercise?: boolean;
   weight_logged?: string; // User input
 }
 

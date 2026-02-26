@@ -1,8 +1,8 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { GeneratedWorkout } from "@/types/workout";
 import { WorkoutNavigation } from "@/components/workout/WorkoutNavigation";
 import { GlobalTimer } from "@/components/workout/GlobalTimer";
-import { SectionRenderer } from "@/components/workout/SectionRenderer";
+import { SectionRenderer, StructureResultData } from "@/components/workout/SectionRenderer";
 import { ProgressTracker } from "@/components/workout/ProgressTracker";
 
 interface WorkoutScreenProps {
@@ -14,6 +14,7 @@ interface WorkoutScreenProps {
 export const WorkoutScreen = ({ workout, onExit, onFinish }: WorkoutScreenProps) => {
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const [loggedData, setLoggedData] = useState<Record<string, any>>({});
+  const [structureResults, setStructureResults] = useState<Record<string, StructureResultData>>({});
 
   const touchStartX = useRef<number | null>(null);
   const startTime = useRef(Date.now());
@@ -53,6 +54,7 @@ export const WorkoutScreen = ({ workout, onExit, onFinish }: WorkoutScreenProps)
     if (isLastSection) {
       onFinish({
         loggedData,
+        structureResults,
         durationSeconds: Math.floor((Date.now() - startTime.current) / 1000)
       });
     } else {
@@ -68,6 +70,10 @@ export const WorkoutScreen = ({ workout, onExit, onFinish }: WorkoutScreenProps)
     }));
   };
 
+  const handleStructureResult = useCallback((sectionName: string, data: StructureResultData) => {
+    setStructureResults(prev => ({ ...prev, [sectionName]: data }));
+  }, []);
+
   return (
     <div
       className="min-h-screen grain-overlay flex flex-col pb-28 relative"
@@ -79,20 +85,13 @@ export const WorkoutScreen = ({ workout, onExit, onFinish }: WorkoutScreenProps)
       <div className="max-w-md mx-auto w-full px-4 pt-2">
         {/* Section Header */}
         <div className="mb-6 space-y-2">
-          <h1
-            className="text-heading-h3 font-bold uppercase tracking-wider break-words"
-            style={{ color: 'var(--text-header)' }}
-          >
-            {currentSection.name}
-          </h1>
           <ProgressTracker progress={progress} />
-          <div
-            className="flex justify-between text-label-xs uppercase tracking-widest"
+          <span
+            className="text-label-xs uppercase tracking-widest"
             style={{ color: 'var(--text-paragraph)' }}
           >
-            <span>Section {currentSectionIndex + 1} of {workout.sections.length}</span>
-            <span>{currentSection.type.replace('_', ' ')}</span>
-          </div>
+            {workout.anchor} &bull; Intensity {workout.intensity}
+          </span>
         </div>
 
         {/* Exercises */}
@@ -100,6 +99,7 @@ export const WorkoutScreen = ({ workout, onExit, onFinish }: WorkoutScreenProps)
           key={currentSectionIndex}
           section={currentSection}
           onLog={handleLog}
+          onStructureResult={handleStructureResult}
         />
       </div>
 
