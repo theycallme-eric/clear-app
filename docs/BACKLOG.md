@@ -84,11 +84,11 @@ Important but not blocking. Address after core features complete.
 ### Low Priority
 Nice to have. Address when time permits or for future versions.
 
-- [ ] **[Title]** - [Description]
+- [ ] **Section Notes (per-section)** - Revisit ADD SECTION NOTE feature for workout sections
   - Priority: Low
-  - Type: [Type]
-  - Added: [Date]
-  - Context: [Context]
+  - Type: Feature
+  - Added: 2026-02-25
+  - Context: Hidden for now from WorkoutScreen. NoteModal component still exists. May want per-section notes separate from per-exercise notes. Revisit when exercise notes UX is settled.
 
 ---
 
