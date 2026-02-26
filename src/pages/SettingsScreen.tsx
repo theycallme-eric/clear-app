@@ -468,7 +468,7 @@ export const SettingsScreen = ({
               </Card>
 
               <Card onClick={startAddLocation} padding="md" className="text-center">
-                <span className="text-label-sm text-clear-orange">
+                <span className="text-label-sm" style={{ color: 'var(--icon-cta)' }}>
                   + Add Location
                 </span>
               </Card>
@@ -623,10 +623,10 @@ export const SettingsScreen = ({
                               className={cn(
                                 "px-2 py-1 text-label-xs uppercase tracking-wide transition-all",
                                 isSelected
-                                  ? "bg-clear-lime/20 border border-clear-lime text-clear-lime"
+                                  ? "border text-[var(--text-label-selected)] border-[var(--border-chip-selected)] bg-[var(--color-green-alpha-200)]"
                                   : isDisabled
                                   ? "bg-transparent border border-muted-foreground/20 text-muted-foreground/40 cursor-not-allowed"
-                                  : "bg-transparent border border-muted-foreground/30 text-muted-foreground hover:border-clear-orange/50"
+                                  : "bg-transparent border border-muted-foreground/30 text-muted-foreground hover:border-[var(--border-chip)]"
                               )}
                             >
                               {isSelected && <Check className="w-3 h-3 inline mr-1" />}
@@ -653,7 +653,7 @@ export const SettingsScreen = ({
                         <div className="space-y-3 pt-2" style={{ borderTop: '2px solid var(--border-spacer)' }}>
                           {WORKOUT_SECTIONS.map((section) => (
                             <div key={section.id}>
-                              <p className="text-label-xs uppercase tracking-wide text-clear-orange">
+                              <p className="text-label-xs uppercase tracking-wide" style={{ color: 'var(--text-card-label)' }}>
                                 {section.name}
                               </p>
                               <p className="text-muted-foreground text-paragraph-sm">

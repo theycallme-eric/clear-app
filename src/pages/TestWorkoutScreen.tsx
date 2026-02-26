@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { WorkoutScreen } from "@/pages/WorkoutScreen";
-import { generateTestWorkout } from "@/types/workout";
+import { generateTestWorkout } from "@/lib/test-fixtures";
 
 interface TestWorkoutScreenProps {
   onBack: () => void;

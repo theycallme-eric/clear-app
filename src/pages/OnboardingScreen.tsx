@@ -280,7 +280,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                   <div className="px-4 pb-4 space-y-3 pt-3" style={{ borderTop: '2px solid var(--border-spacer)' }}>
                     {WORKOUT_SECTIONS.map((section) => (
                       <div key={section.id}>
-                        <p className="text-label-xs uppercase tracking-wide text-clear-orange">
+                        <p className="text-label-xs uppercase tracking-wide" style={{ color: 'var(--text-card-label)' }}>
                           {section.name}
                         </p>
                         <p className="text-muted-foreground text-paragraph-sm">
@@ -343,7 +343,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                   </div>
                   <button
                     onClick={() => handleEditStep(1)}
-                    className="text-clear-orange text-sm hover:text-clear-orange/80 transition-colors"
+                    className="text-sm transition-colors" style={{ color: 'var(--icon-cta)' }}
                   >
                     Edit
                   </button>
@@ -369,7 +369,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                   </div>
                   <button
                     onClick={() => handleEditStep(2)}
-                    className="text-clear-orange text-sm hover:text-clear-orange/80 transition-colors"
+                    className="text-sm transition-colors" style={{ color: 'var(--icon-cta)' }}
                   >
                     Edit
                   </button>
@@ -389,7 +389,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                   </div>
                   <button
                     onClick={() => handleEditStep(3)}
-                    className="text-clear-orange text-sm hover:text-clear-orange/80 transition-colors"
+                    className="text-sm transition-colors" style={{ color: 'var(--icon-cta)' }}
                   >
                     Edit
                   </button>
