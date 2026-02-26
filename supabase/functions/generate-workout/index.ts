@@ -137,6 +137,7 @@ Rep schemes are modifiers that apply within structures. They go in the \`reps\` 
 - pyramid: Up then down — "3-6-9-12-9-6-3"
 - inverse: Paired movements, opposite direction — "10/1, 9/2, 8/3..."
 - n_plus_one: Add 1 each round until failure — "1, 2, 3, 4..."
+- ladder_fixed_interval: Ladder on primary movement, fixed reps of a secondary between each rung — "Push-ups: 2-4-6-8-10-8-6-4-2, with 4 burpees between each set". Mark the interval exercise with \`"is_interval_exercise": true\`.
 
 Ladders work well in For Time and Circuit structures. N+1 pairs well with EMOM and AMRAP.
 

@@ -172,6 +172,7 @@ Rep schemes modify how reps are prescribed *within* any structure. They're ortho
 | `pyramid` | Up then down | 3-6-9-12-9-6-3 | Peak in middle |
 | `inverse` | Two movements, opposite direction | 10/1, 9/2, 8/3... 1/10 | Paired exercises |
 | `n_plus_one` | Add 1 each round until failure | 1, 2, 3, 4... | "Death by" format |
+| `ladder_fixed_interval` | Ladder on primary, fixed reps of secondary between rungs | Push-ups: 2-4-6-8, 4 burpees between | Interval exercise marked `is_interval_exercise: true` |
 
 **Where rep schemes apply:**
 
