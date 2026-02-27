@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-02-26
+**Last Session:** 2026-02-27
 
 ---
 
@@ -13,14 +13,54 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Workout UX
-**Current Task:** Structure clarity complete
-**Last Completed:** Workout structure clarity — all structure types overhauled
+**Current Phase:** Generation Screen UX
+**Current Task:** Duration & Notes redesign complete
+**Last Completed:** Generation screen Duration/Notes card wrapping, radio presets, label consistency
 **Blocking Issues:** Superset connector horizontal spacing needs fine-tuning (cosmetic)
 
 ---
 
 ## Session Entries
+
+### Session: 2026-02-27 - Generation Screen Duration & Notes Redesign
+
+**Duration:** ~30 min
+**Mode:** Claude Code
+**Branch:** `feature/generation-screen-duration-notes-redesign` → PR #3
+
+#### What Got Done
+- **DurationSelector**: Rewrote Duration from plain Input into Card-wrapped radio button presets (15/30/45/60) with full-width Custom button on second row
+- **NotesField**: Wrapped Textarea in Card with card-label styled heading
+- **Custom duration validation**: Numbers-only input (strips non-digits), 5–120 range validation on blur with toast, generate button disabled until valid value entered
+- **Default duration**: Set to 45 min on screen load
+- **Label consistency**: Updated Intensity Level, Focus Area, Location labels from `--text-paragraph` to `--text-card-label` color token across all generation screen sections
+- **Code review**: Caught redundant `font-bold` (already in `.text-label-xs` utility), removed from all labels
+
+#### What Came Up (Unexpected)
+- RadioButton row of 5 overflowed card on mobile — "CUSTOM" text at 14px bold couldn't fit in equal-width flex distribution. Fixed by moving Custom to its own full-width row below the 4 presets.
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| 4 presets in row + Custom stacked below | 5 equal-width RadioButtons overflow on mobile; stacking Custom gives it full width |
+| Generate blocked when custom selected without valid value | User requirement — empty custom duration shouldn't allow workout generation |
+| Numbers-only input with digit stripping | Prevents invalid input at keystroke level rather than just on blur |
+| No `font-bold` on labels | `.text-label-xs` already includes `font-weight: 700` — redundant class |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/components/OptionalFields.tsx` | Rewritten — DurationSelector + NotesField sub-components with Card wrapping |
+| `src/pages/GenerationScreen.tsx` | Modified — default time "45", canGenerate requires time !== "" |
+| `src/components/IntensitySlider.tsx` | Modified — label color to --text-card-label |
+| `src/components/AnchorGrid.tsx` | Modified — label color to --text-card-label |
+| `src/components/LocationAccordion.tsx` | Modified — label color to --text-card-label |
+
+#### Status
+- TypeScript compiles clean, build passes
+- PR #3 created, ready for merge
+
+---
 
 ### Session: 2026-02-26 - Workout Structure Clarity
 
