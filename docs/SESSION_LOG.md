@@ -13,14 +13,83 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Generation Screen UX
-**Current Task:** Duration & Notes redesign complete
-**Last Completed:** Generation screen Duration/Notes card wrapping, radio presets, label consistency
+**Current Phase:** Design System Hardening
+**Current Task:** Complete
+**Last Completed:** Spacing audit & standardization — all Tailwind spacing backed by CSS tokens
 **Blocking Issues:** Superset connector horizontal spacing needs fine-tuning (cosmetic)
 
 ---
 
 ## Session Entries
+
+### Session: 2026-02-27 - Spacing Audit & Token Standardization
+
+**Duration:** ~30 min
+**Mode:** Claude Code
+**Branch:** `feature/spacing-token-standardization` → PR #5, merged
+
+#### What Got Done
+- **Tailwind → CSS vars**: Wired Tailwind's spacing scale to existing `--spacing-*` CSS variables in `tailwind.config.ts`. 16 mappings, all verified pixel-equivalent via `scripts/verify-spacing.mjs`
+- **Full codebase audit**: Read every component and screen file, cataloged all spacing classes, confirmed most were already on-scale
+- **Fixed 5 off-scale values**: All `*-1.5` (6px) instances snapped to nearest token — either `*-1` (4px) or `*-2` (8px)
+- **Documentation**: Added spacing token reference table and card padding presets to `memory/ui-rules.md`
+- **Verification script**: Created `scripts/verify-spacing.mjs` that mathematically proves all mappings resolve to Tailwind defaults
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Map only the 16 values actually in the CSS var scale | Values like 1.5/2.5/7/9 are intentionally excluded — they're off-scale |
+| Snap `gap-1.5` → `gap-1` in Chip | 4px more appropriate for tight icon→text gap in small component |
+| Snap `space-y-1.5` → `space-y-2` in ActiveExerciseCard | 8px label→input gap is standard form spacing |
+| Leave `pb-28` (WorkoutScreen) as-is | Structural nav clearance value, not design system spacing |
+| Leave shadcn upstream fractional values (tooltip, badge) | Not our code to maintain; they still resolve via Tailwind defaults |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `tailwind.config.ts` | Modified — added `spacing` mapping in `theme.extend` |
+| `scripts/verify-spacing.mjs` | Created — verification script |
+| `src/components/workout/ActiveExerciseCard.tsx` | Modified — `space-y-1.5` → `space-y-2` (2 instances) |
+| `src/components/Chip.tsx` | Modified — `gap-1.5` → `gap-1` |
+| `src/components/ExerciseCard.tsx` | Modified — `px-1.5` → `px-1` |
+| `src/components/workout/LadderRungs.tsx` | Modified — `py-1.5` → `py-2` |
+| `src/components/ui/card.tsx` | Modified — `space-y-1.5` → `space-y-2` |
+
+#### Status
+- PR #5 merged to main
+- TypeScript clean, build clean, verification script passes
+
+---
+
+### Session: 2026-02-27 - Extract System Prompt to Separate File
+
+**Duration:** ~15 min
+**Mode:** Claude Code
+**Branch:** `feature/extract-prompt-file` → PR #4
+
+#### What Got Done
+- Extracted the workout generation system prompt from inline in `index.ts` to its own `prompt.ts` file
+- Handler now imports `SYSTEM_PROMPT` from `./prompt.ts` — no functional changes
+- Fixed git safety hook bug: `-f` flag regex was matching `-f` substrings in branch names (e.g. `feature/extract-prompt-file`)
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Separate prompt.ts file | Enables prompt iteration without touching handler/validation logic |
+| Keep output schema in prompt (not generated from types) | Simpler for now; noted as future improvement for type-prompt sync |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `supabase/functions/generate-workout/prompt.ts` | Created — system prompt as exported const |
+| `supabase/functions/generate-workout/index.ts` | Modified — removed inline prompt, added import |
+| `.claude/hooks/git-safety-check.sh` | Modified — fixed `-f` regex false positive on branch names |
+
+#### Status
+- PR #4 created, ready for merge
+- No functional changes — same prompt content, just relocated
+
+---
 
 ### Session: 2026-02-27 - Generation Screen Duration & Notes Redesign
 
