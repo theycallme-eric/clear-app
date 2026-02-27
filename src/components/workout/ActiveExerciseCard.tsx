@@ -184,7 +184,7 @@ export const ActiveExerciseCard = ({
                     {showInputs && (
                         <div className={hasWeight ? "grid grid-cols-2 gap-3" : ""}>
                             {hasWeight && (
-                                <div className="space-y-1.5">
+                                <div className="space-y-2">
                                     <label
                                         className="text-label-xs uppercase tracking-wider"
                                         style={{ color: 'var(--text-disabled)' }}
@@ -198,7 +198,7 @@ export const ActiveExerciseCard = ({
                                     />
                                 </div>
                             )}
-                            <div className="space-y-1.5">
+                            <div className="space-y-2">
                                 <label
                                     className="text-label-xs uppercase tracking-wider"
                                     style={{ color: 'var(--text-disabled)' }}

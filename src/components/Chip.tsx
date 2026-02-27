@@ -91,7 +91,7 @@ export function Chip({
       hasLeftBorder={true}
       className="h-full"
     >
-      <div className="flex items-center justify-center gap-1.5 px-3 h-full">
+      <div className="flex items-center justify-center gap-1 px-3 h-full">
         {isSelected && showCheck && (
           <Check
             className="w-3 h-3 shrink-0"

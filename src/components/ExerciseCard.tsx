@@ -15,7 +15,7 @@ export const ExerciseCard = ({ exercise, onEditClick }: ExerciseCardProps) => {
         <h4 className="exercise-card-title">
           {exercise.name}
           {exercise.equipment && (
-            <span className="ml-2 text-label-xs font-normal text-muted-foreground uppercase tracking-wider bg-secondary/10 px-1.5 py-0.5 rounded">
+            <span className="ml-2 text-label-xs font-normal text-muted-foreground uppercase tracking-wider bg-secondary/10 px-1 py-0.5 rounded">
               {exercise.equipment.replace(/_/g, ' ')}
             </span>
           )}
