@@ -26,7 +26,7 @@ export const LocationAccordion = ({ selected, onSelect, locations }: LocationAcc
         <div>
           <span
             className="text-label-xs uppercase tracking-widest block mb-1"
-            style={{ color: "var(--text-paragraph)" }}
+            style={{ color: "var(--text-card-label)" }}
           >
             Location
           </span>

@@ -14,7 +14,7 @@ export const IntensitySlider = ({ value, onChange }: IntensitySliderProps) => {
     <Card cornerSize="md" padding="lg">
       <label
         className="text-label-xs uppercase tracking-widest mb-4 block"
-        style={{ color: "var(--text-paragraph)" }}
+        style={{ color: "var(--text-card-label)" }}
       >
         Intensity Level
       </label>
