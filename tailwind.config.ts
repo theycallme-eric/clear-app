@@ -13,6 +13,25 @@ export default {
       },
     },
     extend: {
+      spacing: {
+        // Primitives — map to existing CSS vars in src/index.css
+        'px': '1px',
+        '0': '0px',
+        '0.5': 'var(--spacing-50)',   // 2px
+        '1': 'var(--spacing-100)',    // 4px
+        '2': 'var(--spacing-200)',    // 8px
+        '3': 'var(--spacing-300)',    // 12px
+        '4': 'var(--spacing-400)',    // 16px
+        '5': 'var(--spacing-500)',    // 20px
+        '6': 'var(--spacing-600)',    // 24px
+        '8': 'var(--spacing-700)',    // 32px
+        '10': 'var(--spacing-800)',   // 40px
+        '12': 'var(--spacing-1000)',  // 48px
+        '14': 'var(--spacing-1100)',  // 56px
+        '16': 'var(--spacing-1200)',  // 64px
+        '24': 'var(--spacing-1300)',  // 96px
+        '32': 'var(--spacing-1400)',  // 128px
+      },
       colors: {
         border: "var(--border)",
         input: "var(--input)",

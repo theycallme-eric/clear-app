@@ -77,7 +77,7 @@ export const LadderRungs = ({
                                 borderColor={tokens.border}
                                 hasLeftBorder={true}
                             >
-                                <div className="px-2 py-1.5 flex items-center justify-center min-w-[32px] h-[36px]">
+                                <div className="px-2 py-2 flex items-center justify-center min-w-[32px] h-[36px]">
                                     <span
                                         className="text-paragraph-sm font-mono font-bold"
                                         style={{ color: tokens.text }}
