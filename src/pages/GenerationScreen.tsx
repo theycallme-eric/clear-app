@@ -30,7 +30,7 @@ export const GenerationScreen = ({ onGenerate, userPreferences, isGenerating = f
   const [intensity, setIntensity] = useState(7);
   const [anchor, setAnchor] = useState<AnchorType | null>(null);
   const [location, setLocation] = useState(defaultLocation?.name || "Gym");
-  const [time, setTime] = useState("");
+  const [time, setTime] = useState("45");
   const [notes, setNotes] = useState("");
 
 
@@ -44,7 +44,7 @@ export const GenerationScreen = ({ onGenerate, userPreferences, isGenerating = f
     });
   };
 
-  const canGenerate = anchor !== null;
+  const canGenerate = anchor !== null && time !== "";
 
   return (
     <div className="min-h-screen grain-overlay">
