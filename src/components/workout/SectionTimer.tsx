@@ -108,16 +108,16 @@ export const SectionTimer = ({
 
     // Token mapping based on state
     const surfaceColor = isLowTime
-        ? 'var(--surface-error)'
-        : 'var(--surface-radio-selected)';
+        ? 'var(--surface-timer-low)'
+        : 'var(--surface-timer)';
 
     const borderColor = isLowTime
-        ? 'var(--border-error)'
-        : 'var(--border-radio-select)';
+        ? 'var(--border-timer-low)'
+        : 'var(--border-timer)';
 
     const textColor = isLowTime
-        ? 'var(--text-error)'
-        : 'var(--text-radio-text-select)';
+        ? 'var(--text-timer-low)'
+        : 'var(--text-timer)';
 
     return (
         <div className={className}>

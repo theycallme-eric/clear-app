@@ -1,7 +1,8 @@
-import { ArrowLeft, Menu, FileText } from "lucide-react";
+import { ArrowLeft, Menu, FileText, Frown, Meh, Smile, SmilePlus, ThumbsDown } from "lucide-react";
 import { WorkoutHistoryEntry } from "@/types/workout";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import { Card } from "@/components/Card";
+import { LucideIcon } from "lucide-react";
 
 interface SessionDetailScreenProps {
   workout: WorkoutHistoryEntry | null;
@@ -10,12 +11,12 @@ interface SessionDetailScreenProps {
   onOpenSettings: () => void;
 }
 
-const MOOD_EMOJIS: Record<number, string> = {
-  1: "😫",
-  2: "😕",
-  3: "😐",
-  4: "🙂",
-  5: "😀",
+const MOOD_ICONS: Record<number, LucideIcon> = {
+  1: ThumbsDown,
+  2: Frown,
+  3: Meh,
+  4: Smile,
+  5: SmilePlus,
 };
 
 export const SessionDetailScreen = ({
@@ -46,17 +47,22 @@ export const SessionDetailScreen = ({
         <header className="flex items-center justify-between px-4 py-4">
           <button
             onClick={onBack}
-            className="p-2 text-foreground/80 hover:text-foreground transition-colors"
+            className="p-2 transition-colors"
+            style={{ color: 'var(--icon-cta)' }}
             aria-label="Back"
           >
             <ArrowLeft size={24} />
           </button>
-          <span className="text-cta-sm font-bold tracking-wider text-foreground uppercase">
+          <span
+            className="text-cta-sm font-bold tracking-wider uppercase"
+            style={{ color: 'var(--text-header)' }}
+          >
             Back
           </span>
           <button
             onClick={onOpenSettings}
-            className="p-2 text-foreground/80 hover:text-foreground transition-colors"
+            className="p-2 transition-colors"
+            style={{ color: 'var(--icon-cta)' }}
             aria-label="Menu"
           >
             <Menu size={24} />
@@ -69,21 +75,32 @@ export const SessionDetailScreen = ({
           ) : (
           <>
           {/* Date Title */}
-          <h1 className="text-heading-h4 font-bold tracking-wider text-foreground mb-2">
+          <h1
+            className="text-heading-h4 font-bold tracking-wider mb-2"
+            style={{ color: 'var(--text-header)' }}
+          >
             {formatDateTitle(workout.date)}
           </h1>
 
           {/* Summary */}
           <div className="mb-6">
-            <p className="text-heading-h5 font-medium text-foreground uppercase tracking-wide">
+            <p
+              className="text-heading-h5 font-medium uppercase tracking-wide"
+              style={{ color: 'var(--text-header)' }}
+            >
               {workout.anchor} &bull; Intensity {workout.intensity}
             </p>
-            <p className="text-muted-foreground text-paragraph-sm">
+            <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
               {workout.duration} min {workout.goal && `• ${workout.goal}`}
             </p>
-            {workout.mood && (
-              <p className="text-2xl mt-2">{MOOD_EMOJIS[workout.mood]}</p>
-            )}
+            {workout.mood && (() => {
+              const MoodIcon = MOOD_ICONS[workout.mood];
+              return MoodIcon ? (
+                <div className="mt-2" style={{ color: 'var(--text-paragraph)' }}>
+                  <MoodIcon size={24} />
+                </div>
+              ) : null;
+            })()}
           </div>
 
           {/* Sections */}
@@ -101,10 +118,10 @@ export const SessionDetailScreen = ({
                     {section.exercises.map((exercise) => (
                       <div key={exercise.id}>
                         <div className="flex items-start justify-between">
-                          <p className="text-label-sm text-foreground">
+                          <p className="text-label-sm" style={{ color: 'var(--text-header)' }}>
                             {exercise.name}
                           </p>
-                          <p className="text-label-xs text-muted-foreground">
+                          <p className="text-label-xs" style={{ color: 'var(--text-paragraph)' }}>
                             {exercise.sets} × {formatReps(exercise.reps)}
                             {exercise.weight && ` @ ${exercise.weight}`}
                           </p>
@@ -126,7 +143,7 @@ export const SessionDetailScreen = ({
             </div>
           ) : (
             <Card padding="md" className="text-center">
-              <p className="text-muted-foreground text-paragraph-sm">
+              <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
                 No detailed workout data available
               </p>
             </Card>

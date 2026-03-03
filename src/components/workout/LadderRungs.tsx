@@ -95,11 +95,14 @@ export const LadderRungs = ({
 };
 
 /** Parse a rep string like "2-4-6-8-6-4-2 each" into rung numbers */
-export const parseRungs = (reps: string): number[] =>
-    reps.split('-').map(s => parseInt(s, 10)).filter(n => !isNaN(n));
+export const parseRungs = (reps: string | number): number[] => {
+    const str = String(reps);
+    return str.split('-').map(s => parseInt(s, 10)).filter(n => !isNaN(n));
+};
 
 /** Check if a rep scheme string indicates a ladder pattern */
-export const isLadderReps = (reps: string): boolean => {
+export const isLadderReps = (reps: string | number): boolean => {
+    if (typeof reps === 'number') return false;
     const rungs = parseRungs(reps);
     return rungs.length >= 3;
 };

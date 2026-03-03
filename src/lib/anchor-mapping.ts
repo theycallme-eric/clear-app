@@ -191,6 +191,8 @@ export function resolveAnchorToPattern(
       return resolveUpperBody(history);
     case "FULL BODY":
       return resolveFullBody(history);
+    case "POWER":
+      return "power";
     case "SURPRISE":
       return resolveSurprise(history);
     default:

@@ -98,6 +98,7 @@ export const useWorkoutFlow = (
             const result = await generateWorkout({
                 intensity: params.intensity,
                 anchor: movementPattern,
+                goal: params.goal || 'balanced',
                 duration_mins: durationMins,
                 location_name: locationName,
                 equipment,
@@ -145,7 +146,8 @@ export const useWorkoutFlow = (
                 const workout = transformAPIWorkoutToFrontend(
                     result.workout,
                     params.intensity,
-                    movementPattern
+                    movementPattern,
+                    params.goal || 'balanced'
                 );
                 setGeneratedWorkout(workout);
                 toast.success("Workout generated!", {
@@ -179,6 +181,7 @@ export const useWorkoutFlow = (
         const params: WorkoutParams = {
             intensity,
             anchor,
+            goal: 'balanced',
             location: defaultLocation?.name || "Gym",
             time: "45 min",
             notes: "",
@@ -239,13 +242,13 @@ export const useWorkoutFlow = (
             });
         }
 
-        // Reset state and reload home data
+        // Navigate first, then reset state and reload data
+        if (onSuccess) onSuccess();
         setGeneratedWorkout(null);
         setWorkoutNotes(null);
         setCurrentSessionId(null);
         setCurrentLocationId(null);
-        await loadHomeData();
-        if (onSuccess) onSuccess();
+        loadHomeData();
     };
 
     const handleResumeIncomplete = async (incompleteSessionId: string, onSuccess?: () => void) => {

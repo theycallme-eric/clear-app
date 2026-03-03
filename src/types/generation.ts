@@ -8,6 +8,7 @@
 export interface GenerateWorkoutRequest {
   intensity: number; // 1-10
   anchor: string;
+  goal?: string; // Training goal: strength, hypertrophy, conditioning, balanced, active_recovery
   duration_mins: number;
   location_id?: string; // Optional if equipment provided
   location_name?: string; // For display in prompt
@@ -33,6 +34,7 @@ export interface GenerationMetadata {
   request: {
     intensity: number;
     anchor: string;
+    goal: string;
     duration_mins: number;
     location_id: string;
   };

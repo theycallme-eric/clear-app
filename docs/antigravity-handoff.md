@@ -1,4 +1,6 @@
-# Prompt for Antigravity: Continue UI Component Refactor
+# Prompt for the Implementation Agent: Continue UI Component Refactor
+
+> **Implementation agent:** Currently Claude Code. If the tool changes, update this line.
 
 ## Context
 We've been refactoring the Clear App UI to use a consistent "chamfered corner" design pattern. You created `ChamferedFrame` which solved the border gap issues. Here's the current state:
@@ -47,6 +49,6 @@ You have access to Figma via MCP. The button component set is in the design file
 ## Workflow Note
 > **Intentional Update (Feb 2026):** This document was previously maintained by Claude Code. The workflow has changed:
 > - **Claude.ai (Opus):** Planning, prompt crafting, architecture decisions
-> - **Antigravity:** All code implementation, file creation, deployment
+> - **The implementation agent:** All code implementation, file creation, deployment
 
-*Last updated by Antigravity*
+*Last updated by the implementation agent*

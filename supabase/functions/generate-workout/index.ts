@@ -10,9 +10,21 @@ import { SYSTEM_PROMPT } from './prompt.ts';
 // TYPES
 // ============================================
 
+type GoalType = 'strength' | 'hypertrophy' | 'conditioning' | 'balanced' | 'active_recovery';
+
+// Sections that each goal typically generates — used for validation
+const VALID_SECTIONS_BY_GOAL: Record<GoalType, string[]> = {
+  strength: ['warmup', 'primary_lift', 'accessory', 'core', 'cooldown'],
+  hypertrophy: ['warmup', 'primary_lift', 'accessory', 'core', 'cooldown'],
+  conditioning: ['warmup', 'conditioning', 'accessory', 'core', 'cooldown'],
+  balanced: ['warmup', 'mobility', 'primary_lift', 'accessory', 'core', 'conditioning', 'cooldown'],
+  active_recovery: ['warmup', 'mobility', 'cooldown'],
+};
+
 interface GenerationRequest {
   intensity: number; // 1-10
   anchor: string;
+  goal?: GoalType; // Training goal — defaults to 'balanced'
   duration_mins: number;
   location_id?: string; // Optional if equipment provided directly
   location_name?: string; // For display in prompt
@@ -124,6 +136,8 @@ function buildUserPrompt(
     return `  ${ex.id} | ${ex.name} | equipment:[${equipStr}] | sections:[${sectionsStr}]${primaryStr}${anchorsStr}${regressionStr} | cues:[${cuesStr}]`;
   }).join('\n');
 
+  const goal = request.goal || 'balanced';
+
   return `USER CONTEXT:
 - Experience: ${profile.experience_level || 'some'}
 - Limitations: ${profile.limitations || 'None'}
@@ -131,6 +145,7 @@ function buildUserPrompt(
 - Enabled sections: ${profile.enabled_sections.join(', ')}
 
 WORKOUT REQUEST:
+- Training Goal: ${goal}
 - Intensity: ${request.intensity}/10
 - Anchor: ${request.anchor}
 - Duration: ${request.duration_mins} minutes
@@ -420,7 +435,13 @@ serve(async (req: Request) => {
 
     // Build available equipment set (always include bodyweight)
     const availableEquipment = new Set([...location.equipment, 'bodyweight']);
-    const enabledSectionsSet = new Set(profile.enabled_sections);
+
+    // Derive enabled sections from per-workout goal (takes priority over profile)
+    const goal: GoalType = (request.goal as GoalType) || 'balanced';
+    const goalSections = VALID_SECTIONS_BY_GOAL[goal] || VALID_SECTIONS_BY_GOAL.balanced;
+    const enabledSectionsSet = new Set(
+      request.enabled_sections || goalSections
+    );
 
     // Filter exercises: must have at least one equipment option available AND
     // at least one section that matches the user's enabled sections
@@ -491,11 +512,12 @@ serve(async (req: Request) => {
       JSON.stringify({
         workout,
         metadata: {
-          prompt_version: 'v2.0.0',
+          prompt_version: 'v3.0.0',
           generated_at: new Date().toISOString(),
           request: {
             intensity: request.intensity,
             anchor: request.anchor,
+            goal,
             duration_mins: request.duration_mins,
             location_id: request.location_id,
           },

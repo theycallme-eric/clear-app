@@ -93,17 +93,22 @@ export const HistoryScreen = ({
         <header className="flex items-center justify-between px-4 py-4">
           <button
             onClick={onBack}
-            className="p-2 text-foreground/80 hover:text-foreground transition-colors"
+            className="p-2 transition-colors"
+            style={{ color: 'var(--icon-cta)' }}
             aria-label="Back"
           >
             <ArrowLeft size={24} />
           </button>
-          <h1 className="text-heading-h4 font-bold tracking-wider text-foreground uppercase">
+          <h1
+            className="text-heading-h4 font-bold tracking-wider uppercase"
+            style={{ color: 'var(--text-header)' }}
+          >
             History
           </h1>
           <button
             onClick={onOpenSettings}
-            className="p-2 text-foreground/80 hover:text-foreground transition-colors"
+            className="p-2 transition-colors"
+            style={{ color: 'var(--icon-cta)' }}
             aria-label="Menu"
           >
             <Menu size={24} />
@@ -113,7 +118,10 @@ export const HistoryScreen = ({
         <div className="px-4">
           {/* Filter Section */}
           <div className="mb-6">
-            <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3">
+            <p
+              className="text-label-xs uppercase tracking-widest mb-3"
+              style={{ color: 'var(--text-card-label)' }}
+            >
               Filter By
             </p>
             <div className="flex gap-2">
@@ -124,11 +132,16 @@ export const HistoryScreen = ({
                   setIntensityFilter('ALL');
                 }}
                 className={cn(
-                  "px-3 py-2 text-xs font-mono uppercase tracking-wide transition-all",
+                  "px-3 py-2 text-label-xs uppercase tracking-wide transition-all",
                   !isActiveFilter
-                    ? "bg-clear-orange/20 border border-clear-orange text-clear-orange"
-                    : "bg-transparent border border-muted-foreground/30 text-muted-foreground hover:border-clear-orange/50"
+                    ? "border"
+                    : "border"
                 )}
+                style={
+                  !isActiveFilter
+                    ? { backgroundColor: 'var(--surface-card-accent)', borderColor: 'var(--border-card)', color: 'var(--text-cta)' }
+                    : { backgroundColor: 'transparent', borderColor: 'var(--color-neutral-alpha-300)', color: 'var(--text-disabled)' }
+                }
               >
                 All
               </button>
@@ -140,12 +153,12 @@ export const HistoryScreen = ({
                     setAnchorDropdownOpen(!anchorDropdownOpen);
                     setIntensityDropdownOpen(false);
                   }}
-                  className={cn(
-                    "px-3 py-2 text-xs font-mono uppercase tracking-wide transition-all flex items-center gap-1",
+                  className="px-3 py-2 text-label-xs uppercase tracking-wide transition-all flex items-center gap-1 border"
+                  style={
                     anchorFilter !== 'ALL'
-                      ? "bg-clear-orange/20 border border-clear-orange text-clear-orange"
-                      : "bg-transparent border border-muted-foreground/30 text-muted-foreground hover:border-clear-orange/50"
-                  )}
+                      ? { backgroundColor: 'var(--surface-card-accent)', borderColor: 'var(--border-card)', color: 'var(--text-cta)' }
+                      : { backgroundColor: 'transparent', borderColor: 'var(--color-neutral-alpha-300)', color: 'var(--text-disabled)' }
+                  }
                 >
                   {anchorFilter === 'ALL' ? 'Anchor' : anchorFilter}
                   <ChevronDown className="w-3 h-3" />
@@ -160,12 +173,12 @@ export const HistoryScreen = ({
                           setAnchorFilter(option.value);
                           setAnchorDropdownOpen(false);
                         }}
-                        className={cn(
-                          "w-full text-left px-3 py-2 text-xs font-mono uppercase tracking-wide transition-colors",
-                          anchorFilter === option.value
-                            ? "text-clear-orange"
-                            : "text-muted-foreground hover:text-foreground"
-                        )}
+                        className="w-full text-left px-3 py-2 text-label-xs uppercase tracking-wide transition-colors"
+                        style={{
+                          color: anchorFilter === option.value
+                            ? 'var(--text-cta)'
+                            : 'var(--text-paragraph)',
+                        }}
                       >
                         {option.label}
                       </button>
@@ -181,12 +194,12 @@ export const HistoryScreen = ({
                     setIntensityDropdownOpen(!intensityDropdownOpen);
                     setAnchorDropdownOpen(false);
                   }}
-                  className={cn(
-                    "px-3 py-2 text-xs font-mono uppercase tracking-wide transition-all flex items-center gap-1",
+                  className="px-3 py-2 text-label-xs uppercase tracking-wide transition-all flex items-center gap-1 border"
+                  style={
                     intensityFilter !== 'ALL'
-                      ? "bg-clear-orange/20 border border-clear-orange text-clear-orange"
-                      : "bg-transparent border border-muted-foreground/30 text-muted-foreground hover:border-clear-orange/50"
-                  )}
+                      ? { backgroundColor: 'var(--surface-card-accent)', borderColor: 'var(--border-card)', color: 'var(--text-cta)' }
+                      : { backgroundColor: 'transparent', borderColor: 'var(--color-neutral-alpha-300)', color: 'var(--text-disabled)' }
+                  }
                 >
                   {intensityFilter === 'ALL' ? 'Intensity' : intensityFilter}
                   <ChevronDown className="w-3 h-3" />
@@ -201,12 +214,12 @@ export const HistoryScreen = ({
                           setIntensityFilter(option.value);
                           setIntensityDropdownOpen(false);
                         }}
-                        className={cn(
-                          "w-full text-left px-3 py-2 text-xs font-mono uppercase tracking-wide transition-colors",
-                          intensityFilter === option.value
-                            ? "text-clear-orange"
-                            : "text-muted-foreground hover:text-foreground"
-                        )}
+                        className="w-full text-left px-3 py-2 text-label-xs uppercase tracking-wide transition-colors"
+                        style={{
+                          color: intensityFilter === option.value
+                            ? 'var(--text-cta)'
+                            : 'var(--text-paragraph)',
+                        }}
                       >
                         {option.label}
                       </button>
@@ -228,7 +241,10 @@ export const HistoryScreen = ({
             <div className="space-y-6">
               {Object.entries(groupedByMonth).map(([month, workouts]) => (
                 <div key={month}>
-                  <h2 className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3">
+                  <h2
+                    className="text-label-xs uppercase tracking-widest mb-3"
+                    style={{ color: 'var(--text-card-label)' }}
+                  >
                     {month}
                   </h2>
                   <div className="space-y-2">
@@ -238,10 +254,16 @@ export const HistoryScreen = ({
                         onClick={() => onSelectWorkout(workout.id)}
                         padding="md"
                       >
-                        <p className="text-label-sm text-foreground uppercase tracking-wide">
+                        <p
+                          className="text-label-sm uppercase tracking-wide"
+                          style={{ color: 'var(--text-header)' }}
+                        >
                           {formatDate(workout.date)} &bull; {workout.anchor} &bull; Int. {workout.intensity}
                         </p>
-                        <p className="text-muted-foreground text-paragraph-sm flex items-center gap-1 mt-1">
+                        <p
+                          className="text-paragraph-sm flex items-center gap-1 mt-1"
+                          style={{ color: 'var(--text-paragraph)' }}
+                        >
                           <Clock className="w-3 h-3" />
                           {workout.duration} min
                         </p>

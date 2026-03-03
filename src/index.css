@@ -174,7 +174,6 @@
     --spacing-600: 24px;
     --spacing-700: 32px;
     --spacing-800: 40px;
-    --spacing-900: 40px;
     --spacing-1000: 48px;
     --spacing-1100: 56px;
     --spacing-1200: 64px;
@@ -276,6 +275,9 @@
     --surface-input: var(--color-orange-alpha-100);
     --surface-input-active: var(--color-orange-alpha-200);
     --surface-input-disabled: var(--color-neutral-alpha-100);
+    /* Timer surfaces */
+    --surface-timer: var(--color-green-alpha-600);
+    --surface-timer-low: var(--color-red-alpha-600);
     /* Chip surfaces */
     --surface-chip: var(--color-orange-alpha-400);
     --surface-chip-selected: var(--color-green-alpha-100);
@@ -309,6 +311,9 @@
     /* Spacer */
     --border-spacer: var(--color-orange-alpha-500);
 
+    /* Timer borders */
+    --border-timer: var(--color-green-500);
+    --border-timer-low: var(--color-red-500);
     /* Chip borders */
     --border-chip: var(--color-orange-500);
     --border-chip-selected: var(--color-green-500);
@@ -321,6 +326,7 @@
     --text-cta: var(--color-blue-100);
     --text-cta-hover: var(--color-blue-500);
     --text-timer: var(--color-green-400);
+    --text-timer-low: var(--color-red-900);
     --text-label-info: var(--color-blue-100);
     --text-label-selected: var(--color-green-500);
     --text-label-unselected: var(--color-blue-100);
@@ -353,6 +359,8 @@
     /* Input field icons */
     --icon-input: var(--color-blue-400);
     --icon-input-disabled: var(--color-neutral-400);
+    /* Badge icons (decorative, non-interactive) */
+    --icon-badge: var(--color-orange-500);
     /* Chip icons */
     --icon-chip: var(--color-blue-500);
     --icon-chip-selected: var(--color-green-500);
@@ -456,6 +464,9 @@
     /* Chip borders - blue theme */
     --border-chip: var(--color-blue-500);
     --border-chip-unselected: var(--color-blue-alpha-300);
+
+    /* Icons - blue theme */
+    --icon-badge: var(--color-blue-500);
 
     /* Text Colors */
     --text-header: var(--color-orange-300);
@@ -809,26 +820,31 @@
     font-family: var(--font-paragraph);
     font-size: var(--paragraph-xs-size);
     line-height: var(--paragraph-xs-line-height);
+    font-weight: var(--font-weight-medium);
   }
   .text-paragraph-sm {
     font-family: var(--font-paragraph);
     font-size: var(--paragraph-sm-size);
     line-height: var(--paragraph-sm-line-height);
+    font-weight: var(--font-weight-medium);
   }
   .text-paragraph-md {
     font-family: var(--font-paragraph);
     font-size: var(--paragraph-md-size);
     line-height: var(--paragraph-md-line-height);
+    font-weight: var(--font-weight-medium);
   }
   .text-paragraph-lg {
     font-family: var(--font-paragraph);
     font-size: var(--paragraph-lg-size);
     line-height: var(--paragraph-lg-line-height);
+    font-weight: var(--font-weight-medium);
   }
   .text-paragraph-xl {
     font-family: var(--font-paragraph);
     font-size: var(--paragraph-xl-size);
     line-height: var(--paragraph-xl-line-height);
+    font-weight: var(--font-weight-medium);
   }
 
   /* ----- Label (Oxanium) ----- */

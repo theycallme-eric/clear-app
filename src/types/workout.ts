@@ -1,5 +1,5 @@
 // User-facing anchor types (what user selects in UI)
-export type AnchorType = 'LOWER BODY' | 'UPPER BODY' | 'FULL BODY' | 'SURPRISE';
+export type AnchorType = 'LOWER BODY' | 'UPPER BODY' | 'FULL BODY' | 'POWER' | 'SURPRISE';
 
 // Movement patterns (what gets sent to API and stored in DB)
 export type MovementPattern = 'squat' | 'hinge' | 'press' | 'pull' | 'power';
@@ -62,13 +62,14 @@ export const EXPERIENCE_LEVELS: { value: ExperienceLevel; label: string; descrip
 ];
 
 // Goal presets
-export type GoalPreset = 'strength' | 'balanced' | 'conditioning' | 'quick';
+export type GoalPreset = 'strength' | 'hypertrophy' | 'conditioning' | 'balanced' | 'active_recovery';
 
 export const GOAL_PRESETS: { value: GoalPreset; label: string; description: string }[] = [
-  { value: 'strength', label: 'Strength', description: 'Heavy lifts, longer rest' },
-  { value: 'balanced', label: 'Balanced', description: 'A little of everything' },
-  { value: 'conditioning', label: 'Conditioning', description: 'Circuits, shorter rest' },
-  { value: 'quick', label: 'Quick & Effective', description: 'Fewer sections, get done' },
+  { value: 'strength', label: 'Strength', description: 'Heavy lifts, long rest' },
+  { value: 'hypertrophy', label: 'Hypertrophy', description: 'Volume & time under tension' },
+  { value: 'conditioning', label: 'Conditioning', description: 'Circuits, AMRAPs, keep moving' },
+  { value: 'balanced', label: 'Balanced', description: 'A bit of everything' },
+  { value: 'active_recovery', label: 'Recovery', description: 'Gentle movement & mobility' },
 ];
 
 // Workout sections
@@ -89,10 +90,20 @@ export const WORKOUT_SECTIONS: { id: SectionType; name: string; description: str
 
 // Sections enabled by goal preset
 export const SECTIONS_BY_GOAL: Record<GoalPreset, SectionType[]> = {
-  strength: ['warmup', 'mobility', 'primary', 'accessory', 'core', 'cooldown'],
+  strength: ['warmup', 'primary', 'accessory', 'core', 'cooldown'],
+  hypertrophy: ['warmup', 'primary', 'accessory', 'core', 'cooldown'],
+  conditioning: ['warmup', 'conditioning', 'core', 'cooldown'],
   balanced: ['warmup', 'mobility', 'primary', 'accessory', 'core', 'conditioning', 'cooldown'],
-  conditioning: ['warmup', 'mobility', 'carries', 'core', 'stability', 'conditioning', 'cooldown'],
-  quick: ['warmup', 'primary', 'core', 'cooldown'],
+  active_recovery: ['warmup', 'mobility', 'cooldown'],
+};
+
+// Intensity range constraints per goal
+export const INTENSITY_RANGE_BY_GOAL: Record<GoalPreset, { min: number; max: number; default: number }> = {
+  strength: { min: 3, max: 10, default: 6 },
+  hypertrophy: { min: 3, max: 9, default: 6 },
+  conditioning: { min: 4, max: 10, default: 7 },
+  balanced: { min: 1, max: 10, default: 5 },
+  active_recovery: { min: 1, max: 3, default: 2 },
 };
 
 // Location saved by user
@@ -172,6 +183,7 @@ export interface GeneratedWorkout {
   duration: string;
   intensity: number;
   anchor: string;
+  goal?: string;
   sections: WorkoutSection[];
 }
 
@@ -438,7 +450,7 @@ export const generateMockStreakData = (): StreakData => {
 
 // Get suggested anchor based on least recently worked body region
 export const getSuggestedAnchor = (history: WorkoutHistoryEntry[]): AnchorType => {
-  const allAnchors: AnchorType[] = ['LOWER BODY', 'UPPER BODY', 'FULL BODY', 'SURPRISE'];
+  const allAnchors: AnchorType[] = ['LOWER BODY', 'UPPER BODY', 'FULL BODY', 'POWER', 'SURPRISE'];
 
   if (history.length === 0) {
     return 'FULL BODY'; // Default for new users
@@ -495,7 +507,7 @@ export const getMockUserPreferences = (): UserPreferences => {
     ],
     defaultLocationId: null, // Will be set to first location's id
     experienceLevel: 'confident',
-    goal: 'balanced',
+    goal: 'balanced' as GoalPreset,
     sections: SECTIONS_BY_GOAL.balanced,
     limitations: '',
   };

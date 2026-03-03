@@ -264,12 +264,13 @@ export const SettingsScreen = ({
         <header className="flex items-center justify-between px-4 py-4">
           <button
             onClick={handleBack}
-            className="p-2 text-foreground/80 hover:text-foreground transition-colors"
+            className="p-2 hover:opacity-80 transition-colors"
+            style={{ color: 'var(--icon-cta)' }}
             aria-label="Back"
           >
             <ArrowLeft size={24} />
           </button>
-          <h1 className="text-heading-h4 font-bold tracking-wider text-foreground uppercase">
+          <h1 className="text-heading-h4 font-bold tracking-wider uppercase" style={{ color: 'var(--text-header)' }}>
             {getTitle()}
           </h1>
           <div className="w-10" />
@@ -281,7 +282,7 @@ export const SettingsScreen = ({
             <div className="space-y-6">
               {/* Workout Setup Section */}
               <div>
-                <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3">
+                <p className="text-label-xs uppercase tracking-widest mb-3" style={{ color: 'var(--text-card-label)' }}>
                   Workout Setup
                 </p>
                 <div className="space-y-2">
@@ -289,14 +290,14 @@ export const SettingsScreen = ({
                   <Card onClick={() => setCurrentView("locations")} padding="md">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-label-sm text-foreground uppercase">
+                        <p className="text-label-sm uppercase" style={{ color: 'var(--text-header)' }}>
                           Locations / Equipment
                         </p>
-                        <p className="text-muted-foreground text-paragraph-sm mt-0.5">
+                        <p className="text-paragraph-sm mt-0.5" style={{ color: 'var(--text-paragraph)' }}>
                           {defaultLocation?.name || "Not set"}
                         </p>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                      <ChevronRight className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
                     </div>
                   </Card>
 
@@ -313,14 +314,14 @@ export const SettingsScreen = ({
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-label-sm text-foreground uppercase">
+                        <p className="text-label-sm uppercase" style={{ color: 'var(--text-header)' }}>
                           Workout Structure
                         </p>
-                        <p className="text-muted-foreground text-paragraph-sm mt-0.5">
+                        <p className="text-paragraph-sm mt-0.5" style={{ color: 'var(--text-paragraph)' }}>
                           {GOAL_PRESETS.find(g => g.value === preferences.goal)?.label || "Not set"} • {preferences.sections.length} sections
                         </p>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                      <ChevronRight className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
                     </div>
                   </Card>
 
@@ -334,14 +335,14 @@ export const SettingsScreen = ({
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-label-sm text-foreground uppercase">
+                        <p className="text-label-sm uppercase" style={{ color: 'var(--text-header)' }}>
                           Limitations
                         </p>
-                        <p className="text-muted-foreground text-paragraph-sm mt-0.5 truncate max-w-[250px]">
+                        <p className="text-paragraph-sm mt-0.5 truncate max-w-[250px]" style={{ color: 'var(--text-paragraph)' }}>
                           {preferences.limitations ? `"${preferences.limitations.slice(0, 30)}${preferences.limitations.length > 30 ? '...' : ''}"` : "None set"}
                         </p>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                      <ChevronRight className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
                     </div>
                   </Card>
                 </div>
@@ -349,26 +350,26 @@ export const SettingsScreen = ({
 
               {/* About Section */}
               <div>
-                <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3">
+                <p className="text-label-xs uppercase tracking-widest mb-3" style={{ color: 'var(--text-card-label)' }}>
                   About
                 </p>
                 <div className="space-y-2">
                   <Card onClick={() => toast.info("Feedback form coming soon!")} padding="md">
                     <div className="flex items-center justify-between">
-                      <p className="text-label-sm text-foreground uppercase">
+                      <p className="text-label-sm uppercase" style={{ color: 'var(--text-header)' }}>
                         Send Feedback
                       </p>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                      <ChevronRight className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
                     </div>
                   </Card>
 
                   <Card padding="md">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-label-sm text-foreground uppercase">
+                        <p className="text-label-sm uppercase" style={{ color: 'var(--text-header)' }}>
                           About Clear
                         </p>
-                        <p className="text-muted-foreground text-paragraph-sm mt-0.5">
+                        <p className="text-paragraph-sm mt-0.5" style={{ color: 'var(--text-paragraph)' }}>
                           Version 1.0.0
                         </p>
                       </div>
@@ -380,7 +381,7 @@ export const SettingsScreen = ({
               {/* Developer Section */}
               {(onOpenDeveloper || onLaunchTestWorkout) && (
                 <div>
-                  <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3">
+                  <p className="text-label-xs uppercase tracking-widest mb-3" style={{ color: 'var(--text-card-label)' }}>
                     Developer
                   </p>
                   <div className="space-y-2">
@@ -388,14 +389,14 @@ export const SettingsScreen = ({
                       <Card onClick={onOpenDeveloper} padding="md">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-label-sm text-foreground uppercase">
+                            <p className="text-label-sm uppercase" style={{ color: 'var(--text-header)' }}>
                               Component Gallery
                             </p>
-                            <p className="text-muted-foreground text-paragraph-sm mt-0.5">
+                            <p className="text-paragraph-sm mt-0.5" style={{ color: 'var(--text-paragraph)' }}>
                               Audit design system components
                             </p>
                           </div>
-                          <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                          <ChevronRight className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
                         </div>
                       </Card>
                     )}
@@ -403,14 +404,14 @@ export const SettingsScreen = ({
                       <Card onClick={onLaunchTestWorkout} padding="md">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-label-sm text-foreground uppercase">
+                            <p className="text-label-sm uppercase" style={{ color: 'var(--text-header)' }}>
                               Test Workout
                             </p>
-                            <p className="text-muted-foreground text-paragraph-sm mt-0.5">
+                            <p className="text-paragraph-sm mt-0.5" style={{ color: 'var(--text-paragraph)' }}>
                               All structure types in one session
                             </p>
                           </div>
-                          <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                          <ChevronRight className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
                         </div>
                       </Card>
                     )}
@@ -439,7 +440,7 @@ export const SettingsScreen = ({
           {currentView === "locations" && (
             <div className="space-y-4">
               <Card cornerSize="md" padding="md">
-                <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-4">
+                <p className="text-label-xs uppercase tracking-widest mb-4" style={{ color: 'var(--text-card-label)' }}>
                   Default Location
                 </p>
                 <div className="flex flex-col gap-2">
@@ -481,7 +482,7 @@ export const SettingsScreen = ({
               <Card cornerSize="md" padding="md">
                 {/* Location Name */}
                 <div className="space-y-2 mb-6">
-                  <label className="block text-paragraph-sm text-foreground">
+                  <label className="block text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
                     Location Name
                   </label>
                   <Input
@@ -493,7 +494,7 @@ export const SettingsScreen = ({
 
                 {/* Equipment Type */}
                 <div className="mb-4">
-                  <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-2">
+                  <p className="text-label-xs uppercase tracking-widest mb-2" style={{ color: 'var(--text-card-label)' }}>
                     Equipment Type
                   </p>
                   <div className="flex flex-col gap-2">
@@ -516,13 +517,13 @@ export const SettingsScreen = ({
                     onClick={() => setEquipmentAccordionOpen(!equipmentAccordionOpen)}
                     className="w-full flex items-center justify-between"
                   >
-                    <span className="text-cta-sm font-medium text-foreground">
+                    <span className="text-cta-sm font-medium" style={{ color: 'var(--text-header)' }}>
                       Customize Equipment
                     </span>
                     {equipmentAccordionOpen ? (
-                      <ChevronUp className="w-5 h-5 text-muted-foreground" />
+                      <ChevronUp className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
                     ) : (
-                      <ChevronDown className="w-5 h-5 text-muted-foreground" />
+                      <ChevronDown className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
                     )}
                   </button>
 
@@ -572,7 +573,7 @@ export const SettingsScreen = ({
               <Card cornerSize="md" padding="md">
                 {/* Goal Selection */}
                 <div className="mb-4">
-                  <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-2">
+                  <p className="text-label-xs uppercase tracking-widest mb-2" style={{ color: 'var(--text-card-label)' }}>
                     Goal
                   </p>
                   <div className="flex flex-col gap-2">
@@ -596,13 +597,13 @@ export const SettingsScreen = ({
                       onClick={() => setSectionsAccordionOpen(!sectionsAccordionOpen)}
                       className="w-full flex items-center justify-between"
                     >
-                      <span className="text-cta-sm font-medium text-foreground">
+                      <span className="text-cta-sm font-medium" style={{ color: 'var(--text-header)' }}>
                         Customize Sections
                       </span>
                       {sectionsAccordionOpen ? (
-                        <ChevronUp className="w-5 h-5 text-muted-foreground" />
+                        <ChevronUp className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
                       ) : (
-                        <ChevronDown className="w-5 h-5 text-muted-foreground" />
+                        <ChevronDown className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
                       )}
                     </button>
 
@@ -625,9 +626,16 @@ export const SettingsScreen = ({
                                 isSelected
                                   ? "border text-[var(--text-label-selected)] border-[var(--border-chip-selected)] bg-[var(--color-green-alpha-200)]"
                                   : isDisabled
-                                  ? "bg-transparent border border-muted-foreground/20 text-muted-foreground/40 cursor-not-allowed"
-                                  : "bg-transparent border border-muted-foreground/30 text-muted-foreground hover:border-[var(--border-chip)]"
+                                  ? "bg-transparent border border-[var(--text-disabled)] border-opacity-20 cursor-not-allowed"
+                                  : "bg-transparent border border-[var(--text-disabled)] border-opacity-30 hover:border-[var(--border-chip)]"
                               )}
+                              style={
+                                !isSelected
+                                  ? isDisabled
+                                    ? { color: 'var(--text-disabled)', opacity: 0.4 }
+                                    : { color: 'var(--text-disabled)' }
+                                  : undefined
+                              }
                             >
                               {isSelected && <Check className="w-3 h-3 inline mr-1" />}
                               {section.name}
@@ -639,13 +647,14 @@ export const SettingsScreen = ({
                       {/* Legend */}
                       <button
                         onClick={() => setLegendOpen(!legendOpen)}
-                        className="w-full flex items-center justify-between text-sm text-muted-foreground hover:text-foreground transition-colors"
+                        className="w-full flex items-center justify-between text-cta-sm transition-colors"
+                        style={{ color: 'var(--text-cta)' }}
                       >
                         <span>What do these mean?</span>
                         {legendOpen ? (
-                          <ChevronUp className="w-4 h-4" />
+                          <ChevronUp className="w-4 h-4" style={{ color: 'var(--icon-cta)' }} />
                         ) : (
-                          <ChevronDown className="w-4 h-4" />
+                          <ChevronDown className="w-4 h-4" style={{ color: 'var(--icon-cta)' }} />
                         )}
                       </button>
 
@@ -656,7 +665,7 @@ export const SettingsScreen = ({
                               <p className="text-label-xs uppercase tracking-wide" style={{ color: 'var(--text-card-label)' }}>
                                 {section.name}
                               </p>
-                              <p className="text-muted-foreground text-paragraph-sm">
+                              <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
                                 {section.description}
                               </p>
                             </div>
@@ -676,10 +685,10 @@ export const SettingsScreen = ({
             <div className="space-y-6">
               <Card cornerSize="md" padding="md">
                 <div className="mb-4">
-                  <h2 className="text-heading-h4 font-bold uppercase tracking-wider text-foreground">
+                  <h2 className="text-heading-h4 font-bold uppercase tracking-wider" style={{ color: 'var(--text-header)' }}>
                     Anything We Should<br />Work Around?
                   </h2>
-                  <p className="text-muted-foreground text-paragraph-sm mt-2">
+                  <p className="text-paragraph-sm mt-2" style={{ color: 'var(--text-paragraph)' }}>
                     Old injuries, problem areas, or movements you want to avoid.
                   </p>
                 </div>
@@ -709,7 +718,10 @@ export const SettingsScreen = ({
         {/* Fixed Bottom Save Button */}
         {(currentView === "editLocation" || currentView === "addLocation" ||
           currentView === "structure" || currentView === "limitations") && (
-          <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background to-transparent">
+          <div
+            className="fixed bottom-0 left-0 right-0 p-4"
+            style={{ background: 'linear-gradient(to top, var(--color-neutral-900), var(--color-neutral-900) 60%, transparent)' }}
+          >
             <div className="max-w-md mx-auto">
               <CTAButton
                 onClick={() => {

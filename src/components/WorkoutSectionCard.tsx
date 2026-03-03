@@ -19,13 +19,13 @@ export const WorkoutSectionCard = ({ section, onRandomize }: WorkoutSectionCardP
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between p-4 text-left"
       >
-        <span className="text-cta-sm font-bold text-clear-orange">
+        <span className="text-cta-sm font-bold" style={{ color: 'var(--text-card-label)' }}>
           {section.name}
         </span>
         {isExpanded ? (
-          <ChevronUp size={20} className="text-foreground/60" />
+          <ChevronUp size={20} style={{ color: 'var(--icon-cta)' }} />
         ) : (
-          <ChevronDown size={20} className="text-foreground/60" />
+          <ChevronDown size={20} style={{ color: 'var(--icon-cta)' }} />
         )}
       </button>
 
@@ -37,12 +37,15 @@ export const WorkoutSectionCard = ({ section, onRandomize }: WorkoutSectionCardP
               <p className="exercise-card-title">
                 {exercise.name}
                 {exercise.equipment && (
-                  <span className="ml-2 text-label-xs font-normal text-muted-foreground uppercase tracking-wider">
+                  <span
+                    className="ml-2 text-label-xs font-normal uppercase tracking-wider"
+                    style={{ color: 'var(--text-paragraph)' }}
+                  >
                     {exercise.equipment.replace(/_/g, ' ')}
                   </span>
                 )}
               </p>
-              <p className="text-paragraph-sm text-foreground">
+              <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
                 ({exercise.sets ? `${exercise.sets}×` : ''}{exercise.reps})
               </p>
             </div>
@@ -66,7 +69,11 @@ export const WorkoutSectionCard = ({ section, onRandomize }: WorkoutSectionCardP
               e.stopPropagation();
               onRandomize?.();
             }}
-            className="w-full flex items-center justify-center gap-2 py-3 border border-clear-orange/30 text-clear-orange hover:bg-clear-orange/10 transition-colors"
+            className="w-full flex items-center justify-center gap-2 py-3 border transition-colors"
+            style={{
+              borderColor: 'var(--border-card)',
+              color: 'var(--icon-cta)',
+            }}
           >
             <RefreshCw size={16} />
             <span className="text-paragraph-sm font-medium">Randomize Section</span>

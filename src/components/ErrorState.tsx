@@ -19,13 +19,17 @@ export const ErrorState = ({
 }: ErrorStateProps) => {
   return (
     <Card padding="md" className={cn("text-center", className)}>
-      <p className="text-foreground text-label-sm uppercase tracking-wide mb-2">
+      <p
+        className="text-label-sm uppercase tracking-wide mb-2"
+        style={{ color: 'var(--text-header)' }}
+      >
         {message}
       </p>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="inline-flex items-center gap-2 mt-2 px-4 py-2 text-label-sm text-clear-orange hover:text-clear-orange/80 transition-colors"
+          className="inline-flex items-center gap-2 mt-2 px-4 py-2 text-label-sm transition-colors"
+          style={{ color: 'var(--icon-cta)' }}
         >
           <RefreshCw className="w-4 h-4" />
           Try Again

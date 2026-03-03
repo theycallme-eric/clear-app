@@ -34,16 +34,16 @@ export const GlobalTimer = ({ isRunning, onTimeUpdate, startTime }: GlobalTimerP
     };
 
     return (
-        <div className="sticky top-0 z-10 flex items-center justify-center px-5 py-3 backdrop-blur-md bg-background/80">
+        <div className="sticky top-0 z-10 flex items-center justify-center px-5 py-3 backdrop-blur-md" style={{ backgroundColor: 'rgba(23, 23, 23, 0.8)' }}>
             <ChamferedFrame
                 cornerSize="sm"
-                surfaceColor="var(--surface-radio-selected)"
-                borderColor="var(--border-radio-select)"
+                surfaceColor="var(--surface-timer)"
+                borderColor="var(--border-timer)"
                 hasLeftBorder={true}
             >
                 <span
-                    className="block px-5 py-1 text-heading-h4 font-bold text-center"
-                    style={{ color: 'var(--text-radio-text-select)' }}
+                    className="block px-5 py-1 text-time-lg font-bold text-center"
+                    style={{ color: 'var(--text-timer)' }}
                 >
                     {formatTime(elapsedSeconds)}
                 </span>

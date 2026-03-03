@@ -90,10 +90,13 @@ export const HomeScreen = ({
         <div className="px-4 space-y-6">
           {/* Hero CTA - Generate Workout */}
           <Card onClick={onGenerateWorkout} padding="lg">
-            <h2 className="text-heading-h2 font-bold uppercase tracking-wider text-foreground mb-2">
+            <h2
+              className="text-heading-h2 font-bold uppercase tracking-wider mb-2"
+              style={{ color: 'var(--text-header)' }}
+            >
               Generate Workout
             </h2>
-            <p className="text-muted-foreground text-paragraph-sm">
+            <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
               Set intensity, anchor, and build your session
             </p>
           </Card>
@@ -105,17 +108,20 @@ export const HomeScreen = ({
             className={!hasHistory ? "opacity-50 cursor-not-allowed" : ""}
           >
             <div className="flex items-center gap-2 mb-2">
-              <Zap className="w-5 h-5 text-clear-orange" />
-              <span className="text-heading-h5 font-medium uppercase tracking-wider text-foreground">
+              <Zap className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
+              <span
+                className="text-heading-h5 font-medium uppercase tracking-wider"
+                style={{ color: 'var(--text-header)' }}
+              >
                 Quick Start
               </span>
             </div>
             {hasHistory ? (
-              <p className="text-muted-foreground text-paragraph-sm">
+              <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
                 Intensity: {suggestedIntensity} &bull; Anchor: {suggestedAnchor}
               </p>
             ) : (
-              <p className="text-muted-foreground text-paragraph-sm">
+              <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
                 Start your first workout
               </p>
             )}
@@ -123,19 +129,30 @@ export const HomeScreen = ({
 
           {/* Streak Tracker */}
           <Card padding="md">
-            <h3 className="text-label-xs uppercase tracking-widest text-muted-foreground mb-4">
+            <h3
+              className="text-label-xs uppercase tracking-widest mb-4"
+              style={{ color: 'var(--text-card-label)' }}
+            >
               Streak
             </h3>
 
             {/* Big streak number */}
             <div className="text-center mb-4">
-              <span className="text-heading-h1 font-bold text-foreground">
+              <span
+                className="text-heading-h1 font-bold"
+                style={{ color: 'var(--text-header)' }}
+              >
                 {streakData.currentStreak}
               </span>
-              <span className="text-2xl ml-2">
-                <Flame className="inline w-8 h-8 text-clear-orange" />
+              <span className="ml-2">
+                <Flame className="inline w-8 h-8" style={{ color: 'var(--icon-badge)' }} />
               </span>
-              <p className="text-label-sm text-muted-foreground mt-1">days</p>
+              <p
+                className="text-label-sm mt-1"
+                style={{ color: 'var(--text-paragraph)' }}
+              >
+                days
+              </p>
             </div>
 
             {/* Week view */}
@@ -143,17 +160,21 @@ export const HomeScreen = ({
               {weekDays.map((day, index) => (
                 <div key={index} className="flex flex-col items-center gap-1">
                   <div
-                    className={`aspect-square w-full max-w-10 flex items-center justify-center border ${
+                    className="aspect-square w-full max-w-10 flex items-center justify-center border"
+                    style={
                       day.status === "workout"
-                        ? "bg-clear-lime/20 border-clear-lime text-clear-lime"
+                        ? { backgroundColor: 'var(--color-green-alpha-200)', borderColor: 'var(--border-success)', color: 'var(--text-label-selected)' }
                         : day.status === "rest"
-                        ? "bg-clear-purple/20 border-clear-purple text-clear-purple"
-                        : "bg-transparent border-muted-foreground/30 text-muted-foreground/50"
-                    }`}
+                        ? { backgroundColor: 'var(--color-blue-alpha-200)', borderColor: 'var(--border-info)', color: 'var(--icon-cta)' }
+                        : { backgroundColor: 'transparent', borderColor: 'var(--color-neutral-alpha-300)', color: 'var(--text-disabled)' }
+                    }
                   >
                     {day.status === "workout" ? "●" : day.status === "rest" ? "◐" : "○"}
                   </div>
-                  <span className="text-label-xs text-muted-foreground">
+                  <span
+                    className="text-label-xs"
+                    style={{ color: 'var(--text-disabled)' }}
+                  >
                     {day.label}
                   </span>
                 </div>
@@ -173,7 +194,10 @@ export const HomeScreen = ({
 
           {/* Recent Workouts */}
           <div>
-            <h3 className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3 px-1">
+            <h3
+              className="text-label-xs uppercase tracking-widest mb-3 px-1"
+              style={{ color: 'var(--text-card-label)' }}
+            >
               Recent
             </h3>
 
@@ -200,10 +224,16 @@ export const HomeScreen = ({
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-label-sm text-foreground uppercase tracking-wide">
-                            {formatDate(workout.date)} &bull; {workout.anchor} &bull; Int. {workout.intensity}
+                          <p
+                            className="text-label-sm uppercase tracking-wide"
+                            style={{ color: 'var(--text-header)' }}
+                          >
+                            {formatDate(workout.date)} &bull; {workout.goal ? `${workout.goal} · ` : ''}{workout.anchor} &bull; Int. {workout.intensity}
                           </p>
-                          <p className="text-muted-foreground text-paragraph-sm flex items-center gap-1 mt-1">
+                          <p
+                            className="text-paragraph-sm flex items-center gap-1 mt-1"
+                            style={{ color: 'var(--text-paragraph)' }}
+                          >
                             <Clock className="w-3 h-3" />
                             {workout.duration} min
                           </p>
@@ -215,7 +245,8 @@ export const HomeScreen = ({
 
                 <button
                   onClick={onViewHistory}
-                  className="w-full mt-3 py-2 text-center text-clear-orange text-paragraph-sm font-medium hover:text-clear-orange/80 transition-colors"
+                  className="w-full mt-3 py-2 text-center text-paragraph-sm font-medium transition-colors"
+                  style={{ color: 'var(--text-cta)' }}
                 >
                   View All History
                 </button>

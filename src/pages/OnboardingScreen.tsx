@@ -132,7 +132,8 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
           {step > 1 ? (
             <button
               onClick={handleBack}
-              className="p-2 text-foreground/80 hover:text-foreground transition-colors"
+              className="p-2 transition-colors"
+              style={{ color: 'var(--icon-cta)' }}
               aria-label="Back"
             >
               <ArrowLeft size={24} />
@@ -140,7 +141,10 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
           ) : (
             <div className="w-10" />
           )}
-          <h1 className="text-heading-h2 font-bold tracking-wider text-foreground">
+          <h1
+            className="text-heading-h2 font-bold tracking-wider"
+            style={{ color: 'var(--text-header)' }}
+          >
             CLEAR
           </h1>
           <div className="w-10" />
@@ -150,7 +154,10 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
           {/* Step 1: Equipment/Location */}
           {step === 1 && (
             <div className="space-y-6">
-              <h2 className="text-heading-h2 font-bold uppercase tracking-wider text-foreground">
+              <h2
+                className="text-heading-h2 font-bold uppercase tracking-wider"
+                style={{ color: 'var(--text-header)' }}
+              >
                 What's Your Gym Setup?
               </h2>
 
@@ -183,13 +190,13 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                     onClick={() => setEquipmentAccordionOpen(!equipmentAccordionOpen)}
                     className="w-full p-4 flex items-center justify-between"
                   >
-                    <span className="text-cta-sm font-medium text-foreground">
+                    <span className="text-cta-sm font-medium" style={{ color: 'var(--text-header)' }}>
                       Customize Equipment
                     </span>
                     {equipmentAccordionOpen ? (
-                      <ChevronUp className="w-5 h-5 text-muted-foreground" />
+                      <ChevronUp className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
                     ) : (
-                      <ChevronDown className="w-5 h-5 text-muted-foreground" />
+                      <ChevronDown className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
                     )}
                   </button>
 
@@ -197,7 +204,6 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                     <div className="px-4 pb-4">
                       <div className="flex flex-wrap gap-2">
                         {EQUIPMENT_BY_TIER.full.map((equipment) => {
-                          const isAvailable = EQUIPMENT_BY_TIER[selectedTier].includes(equipment);
                           const isSelected = selectedEquipment.includes(equipment);
                           const isBodyweight = equipment === 'Bodyweight';
 
@@ -219,7 +225,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                 </Card>
               )}
 
-              <p className="text-muted-foreground text-paragraph-sm text-center">
+              <p className="text-paragraph-sm text-center" style={{ color: 'var(--text-paragraph)' }}>
                 You can add more locations later
               </p>
             </div>
@@ -229,10 +235,13 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
           {step === 2 && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-heading-h2 font-bold uppercase tracking-wider text-foreground">
+                <h2
+                  className="text-heading-h2 font-bold uppercase tracking-wider"
+                  style={{ color: 'var(--text-header)' }}
+                >
                   Workout Sections
                 </h2>
-                <p className="text-muted-foreground text-paragraph-sm mt-2">
+                <p className="text-paragraph-sm mt-2" style={{ color: 'var(--text-paragraph)' }}>
                   Choose which parts to include in your workouts.
                 </p>
               </div>
@@ -264,15 +273,15 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
               <Card cornerSize="md" padding="none">
                 <button
                   onClick={() => setLegendOpen(!legendOpen)}
-                  className="w-full p-4 flex items-center justify-between text-sm"
+                  className="w-full p-4 flex items-center justify-between"
                 >
-                  <span className="text-cta-sm font-medium text-foreground">
+                  <span className="text-cta-sm font-medium" style={{ color: 'var(--text-header)' }}>
                     What do these mean?
                   </span>
                   {legendOpen ? (
-                    <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                    <ChevronUp className="w-4 h-4" style={{ color: 'var(--icon-cta)' }} />
                   ) : (
-                    <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                    <ChevronDown className="w-4 h-4" style={{ color: 'var(--icon-cta)' }} />
                   )}
                 </button>
 
@@ -283,7 +292,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                         <p className="text-label-xs uppercase tracking-wide" style={{ color: 'var(--text-card-label)' }}>
                           {section.name}
                         </p>
-                        <p className="text-muted-foreground text-paragraph-sm">
+                        <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
                           {section.description}
                         </p>
                       </div>
@@ -292,7 +301,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                 )}
               </Card>
 
-              <p className="text-muted-foreground text-paragraph-sm text-center">
+              <p className="text-paragraph-sm text-center" style={{ color: 'var(--text-paragraph)' }}>
                 You can change this anytime in settings
               </p>
             </div>
@@ -302,10 +311,13 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
           {step === 3 && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-heading-h2 font-bold uppercase tracking-wider text-foreground">
+                <h2
+                  className="text-heading-h2 font-bold uppercase tracking-wider"
+                  style={{ color: 'var(--text-header)' }}
+                >
                   Anything We Should<br />Work Around?
                 </h2>
-                <p className="text-muted-foreground text-paragraph-sm mt-2">
+                <p className="text-paragraph-sm mt-2" style={{ color: 'var(--text-paragraph)' }}>
                   Old injuries, problem areas, or movements you want to avoid.
                 </p>
               </div>
@@ -322,7 +334,10 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
           {/* Step 4: Confirmation */}
           {step === 4 && (
             <div className="space-y-6">
-              <h2 className="text-heading-h2 font-bold uppercase tracking-wider text-foreground">
+              <h2
+                className="text-heading-h2 font-bold uppercase tracking-wider"
+                style={{ color: 'var(--text-header)' }}
+              >
                 Here's Your Setup
               </h2>
 
@@ -330,20 +345,26 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
               <Card padding="md">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-1">
+                    <p
+                      className="text-label-xs uppercase tracking-widest mb-1"
+                      style={{ color: 'var(--text-card-label)' }}
+                    >
                       Location
                     </p>
-                    <p className="font-display text-lg font-semibold text-foreground">
+                    <p
+                      className="text-heading-h5 font-bold"
+                      style={{ color: 'var(--text-header)' }}
+                    >
                       {TIER_OPTIONS.find(t => t.value === selectedTier)?.label}
                     </p>
-                    <p className="text-muted-foreground text-paragraph-sm mt-1">
+                    <p className="text-paragraph-sm mt-1" style={{ color: 'var(--text-paragraph)' }}>
                       {selectedEquipment.slice(0, 5).join(', ')}
                       {selectedEquipment.length > 5 && ` +${selectedEquipment.length - 5} more`}
                     </p>
                   </div>
                   <button
                     onClick={() => handleEditStep(1)}
-                    className="text-sm transition-colors" style={{ color: 'var(--icon-cta)' }}
+                    className="text-label-sm transition-colors" style={{ color: 'var(--icon-cta)' }}
                   >
                     Edit
                   </button>
@@ -354,13 +375,19 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
               <Card padding="md">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-1">
+                    <p
+                      className="text-label-xs uppercase tracking-widest mb-1"
+                      style={{ color: 'var(--text-card-label)' }}
+                    >
                       Workout Sections
                     </p>
-                    <p className="font-display text-lg font-semibold text-foreground">
+                    <p
+                      className="text-heading-h5 font-bold"
+                      style={{ color: 'var(--text-header)' }}
+                    >
                       {sections.length} sections
                     </p>
-                    <p className="text-muted-foreground text-paragraph-sm mt-1">
+                    <p className="text-paragraph-sm mt-1" style={{ color: 'var(--text-paragraph)' }}>
                       {sections.slice(0, 4).map(s =>
                         WORKOUT_SECTIONS.find(ws => ws.id === s)?.name
                       ).join(', ')}
@@ -369,7 +396,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
                   </div>
                   <button
                     onClick={() => handleEditStep(2)}
-                    className="text-sm transition-colors" style={{ color: 'var(--icon-cta)' }}
+                    className="text-label-sm transition-colors" style={{ color: 'var(--icon-cta)' }}
                   >
                     Edit
                   </button>
@@ -380,16 +407,22 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
               <Card padding="md">
                 <div className="flex items-start justify-between">
                   <div className="flex-1 mr-4">
-                    <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-1">
+                    <p
+                      className="text-label-xs uppercase tracking-widest mb-1"
+                      style={{ color: 'var(--text-card-label)' }}
+                    >
                       Limitations
                     </p>
-                    <p className="font-display text-lg font-semibold text-foreground">
+                    <p
+                      className="text-heading-h5 font-bold"
+                      style={{ color: 'var(--text-header)' }}
+                    >
                       {limitations ? `"${limitations.slice(0, 50)}${limitations.length > 50 ? '...' : ''}"` : 'None specified'}
                     </p>
                   </div>
                   <button
                     onClick={() => handleEditStep(3)}
-                    className="text-sm transition-colors" style={{ color: 'var(--icon-cta)' }}
+                    className="text-label-sm transition-colors" style={{ color: 'var(--icon-cta)' }}
                   >
                     Edit
                   </button>
@@ -400,7 +433,10 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
         </div>
 
         {/* Fixed Bottom Navigation */}
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background to-transparent">
+        <div
+          className="fixed bottom-0 left-0 right-0 p-4"
+          style={{ background: 'linear-gradient(to top, var(--color-neutral-900), var(--color-neutral-900) 60%, transparent)' }}
+        >
           <div className="max-w-md mx-auto space-y-3">
             {step === 3 ? (
               <div className="flex gap-3">
@@ -440,7 +476,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
               </CTAButton>
             )}
 
-            <p className="text-center text-muted-foreground text-paragraph-sm">
+            <p className="text-center text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
               Step {step} of 4
             </p>
           </div>

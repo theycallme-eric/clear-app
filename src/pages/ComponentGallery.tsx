@@ -67,12 +67,13 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
         <header className="flex items-center justify-between px-4 py-4">
           <button
             onClick={onBack}
-            className="p-2 text-foreground/80 hover:text-foreground transition-colors"
+            className="p-2 transition-colors"
+            style={{ color: 'var(--icon-cta)' }}
             aria-label="Back"
           >
             <ArrowLeft size={24} />
           </button>
-          <h1 className="text-heading-h4 font-bold tracking-wider text-foreground uppercase">
+          <h1 className="text-heading-h4 font-bold tracking-wider uppercase" style={{ color: 'var(--text-header)' }}>
             Component Gallery
           </h1>
           <div className="w-10" />
@@ -83,62 +84,62 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
           {/* ─── TYPOGRAPHY ─── */}
           <Section title="Typography — Headings (Rajdhani)">
             <div className="space-y-3">
-              <p className="text-heading-h1 font-bold text-foreground">Heading H1</p>
-              <p className="text-heading-h2 font-bold text-foreground">Heading H2</p>
-              <p className="text-heading-h3 font-bold text-foreground">Heading H3</p>
-              <p className="text-heading-h4 font-bold text-foreground">Heading H4</p>
-              <p className="text-heading-h5 font-medium text-foreground">Heading H5</p>
-              <p className="text-heading-h6 font-medium text-foreground">Heading H6</p>
+              <p className="text-heading-h1 font-bold">Heading H1</p>
+              <p className="text-heading-h2 font-bold">Heading H2</p>
+              <p className="text-heading-h3 font-bold">Heading H3</p>
+              <p className="text-heading-h4 font-bold">Heading H4</p>
+              <p className="text-heading-h5 font-medium">Heading H5</p>
+              <p className="text-heading-h6 font-medium">Heading H6</p>
             </div>
           </Section>
 
           <Section title="Typography — Paragraph (Space Grotesk)">
             <div className="space-y-3">
-              <p className="text-paragraph-xl text-foreground">Paragraph XL — for large body text</p>
-              <p className="text-paragraph-lg text-foreground">Paragraph LG — for emphasized text</p>
-              <p className="text-paragraph-md text-foreground">Paragraph MD — default body text</p>
-              <p className="text-paragraph-sm text-muted-foreground">Paragraph SM — secondary text</p>
-              <p className="text-paragraph-xs text-muted-foreground">Paragraph XS — smallest body text</p>
+              <p className="text-paragraph-xl ">Paragraph XL — for large body text</p>
+              <p className="text-paragraph-lg ">Paragraph LG — for emphasized text</p>
+              <p className="text-paragraph-md ">Paragraph MD — default body text</p>
+              <p className="text-paragraph-sm " style={{ color: 'var(--text-paragraph)' }}>Paragraph SM — secondary text</p>
+              <p className="text-paragraph-xs " style={{ color: 'var(--text-paragraph)' }}>Paragraph XS — smallest body text</p>
             </div>
           </Section>
 
           <Section title="Typography — Label (Oxanium)">
             <div className="space-y-3">
-              <p className="text-label-xl uppercase tracking-wider text-foreground">Label XL — large labels</p>
-              <p className="text-label-lg uppercase tracking-wider text-foreground">Label LG — section labels</p>
-              <p className="text-label-md uppercase tracking-wider text-foreground">Label MD — standard labels</p>
-              <p className="text-label-sm uppercase tracking-wider text-muted-foreground">Label SM — small labels</p>
-              <p className="text-label-xs uppercase tracking-widest text-muted-foreground">Label XS — tiny labels</p>
+              <p className="text-label-xl uppercase tracking-wider" style={{ color: 'var(--text-header)' }}>Label XL — large labels</p>
+              <p className="text-label-lg uppercase tracking-wider" style={{ color: 'var(--text-header)' }}>Label LG — section labels</p>
+              <p className="text-label-md uppercase tracking-wider" style={{ color: 'var(--text-header)' }}>Label MD — standard labels</p>
+              <p className="text-label-sm uppercase tracking-wider" style={{ color: 'var(--text-paragraph)' }}>Label SM — small labels</p>
+              <p className="text-label-xs uppercase tracking-widest" style={{ color: 'var(--text-paragraph)' }}>Label XS — tiny labels</p>
             </div>
           </Section>
 
           <Section title="Typography — CTA (Oxanium uppercase)">
             <div className="space-y-3">
-              <p className="text-cta-lg font-bold text-foreground">CTA LG — large buttons</p>
-              <p className="text-cta-md font-bold text-foreground">CTA MD — standard buttons</p>
-              <p className="text-cta-sm font-bold text-foreground">CTA SM — small buttons</p>
-              <p className="text-cta-xs font-bold text-foreground">CTA XS — tiny buttons</p>
+              <p className="text-cta-lg font-bold">CTA LG — large buttons</p>
+              <p className="text-cta-md font-bold">CTA MD — standard buttons</p>
+              <p className="text-cta-sm font-bold">CTA SM — small buttons</p>
+              <p className="text-cta-xs font-bold">CTA XS — tiny buttons</p>
             </div>
           </Section>
 
           <Section title="Typography — Time (Oxanium)">
             <div className="space-y-3">
-              <p className="text-time-xl font-bold text-foreground">12:34 — Time XL</p>
-              <p className="text-time-lg font-bold text-foreground">12:34 — Time LG</p>
+              <p className="text-time-xl font-bold">12:34 — Time XL</p>
+              <p className="text-time-lg font-bold">12:34 — Time LG</p>
             </div>
           </Section>
 
           {/* ─── COLORS ─── */}
           <Section title="Colors">
             <div className="grid grid-cols-4 gap-2">
-              <ColorSwatch name="orange" className="bg-clear-orange" />
-              <ColorSwatch name="lime" className="bg-clear-lime" />
-              <ColorSwatch name="purple" className="bg-clear-purple" />
-              <ColorSwatch name="accent" className="bg-accent" />
-              <ColorSwatch name="fg" className="bg-foreground" />
-              <ColorSwatch name="muted" className="bg-muted-foreground" />
-              <ColorSwatch name="bg" className="bg-background border border-muted-foreground/30" />
-              <ColorSwatch name="card" className="bg-card border border-muted-foreground/30" />
+              <ColorSwatch name="orange" style={{ backgroundColor: 'var(--color-orange-500)' }} />
+              <ColorSwatch name="lime" style={{ backgroundColor: 'var(--color-green-500)' }} />
+              <ColorSwatch name="purple" style={{ backgroundColor: 'var(--color-purple-500)' }} />
+              <ColorSwatch name="accent" style={{ backgroundColor: 'var(--color-blue-500)' }} />
+              <ColorSwatch name="fg" style={{ backgroundColor: 'var(--text-header)' }} />
+              <ColorSwatch name="muted" style={{ backgroundColor: 'var(--text-paragraph)' }} />
+              <ColorSwatch name="bg" style={{ backgroundColor: 'var(--color-neutral-900)', border: '1px solid var(--color-neutral-alpha-300)' }} />
+              <ColorSwatch name="card" style={{ backgroundColor: 'var(--surface-card)', border: '1px solid var(--color-neutral-alpha-300)' }} />
             </div>
           </Section>
 
@@ -346,10 +347,10 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
 
               <Subsection label="Default (with left accent column)">
                 <ChamferedCard>
-                  <p className="text-cta-sm font-medium text-foreground">
+                  <p className="text-cta-sm font-medium">
                     Universal Card
                   </p>
-                  <p className="text-paragraph-sm text-muted-foreground mt-1">
+                  <p className="text-paragraph-sm mt-1">
                     Uses ChamferedFrame + LeftColumn pattern
                   </p>
                 </ChamferedCard>
@@ -496,10 +497,10 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
             <div className="space-y-4">
               <Subsection label="ChamferedCard">
                 <ChamferedCard padding="md">
-                  <p className="text-cta-sm font-medium text-foreground">
+                  <p className="text-cta-sm font-medium">
                     Chamfered Card
                   </p>
-                  <p className="text-paragraph-sm text-muted-foreground mt-1">
+                  <p className="text-paragraph-sm mt-1">
                     Used throughout the app for content sections
                   </p>
                 </ChamferedCard>
@@ -582,11 +583,11 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
           {/* ═══ MUSEUM — Legacy components preserved for reference ═════════════ */}
           {/* ════════════════════════════════════════════════════════════════════ */}
 
-          <div className="mt-16 pt-8 border-t-2 border-muted-foreground/30">
-            <p className="text-label-lg text-muted-foreground uppercase tracking-widest mb-2">
+          <div className="mt-16 pt-8" style={{ borderTop: '2px solid var(--border-spacer)' }}>
+            <p className="text-label-lg uppercase tracking-widest mb-2" style={{ color: 'var(--text-disabled)' }}>
               Museum
             </p>
-            <p className="text-paragraph-sm text-muted-foreground mb-8">
+            <p className="text-paragraph-sm mb-8" style={{ color: 'var(--text-paragraph)' }}>
               Legacy shadcn/ui components preserved for reference. These are not used in the app and will be removed in a future cleanup.
             </p>
           </div>
@@ -619,15 +620,15 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
             <div className="space-y-4">
               <Subsection label="Slider">
                 <Slider value={sliderValue} onValueChange={setSliderValue} max={100} step={1} />
-                <p className="text-label-xs text-muted-foreground mt-1">Value: {sliderValue[0]}</p>
+                <p className="text-label-xs mt-1">Value: {sliderValue[0]}</p>
               </Subsection>
 
               <Subsection label="Switch">
                 <div className="flex items-center gap-4">
                   <Switch checked={switchOn} onCheckedChange={setSwitchOn} />
-                  <span className="text-paragraph-sm text-muted-foreground">{switchOn ? "On" : "Off"}</span>
+                  <span className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>{switchOn ? "On" : "Off"}</span>
                   <Switch disabled />
-                  <span className="text-paragraph-sm text-muted-foreground">Disabled</span>
+                  <span className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>Disabled</span>
                 </div>
               </Subsection>
             </div>
@@ -689,7 +690,7 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h2 className="text-label-xs uppercase tracking-widest text-clear-orange mb-3 pb-2" style={{ borderBottom: '2px solid var(--border-spacer)' }}>
+      <h2 className="text-label-xs uppercase tracking-widest mb-3 pb-2" style={{ color: 'var(--text-card-label)', borderBottom: '2px solid var(--border-spacer)' }}>
         {title}
       </h2>
       {children}
@@ -700,7 +701,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Subsection({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="text-label-xs uppercase tracking-widest text-muted-foreground mb-2" style={{ fontSize: '10px' }}>
+      <p className="text-label-xs uppercase tracking-widest mb-2" style={{ fontSize: '10px', color: 'var(--text-disabled)' }}>
         {label}
       </p>
       {children}
@@ -708,11 +709,11 @@ function Subsection({ label, children }: { label: string; children: React.ReactN
   );
 }
 
-function ColorSwatch({ name, className }: { name: string; className: string }) {
+function ColorSwatch({ name, style }: { name: string; style: React.CSSProperties }) {
   return (
     <div className="text-center">
-      <div className={`w-full aspect-square rounded ${className}`} />
-      <p className="text-label-xs text-muted-foreground mt-1" style={{ fontSize: '9px' }}>{name}</p>
+      <div className="w-full aspect-square" style={style} />
+      <p className="text-label-xs mt-1" style={{ fontSize: '9px', color: 'var(--text-disabled)' }}>{name}</p>
     </div>
   );
 }

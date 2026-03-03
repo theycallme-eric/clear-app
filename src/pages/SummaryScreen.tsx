@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Flame } from "lucide-react";
+import { Flame, Frown, Meh, Smile, SmilePlus, ThumbsDown } from "lucide-react";
 import { GeneratedWorkout, StreakData } from "@/types/workout";
 import { WorkoutNotes } from "./WorkoutScreen";
 import { cn } from "@/lib/utils";
 import { CTAButton } from "@/components/CTAButton";
 import { Card } from "@/components/Card";
+import { Textarea } from "@/components/ui/textarea";
 
 interface SummaryScreenProps {
   workout: GeneratedWorkout;
@@ -20,11 +21,11 @@ const formatDuration = (seconds: number): string => {
 };
 
 const MOOD_OPTIONS = [
-  { value: 1, emoji: "😫", label: "Exhausted" },
-  { value: 2, emoji: "😕", label: "Tough" },
-  { value: 3, emoji: "😐", label: "Okay" },
-  { value: 4, emoji: "🙂", label: "Good" },
-  { value: 5, emoji: "😀", label: "Great" },
+  { value: 1, icon: ThumbsDown, label: "Exhausted" },
+  { value: 2, icon: Frown, label: "Tough" },
+  { value: 3, icon: Meh, label: "Okay" },
+  { value: 4, icon: Smile, label: "Good" },
+  { value: 5, icon: SmilePlus, label: "Great" },
 ];
 
 export const SummaryScreen = ({
@@ -76,88 +77,122 @@ export const SummaryScreen = ({
     <div className="min-h-screen grain-overlay">
       <div className="max-w-md mx-auto px-4 py-8 pb-32">
         {/* Header */}
-        <h1 className="text-heading-h4 font-bold text-foreground uppercase tracking-wider mb-6">
+        <h1
+          className="text-heading-h4 font-bold uppercase tracking-wider mb-6"
+          style={{ color: 'var(--text-header)' }}
+        >
           Workout Complete
         </h1>
 
         {/* Celebration */}
         <div className="text-center mb-6">
-          <div className="text-6xl mb-2">🎉</div>
-          <h2 className="text-heading-h2 font-bold text-foreground uppercase tracking-wide">
+          <h2
+            className="text-heading-h2 font-bold uppercase tracking-wide"
+            style={{ color: 'var(--text-header)' }}
+          >
             Nice Work!
           </h2>
         </div>
 
         {/* Workout Summary Card */}
         <Card padding="md" className="mb-6 text-center">
-          <p className="text-heading-h5 font-medium text-foreground uppercase tracking-wide">
-            {workout.anchor} &bull; Intensity {workout.intensity}
+          <p
+            className="text-heading-h5 font-medium uppercase tracking-wide"
+            style={{ color: 'var(--text-header)' }}
+          >
+            {workout.goal ? `${workout.goal.replace('_', ' ')} · ` : ''}{workout.anchor} &bull; Intensity {workout.intensity}
           </p>
-          <p className="text-muted-foreground text-paragraph-sm mt-1">
+          <p className="text-paragraph-sm mt-1" style={{ color: 'var(--text-paragraph)' }}>
             {formatDuration(totalTime)} &bull; {workout.sections.length} sections
           </p>
         </Card>
 
         {/* Mood Tracker */}
         <div className="mb-6">
-          <h3 className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3">
+          <h3
+            className="text-label-xs uppercase tracking-widest mb-3"
+            style={{ color: 'var(--text-card-label)' }}
+          >
             How Do You Feel?
           </h3>
           <div className="flex justify-between gap-2">
-            {MOOD_OPTIONS.map((mood) => (
-              <button
-                key={mood.value}
-                onClick={() => setSelectedMood(mood.value)}
-                className={cn(
-                  "flex-1 py-3 text-2xl transition-all",
-                  selectedMood === mood.value
-                    ? "bg-clear-orange/20 border border-clear-orange scale-110"
-                    : "bg-transparent border border-transparent hover:bg-muted/20"
-                )}
-                aria-label={mood.label}
-              >
-                {mood.emoji}
-              </button>
-            ))}
+            {MOOD_OPTIONS.map((mood) => {
+              const Icon = mood.icon;
+              return (
+                <button
+                  key={mood.value}
+                  onClick={() => setSelectedMood(mood.value)}
+                  className={cn(
+                    "flex-1 py-3 flex items-center justify-center transition-all border",
+                  )}
+                  style={
+                    selectedMood === mood.value
+                      ? { backgroundColor: 'var(--surface-radio-selected)', borderColor: 'var(--border-radio-select)', color: 'var(--text-label-selected)' }
+                      : { backgroundColor: 'transparent', borderColor: 'transparent', color: 'var(--text-paragraph)' }
+                  }
+                  aria-label={mood.label}
+                >
+                  <Icon size={24} />
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {/* Session Notes */}
         <div className="mb-6">
-          <h3 className="text-label-xs uppercase tracking-widest text-muted-foreground mb-3">
+          <h3
+            className="text-label-xs uppercase tracking-widest mb-3"
+            style={{ color: 'var(--text-card-label)' }}
+          >
             Session Notes (Optional)
           </h3>
-          <Card padding="md">
-            <textarea
-              value={sessionNotes}
-              onChange={(e) => setSessionNotes(e.target.value)}
-              placeholder="Add any notes about this workout..."
-              className="w-full h-24 bg-transparent text-foreground placeholder:text-muted-foreground/50 resize-none focus:outline-none text-sm"
-            />
-          </Card>
+          <Textarea
+            value={sessionNotes}
+            onChange={(e) => setSessionNotes(e.target.value)}
+            placeholder="Add any notes about this workout..."
+            className="min-h-[96px]"
+          />
         </div>
 
         {/* Streak Update */}
         <Card padding="md">
-          <h3 className="text-label-xs uppercase tracking-widest text-muted-foreground mb-4">
+          <h3
+            className="text-label-xs uppercase tracking-widest mb-4"
+            style={{ color: 'var(--text-card-label)' }}
+          >
             Streak
           </h3>
 
           {/* Streak increment */}
           <div className="text-center mb-4">
-            <span className="text-heading-h2 font-bold text-muted-foreground">
+            <span
+              className="text-heading-h2 font-bold"
+              style={{ color: 'var(--text-disabled)' }}
+            >
               {streakData.currentStreak}
             </span>
-            <span className="text-heading-h2 font-bold text-clear-orange mx-2">
-              →
+            <span
+              className="text-heading-h2 font-bold mx-2"
+              style={{ color: 'var(--icon-badge)' }}
+            >
+              &rarr;
             </span>
-            <span className="text-heading-h1 font-bold text-foreground">
+            <span
+              className="text-heading-h1 font-bold"
+              style={{ color: 'var(--text-header)' }}
+            >
               {newStreak}
             </span>
-            <span className="text-2xl ml-2">
-              <Flame className="inline w-7 h-7 text-clear-orange" />
+            <span className="ml-2">
+              <Flame className="inline w-7 h-7" style={{ color: 'var(--icon-badge)' }} />
             </span>
-            <p className="text-label-sm text-muted-foreground mt-1">days</p>
+            <p
+              className="text-label-sm mt-1"
+              style={{ color: 'var(--text-paragraph)' }}
+            >
+              days
+            </p>
           </div>
 
           {/* Week view */}
@@ -166,18 +201,24 @@ export const SummaryScreen = ({
               <div key={index} className="flex flex-col items-center gap-1">
                 <div
                   className={cn(
-                    "w-9 h-9 flex items-center justify-center border transition-all",
-                    day.status === "workout"
-                      ? "bg-clear-lime/20 border-clear-lime text-clear-lime"
-                      : day.status === "rest"
-                      ? "bg-clear-purple/20 border-clear-purple text-clear-purple"
-                      : "bg-transparent border-muted-foreground/30 text-muted-foreground/50",
-                    day.isToday && "ring-2 ring-clear-orange ring-offset-1 ring-offset-background"
+                    "w-8 h-8 flex items-center justify-center border transition-all",
+                    day.isToday && "ring-2 ring-offset-1"
                   )}
+                  style={{
+                    ...(day.status === "workout"
+                      ? { backgroundColor: 'var(--color-green-alpha-200)', borderColor: 'var(--border-success)', color: 'var(--text-label-selected)' }
+                      : day.status === "rest"
+                      ? { backgroundColor: 'var(--color-blue-alpha-200)', borderColor: 'var(--border-info)', color: 'var(--icon-cta)' }
+                      : { backgroundColor: 'transparent', borderColor: 'var(--color-neutral-alpha-300)', color: 'var(--text-disabled)' }),
+                    ...(day.isToday ? { '--tw-ring-color': 'var(--border-card)', '--tw-ring-offset-color': 'var(--color-neutral-900)' } as React.CSSProperties : {}),
+                  }}
                 >
                   {day.status === "workout" ? "●" : day.status === "rest" ? "◐" : "○"}
                 </div>
-                <span className="text-label-xs text-muted-foreground">
+                <span
+                  className="text-label-xs"
+                  style={{ color: 'var(--text-disabled)' }}
+                >
                   {day.label}
                 </span>
               </div>
@@ -187,7 +228,10 @@ export const SummaryScreen = ({
       </div>
 
       {/* Fixed Bottom Action */}
-      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background to-transparent pt-8 pb-4 px-4">
+      <div
+        className="fixed bottom-0 left-0 right-0 pt-8 pb-4 px-4"
+        style={{ background: 'linear-gradient(to top, var(--color-neutral-900), var(--color-neutral-900) 60%, transparent)' }}
+      >
         <div className="max-w-md mx-auto">
           <CTAButton
             onClick={handleFinish}

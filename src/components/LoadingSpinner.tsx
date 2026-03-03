@@ -21,12 +21,16 @@ export const LoadingSpinner = ({ size = "md", className, message }: LoadingSpinn
     <div className={cn("flex items-center justify-center gap-2", className)}>
       <div
         className={cn(
-          "rounded-full border-muted-foreground/30 border-t-clear-orange animate-spin",
+          "rounded-full animate-spin",
           sizeClasses[size]
         )}
+        style={{
+          borderColor: 'var(--color-neutral-alpha-300)',
+          borderTopColor: 'var(--border-card)',
+        }}
       />
       {message && (
-        <span className="text-sm text-muted-foreground font-mono">{message}</span>
+        <span className="text-label-sm font-mono" style={{ color: 'var(--text-paragraph)' }}>{message}</span>
       )}
     </div>
   );

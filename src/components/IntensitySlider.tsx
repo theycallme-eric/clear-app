@@ -4,11 +4,14 @@ import { ChamferedFrame } from "./ChamferedFrame";
 interface IntensitySliderProps {
   value: number;
   onChange: (value: number) => void;
+  min?: number;
+  max?: number;
 }
 
-export const IntensitySlider = ({ value, onChange }: IntensitySliderProps) => {
-  // Calculate fill percentage for the track (1-10 scale)
-  const fillPercent = ((value - 1) / 9) * 100;
+export const IntensitySlider = ({ value, onChange, min = 1, max = 10 }: IntensitySliderProps) => {
+  // Calculate fill percentage based on dynamic range
+  const range = max - min;
+  const fillPercent = range > 0 ? ((value - min) / range) * 100 : 0;
 
   return (
     <Card cornerSize="md" padding="lg">
@@ -24,8 +27,8 @@ export const IntensitySlider = ({ value, onChange }: IntensitySliderProps) => {
           <div className="relative">
             <input
               type="range"
-              min="1"
-              max="10"
+              min={min}
+              max={max}
               value={value}
               onChange={(e) => onChange(parseInt(e.target.value))}
               className="intensity-slider w-full"
@@ -39,9 +42,10 @@ export const IntensitySlider = ({ value, onChange }: IntensitySliderProps) => {
             className="flex justify-between mt-2 text-label-xs"
             style={{ color: "var(--text-paragraph)" }}
           >
-            <span>1</span>
-            <span>5</span>
-            <span>10</span>
+            <span>{min}</span>
+            {/* Show midpoint label if range is wide enough */}
+            {range >= 4 && <span>{Math.round((min + max) / 2)}</span>}
+            <span>{max}</span>
           </div>
         </div>
 

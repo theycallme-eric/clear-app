@@ -27,13 +27,16 @@ export const EmptyState = ({
   return (
     <Card padding="lg" className={cn("text-center", className)}>
       {Icon && (
-        <Icon className="w-10 h-10 mx-auto mb-4 text-muted-foreground/50" />
+        <Icon className="w-10 h-10 mx-auto mb-4" style={{ color: 'var(--text-disabled)' }} />
       )}
-      <p className="text-heading-h5 font-medium text-foreground uppercase tracking-wide mb-1">
+      <p
+        className="text-heading-h5 font-medium uppercase tracking-wide mb-1"
+        style={{ color: 'var(--text-header)' }}
+      >
         {title}
       </p>
       {description && (
-        <p className="text-paragraph-sm text-muted-foreground mb-4">
+        <p className="text-paragraph-sm mb-4" style={{ color: 'var(--text-paragraph)' }}>
           {description}
         </p>
       )}

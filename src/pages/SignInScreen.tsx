@@ -69,18 +69,22 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
       {/* Header */}
       <button
         onClick={onBack}
-        className="flex items-center gap-2 text-foreground/70 hover:text-foreground transition-colors mb-8"
+        className="flex items-center gap-2 transition-colors mb-8"
+        style={{ color: 'var(--icon-cta)' }}
       >
         <ArrowLeft size={20} />
-        <span className="font-body">Back</span>
+        <span className="text-cta-sm">Back</span>
       </button>
 
       <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full">
         {/* Title */}
-        <h1 className="text-heading-h1 font-bold tracking-wider text-foreground mb-2">
+        <h1
+          className="text-heading-h1 font-bold tracking-wider mb-2"
+          style={{ color: 'var(--text-header)' }}
+        >
           Sign In
         </h1>
-        <p className="text-foreground/60 mb-8">
+        <p className="text-paragraph-sm mb-8" style={{ color: 'var(--text-paragraph)' }}>
           Welcome back to CLEAR
         </p>
 
@@ -89,7 +93,7 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
           <Card cornerSize="md" padding="md">
             {/* Email */}
             <div className="space-y-2 mb-4">
-              <label className="block text-paragraph-sm text-foreground">
+              <label className="block text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
                 Email
               </label>
               <Input
@@ -103,7 +107,7 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
 
             {/* Password */}
             <div className="space-y-2">
-              <label className="block text-paragraph-sm text-foreground">
+              <label className="block text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
                 Password
               </label>
               <Input
@@ -136,7 +140,7 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
                 }}
                 disabled={isLoading}
               />
-              <span className="text-paragraph-sm text-foreground/70">
+              <span className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
                 Stay logged in
               </span>
             </div>
@@ -144,7 +148,8 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
             <button
               type="button"
               onClick={onForgotPassword}
-              className="text-sm text-accent hover:text-accent/80 transition-colors"
+              className="text-cta-sm transition-colors"
+              style={{ color: 'var(--text-cta)' }}
             >
               Forgot password?
             </button>
