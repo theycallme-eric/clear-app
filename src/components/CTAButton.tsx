@@ -144,7 +144,7 @@ export function CTAButton({
         isPrimary ? [
           "[--btn-surface:var(--surface-cta-primary)]",
           "[--btn-border:var(--border-cta-primary)]",
-          "[--btn-accent:var(--surface-cta-accent)]",
+          "[--btn-accent:var(--surface-cta-primary-accent)]",
           // Hover state (when not disabled)
           !disabled && "hover:[--btn-surface:var(--surface-cta-primary-hover)]",
           !disabled && "hover:[--btn-border:var(--border-cta-primary-hover)]",

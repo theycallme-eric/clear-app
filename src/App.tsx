@@ -80,7 +80,7 @@ const App = () => (
         </HomeDataProvider>
       </BrowserRouter>
     </TooltipProvider>
-    <ReactQueryDevtools initialIsOpen={false} />
+    <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
   </QueryClientProvider>
 );
 

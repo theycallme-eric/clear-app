@@ -1,12 +1,15 @@
+import { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { CTAButton } from "@/components/CTAButton";
 import { Card } from "@/components/Card";
+import { RadioButton } from "@/components/RadioButton";
 import {
   UserPreferences,
   UserLocation,
   GOAL_PRESETS,
 } from "@/types/workout";
 import { toast } from "@/components/ui/sonner";
+import { getTheme, setTheme, type ThemeMode } from "@/lib/theme";
 
 interface SettingsHubProps {
   preferences: UserPreferences;
@@ -29,6 +32,13 @@ export const SettingsHub = ({
   onLaunchTestWorkout,
   onSignOutRequest,
 }: SettingsHubProps) => {
+  const [themeMode, setThemeMode] = useState<ThemeMode>(getTheme);
+
+  const handleThemeChange = (mode: ThemeMode) => {
+    setTheme(mode);
+    setThemeMode(mode);
+  };
+
   return (
     <div className="space-y-6">
       {/* Workout Setup Section */}
@@ -81,6 +91,27 @@ export const SettingsHub = ({
               <ChevronRight className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
             </div>
           </Card>
+        </div>
+      </div>
+
+      {/* Appearance Section */}
+      <div>
+        <p className="text-label-xs uppercase tracking-widest mb-3" style={{ color: 'var(--text-card-label)' }}>
+          Appearance
+        </p>
+        <div className="flex gap-2">
+          <RadioButton
+            selected={themeMode === 'orange'}
+            onClick={() => handleThemeChange('orange')}
+            label="Orange"
+            className="flex-1"
+          />
+          <RadioButton
+            selected={themeMode === 'blue'}
+            onClick={() => handleThemeChange('blue')}
+            label="Blue"
+            className="flex-1"
+          />
         </div>
       </div>
 

@@ -245,15 +245,16 @@
     /* Surfaces */
     --surface-card: var(--color-orange-alpha-100);
     --surface-card-accent: var(--color-orange-alpha-400);
-    --surface-cta: var(--color-orange-alpha-400);
-    --surface-cta-hover: var(--color-orange-alpha-600);
-    --surface-cta-accent: var(--color-orange-alpha-600);
-    /* CTA Button surfaces */
-    --surface-cta-primary: var(--color-orange-alpha-400);
-    --surface-cta-primary-hover: var(--color-orange-alpha-600);
+    --surface-cta: var(--color-blue-alpha-400);
+    --surface-cta-hover: var(--color-blue-alpha-600);
+    --surface-cta-accent: var(--color-blue-alpha-600);
+    /* CTA Button surfaces — primary uses complement (blue) for interaction */
+    --surface-cta-primary: var(--color-blue-alpha-400);
+    --surface-cta-primary-hover: var(--color-blue-alpha-600);
+    --surface-cta-primary-accent: var(--color-blue-alpha-600);
     --surface-cta-primary-disabled: var(--color-neutral-alpha-300);
-    --surface-cta-secondary: rgba(248, 120, 35, 0.05);
-    --surface-cta-secondary-hover: var(--color-orange-alpha-200);
+    --surface-cta-secondary: rgba(0, 169, 244, 0.05);
+    --surface-cta-secondary-hover: var(--color-blue-alpha-200);
     --surface-cta-secondary-disabled: rgba(114, 114, 116, 0.05);
     --surface-success: var(--color-green-alpha-600);
     --surface-success-accent: var(--color-green-alpha-800);
@@ -285,13 +286,13 @@
 
     /* Borders */
     --border-card: var(--color-orange-500);
-    --border-cta: var(--color-orange-500);
-    --border-cta-hover: var(--color-orange-400);
-    /* CTA Button borders */
-    --border-cta-primary: var(--color-orange-500);
-    --border-cta-primary-hover: var(--color-orange-400);
-    --border-cta-secondary: var(--color-orange-500);
-    --border-cta-secondary-hover: var(--color-orange-600);
+    --border-cta: var(--color-blue-500);
+    --border-cta-hover: var(--color-blue-400);
+    /* CTA Button borders — primary uses complement (blue) */
+    --border-cta-primary: var(--color-blue-500);
+    --border-cta-primary-hover: var(--color-blue-400);
+    --border-cta-secondary: var(--color-blue-500);
+    --border-cta-secondary-hover: var(--color-blue-600);
     --border-disabled: var(--color-neutral-400);
     --border-success: var(--color-green-500);
     --border-error: var(--color-red-500);
@@ -419,16 +420,17 @@
     /* Surfaces */
     --surface-card: var(--color-blue-alpha-100);
     --surface-card-accent: var(--color-blue-alpha-400);
-    --surface-cta: var(--color-blue-alpha-400);
-    --surface-cta-hover: var(--color-blue-alpha-600);
-    --surface-cta-accent: var(--color-blue-alpha-600);
+    --surface-cta: var(--color-orange-alpha-400);
+    --surface-cta-hover: var(--color-orange-alpha-600);
+    --surface-cta-accent: var(--color-orange-alpha-600);
     --surface-radio-unselect: var(--color-blue-alpha-100);
     --surface-radio-card-unselected: var(--color-blue-alpha-100);
-    /* CTA Button surfaces - blue theme */
-    --surface-cta-primary: var(--color-blue-alpha-400);
-    --surface-cta-primary-hover: var(--color-blue-alpha-600);
-    --surface-cta-secondary: rgba(0, 169, 244, 0.05);
-    --surface-cta-secondary-hover: var(--color-blue-alpha-200);
+    /* CTA Button surfaces - blue theme — primary uses complement (orange) */
+    --surface-cta-primary: var(--color-orange-alpha-400);
+    --surface-cta-primary-hover: var(--color-orange-alpha-600);
+    --surface-cta-primary-accent: var(--color-orange-alpha-600);
+    --surface-cta-secondary: rgba(248, 120, 35, 0.05);
+    --surface-cta-secondary-hover: var(--color-orange-alpha-200);
     --surface-cta-secondary-disabled: rgba(114, 114, 116, 0.05);
     /* Slider surfaces - blue theme */
     --surface-slider-thumb: var(--color-blue-alpha-900);
@@ -443,15 +445,15 @@
 
     /* Borders */
     --border-card: var(--color-blue-500);
-    --border-cta: var(--color-blue-500);
-    --border-cta-hover: var(--color-blue-600);
+    --border-cta: var(--color-orange-500);
+    --border-cta-hover: var(--color-orange-400);
     --border-radio-unselected: var(--color-blue-alpha-600);
     --border-radio-text-unselected: var(--color-blue-alpha-600);
-    /* CTA Button borders - blue theme */
-    --border-cta-primary: var(--color-blue-500);
-    --border-cta-primary-hover: var(--color-blue-400);
-    --border-cta-secondary: var(--color-blue-500);
-    --border-cta-secondary-hover: var(--color-blue-600);
+    /* CTA Button borders - blue theme — all CTAs use complement (orange) */
+    --border-cta-primary: var(--color-orange-500);
+    --border-cta-primary-hover: var(--color-orange-400);
+    --border-cta-secondary: var(--color-orange-500);
+    --border-cta-secondary-hover: var(--color-orange-600);
     /* Slider borders - blue theme */
     --border-slider: var(--color-blue-500);
     --border-slider-thumb: var(--color-blue-500);
@@ -802,8 +804,7 @@
      Uses currentColor so it adapts to the element's text color.
      Reference: Alien phosphor persistence, Eva active-status indicators. */
   .glow-emissive {
-    text-shadow: 0 0 8px currentColor, 0 0 24px currentColor;
-    filter: brightness(1.05);
+    text-shadow: 0 0 6px color-mix(in srgb, currentColor 25%, transparent);
   }
 
   /* Micro-pulse — barely perceptible brightness oscillation.
