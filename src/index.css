@@ -634,6 +634,25 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   }
 
+  /* Scan lines — faint horizontal lines over the entire display.
+     Creates "this is a CRT display, not a window" feeling.
+     Reference: Alien terminals, Cyberpunk 2077 panel overlays. */
+  .grain-overlay::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.025;
+    z-index: -1;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(255, 255, 255, 0.08) 2px,
+      rgba(255, 255, 255, 0.08) 4px
+    );
+  }
+
   /* Intensity Slider
      Figma specs: 4px track, 10px thumb, 2px padding, 1px border
      ========================================================================= */
@@ -776,6 +795,63 @@
 @layer utilities {
   .text-shadow-glow {
     text-shadow: 0 0 10px currentColor;
+  }
+
+  /* Emissive glow — subtle light emission on key data readouts.
+     Makes elements feel like they're generating light, not painted.
+     Uses currentColor so it adapts to the element's text color.
+     Reference: Alien phosphor persistence, Eva active-status indicators. */
+  .glow-emissive {
+    text-shadow: 0 0 8px currentColor, 0 0 24px currentColor;
+    filter: brightness(1.05);
+  }
+
+  /* Micro-pulse — barely perceptible brightness oscillation.
+     Enough to make structural elements feel powered on, not enough to
+     register consciously. Stepped to match mechanical motion language.
+     Reference: Star Wars indicator lights, Eva nominal-status pulses. */
+  .pulse-micro {
+    animation: micro-pulse 4s steps(2, end) infinite;
+  }
+
+  @keyframes micro-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+  }
+
+  /* Staggered reveal — children materialize in sequence on page load.
+     Mechanical timing: stepped, not smooth. Each child delays by one step.
+     Apply to a parent container. Children get stagger-delay via CSS var.
+     Reference: Alien character-by-character text, Blade Runner stepped zoom. */
+  .stagger-reveal > * {
+    animation: materialize 200ms steps(3, end) both;
+    animation-delay: calc(var(--stagger-index, 0) * 60ms);
+  }
+
+  .stagger-reveal > *:nth-child(1) { --stagger-index: 0; }
+  .stagger-reveal > *:nth-child(2) { --stagger-index: 1; }
+  .stagger-reveal > *:nth-child(3) { --stagger-index: 2; }
+  .stagger-reveal > *:nth-child(4) { --stagger-index: 3; }
+  .stagger-reveal > *:nth-child(5) { --stagger-index: 4; }
+  .stagger-reveal > *:nth-child(6) { --stagger-index: 5; }
+  .stagger-reveal > *:nth-child(7) { --stagger-index: 6; }
+  .stagger-reveal > *:nth-child(8) { --stagger-index: 7; }
+
+  @keyframes materialize {
+    0% {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Respect user preference — disable all atmospheric animations */
+  @media (prefers-reduced-motion: reduce) {
+    .pulse-micro { animation: none; }
+    .stagger-reveal > * { animation: none; }
   }
 
   /* =========================================================================

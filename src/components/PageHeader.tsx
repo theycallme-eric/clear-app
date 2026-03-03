@@ -64,7 +64,7 @@ export const PageHeader = ({
     if (center === 'logo') {
       return (
         <h1
-          className="text-heading-h2 font-bold tracking-wider"
+          className="text-heading-h2 font-bold tracking-wider glow-emissive"
           style={{ color: 'var(--text-header)' }}
         >
           CLEAR

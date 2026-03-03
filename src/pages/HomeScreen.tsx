@@ -125,7 +125,7 @@ export const HomeScreen = () => {
 
   return (
     <AppLayout header={<PageHeader right="menu" onMenu={() => navigate("/settings")} />}>
-      <div className="space-y-6">
+      <div className="space-y-6 stagger-reveal">
         <Card onClick={() => navigate("/generate")} padding="lg">
           <h2
             className="text-heading-h2 font-bold uppercase tracking-wider mb-2"
@@ -172,7 +172,7 @@ export const HomeScreen = () => {
           </h3>
 
           <div className="text-center mb-4">
-            <span className="text-heading-h1 font-bold" style={{ color: 'var(--text-header)' }}>
+            <span className="text-heading-h1 font-bold glow-emissive" style={{ color: 'var(--text-header)' }}>
               {streakData.currentStreak}
             </span>
             <span className="ml-2">

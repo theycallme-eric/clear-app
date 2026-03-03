@@ -40,7 +40,7 @@ export function LeftColumn({
 
   return (
     <div
-      className={cn("self-stretch shrink-0 border-2", className)}
+      className={cn("self-stretch shrink-0 border-2 pulse-micro", className)}
       style={{
         width,
         backgroundColor: surfaceColor,
