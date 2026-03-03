@@ -15,6 +15,7 @@ Execute a session plan from `.claude/plans/`.
 
 4. **Follow the skill steps:**
    - Load the plan and parse structure
+   - Create a working branch (`feature/[plan-name]`) or confirm existing branch
    - Read all context files
    - Map tasks to relevant skills
    - Initialize TodoWrite with all tasks

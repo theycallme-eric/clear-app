@@ -36,7 +36,31 @@ This skill takes a session plan and executes it task-by-task, loading relevant s
   - `## Context` — Files to read before starting
   - `## Tasks` — Work items with Do/Acceptance sections
 
-### 2. Load Context Files
+### 2. Create Working Branch
+
+Before loading context, ensure work happens on an isolated feature branch.
+
+1. **Derive branch name from plan filename:**
+   - `SESSION_PLAN_auth_refactor.md` → `feature/auth-refactor`
+   - Rule: drop `SESSION_PLAN_` prefix, replace underscores with hyphens, prepend `feature/`
+
+2. **Check current branch:**
+   - **On `main`:** Create and checkout the new branch from main
+     ```
+     git checkout -b feature/[derived-name]
+     ```
+   - **Already on the target branch:** Continue (resuming a prior session)
+   - **On a different feature branch:** Ask the user:
+     ```
+     You're currently on [current-branch]. Options:
+     1. Stay on this branch (work here instead)
+     2. Stash changes and switch to feature/[derived-name]
+     3. Abort — sort out branches manually
+     ```
+
+3. **Check working tree:** If there are uncommitted changes, warn the user and ask whether to stash, commit, or continue anyway.
+
+### 3. Load Context Files
 
 - Read every file listed in the plan's `## Context` section
 - Look for patterns like:
@@ -45,7 +69,7 @@ This skill takes a session plan and executes it task-by-task, loading relevant s
   - Any file paths mentioned
 - Build understanding before starting any work
 
-### 3. Map Tasks to Skills
+### 4. Map Tasks to Skills
 
 For each task, detect type keywords and load relevant skills:
 
@@ -61,7 +85,7 @@ Also check:
 - If task explicitly names a skill via `**Skill:**` field, load that
 - Consult `.claude/README.md` trigger table for additional mappings
 
-### 4. Initialize Progress Tracking
+### 5. Initialize Progress Tracking
 
 Use TodoWrite to create items for each task:
 
@@ -75,7 +99,7 @@ TodoWrite([
 
 All tasks start as `pending`.
 
-### 5. Execute Tasks Sequentially
+### 6. Execute Tasks Sequentially
 
 For each task:
 
@@ -85,7 +109,7 @@ For each task:
 4. **Execute the work** — Make the changes, create files, etc.
 5. **Check `**Acceptance:**` criteria** — Validate each criterion
 
-### 6. Validate Acceptance Criteria
+### 7. Validate Acceptance Criteria
 
 For each criterion in the task's `**Acceptance:**` section:
 
@@ -114,7 +138,7 @@ Options:
 - If skip: Note the skip, continue to next criterion/task
 - If pause: Save state, user can run `/execute` again to resume
 
-### 7. Complete Task
+### 8. Complete Task
 
 - Only mark `completed` in TodoWrite when:
   - ALL acceptance criteria pass, OR
@@ -122,7 +146,7 @@ Options:
 
 - Move to next task
 
-### 8. Close Session
+### 9. Close Session
 
 After all tasks complete:
 
@@ -179,6 +203,7 @@ After completion:
 
 - [ ] Plan file located and loaded
 - [ ] Session Goal understood
+- [ ] Working branch created or confirmed
 - [ ] Context files read
 - [ ] Tasks parsed with Do/Acceptance sections
 - [ ] Relevant skills pre-loaded based on task types
