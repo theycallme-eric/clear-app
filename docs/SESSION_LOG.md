@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-03-03 (2nd session)
+**Last Session:** 2026-03-03 (3rd session)
 
 ---
 
@@ -13,14 +13,66 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Navigation System Complete
-**Current Task:** Complete — Route transitions implemented, handoff written for vibe tuning session
-**Last Completed:** Phase 4 route transition animations (mechanical/stepped, design-philosophy-aligned)
+**Current Phase:** Vibe Tuning
+**Current Task:** Complete — atmosphere layers + theme toggle + CTA complement colors
+**Last Completed:** Theme mode toggle, CTA complement color fix, scan lines, glow, micro-pulse, stagger reveal
 **Blocking Issues:** Superset connector horizontal spacing needs fine-tuning (cosmetic)
 
 ---
 
 ## Session Entries
+
+### Session: 2026-03-03 - Vibe Tuning: Atmosphere, Theme Toggle, CTA Complement
+
+**Duration:** ~45 min
+**Mode:** Claude Code
+**Branch:** `feature/vibe-tuning`
+
+#### What Got Done
+- **Atmosphere layers** (per `design-philosophy.md`):
+  - Scan lines — `::after` pseudo on `.grain-overlay`, 2px repeating horizontal lines at 2.5% opacity
+  - Emissive glow — subtle `text-shadow` (25% currentColor) on CLEAR logo, timer display, streak number
+  - Micro-pulse — 4s stepped oscillation (100%→85% opacity) on card accent bars via LeftColumn
+  - Stagger reveal — children materialize in sequence (60ms delay, stepped timing) on Home, Generation, History screens
+- **Theme toggle**: Orange/Blue mode switcher in Settings → Appearance section. localStorage persistence via `src/lib/theme.ts`, applied before `createRoot()` to prevent flash
+- **CTA complement color fix**: All CTA buttons (primary + secondary) now use complement color — blue surfaces/borders/accents in orange mode, orange in blue mode. Per design philosophy: "theme color = structure, complement = interaction"
+- **Glow tuning**: Initial glow was too heavy (double shadow + brightness filter). Reduced to single shadow at 25% opacity — subtle phosphor persistence, not neon sign
+
+#### What Came Up (Unexpected)
+- Initial glow implementation looked cheap ("jr designer cranked up glow") — needed to be dialed way back. Lesson: atmospheric effects should be invisible until removed
+- CTA token fix required both primary AND secondary buttons — first pass only did primary, leaving secondary buttons still in theme color
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| localStorage only for theme (no DB) | Theme is a device-local visual preference, not a profile field |
+| `initTheme()` before `createRoot()` | Prevents flash of wrong theme on page load |
+| All CTA surfaces/borders → complement | Design philosophy: "Complement color = interaction. CTAs, buttons, links, tappable icons" |
+| Single text-shadow at 25% opacity | "Seasoning, not the main course" — glow should feel emissive, not decorative |
+| `steps(4, end)` for stagger reveal | Consistent with mechanical motion language throughout the app |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/index.css` | Modified — scan lines, glow utility, micro-pulse, stagger reveal, CTA token swaps (16 tokens) |
+| `src/lib/theme.ts` | Created — getTheme/setTheme/initTheme with localStorage |
+| `src/main.tsx` | Modified — import initTheme, call before render |
+| `src/components/CTAButton.tsx` | Modified — primary accent uses `--surface-cta-primary-accent` |
+| `src/components/PageHeader.tsx` | Modified — glow-emissive on CLEAR logo |
+| `src/components/TimerDisplay.tsx` | Modified — glow-emissive on timer text |
+| `src/components/LeftColumn.tsx` | Modified — pulse-micro on accent bars |
+| `src/pages/HomeScreen.tsx` | Modified — glow-emissive on streak, stagger-reveal on content |
+| `src/pages/GenerationScreen.tsx` | Modified — stagger-reveal on content |
+| `src/pages/HistoryScreen.tsx` | Modified — stagger-reveal on content |
+| `src/pages/settings/SettingsHub.tsx` | Modified — Appearance section with Orange/Blue RadioButtons |
+| `src/App.tsx` | Modified — ReactQueryDevtools moved to bottom-left |
+
+#### Status
+- Build passes, TypeScript compiles cleanly
+- 2 commits on `feature/vibe-tuning`, not yet pushed
+- Ready for PR or continued screen-by-screen tuning in next session
+
+---
 
 ### Session: 2026-03-03 - Navigation System: Route Transitions (Phase 4)
 
