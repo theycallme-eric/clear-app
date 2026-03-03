@@ -555,7 +555,16 @@
     position: relative;
   }
 
-  /* Background layers: gradient image -> dark overlay -> grain (grain on top) */
+  /* =====================================================================
+     BACKGROUND SYSTEM
+     Layer stack (back to front):
+       z-index -4: Static PNG fallback (prefers-reduced-motion only)
+       z-index -3: Animated gradient blobs (AnimatedBackground component)
+       z-index -2: Dark overlay (body::after)
+       z-index -1: Grain + scanlines (grain-overlay pseudo-elements)
+     ===================================================================== */
+
+  /* Static PNG — hidden by default, shown for reduced-motion users */
   body::before {
     content: '';
     position: fixed;
@@ -563,7 +572,20 @@
     background-image: url('./assets/bg-mobile.png');
     background-size: cover;
     background-position: center;
-    z-index: -3;
+    z-index: -4;
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    body::before {
+      background-image: url('./assets/bg-desktop.png');
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body::before {
+      display: block;
+    }
   }
 
   /* Dark overlay on top of gradient */
@@ -575,10 +597,175 @@
     z-index: -2;
   }
 
+  /* =====================================================================
+     ANIMATED BACKGROUND BLOBS
+     Rendered by <AnimatedBackground /> component.
+     Uses CSS transforms for GPU-accelerated smooth drift.
+     ===================================================================== */
+  .bg-animated-layer {
+    position: fixed;
+    inset: 0;
+    z-index: -3;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .bg-blob {
+    position: absolute;
+    border-radius: 50%;
+    will-change: transform;
+  }
+
+  /* --- Mobile first (portrait viewports) --- */
+  .bg-blob-amber {
+    width: 250vw;
+    height: 80vh;
+    top: -25%;
+    left: -75%;
+    background: radial-gradient(
+      ellipse closest-side,
+      rgba(255, 191, 61, 0.40) 0%,
+      rgba(255, 191, 61, 0.15) 40%,
+      transparent 70%
+    );
+    animation: bg-drift-amber-mobile 15s ease-in-out infinite alternate;
+  }
+
+  .bg-blob-blue {
+    width: 250vw;
+    height: 90vh;
+    bottom: -30%;
+    right: -75%;
+    background: radial-gradient(
+      ellipse closest-side,
+      rgba(1, 71, 111, 0.65) 0%,
+      rgba(1, 71, 111, 0.25) 45%,
+      transparent 75%
+    );
+    animation: bg-drift-blue-mobile 17.5s ease-in-out infinite alternate;
+  }
+
+  .bg-blob-cyan {
+    width: 250vw;
+    height: 60vh;
+    bottom: -10%;
+    left: -75%;
+    background: radial-gradient(
+      ellipse closest-side,
+      rgba(43, 163, 231, 0.18) 0%,
+      rgba(43, 163, 231, 0.06) 45%,
+      transparent 70%
+    );
+    animation: bg-drift-cyan-mobile 12.5s ease-in-out infinite alternate;
+  }
+
+  .bg-blob-dark {
+    width: 160vw;
+    height: 70vh;
+    top: -5%;
+    left: -20%;
+    background: radial-gradient(
+      ellipse closest-side,
+      rgba(10, 10, 10, 0.6) 0%,
+      rgba(23, 23, 23, 0.3) 50%,
+      transparent 80%
+    );
+    animation: bg-drift-dark-mobile 20s ease-in-out infinite alternate;
+  }
+
+  /* Mobile drift keyframes (% units scale to blob size) */
+  @keyframes bg-drift-amber-mobile {
+    0%   { transform: translate(0, 0) scale(1); }
+    33%  { transform: translate(5%, 4%) scale(1.05); }
+    66%  { transform: translate(-3%, 8%) scale(0.97); }
+    100% { transform: translate(8%, -2%) scale(1.03); }
+  }
+
+  @keyframes bg-drift-blue-mobile {
+    0%   { transform: translate(0, 0) scale(1); }
+    33%  { transform: translate(-4%, -3%) scale(1.04); }
+    66%  { transform: translate(3%, -6%) scale(0.96); }
+    100% { transform: translate(-6%, 2%) scale(1.06); }
+  }
+
+  @keyframes bg-drift-cyan-mobile {
+    0%   { transform: translate(0, 0) scale(1); }
+    50%  { transform: translate(8%, -5%) scale(1.08); }
+    100% { transform: translate(4%, 4%) scale(0.95); }
+  }
+
+  @keyframes bg-drift-dark-mobile {
+    0%   { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(4%, 3%) scale(1.04); }
+  }
+
+  /* --- Desktop (768px+) — vmax sizing for wide viewports --- */
   @media (min-width: 768px) {
-    body::before {
-      background-image: url('./assets/bg-desktop.png');
+    .bg-blob-amber {
+      width: 120vmax;
+      height: 100vmax;
+      top: -40%;
+      left: -30%;
+      animation-name: bg-drift-amber-desktop;
     }
+
+    .bg-blob-blue {
+      width: 130vmax;
+      height: 110vmax;
+      bottom: -45%;
+      right: -35%;
+      top: auto;
+      left: auto;
+      animation-name: bg-drift-blue-desktop;
+    }
+
+    .bg-blob-cyan {
+      width: 80vmax;
+      height: 70vmax;
+      bottom: auto;
+      top: 10%;
+      left: -15%;
+      animation-name: bg-drift-cyan-desktop;
+    }
+
+    .bg-blob-dark {
+      width: 100vmax;
+      height: 80vmax;
+      top: -10%;
+      left: -5%;
+      animation-name: bg-drift-dark-desktop;
+    }
+  }
+
+  /* Desktop drift keyframes (vw/vh for proportional movement) */
+  @keyframes bg-drift-amber-desktop {
+    0%   { transform: translate(0, 0) scale(1); }
+    33%  { transform: translate(8vw, 3vh) scale(1.05); }
+    66%  { transform: translate(-3vw, 6vh) scale(0.97); }
+    100% { transform: translate(12vw, -2vh) scale(1.03); }
+  }
+
+  @keyframes bg-drift-blue-desktop {
+    0%   { transform: translate(0, 0) scale(1); }
+    33%  { transform: translate(-6vw, -4vh) scale(1.04); }
+    66%  { transform: translate(4vw, -8vh) scale(0.96); }
+    100% { transform: translate(-10vw, 2vh) scale(1.06); }
+  }
+
+  @keyframes bg-drift-cyan-desktop {
+    0%   { transform: translate(0, 0) scale(1); }
+    50%  { transform: translate(10vw, -6vh) scale(1.08); }
+    100% { transform: translate(5vw, 5vh) scale(0.95); }
+  }
+
+  @keyframes bg-drift-dark-desktop {
+    0%   { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(5vw, 4vh) scale(1.04); }
+  }
+
+  /* Reduced motion: hide blobs, show static PNG */
+  @media (prefers-reduced-motion: reduce) {
+    .bg-animated-layer { display: none; }
   }
 }
 
@@ -644,7 +831,7 @@
     position: fixed;
     inset: 0;
     pointer-events: none;
-    opacity: 0.025;
+    opacity: 0.10;
     z-index: -1;
     background: repeating-linear-gradient(
       to bottom,
