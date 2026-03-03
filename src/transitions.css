@@ -1,0 +1,110 @@
+/* =============================================================================
+   ROUTE TRANSITION ANIMATIONS
+
+   Design philosophy: "Mechanical, not organic. Stepped, not eased. Linear, not
+   springy. Brief mechanical transitions (150-200ms)."
+
+   Applied by RouteTransition component. Enter-only — old page unmounts
+   immediately, new page materializes in.
+   ============================================================================= */
+
+:root {
+  --transition-duration: 150ms;
+  --transition-duration-mode: 180ms;
+  --transition-easing: linear;
+  --transition-steps: steps(4, end);
+}
+
+/* --- Forward (stepped shift from right) ---------------------------------- */
+@keyframes shift-in-right {
+  0% {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.route-enter-forward {
+  animation: shift-in-right var(--transition-duration) var(--transition-steps) both;
+}
+
+/* --- Back (stepped shift from left) -------------------------------------- */
+@keyframes shift-in-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.route-enter-back {
+  animation: shift-in-left var(--transition-duration) var(--transition-steps) both;
+}
+
+/* --- Workout entry (mechanical shift up — entering focused mode) --------- */
+@keyframes shift-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.route-enter-up {
+  animation: shift-in-up var(--transition-duration-mode) var(--transition-steps) both;
+}
+
+/* --- Workout exit (mechanical shift down — leaving focused mode) --------- */
+@keyframes shift-in-down {
+  0% {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.route-enter-down {
+  animation: shift-in-down var(--transition-duration-mode) var(--transition-steps) both;
+}
+
+/* --- Hard cut with brief flash (summary → home, debrief complete) -------- */
+@keyframes cut-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.route-enter-fade {
+  animation: cut-in var(--transition-duration) var(--transition-easing) both;
+}
+
+/* --- No animation -------------------------------------------------------- */
+.route-enter-none {
+  /* Instant — no animation applied */
+}
+
+/* --- Respect user preference --------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .route-enter-forward,
+  .route-enter-back,
+  .route-enter-up,
+  .route-enter-down,
+  .route-enter-fade {
+    animation: none;
+  }
+}

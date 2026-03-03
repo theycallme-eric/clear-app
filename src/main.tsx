@@ -4,6 +4,7 @@ import App from "./App.tsx";
 import { AuthProvider } from "./contexts/AuthContext";
 import { AppErrorFallback } from "./components/AppErrorFallback";
 import "./index.css";
+import "./transitions.css";
 
 createRoot(document.getElementById("root")!).render(
   <ErrorBoundary fallbackRender={AppErrorFallback}>

@@ -3,6 +3,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { RouteErrorFallback } from '@/components/RouteErrorFallback';
+import { RouteTransition } from '@/components/RouteTransition';
 
 /**
  * Wraps authenticated routes. Redirects to /welcome if unauthenticated,
@@ -26,7 +27,9 @@ export function ProtectedRoute() {
 
   return (
     <ErrorBoundary fallbackRender={RouteErrorFallback} resetKeys={[location.pathname]}>
-      <Outlet />
+      <RouteTransition>
+        <Outlet />
+      </RouteTransition>
     </ErrorBoundary>
   );
 }
@@ -52,7 +55,9 @@ export function PublicOnlyRoute() {
 
   return (
     <ErrorBoundary fallbackRender={RouteErrorFallback} resetKeys={[location.pathname]}>
-      <Outlet />
+      <RouteTransition>
+        <Outlet />
+      </RouteTransition>
     </ErrorBoundary>
   );
 }
@@ -79,7 +84,9 @@ export function OnboardingRoute() {
 
   return (
     <ErrorBoundary fallbackRender={RouteErrorFallback} resetKeys={[location.pathname]}>
-      <Outlet />
+      <RouteTransition>
+        <Outlet />
+      </RouteTransition>
     </ErrorBoundary>
   );
 }
