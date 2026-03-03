@@ -2,7 +2,10 @@
 // Queries for workout history and streak calculation
 
 import { supabase } from './supabase';
+import { logger } from './logger';
+import { DB_TO_SECTION } from './section-mapping';
 import type { WorkoutHistoryEntry, StreakData, AnchorType } from '@/types/workout';
+import type { Database } from '@/types/database';
 
 /**
  * Fetch recent workout history for the current user
@@ -17,7 +20,7 @@ export async function fetchWorkoutHistory(limit: number = 10): Promise<WorkoutHi
     .limit(limit);
 
   if (error) {
-    console.error('Error fetching workout history:', error);
+    logger.data.error('fetchWorkoutHistory failed', { error: error.message });
     return [];
   }
 
@@ -55,7 +58,7 @@ export async function fetchStreakData(): Promise<StreakData> {
     .order('date', { ascending: false });
 
   if (error) {
-    console.error('Error fetching streak data:', error);
+    logger.data.error('fetchStreakData failed', { error: error.message });
     return { currentStreak: 0, lastWorkoutDate: null, weekView: {} };
   }
 
@@ -156,6 +159,31 @@ export async function fetchStreakData(): Promise<StreakData> {
 }
 
 /**
+ * Check for an incomplete (started but not finished) workout session
+ */
+export async function fetchIncompleteSession(userId: string): Promise<{ id: string; date: string } | null> {
+  const { data: incomplete } = await supabase
+    .from('workout_sessions')
+    .select('id, date')
+    .eq('user_id', userId)
+    .eq('is_rest_day', false)
+    .is('completed_at', null)
+    .order('created_at', { ascending: false })
+    .limit(1);
+
+  if (incomplete && incomplete.length > 0) {
+    const session = incomplete[0];
+    const dateStr = new Date(session.date + 'T00:00:00').toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
+    return { id: session.id, date: dateStr };
+  }
+
+  return null;
+}
+
+/**
  * Fetch full workout detail (sections + exercises) for a specific session
  */
 export async function fetchWorkoutDetail(sessionId: string): Promise<import('@/types/workout').WorkoutHistoryEntry | null> {
@@ -166,7 +194,7 @@ export async function fetchWorkoutDetail(sessionId: string): Promise<import('@/t
     .single();
 
   if (error || !session) {
-    console.error('Error fetching workout detail:', error);
+    logger.data.error('fetchWorkoutDetail failed', { error: error.message });
     return null;
   }
 
@@ -178,7 +206,7 @@ export async function fetchWorkoutDetail(sessionId: string): Promise<import('@/t
     .order('order_index', { ascending: true });
 
   if (sectionsError) {
-    console.error('Error fetching sections:', sectionsError);
+    logger.data.error('fetchWorkoutDetail sections failed', { error: sectionsError.message });
   }
 
   // Map section type to display name
@@ -199,8 +227,8 @@ export async function fetchWorkoutDetail(sessionId: string): Promise<import('@/t
     id: section.id,
     name: sectionNameMap[section.section_type] || section.section_type,
     exercises: (section.exercises || [])
-      .sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0))
-      .map((ex: any) => ({
+      .sort((a: { order_index?: number }, b: { order_index?: number }) => (a.order_index || 0) - (b.order_index || 0))
+      .map((ex: Database['public']['Tables']['exercises']['Row']) => ({
         id: ex.id,
         name: ex.exercise_id?.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()) || 'Unknown',
         sets: ex.sets || 1,
@@ -239,7 +267,7 @@ export async function fetchUserPreferences(): Promise<import('@/types/workout').
     .single();
 
   if (error) {
-    console.error('Error fetching profile:', error);
+    logger.data.error('fetchUserPreferences failed', { error: error.message });
     return null;
   }
 
@@ -249,29 +277,17 @@ export async function fetchUserPreferences(): Promise<import('@/types/workout').
     .eq('user_id', user.id);
 
   if (locError) {
-    console.error('Error fetching locations:', locError);
+    logger.data.error('fetchUserPreferences locations failed', { error: locError.message });
   }
 
   // Map database section types back to frontend types
-  const sectionTypeMap: Record<string, import('@/types/workout').SectionType> = {
-    warmup: 'warmup',
-    mobility: 'mobility',
-    primary_lift: 'primary',
-    accessory: 'accessory',
-    skill_power: 'skill',
-    carries: 'carries',
-    core: 'core',
-    stability_balance: 'stability',
-    conditioning: 'conditioning',
-    cooldown: 'cooldown',
-  };
-
   const enabledSections = (profile.enabled_sections || []).map(
-    (s: string) => sectionTypeMap[s] || s
+    (s: string) => DB_TO_SECTION[s] || s
   ) as import('@/types/workout').SectionType[];
 
   // Map locations from database format to frontend format
-  const locations = (locationData || []).map((loc: any) => ({
+  type LocationRow = Database['public']['Tables']['locations']['Row'];
+  const locations = (locationData || []).map((loc: LocationRow) => ({
     id: loc.id,
     name: loc.name,
     tier: loc.tier as import('@/types/workout').EquipmentTier,

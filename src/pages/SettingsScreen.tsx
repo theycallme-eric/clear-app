@@ -1,12 +1,8 @@
 import { useState } from "react";
-import { ArrowLeft, ChevronRight, ChevronDown, ChevronUp, Check } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
+import { PageHeader } from "@/components/PageHeader";
+import { AppLayout } from "@/layouts";
 import { CTAButton } from "@/components/CTAButton";
-import { Card } from "@/components/Card";
-import { Chip } from "@/components/Chip";
-import { RadioButton } from "@/components/RadioButton";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   UserPreferences,
   UserLocation,
@@ -14,21 +10,15 @@ import {
   GoalPreset,
   SectionType,
   EQUIPMENT_BY_TIER,
-  GOAL_PRESETS,
-  WORKOUT_SECTIONS,
   SECTIONS_BY_GOAL,
 } from "@/types/workout";
 import { toast } from "@/components/ui/sonner";
 import { SignOutConfirmModal } from "@/components/SignOutConfirmModal";
-
-interface SettingsScreenProps {
-  userPreferences: UserPreferences;
-  onSavePreferences: (preferences: UserPreferences) => void;
-  onBack: () => void;
-  onOpenDeveloper?: () => void;
-  onLaunchTestWorkout?: () => void;
-  onSignOut: () => void;
-}
+import { SettingsHub } from "@/pages/settings/SettingsHub";
+import { LocationList, LocationEditor } from "@/pages/settings/LocationSettings";
+import { StructureSettings } from "@/pages/settings/StructureSettings";
+import { LimitationsSettings } from "@/pages/settings/LimitationsSettings";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 type SettingsView =
   | "hub"
@@ -38,21 +28,32 @@ type SettingsView =
   | "structure"
   | "limitations";
 
-const TIER_OPTIONS: { value: EquipmentTier; label: string; description: string }[] = [
-  { value: 'minimal', label: 'Minimal', description: 'Bodyweight, bands, mat' },
-  { value: 'home', label: 'Home Gym', description: 'Dumbbells, bench, basics' },
-  { value: 'building', label: 'Building Gym', description: 'Rack, barbell, dumbbells' },
-  { value: 'full', label: 'Full Gym', description: 'Commercial, everything' },
-];
+export const SettingsScreen = () => {
+  const navigate = useNavigate();
+  const { profile, locations, updateProfile, updateLocations, signOut } = useAuthContext();
 
-export const SettingsScreen = ({
-  userPreferences,
-  onSavePreferences,
-  onBack,
-  onOpenDeveloper,
-  onLaunchTestWorkout,
-  onSignOut,
-}: SettingsScreenProps) => {
+  // Build preferences from AuthContext
+  const userPreferences: UserPreferences = {
+    onboardingComplete: profile?.onboardingComplete || false,
+    locations,
+    defaultLocationId: profile?.defaultLocationId || null,
+    experienceLevel: profile?.experienceLevel || null,
+    goal: profile?.goal || null,
+    sections: profile?.enabledSections || [],
+    limitations: profile?.limitations || '',
+  };
+
+  const handleSavePreferences = async (newPreferences: UserPreferences) => {
+    await updateProfile({
+      experienceLevel: newPreferences.experienceLevel,
+      goal: newPreferences.goal,
+      limitations: newPreferences.limitations,
+      enabledSections: newPreferences.sections,
+      defaultLocationId: newPreferences.defaultLocationId,
+    });
+    await updateLocations(newPreferences.locations);
+  };
+
   const [currentView, setCurrentView] = useState<SettingsView>("hub");
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const [preferences, setPreferences] = useState<UserPreferences>({ ...userPreferences });
@@ -159,7 +160,7 @@ export const SettingsScreen = ({
       defaultLocationId: preferences.defaultLocationId || newLocation.id,
     };
     setPreferences(updatedPrefs);
-    onSavePreferences(updatedPrefs);
+    handleSavePreferences(updatedPrefs);
     toast.success(editingLocationId ? "Location updated" : "Location added");
     setCurrentView("locations");
   };
@@ -182,7 +183,7 @@ export const SettingsScreen = ({
       defaultLocationId: newDefaultId,
     };
     setPreferences(updatedPrefs);
-    onSavePreferences(updatedPrefs);
+    handleSavePreferences(updatedPrefs);
     toast.success("Location deleted");
     setCurrentView("locations");
   };
@@ -194,7 +195,7 @@ export const SettingsScreen = ({
       defaultLocationId: locationId,
     };
     setPreferences(updatedPrefs);
-    onSavePreferences(updatedPrefs);
+    handleSavePreferences(updatedPrefs);
   };
 
   // Save workout structure
@@ -205,7 +206,7 @@ export const SettingsScreen = ({
       sections: selectedSections,
     };
     setPreferences(updatedPrefs);
-    onSavePreferences(updatedPrefs);
+    handleSavePreferences(updatedPrefs);
     toast.success("Workout structure updated");
     setCurrentView("hub");
   };
@@ -217,7 +218,7 @@ export const SettingsScreen = ({
       limitations: limitations,
     };
     setPreferences(updatedPrefs);
-    onSavePreferences(updatedPrefs);
+    handleSavePreferences(updatedPrefs);
     toast.success("Limitations updated");
     setCurrentView("hub");
   };
@@ -231,7 +232,7 @@ export const SettingsScreen = ({
   const handleBack = () => {
     switch (currentView) {
       case "hub":
-        onBack();
+        navigate("/");
         break;
       case "editLocation":
       case "addLocation":
@@ -254,504 +255,123 @@ export const SettingsScreen = ({
     }
   };
 
+  // Navigate to structure view with fresh state from preferences
+  const navigateToStructure = () => {
+    setSelectedGoal(preferences.goal);
+    setSelectedSections([...preferences.sections]);
+    setSectionsAccordionOpen(false);
+    setLegendOpen(false);
+    setCurrentView("structure");
+  };
+
+  // Navigate to limitations view with fresh state from preferences
+  const navigateToLimitations = () => {
+    setLimitations(preferences.limitations);
+    setCurrentView("limitations");
+  };
+
   // Get default location
   const defaultLocation = preferences.locations.find(loc => loc.id === preferences.defaultLocationId);
 
-  return (
-    <div className="min-h-screen grain-overlay">
-      <div className="max-w-md mx-auto pb-32">
-        {/* Header */}
-        <header className="flex items-center justify-between px-4 py-4">
-          <button
-            onClick={handleBack}
-            className="p-2 hover:opacity-80 transition-colors"
-            style={{ color: 'var(--icon-cta)' }}
-            aria-label="Back"
-          >
-            <ArrowLeft size={24} />
-          </button>
-          <h1 className="text-heading-h4 font-bold tracking-wider uppercase" style={{ color: 'var(--text-header)' }}>
-            {getTitle()}
-          </h1>
-          <div className="w-10" />
-        </header>
-
-        <div className="px-4">
-          {/* Settings Hub */}
-          {currentView === "hub" && (
-            <div className="space-y-6">
-              {/* Workout Setup Section */}
-              <div>
-                <p className="text-label-xs uppercase tracking-widest mb-3" style={{ color: 'var(--text-card-label)' }}>
-                  Workout Setup
-                </p>
-                <div className="space-y-2">
-                  {/* Locations */}
-                  <Card onClick={() => setCurrentView("locations")} padding="md">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-label-sm uppercase" style={{ color: 'var(--text-header)' }}>
-                          Locations / Equipment
-                        </p>
-                        <p className="text-paragraph-sm mt-0.5" style={{ color: 'var(--text-paragraph)' }}>
-                          {defaultLocation?.name || "Not set"}
-                        </p>
-                      </div>
-                      <ChevronRight className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
-                    </div>
-                  </Card>
-
-                  {/* Workout Structure */}
-                  <Card
-                    onClick={() => {
-                      setSelectedGoal(preferences.goal);
-                      setSelectedSections([...preferences.sections]);
-                      setSectionsAccordionOpen(false);
-                      setLegendOpen(false);
-                      setCurrentView("structure");
-                    }}
-                    padding="md"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-label-sm uppercase" style={{ color: 'var(--text-header)' }}>
-                          Workout Structure
-                        </p>
-                        <p className="text-paragraph-sm mt-0.5" style={{ color: 'var(--text-paragraph)' }}>
-                          {GOAL_PRESETS.find(g => g.value === preferences.goal)?.label || "Not set"} • {preferences.sections.length} sections
-                        </p>
-                      </div>
-                      <ChevronRight className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
-                    </div>
-                  </Card>
-
-                  {/* Limitations */}
-                  <Card
-                    onClick={() => {
-                      setLimitations(preferences.limitations);
-                      setCurrentView("limitations");
-                    }}
-                    padding="md"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-label-sm uppercase" style={{ color: 'var(--text-header)' }}>
-                          Limitations
-                        </p>
-                        <p className="text-paragraph-sm mt-0.5 truncate max-w-[250px]" style={{ color: 'var(--text-paragraph)' }}>
-                          {preferences.limitations ? `"${preferences.limitations.slice(0, 30)}${preferences.limitations.length > 30 ? '...' : ''}"` : "None set"}
-                        </p>
-                      </div>
-                      <ChevronRight className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
-                    </div>
-                  </Card>
-                </div>
-              </div>
-
-              {/* About Section */}
-              <div>
-                <p className="text-label-xs uppercase tracking-widest mb-3" style={{ color: 'var(--text-card-label)' }}>
-                  About
-                </p>
-                <div className="space-y-2">
-                  <Card onClick={() => toast.info("Feedback form coming soon!")} padding="md">
-                    <div className="flex items-center justify-between">
-                      <p className="text-label-sm uppercase" style={{ color: 'var(--text-header)' }}>
-                        Send Feedback
-                      </p>
-                      <ChevronRight className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
-                    </div>
-                  </Card>
-
-                  <Card padding="md">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-label-sm uppercase" style={{ color: 'var(--text-header)' }}>
-                          About Clear
-                        </p>
-                        <p className="text-paragraph-sm mt-0.5" style={{ color: 'var(--text-paragraph)' }}>
-                          Version 1.0.0
-                        </p>
-                      </div>
-                    </div>
-                  </Card>
-                </div>
-              </div>
-
-              {/* Developer Section */}
-              {(onOpenDeveloper || onLaunchTestWorkout) && (
-                <div>
-                  <p className="text-label-xs uppercase tracking-widest mb-3" style={{ color: 'var(--text-card-label)' }}>
-                    Developer
-                  </p>
-                  <div className="space-y-2">
-                    {onOpenDeveloper && (
-                      <Card onClick={onOpenDeveloper} padding="md">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-label-sm uppercase" style={{ color: 'var(--text-header)' }}>
-                              Component Gallery
-                            </p>
-                            <p className="text-paragraph-sm mt-0.5" style={{ color: 'var(--text-paragraph)' }}>
-                              Audit design system components
-                            </p>
-                          </div>
-                          <ChevronRight className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
-                        </div>
-                      </Card>
-                    )}
-                    {onLaunchTestWorkout && (
-                      <Card onClick={onLaunchTestWorkout} padding="md">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-label-sm uppercase" style={{ color: 'var(--text-header)' }}>
-                              Test Workout
-                            </p>
-                            <p className="text-paragraph-sm mt-0.5" style={{ color: 'var(--text-paragraph)' }}>
-                              All structure types in one session
-                            </p>
-                          </div>
-                          <ChevronRight className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
-                        </div>
-                      </Card>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Sign Out */}
-              <div
-                className="pt-4"
-                style={{ '--text-cta': 'var(--color-red-400)', '--text-cta-hover': 'var(--color-red-300)' } as React.CSSProperties}
-              >
-                <CTAButton
-                  onClick={() => setShowSignOutConfirm(true)}
-                  variant="secondary"
-                  size="md"
-                  fullWidth
-                >
-                  Sign Out
-                </CTAButton>
-              </div>
-            </div>
-          )}
-
-          {/* Locations List */}
-          {currentView === "locations" && (
-            <div className="space-y-4">
-              <Card cornerSize="md" padding="md">
-                <p className="text-label-xs uppercase tracking-widest mb-4" style={{ color: 'var(--text-card-label)' }}>
-                  Default Location
-                </p>
-                <div className="flex flex-col gap-2">
-                  {preferences.locations.map((location) => {
-                    // Filter out Bodyweight and take first 3 items for display
-                    const displayEquipment = location.equipment
-                      .filter(e => e !== 'Bodyweight')
-                      .slice(0, 3);
-                    const remainingCount = location.equipment.length - displayEquipment.length - (location.equipment.includes('Bodyweight') ? 1 : 0);
-                    const equipmentDesc = displayEquipment.join(', ') +
-                      (remainingCount > 0 ? ` +${remainingCount} more` : '');
-
-                    return (
-                      <RadioButton
-                        key={location.id}
-                        selected={preferences.defaultLocationId === location.id}
-                        onClick={() => setDefaultLocation(location.id)}
-                        label={location.name}
-                        description={equipmentDesc}
-                        className="w-full"
-                        onEdit={() => startEditLocation(location)}
-                      />
-                    );
-                  })}
-                </div>
-              </Card>
-
-              <Card onClick={startAddLocation} padding="md" className="text-center">
-                <span className="text-label-sm" style={{ color: 'var(--icon-cta)' }}>
-                  + Add Location
-                </span>
-              </Card>
-            </div>
-          )}
-
-          {/* Edit/Add Location */}
-          {(currentView === "editLocation" || currentView === "addLocation") && (
-            <div className="space-y-6">
-              <Card cornerSize="md" padding="md">
-                {/* Location Name */}
-                <div className="space-y-2 mb-6">
-                  <label className="block text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
-                    Location Name
-                  </label>
-                  <Input
-                    value={locationName}
-                    onChange={(e) => setLocationName(e.target.value)}
-                    placeholder="My Gym"
-                  />
-                </div>
-
-                {/* Equipment Type */}
-                <div className="mb-4">
-                  <p className="text-label-xs uppercase tracking-widest mb-2" style={{ color: 'var(--text-card-label)' }}>
-                    Equipment Type
-                  </p>
-                  <div className="flex flex-col gap-2">
-                    {TIER_OPTIONS.map((tier) => (
-                      <RadioButton
-                        key={tier.value}
-                        selected={selectedTier === tier.value}
-                        onClick={() => handleTierSelect(tier.value)}
-                        label={tier.label}
-                        description={tier.description}
-                        className="w-full"
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Customize Equipment Accordion */}
-                <div className="pt-4 -mx-4 px-4" style={{ borderTop: '2px solid var(--border-spacer)' }}>
-                  <button
-                    onClick={() => setEquipmentAccordionOpen(!equipmentAccordionOpen)}
-                    className="w-full flex items-center justify-between"
-                  >
-                    <span className="text-cta-sm font-medium" style={{ color: 'var(--text-header)' }}>
-                      Customize Equipment
-                    </span>
-                    {equipmentAccordionOpen ? (
-                      <ChevronUp className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
-                    ) : (
-                      <ChevronDown className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
-                    )}
-                  </button>
-
-                  {equipmentAccordionOpen && (
-                    <div className="pt-4">
-                      <div className="flex flex-wrap gap-2">
-                        {EQUIPMENT_BY_TIER.full.map((equipment) => {
-                          const isSelected = selectedEquipment.includes(equipment);
-                          const isBodyweight = equipment === 'Bodyweight';
-
-                          return (
-                            <Chip
-                              key={equipment}
-                              variant="selectable"
-                              selected={isSelected}
-                              onClick={() => handleEquipmentToggle(equipment)}
-                              disabled={isBodyweight}
-                            >
-                              {equipment}
-                            </Chip>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </Card>
-
-              {/* Delete Location (only for editing existing) */}
-              {currentView === "editLocation" && preferences.locations.length > 1 && (
-                <CTAButton
-                  onClick={deleteLocation}
-                  variant="secondary"
-                  size="md"
-                  fullWidth
-                  className="[--btn-text:theme(colors.rose.500)]"
-                >
-                  Delete Location
-                </CTAButton>
-              )}
-            </div>
-          )}
-
-          {/* Workout Structure */}
-          {currentView === "structure" && (
-            <div className="space-y-6">
-              <Card cornerSize="md" padding="md">
-                {/* Goal Selection */}
-                <div className="mb-4">
-                  <p className="text-label-xs uppercase tracking-widest mb-2" style={{ color: 'var(--text-card-label)' }}>
-                    Goal
-                  </p>
-                  <div className="flex flex-col gap-2">
-                    {GOAL_PRESETS.map((preset) => (
-                      <RadioButton
-                        key={preset.value}
-                        selected={selectedGoal === preset.value}
-                        onClick={() => handleGoalSelect(preset.value)}
-                        label={preset.label}
-                        description={preset.description}
-                        className="w-full"
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Sections Accordion */}
-                {selectedGoal && (
-                  <div className="pt-4 -mx-4 px-4" style={{ borderTop: '2px solid var(--border-spacer)' }}>
-                    <button
-                      onClick={() => setSectionsAccordionOpen(!sectionsAccordionOpen)}
-                      className="w-full flex items-center justify-between"
-                    >
-                      <span className="text-cta-sm font-medium" style={{ color: 'var(--text-header)' }}>
-                        Customize Sections
-                      </span>
-                      {sectionsAccordionOpen ? (
-                        <ChevronUp className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
-                      ) : (
-                        <ChevronDown className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
-                      )}
-                    </button>
-
-                    {sectionsAccordionOpen && (
-                      <div className="pt-4 space-y-4">
-                      <div className="flex flex-wrap gap-2">
-                        {WORKOUT_SECTIONS.map((section) => {
-                          const isSelected = selectedSections.includes(section.id);
-                          const isAccessory = section.id === 'accessory';
-                          const primaryOff = !selectedSections.includes('primary');
-                          const isDisabled = isAccessory && primaryOff;
-
-                          return (
-                            <button
-                              key={section.id}
-                              onClick={() => !isDisabled && handleSectionToggle(section.id)}
-                              disabled={isDisabled}
-                              className={cn(
-                                "px-2 py-1 text-label-xs uppercase tracking-wide transition-all",
-                                isSelected
-                                  ? "border text-[var(--text-label-selected)] border-[var(--border-chip-selected)] bg-[var(--color-green-alpha-200)]"
-                                  : isDisabled
-                                  ? "bg-transparent border border-[var(--text-disabled)] border-opacity-20 cursor-not-allowed"
-                                  : "bg-transparent border border-[var(--text-disabled)] border-opacity-30 hover:border-[var(--border-chip)]"
-                              )}
-                              style={
-                                !isSelected
-                                  ? isDisabled
-                                    ? { color: 'var(--text-disabled)', opacity: 0.4 }
-                                    : { color: 'var(--text-disabled)' }
-                                  : undefined
-                              }
-                            >
-                              {isSelected && <Check className="w-3 h-3 inline mr-1" />}
-                              {section.name}
-                            </button>
-                          );
-                        })}
-                      </div>
-
-                      {/* Legend */}
-                      <button
-                        onClick={() => setLegendOpen(!legendOpen)}
-                        className="w-full flex items-center justify-between text-cta-sm transition-colors"
-                        style={{ color: 'var(--text-cta)' }}
-                      >
-                        <span>What do these mean?</span>
-                        {legendOpen ? (
-                          <ChevronUp className="w-4 h-4" style={{ color: 'var(--icon-cta)' }} />
-                        ) : (
-                          <ChevronDown className="w-4 h-4" style={{ color: 'var(--icon-cta)' }} />
-                        )}
-                      </button>
-
-                      {legendOpen && (
-                        <div className="space-y-3 pt-2" style={{ borderTop: '2px solid var(--border-spacer)' }}>
-                          {WORKOUT_SECTIONS.map((section) => (
-                            <div key={section.id}>
-                              <p className="text-label-xs uppercase tracking-wide" style={{ color: 'var(--text-card-label)' }}>
-                                {section.name}
-                              </p>
-                              <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
-                                {section.description}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  </div>
-                )}
-              </Card>
-            </div>
-          )}
-
-          {/* Limitations */}
-          {currentView === "limitations" && (
-            <div className="space-y-6">
-              <Card cornerSize="md" padding="md">
-                <div className="mb-4">
-                  <h2 className="text-heading-h4 font-bold uppercase tracking-wider" style={{ color: 'var(--text-header)' }}>
-                    Anything We Should<br />Work Around?
-                  </h2>
-                  <p className="text-paragraph-sm mt-2" style={{ color: 'var(--text-paragraph)' }}>
-                    Old injuries, problem areas, or movements you want to avoid.
-                  </p>
-                </div>
-
-                <Textarea
-                  value={limitations}
-                  onChange={(e) => setLimitations(e.target.value)}
-                  placeholder="Bad left shoulder from years ago. Overhead press feels sketchy sometimes."
-                  className="min-h-[120px]"
-                />
-              </Card>
-
-              {limitations && (
-                <CTAButton
-                  onClick={clearLimitations}
-                  variant="secondary"
-                  size="sm"
-                  fullWidth
-                >
-                  Clear All
-                </CTAButton>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Fixed Bottom Save Button */}
-        {(currentView === "editLocation" || currentView === "addLocation" ||
-          currentView === "structure" || currentView === "limitations") && (
-          <div
-            className="fixed bottom-0 left-0 right-0 p-4"
-            style={{ background: 'linear-gradient(to top, var(--color-neutral-900), var(--color-neutral-900) 60%, transparent)' }}
-          >
-            <div className="max-w-md mx-auto">
-              <CTAButton
-                onClick={() => {
-                  if (currentView === "editLocation" || currentView === "addLocation") {
-                    saveLocation();
-                  } else if (currentView === "structure") {
-                    saveStructure();
-                  } else if (currentView === "limitations") {
-                    saveLimitations();
-                  }
-                }}
-                size="lg"
-                fullWidth
-              >
-                Save
-              </CTAButton>
-            </div>
-          </div>
-        )}
+  const saveFooter = (currentView === "editLocation" || currentView === "addLocation" ||
+    currentView === "structure" || currentView === "limitations") ? (
+    <div
+      className="fixed bottom-0 left-0 right-0 p-4"
+      style={{ background: 'linear-gradient(to top, var(--color-neutral-900), var(--color-neutral-900) 60%, transparent)' }}
+    >
+      <div className="max-w-md mx-auto">
+        <CTAButton
+          onClick={() => {
+            if (currentView === "editLocation" || currentView === "addLocation") {
+              saveLocation();
+            } else if (currentView === "structure") {
+              saveStructure();
+            } else if (currentView === "limitations") {
+              saveLimitations();
+            }
+          }}
+          size="lg"
+          fullWidth
+        >
+          Save
+        </CTAButton>
       </div>
+    </div>
+  ) : undefined;
+
+  return (
+    <AppLayout
+      header={<PageHeader left="back" onBack={handleBack} center={getTitle()} />}
+      footer={saveFooter}
+    >
+      {currentView === "hub" && (
+        <SettingsHub
+          preferences={preferences}
+          defaultLocation={defaultLocation}
+          onNavigateLocations={() => setCurrentView("locations")}
+          onNavigateStructure={navigateToStructure}
+          onNavigateLimitations={navigateToLimitations}
+          onOpenDeveloper={() => navigate("/dev/gallery")}
+          onLaunchTestWorkout={() => navigate("/dev/test-workout")}
+          onSignOutRequest={() => setShowSignOutConfirm(true)}
+        />
+      )}
+
+      {currentView === "locations" && (
+        <LocationList
+          preferences={preferences}
+          onSetDefault={setDefaultLocation}
+          onEditLocation={startEditLocation}
+          onAddLocation={startAddLocation}
+        />
+      )}
+
+      {(currentView === "editLocation" || currentView === "addLocation") && (
+        <LocationEditor
+          isEditing={currentView === "editLocation"}
+          locationName={locationName}
+          onLocationNameChange={setLocationName}
+          selectedTier={selectedTier}
+          onTierSelect={handleTierSelect}
+          selectedEquipment={selectedEquipment}
+          onEquipmentToggle={handleEquipmentToggle}
+          equipmentAccordionOpen={equipmentAccordionOpen}
+          onToggleEquipmentAccordion={() => setEquipmentAccordionOpen(!equipmentAccordionOpen)}
+          canDelete={preferences.locations.length > 1}
+          onDelete={deleteLocation}
+        />
+      )}
+
+      {currentView === "structure" && (
+        <StructureSettings
+          selectedGoal={selectedGoal}
+          onGoalSelect={handleGoalSelect}
+          selectedSections={selectedSections}
+          onSectionToggle={handleSectionToggle}
+          sectionsAccordionOpen={sectionsAccordionOpen}
+          onToggleSectionsAccordion={() => setSectionsAccordionOpen(!sectionsAccordionOpen)}
+          legendOpen={legendOpen}
+          onToggleLegend={() => setLegendOpen(!legendOpen)}
+        />
+      )}
+
+      {currentView === "limitations" && (
+        <LimitationsSettings
+          limitations={limitations}
+          onLimitationsChange={setLimitations}
+          onClear={clearLimitations}
+        />
+      )}
 
       {showSignOutConfirm && (
         <SignOutConfirmModal
           onConfirm={() => {
             setShowSignOutConfirm(false);
-            onSignOut();
+            signOut();
           }}
           onCancel={() => setShowSignOutConfirm(false)}
         />
       )}
-    </div>
+    </AppLayout>
   );
 };

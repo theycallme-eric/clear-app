@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-02-27
+**Last Session:** 2026-03-03 (2nd session)
 
 ---
 
@@ -13,14 +13,210 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Design System Hardening
-**Current Task:** Complete
-**Last Completed:** History system research & favorite/redo feature scoping
+**Current Phase:** Navigation System Complete
+**Current Task:** Complete — Route transitions implemented, handoff written for vibe tuning session
+**Last Completed:** Phase 4 route transition animations (mechanical/stepped, design-philosophy-aligned)
 **Blocking Issues:** Superset connector horizontal spacing needs fine-tuning (cosmetic)
 
 ---
 
 ## Session Entries
+
+### Session: 2026-03-03 - Navigation System: Route Transitions (Phase 4)
+
+**Duration:** ~30 min
+**Mode:** Claude Code
+**Branch:** `feature/codebase-streamline` (uncommitted — ready to stage)
+
+#### What Got Done
+- **Route transition animations**: Created `transitions.css` with 5 animation types: forward (shift right), back (shift left), workout entry (shift up), workout exit (shift down), and hard cut (opacity). All aligned with design philosophy — `steps(4, end)` timing, `linear` easing, 150-180ms durations
+- **Transition direction hook**: `useTransitionDirection.ts` tracks previous vs current pathname, uses route depth map for forward/back inference, special-case overrides for workout entry/exit and summary→home
+- **RouteTransition wrapper**: Component keyed by pathname, applies correct CSS class. Wired into all 3 route guards (`ProtectedRoute`, `PublicOnlyRoute`, `OnboardingRoute`)
+- **Design philosophy compliance**: Initial implementation used smooth ease-out curves and 300ms crossfades. After reading `design-philosophy.md`, rewrote to use stepped timing functions, linear easing, smaller translate distances, and tighter durations to match the "mechanical, not organic" directive
+- **Vibe tuning handoff**: Created `SESSION_PLAN_vibe_tuning.md` with tuning areas (timing, distances, step count, atmosphere layers, progressive reveal), key file map, and acceptance criteria
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| `steps(4, end)` timing function | Design philosophy: "Ratcheting, discrete steps" not "continuous fluid interpolation" |
+| 150ms standard / 180ms mode transitions | Design philosophy: "Brief mechanical transitions (150-200ms)" |
+| 16px translate distance (not 30px) | Smaller distance with stepped timing reads as mechanical shift, not fluid slide |
+| Hard cut for summary→home (not crossfade) | Design philosophy: "Hard cuts between states (for speed)" not "slow crossfades" |
+| Enter-only animations (no exit) | Old page unmounts immediately in React Router — exit animations would require keeping stale component mounted |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/transitions.css` | Created — keyframes + CSS variables for 5 animation types + prefers-reduced-motion |
+| `src/hooks/useTransitionDirection.ts` | Created — route depth map, special cases, CSS class resolver |
+| `src/components/RouteTransition.tsx` | Created — pathname-keyed animation wrapper |
+| `src/routes/guards.tsx` | Modified — wrapped `<Outlet />` with `<RouteTransition>` in all 3 guards |
+| `src/main.tsx` | Modified — imported `transitions.css` |
+| `.claude/plans/SESSION_PLAN_vibe_tuning.md` | Created — handoff for next session |
+
+#### Status
+- TypeScript compiles cleanly, build passes
+- Changes uncommitted on `feature/codebase-streamline` branch
+- Handoff prompt written for vibe tuning session
+
+---
+
+### Session: 2026-03-03 - Infrastructure: Error Boundaries, React Query, Tests
+
+**Duration:** ~1.5 hours
+**Mode:** Claude Code
+**Branch:** `feature/codebase-streamline` → PR #7 (updated)
+
+#### What Got Done
+- **Error boundaries**: Installed `react-error-boundary`. Created two-layer system: `AppErrorFallback` (catastrophic crash screen with design tokens, dev-only error details) wrapping AuthProvider in `main.tsx`, and `RouteErrorFallback` (uses AppLayout + ErrorState with retry/navigate) wrapping Outlet in all three route guards with `resetKeys={[location.pathname]}` for auto-clear on navigation
+- **React Query activation**: Configured `QueryClient` with 5min staleTime, 10min gcTime, retry:1, refetchOnWindowFocus:false. Created `lib/query-keys.ts` factory. Rewrote `useHomeData` from useState/useEffect/mountedRef to three `useQuery` calls — `loadHomeData()` now calls `invalidateQueries`, `clearIncompleteSession()` uses `setQueryData(key, null)`. Removed auto-fetch `useEffect` from `HomeDataContext` (React Query's `enabled` flag handles it). Migrated `SessionDetailScreen` data fetch to `useQuery`. Added `@tanstack/react-query-devtools`
+- **Dead code cleanup**: Confirmed `Index.tsx`, `useAppNavigation.ts`, `useHistoryDetail.ts` already deleted from previous session. Removed obsolete "Index.tsx Monolith" constraint from CLAUDE.md
+- **Test infrastructure**: Installed vitest + @testing-library/react + jest-dom + user-event + jsdom. Created `vitest.config.ts`, `test/setup.ts` (jest-dom + ResizeObserver polyfill), `test/test-utils.tsx` (custom render with QueryClientProvider + MemoryRouter). Added `test` and `test:run` scripts to package.json
+- **28 foundational tests across 4 files**: `ErrorState.test.tsx` (5 — render, retry, click), `workout-api.test.ts` (10 — isGenerationError type guard + transformAPIWorkoutToFrontend mapping), `guards.test.tsx` (9 — all redirect/render scenarios for 3 guards), `home-data.test.ts` (4 — error resilience + data mapping)
+
+#### What Came Up (Unexpected)
+- `ResizeObserver is not defined` in jsdom — `ChamferedFrame` (used by `Card`, used by `ErrorState`) relies on ResizeObserver. Fixed with polyfill stub in test setup
+- Dead code files were already deleted in working tree from previous session but not yet committed — just needed staging
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Two-layer error boundary (app + route) | App-level catches provider/router failures where components can't render; route-level uses existing UI chrome |
+| `resetKeys={[location.pathname]}` on route boundaries | Auto-clears error state when user navigates away — no stale error screens |
+| 5min staleTime, 10min gcTime for React Query | Mobile-app feel: data stays fresh during a session, doesn't refetch on every navigation, but cleans up after idle |
+| `refetchOnWindowFocus: false` | Mobile PWA — tab switching shouldn't trigger refetches |
+| ResizeObserver stub (not full polyfill) | Tests only need to not crash; actual resize behavior is visual and not under test |
+| Preserved useHomeData return shape exactly | Zero changes needed in consumers (HomeScreen, HistoryScreen, SummaryScreen, WorkoutFlowContext) |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/components/AppErrorFallback.tsx` | Created — full-screen dark crash page with design tokens |
+| `src/components/RouteErrorFallback.tsx` | Created — route-level fallback using AppLayout + ErrorState |
+| `src/main.tsx` | Modified — wrapped with ErrorBoundary + AppErrorFallback |
+| `src/routes/guards.tsx` | Modified — wrapped Outlet in each guard with ErrorBoundary |
+| `src/lib/query-keys.ts` | Created — centralized query key factory |
+| `src/hooks/useHomeData.ts` | Rewritten — useState/useEffect → three useQuery calls |
+| `src/contexts/HomeDataContext.tsx` | Modified — removed auto-fetch useEffect |
+| `src/App.tsx` | Modified — configured QueryClient defaults, added ReactQueryDevtools |
+| `src/pages/SessionDetailScreen.tsx` | Modified — useState/useEffect → useQuery |
+| `vitest.config.ts` | Created — jsdom, globals, @ alias, setup file |
+| `src/test/setup.ts` | Created — jest-dom matchers + ResizeObserver polyfill |
+| `src/test/test-utils.tsx` | Created — custom render with QueryClient + MemoryRouter |
+| `src/components/ErrorState.test.tsx` | Created — 5 tests |
+| `src/lib/workout-api.test.ts` | Created — 10 tests |
+| `src/routes/guards.test.tsx` | Created — 9 tests |
+| `src/lib/home-data.test.ts` | Created — 4 tests |
+| `CLAUDE.md` | Modified — removed Index.tsx constraint, updated SPA architecture note |
+| `package.json` | Modified — added test deps + scripts |
+
+#### Status
+- Build passes, TypeScript compiles cleanly, 28 tests pass
+- PR #7 updated with new commit, pushed to remote
+- Code review: 0 critical issues, ready for merge
+
+---
+
+### Session: 2026-03-03 - Session Awareness Hook + Auto-Branching
+
+**Duration:** ~20 min
+**Mode:** Claude Code
+**Branch:** `feature/session-awareness` → PR #8
+
+#### What Got Done
+- **SessionStart hook**: Created `.claude/hooks/session-start-check.sh` that runs when a new Claude Code session opens. Detects uncommitted files, feature branches with unpushed commits, and stashed changes. Outputs a summary so Claude can relay it to the user; silent on clean start.
+- **Auto-branching in /execute**: Added Step 2 ("Create Working Branch") to `execute-plan.md` skill. Derives branch name from plan filename (`SESSION_PLAN_auth_refactor.md` → `feature/auth-refactor`), handles three cases (on main, already on target, on different branch), warns about dirty working tree.
+- **Documentation updates**: Added hook to `.claude/settings.json`, updated `.claude/README.md` registry (hooks table + file structure), updated `.claude/commands/execute.md` flow summary.
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| SessionStart hook (not manual check) | Passive awareness — user sees in-progress work automatically without remembering to check |
+| Branch derived from plan filename | Consistent naming, no user input needed, easy to match branches back to plans |
+| Three-case branch handling (main/target/other) | Covers fresh start, resume, and conflict scenarios without losing work |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `.claude/hooks/session-start-check.sh` | Created — SessionStart awareness script |
+| `.claude/settings.json` | Modified — added SessionStart hook config |
+| `.claude/skills/execute-plan.md` | Modified — added Step 2: Create Working Branch, renumbered steps 3-9 |
+| `.claude/commands/execute.md` | Modified — mentioned branch creation in flow |
+| `.claude/README.md` | Modified — added hook to registry table and file structure |
+
+#### Status
+- PR #8 created on `feature/session-awareness` branch
+- Code review passed (0 issues)
+- All changes are .claude/ config and documentation — no source code changes
+
+---
+
+### Session: 2026-03-03 - Codebase Streamline
+
+**Duration:** ~2 hours
+**Mode:** Claude Code
+**Branch:** `feature/codebase-streamline` → PR #7
+
+#### What Got Done
+- **TypeScript strict mode**: Enabled `strict: true`, `noUnusedLocals`, `noUnusedParameters`, `noFallthroughCasesInSwitch`. Fixed ~14 type errors with proper solutions — zero `as any` or `@ts-ignore` escape hatches
+- **Real bug found**: Strict mode surfaced `anchor: 'rest'` in Index.tsx — 'rest' is not a valid `anchor_type` enum, this insert would fail at DB level. Fixed to `'full_body'`
+- **Logger standardization**: Replaced all `console.error/log/warn` in hooks and lib files with structured `logger.*` calls. Added ESLint `no-console` rule to prevent regression
+- **Supabase call extraction**: Moved direct `supabase.from()` calls from hooks to `lib/workout-api.ts` and `lib/home-data.ts`. Hooks now import zero supabase dependencies
+- **God file splits**:
+  - `useWorkoutFlow.ts` (297→38 lines) → orchestrator + `useWorkoutGeneration.ts` (199) + `useWorkoutSession.ts` (125)
+  - `SettingsScreen.tsx` (757→388 lines) → router + `SettingsHub.tsx` (174) + `LocationSettings.tsx` (194) + `StructureSettings.tsx` (144) + `LimitationsSettings.tsx` (48)
+  - `SectionRenderer.tsx` (569→216 lines) → dispatcher + `TimedRenderer.tsx` (330) + `SupersetRenderer.tsx` (27) + `CircuitRenderer.tsx` (27) + `LadderRenderer.tsx` (58)
+- **Gallery Museum**: Audited all gallery components for app usage. Moved ActionButton and ActionCard to Museum section. Added CLAUDE.md rule: Museum items must never be used as inspiration for new UI
+- **Cleanup**: Removed unused `next-themes` dependency, renamed hook files to camelCase, consolidated duplicate section-type mappings into `lib/section-mapping.ts`, removed unused exports
+
+#### What Came Up (Unexpected)
+- Strict mode revealed a real runtime bug (`anchor: 'rest'` invalid enum) — not just type noise
+- ActionButton (241 lines of code) was only ever used in ComponentGallery — a full duplicate of CTAButton that was never wired into the actual app
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Zero escape hatches for strict mode | Proper type fixes prevent real bugs; `as any` just hides them |
+| Keep god files as thin orchestrators after split | Preserves public API — no changes needed in consumers |
+| Museum = read-only history, never inspiration | Prevents accidental use of legacy patterns in new UI work |
+| Don't delete legacy components | Keep as "where we came from" reference in Museum section |
+| ESLint no-console rule (warn level) | Catches regressions without breaking builds; allows `console.warn` |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `tsconfig.app.json` | Modified — enabled strict mode and lint flags |
+| `src/vite-env.d.ts` | Created — Vite type declarations for `import.meta.env` |
+| `src/types/workout.ts` | Modified — added WorkoutParams, WorkoutNotes types |
+| `src/types/database.ts` | Regenerated — includes new migrations |
+| `src/lib/section-mapping.ts` | Created — consolidated SECTION_TO_DB/DB_TO_SECTION |
+| `src/lib/workout-api.ts` | Modified — type fixes, added completeWorkoutSession() |
+| `src/lib/home-data.ts` | Modified — type fixes, logger migration, added fetchIncompleteSession() |
+| `src/contexts/AuthContext.tsx` | Modified — proper DB types, logger, section-mapping import |
+| `src/hooks/useWorkoutFlow.ts` | Modified — thin 38-line orchestrator |
+| `src/hooks/useWorkoutGeneration.ts` | Created — generation logic extracted |
+| `src/hooks/useWorkoutSession.ts` | Created — session lifecycle extracted |
+| `src/hooks/useHomeData.ts` | Modified — uses lib functions, no supabase import |
+| `src/hooks/useOnboardingFlow.ts` | Modified — logger migration |
+| `src/hooks/useHistoryDetail.ts` | Modified — logger migration |
+| `src/hooks/useAppNavigation.ts` | Modified — removed unused export |
+| `src/hooks/useMobile.ts` | Renamed from use-mobile.tsx |
+| `src/hooks/useToast.ts` | Renamed from use-toast.ts |
+| `src/pages/SettingsScreen.tsx` | Modified — router shell (757→388 lines) |
+| `src/pages/settings/*.tsx` | Created — 4 sub-screen files |
+| `src/components/workout/SectionRenderer.tsx` | Modified — dispatcher (569→216 lines) |
+| `src/components/workout/{Timed,Superset,Circuit,Ladder}Renderer.tsx` | Created — 4 renderer files |
+| `src/pages/ComponentGallery.tsx` | Modified — moved ActionButton/ActionCard to Museum |
+| `CLAUDE.md` | Modified — added Museum rule |
+| `eslint.config.js` | Modified — added no-console rule |
+| `package.json` | Modified — removed next-themes |
+
+#### Status
+- Build passes, types compile cleanly
+- PR #7 open for review
+- 46 files changed, +2090 / -1375 lines
+
+---
 
 ### Session: 2026-02-27 - History System Research & Favorite/Redo Scoping
 

@@ -1,10 +1,15 @@
 import { createRoot } from "react-dom/client";
+import { ErrorBoundary } from "react-error-boundary";
 import App from "./App.tsx";
 import { AuthProvider } from "./contexts/AuthContext";
+import { AppErrorFallback } from "./components/AppErrorFallback";
 import "./index.css";
+import "./transitions.css";
 
 createRoot(document.getElementById("root")!).render(
-  <AuthProvider>
-    <App />
-  </AuthProvider>
+  <ErrorBoundary fallbackRender={AppErrorFallback}>
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  </ErrorBoundary>
 );

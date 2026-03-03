@@ -1,16 +1,13 @@
 import { useState } from "react";
-import { ArrowLeft, Menu, Clock, ChevronDown, Dumbbell } from "lucide-react";
-import { WorkoutHistoryEntry, MovementPattern } from "@/types/workout";
+import { useNavigate } from "react-router-dom";
+import { Clock, ChevronDown, Dumbbell } from "lucide-react";
+import { PageHeader } from "@/components/PageHeader";
+import { AppLayout } from "@/layouts";
+import { MovementPattern } from "@/types/workout";
 import { EmptyState } from "@/components/EmptyState";
 import { Card } from "@/components/Card";
 import { cn } from "@/lib/utils";
-
-interface HistoryScreenProps {
-  workoutHistory: WorkoutHistoryEntry[];
-  onBack: () => void;
-  onSelectWorkout: (workoutId: string) => void;
-  onOpenSettings: () => void;
-}
+import { useHomeDataContext } from "@/contexts/HomeDataContext";
 
 type AnchorFilter = MovementPattern | 'ALL';
 type IntensityFilter = 'ALL' | '1-2' | '3-4' | '5-6' | '7-8' | '9-10';
@@ -33,18 +30,15 @@ const INTENSITY_OPTIONS: { value: IntensityFilter; label: string }[] = [
   { value: '9-10', label: '9-10 (Max)' },
 ];
 
-export const HistoryScreen = ({
-  workoutHistory,
-  onBack,
-  onSelectWorkout,
-  onOpenSettings,
-}: HistoryScreenProps) => {
+export const HistoryScreen = () => {
+  const navigate = useNavigate();
+  const { workoutHistory } = useHomeDataContext();
+
   const [anchorFilter, setAnchorFilter] = useState<AnchorFilter>('ALL');
   const [intensityFilter, setIntensityFilter] = useState<IntensityFilter>('ALL');
   const [anchorDropdownOpen, setAnchorDropdownOpen] = useState(false);
   const [intensityDropdownOpen, setIntensityDropdownOpen] = useState(false);
 
-  // Filter workouts
   const filteredWorkouts = workoutHistory.filter((workout) => {
     if (anchorFilter !== 'ALL' && workout.anchor !== anchorFilter) return false;
     if (intensityFilter !== 'ALL') {
@@ -54,21 +48,17 @@ export const HistoryScreen = ({
     return true;
   });
 
-  // Sort newest first, then group by month
   const sortedWorkouts = [...filteredWorkouts].sort(
     (a, b) => b.date.getTime() - a.date.getTime()
   );
 
   const groupedByMonth = sortedWorkouts.reduce((groups, workout) => {
     const monthKey = workout.date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-    if (!groups[monthKey]) {
-      groups[monthKey] = [];
-    }
+    if (!groups[monthKey]) groups[monthKey] = [];
     groups[monthKey].push(workout);
     return groups;
-  }, {} as Record<string, WorkoutHistoryEntry[]>);
+  }, {} as Record<string, typeof workoutHistory>);
 
-  // Format date for display
   const formatDate = (date: Date): string => {
     const today = new Date();
     const yesterday = new Date(today);
@@ -87,195 +77,154 @@ export const HistoryScreen = ({
   const isActiveFilter = anchorFilter !== 'ALL' || intensityFilter !== 'ALL';
 
   return (
-    <div className="min-h-screen grain-overlay">
-      <div className="max-w-md mx-auto pb-8">
-        {/* Header */}
-        <header className="flex items-center justify-between px-4 py-4">
-          <button
-            onClick={onBack}
-            className="p-2 transition-colors"
-            style={{ color: 'var(--icon-cta)' }}
-            aria-label="Back"
+    <AppLayout header={<PageHeader left="back" onBack={() => navigate("/")} center="History" right="menu" onMenu={() => navigate("/settings")} />}>
+      <div>
+        {/* Filter Section */}
+        <div className="mb-6">
+          <p
+            className="text-label-xs uppercase tracking-widest mb-3"
+            style={{ color: 'var(--text-card-label)' }}
           >
-            <ArrowLeft size={24} />
-          </button>
-          <h1
-            className="text-heading-h4 font-bold tracking-wider uppercase"
-            style={{ color: 'var(--text-header)' }}
-          >
-            History
-          </h1>
-          <button
-            onClick={onOpenSettings}
-            className="p-2 transition-colors"
-            style={{ color: 'var(--icon-cta)' }}
-            aria-label="Menu"
-          >
-            <Menu size={24} />
-          </button>
-        </header>
-
-        <div className="px-4">
-          {/* Filter Section */}
-          <div className="mb-6">
-            <p
-              className="text-label-xs uppercase tracking-widest mb-3"
-              style={{ color: 'var(--text-card-label)' }}
+            Filter By
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                setAnchorFilter('ALL');
+                setIntensityFilter('ALL');
+              }}
+              className={cn("px-3 py-2 text-label-xs uppercase tracking-wide transition-all border")}
+              style={
+                !isActiveFilter
+                  ? { backgroundColor: 'var(--surface-card-accent)', borderColor: 'var(--border-card)', color: 'var(--text-cta)' }
+                  : { backgroundColor: 'transparent', borderColor: 'var(--color-neutral-alpha-300)', color: 'var(--text-disabled)' }
+              }
             >
-              Filter By
-            </p>
-            <div className="flex gap-2">
-              {/* All Chip */}
+              All
+            </button>
+
+            <div className="relative">
               <button
                 onClick={() => {
-                  setAnchorFilter('ALL');
-                  setIntensityFilter('ALL');
+                  setAnchorDropdownOpen(!anchorDropdownOpen);
+                  setIntensityDropdownOpen(false);
                 }}
-                className={cn(
-                  "px-3 py-2 text-label-xs uppercase tracking-wide transition-all",
-                  !isActiveFilter
-                    ? "border"
-                    : "border"
-                )}
+                className="px-3 py-2 text-label-xs uppercase tracking-wide transition-all flex items-center gap-1 border"
                 style={
-                  !isActiveFilter
+                  anchorFilter !== 'ALL'
                     ? { backgroundColor: 'var(--surface-card-accent)', borderColor: 'var(--border-card)', color: 'var(--text-cta)' }
                     : { backgroundColor: 'transparent', borderColor: 'var(--color-neutral-alpha-300)', color: 'var(--text-disabled)' }
                 }
               >
-                All
+                {anchorFilter === 'ALL' ? 'Anchor' : anchorFilter}
+                <ChevronDown className="w-3 h-3" />
               </button>
 
-              {/* Anchor Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={() => {
-                    setAnchorDropdownOpen(!anchorDropdownOpen);
-                    setIntensityDropdownOpen(false);
-                  }}
-                  className="px-3 py-2 text-label-xs uppercase tracking-wide transition-all flex items-center gap-1 border"
-                  style={
-                    anchorFilter !== 'ALL'
-                      ? { backgroundColor: 'var(--surface-card-accent)', borderColor: 'var(--border-card)', color: 'var(--text-cta)' }
-                      : { backgroundColor: 'transparent', borderColor: 'var(--color-neutral-alpha-300)', color: 'var(--text-disabled)' }
-                  }
-                >
-                  {anchorFilter === 'ALL' ? 'Anchor' : anchorFilter}
-                  <ChevronDown className="w-3 h-3" />
-                </button>
+              {anchorDropdownOpen && (
+                <Card padding="sm" showLeftColumn={false} className="absolute top-full left-0 mt-1 z-10 min-w-[140px]">
+                  {ANCHOR_OPTIONS.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => {
+                        setAnchorFilter(option.value);
+                        setAnchorDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-3 py-2 text-label-xs uppercase tracking-wide transition-colors"
+                      style={{
+                        color: anchorFilter === option.value ? 'var(--text-cta)' : 'var(--text-paragraph)',
+                      }}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </Card>
+              )}
+            </div>
 
-                {anchorDropdownOpen && (
-                  <Card padding="sm" showLeftColumn={false} className="absolute top-full left-0 mt-1 z-10 min-w-[140px]">
-                    {ANCHOR_OPTIONS.map((option) => (
-                      <button
-                        key={option.value}
-                        onClick={() => {
-                          setAnchorFilter(option.value);
-                          setAnchorDropdownOpen(false);
-                        }}
-                        className="w-full text-left px-3 py-2 text-label-xs uppercase tracking-wide transition-colors"
-                        style={{
-                          color: anchorFilter === option.value
-                            ? 'var(--text-cta)'
-                            : 'var(--text-paragraph)',
-                        }}
-                      >
-                        {option.label}
-                      </button>
-                    ))}
-                  </Card>
-                )}
-              </div>
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setIntensityDropdownOpen(!intensityDropdownOpen);
+                  setAnchorDropdownOpen(false);
+                }}
+                className="px-3 py-2 text-label-xs uppercase tracking-wide transition-all flex items-center gap-1 border"
+                style={
+                  intensityFilter !== 'ALL'
+                    ? { backgroundColor: 'var(--surface-card-accent)', borderColor: 'var(--border-card)', color: 'var(--text-cta)' }
+                    : { backgroundColor: 'transparent', borderColor: 'var(--color-neutral-alpha-300)', color: 'var(--text-disabled)' }
+                }
+              >
+                {intensityFilter === 'ALL' ? 'Intensity' : intensityFilter}
+                <ChevronDown className="w-3 h-3" />
+              </button>
 
-              {/* Intensity Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={() => {
-                    setIntensityDropdownOpen(!intensityDropdownOpen);
-                    setAnchorDropdownOpen(false);
-                  }}
-                  className="px-3 py-2 text-label-xs uppercase tracking-wide transition-all flex items-center gap-1 border"
-                  style={
-                    intensityFilter !== 'ALL'
-                      ? { backgroundColor: 'var(--surface-card-accent)', borderColor: 'var(--border-card)', color: 'var(--text-cta)' }
-                      : { backgroundColor: 'transparent', borderColor: 'var(--color-neutral-alpha-300)', color: 'var(--text-disabled)' }
-                  }
-                >
-                  {intensityFilter === 'ALL' ? 'Intensity' : intensityFilter}
-                  <ChevronDown className="w-3 h-3" />
-                </button>
-
-                {intensityDropdownOpen && (
-                  <Card padding="sm" showLeftColumn={false} className="absolute top-full left-0 mt-1 z-10 min-w-[140px]">
-                    {INTENSITY_OPTIONS.map((option) => (
-                      <button
-                        key={option.value}
-                        onClick={() => {
-                          setIntensityFilter(option.value);
-                          setIntensityDropdownOpen(false);
-                        }}
-                        className="w-full text-left px-3 py-2 text-label-xs uppercase tracking-wide transition-colors"
-                        style={{
-                          color: intensityFilter === option.value
-                            ? 'var(--text-cta)'
-                            : 'var(--text-paragraph)',
-                        }}
-                      >
-                        {option.label}
-                      </button>
-                    ))}
-                  </Card>
-                )}
-              </div>
+              {intensityDropdownOpen && (
+                <Card padding="sm" showLeftColumn={false} className="absolute top-full left-0 mt-1 z-10 min-w-[140px]">
+                  {INTENSITY_OPTIONS.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => {
+                        setIntensityFilter(option.value);
+                        setIntensityDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-3 py-2 text-label-xs uppercase tracking-wide transition-colors"
+                      style={{
+                        color: intensityFilter === option.value ? 'var(--text-cta)' : 'var(--text-paragraph)',
+                      }}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </Card>
+              )}
             </div>
           </div>
-
-          {/* Workout List Grouped by Month */}
-          {Object.keys(groupedByMonth).length === 0 ? (
-            <EmptyState
-              icon={Dumbbell}
-              title={isActiveFilter ? "No Matches" : "No Workouts Yet"}
-              description={isActiveFilter ? "Try adjusting your filters" : "Complete a workout to see it here"}
-            />
-          ) : (
-            <div className="space-y-6">
-              {Object.entries(groupedByMonth).map(([month, workouts]) => (
-                <div key={month}>
-                  <h2
-                    className="text-label-xs uppercase tracking-widest mb-3"
-                    style={{ color: 'var(--text-card-label)' }}
-                  >
-                    {month}
-                  </h2>
-                  <div className="space-y-2">
-                    {workouts.map((workout) => (
-                      <Card
-                        key={workout.id}
-                        onClick={() => onSelectWorkout(workout.id)}
-                        padding="md"
-                      >
-                        <p
-                          className="text-label-sm uppercase tracking-wide"
-                          style={{ color: 'var(--text-header)' }}
-                        >
-                          {formatDate(workout.date)} &bull; {workout.anchor} &bull; Int. {workout.intensity}
-                        </p>
-                        <p
-                          className="text-paragraph-sm flex items-center gap-1 mt-1"
-                          style={{ color: 'var(--text-paragraph)' }}
-                        >
-                          <Clock className="w-3 h-3" />
-                          {workout.duration} min
-                        </p>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
+
+        {Object.keys(groupedByMonth).length === 0 ? (
+          <EmptyState
+            icon={Dumbbell}
+            title={isActiveFilter ? "No Matches" : "No Workouts Yet"}
+            description={isActiveFilter ? "Try adjusting your filters" : "Complete a workout to see it here"}
+          />
+        ) : (
+          <div className="space-y-6">
+            {Object.entries(groupedByMonth).map(([month, workouts]) => (
+              <div key={month}>
+                <h2
+                  className="text-label-xs uppercase tracking-widest mb-3"
+                  style={{ color: 'var(--text-card-label)' }}
+                >
+                  {month}
+                </h2>
+                <div className="space-y-2">
+                  {workouts.map((workout) => (
+                    <Card
+                      key={workout.id}
+                      onClick={() => navigate(`/history/${workout.id}`)}
+                      padding="md"
+                    >
+                      <p
+                        className="text-label-sm uppercase tracking-wide"
+                        style={{ color: 'var(--text-header)' }}
+                      >
+                        {formatDate(workout.date)} &bull; {workout.anchor} &bull; Int. {workout.intensity}
+                      </p>
+                      <p
+                        className="text-paragraph-sm flex items-center gap-1 mt-1"
+                        style={{ color: 'var(--text-paragraph)' }}
+                      >
+                        <Clock className="w-3 h-3" />
+                        {workout.duration} min
+                      </p>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    </div>
+    </AppLayout>
   );
 };

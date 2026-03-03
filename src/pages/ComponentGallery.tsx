@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { ArrowLeft, Dumbbell, Zap, AlertCircle, User, HelpCircle, Maximize2, Pencil } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Dumbbell, Zap, AlertCircle, User, HelpCircle, Maximize2, Pencil } from "lucide-react";
+import { PageHeader } from "@/components/PageHeader";
+import { AppLayout } from "@/layouts";
 
 // shadcn/ui components
 import { Button } from "@/components/ui/button";
@@ -15,7 +18,6 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { IntensitySlider } from "@/components/IntensitySlider";
 import { AnchorGrid, AnchorType } from "@/components/AnchorGrid";
 import { LocationAccordion } from "@/components/LocationAccordion";
-import { GenerateButton } from "@/components/GenerateButton";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { LoadingSkeleton, SkeletonCard } from "@/components/LoadingSkeleton";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
@@ -28,10 +30,6 @@ import { CTAButton } from "@/components/CTAButton";
 import { RadioButton } from "@/components/RadioButton";
 import { Chip } from "@/components/Chip";
 import { toast } from "@/components/ui/sonner";
-
-interface ComponentGalleryProps {
-  onBack: () => void;
-}
 
 /**
  * Component Gallery — Developer tool for auditing the design system.
@@ -46,7 +44,8 @@ interface ComponentGalleryProps {
  * 2. Add a new <Section> block in the appropriate category
  * 3. Render with sensible default props
  */
-export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
+export const ComponentGallery = () => {
+  const navigate = useNavigate();
   // Local state for interactive demos (no app side effects)
   const [intensityValue, setIntensityValue] = useState(7);
   const [anchorValue, setAnchorValue] = useState<AnchorType | null>("LOWER BODY");
@@ -61,25 +60,8 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
   ];
 
   return (
-    <div className="min-h-screen grain-overlay">
-      <div className="max-w-md mx-auto pb-32">
-        {/* Header */}
-        <header className="flex items-center justify-between px-4 py-4">
-          <button
-            onClick={onBack}
-            className="p-2 transition-colors"
-            style={{ color: 'var(--icon-cta)' }}
-            aria-label="Back"
-          >
-            <ArrowLeft size={24} />
-          </button>
-          <h1 className="text-heading-h4 font-bold tracking-wider uppercase" style={{ color: 'var(--text-header)' }}>
-            Component Gallery
-          </h1>
-          <div className="w-10" />
-        </header>
-
-        <div className="px-4 space-y-8">
+    <AppLayout header={<PageHeader left="back" onBack={() => navigate("/settings")} center="Gallery" />}>
+      <div className="space-y-8">
 
           {/* ─── TYPOGRAPHY ─── */}
           <Section title="Typography — Headings (Rajdhani)">
@@ -144,34 +126,6 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
           </Section>
 
           {/* ─── BUTTONS ─── */}
-
-          <Section title="ActionButton — Figma Design System">
-            <div className="space-y-4">
-              <Subsection label="Primary variant">
-                <div className="flex flex-wrap gap-3 items-center">
-                  <ActionButton variant="primary">Primary</ActionButton>
-                  <ActionButton variant="primary" iconLeft={<Zap className="w-4 h-4" />}>With Icon</ActionButton>
-                  <ActionButton variant="primary" disabled>Disabled</ActionButton>
-                </div>
-              </Subsection>
-
-              <Subsection label="Secondary variant">
-                <div className="flex flex-wrap gap-3 items-center">
-                  <ActionButton variant="secondary">Secondary</ActionButton>
-                  <ActionButton variant="secondary" iconRight={<Dumbbell className="w-4 h-4" />}>With Icon</ActionButton>
-                  <ActionButton variant="secondary" disabled>Disabled</ActionButton>
-                </div>
-              </Subsection>
-
-              <Subsection label="Transparent variant">
-                <div className="flex flex-wrap gap-3 items-center">
-                  <ActionButton variant="transparent">Transparent</ActionButton>
-                  <ActionButton variant="transparent" iconLeft={<Zap className="w-4 h-4" />}>With Icon</ActionButton>
-                  <ActionButton variant="transparent" disabled>Disabled</ActionButton>
-                </div>
-              </Subsection>
-            </div>
-          </Section>
 
           <Section title="CTAButton — Using ChamferedFrame">
             <div className="space-y-4">
@@ -313,31 +267,6 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
                   </Chip>
                 </div>
               </Subsection>
-            </div>
-          </Section>
-
-          {/* ─── CHAMFERED FRAME EXAMPLES ─── */}
-          <Section title="ChamferedFrame Example">
-            <div className="space-y-6">
-
-              <Subsection label="Small (8px Chamfer / 8px Left Col)">
-                <ActionCard cornerSize="sm">
-                  Small Chamfer
-                </ActionCard>
-              </Subsection>
-
-              <Subsection label="Medium (12px Chamfer / 12px Left Col)">
-                <ActionCard cornerSize="md">
-                  Medium Chamfer (Default)
-                </ActionCard>
-              </Subsection>
-
-              <Subsection label="Large (24px Chamfer / 12px Left Col)">
-                <ActionCard cornerSize="lg">
-                  Large Chamfer
-                </ActionCard>
-              </Subsection>
-
             </div>
           </Section>
 
@@ -588,9 +517,59 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
               Museum
             </p>
             <p className="text-paragraph-sm mb-8" style={{ color: 'var(--text-paragraph)' }}>
-              Legacy shadcn/ui components preserved for reference. These are not used in the app and will be removed in a future cleanup.
+              Legacy components preserved to see where we came from. NOT used in the app. Do NOT reference these for any new UI work.
             </p>
           </div>
+
+          <Section title="Museum — ActionButton (pre-ChamferedFrame)">
+            <div className="space-y-4">
+              <Subsection label="Primary variant">
+                <div className="flex flex-wrap gap-3 items-center">
+                  <ActionButton variant="primary">Primary</ActionButton>
+                  <ActionButton variant="primary" iconLeft={<Zap className="w-4 h-4" />}>With Icon</ActionButton>
+                  <ActionButton variant="primary" disabled>Disabled</ActionButton>
+                </div>
+              </Subsection>
+
+              <Subsection label="Secondary variant">
+                <div className="flex flex-wrap gap-3 items-center">
+                  <ActionButton variant="secondary">Secondary</ActionButton>
+                  <ActionButton variant="secondary" iconRight={<Dumbbell className="w-4 h-4" />}>With Icon</ActionButton>
+                  <ActionButton variant="secondary" disabled>Disabled</ActionButton>
+                </div>
+              </Subsection>
+
+              <Subsection label="Transparent variant">
+                <div className="flex flex-wrap gap-3 items-center">
+                  <ActionButton variant="transparent">Transparent</ActionButton>
+                  <ActionButton variant="transparent" iconLeft={<Zap className="w-4 h-4" />}>With Icon</ActionButton>
+                  <ActionButton variant="transparent" disabled>Disabled</ActionButton>
+                </div>
+              </Subsection>
+            </div>
+          </Section>
+
+          <Section title="Museum — ActionCard (pre-Card)">
+            <div className="space-y-6">
+              <Subsection label="Small (8px Chamfer / 8px Left Col)">
+                <ActionCard cornerSize="sm">
+                  Small Chamfer
+                </ActionCard>
+              </Subsection>
+
+              <Subsection label="Medium (12px Chamfer / 12px Left Col)">
+                <ActionCard cornerSize="md">
+                  Medium Chamfer (Default)
+                </ActionCard>
+              </Subsection>
+
+              <Subsection label="Large (24px Chamfer / 12px Left Col)">
+                <ActionCard cornerSize="lg">
+                  Large Chamfer
+                </ActionCard>
+              </Subsection>
+            </div>
+          </Section>
 
           <Section title="Museum — shadcn/ui Buttons">
             <div className="space-y-4">
@@ -679,9 +658,8 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
             </Card>
           </Section>
 
-        </div>
       </div>
-    </div >
+    </AppLayout>
   );
 };
 

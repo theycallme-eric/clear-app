@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { ChamferedFrame } from "@/components/ChamferedFrame";
+import { TimerDisplay } from "@/components/TimerDisplay";
 
 interface GlobalTimerProps {
     isRunning: boolean;
     onTimeUpdate?: (seconds: number) => void;
-    startTime?: number; // timestamp
+    startTime?: number;
 }
 
 export const GlobalTimer = ({ isRunning, onTimeUpdate, startTime }: GlobalTimerProps) => {
@@ -27,27 +27,12 @@ export const GlobalTimer = ({ isRunning, onTimeUpdate, startTime }: GlobalTimerP
         return () => clearInterval(interval);
     }, [isRunning, startTime, onTimeUpdate]);
 
-    const formatTime = (totalSeconds: number) => {
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
-        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-    };
-
     return (
-        <div className="sticky top-0 z-10 flex items-center justify-center px-5 py-3 backdrop-blur-md" style={{ backgroundColor: 'rgba(23, 23, 23, 0.8)' }}>
-            <ChamferedFrame
-                cornerSize="sm"
-                surfaceColor="var(--surface-timer)"
-                borderColor="var(--border-timer)"
-                hasLeftBorder={true}
-            >
-                <span
-                    className="block px-5 py-1 text-time-lg font-bold text-center"
-                    style={{ color: 'var(--text-timer)' }}
-                >
-                    {formatTime(elapsedSeconds)}
-                </span>
-            </ChamferedFrame>
+        <div
+            className="sticky top-0 z-10 flex items-center justify-center px-5 py-3 backdrop-blur-md"
+            style={{ backgroundColor: 'color-mix(in srgb, var(--color-neutral-900) 80%, transparent)' }}
+        >
+            <TimerDisplay elapsedSeconds={elapsedSeconds} />
         </div>
     );
 };

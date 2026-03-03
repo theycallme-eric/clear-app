@@ -1,24 +1,14 @@
 import { useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Flame, Frown, Meh, Smile, SmilePlus, ThumbsDown } from "lucide-react";
-import { GeneratedWorkout, StreakData } from "@/types/workout";
-import { WorkoutNotes } from "./WorkoutScreen";
+import { PageHeader } from "@/components/PageHeader";
+import { AppLayout } from "@/layouts";
 import { cn } from "@/lib/utils";
 import { CTAButton } from "@/components/CTAButton";
 import { Card } from "@/components/Card";
 import { Textarea } from "@/components/ui/textarea";
-
-interface SummaryScreenProps {
-  workout: GeneratedWorkout;
-  notes: WorkoutNotes;
-  totalTime: number;
-  streakData: StreakData;
-  onFinish: (mood: number | null, sessionNotes: string) => void;
-}
-
-const formatDuration = (seconds: number): string => {
-  const mins = Math.floor(seconds / 60);
-  return `${mins} min`;
-};
+import { useWorkoutFlowContext } from "@/contexts/WorkoutFlowContext";
+import { useHomeDataContext } from "@/contexts/HomeDataContext";
 
 const MOOD_OPTIONS = [
   { value: 1, icon: ThumbsDown, label: "Exhausted" },
@@ -28,20 +18,25 @@ const MOOD_OPTIONS = [
   { value: 5, icon: SmilePlus, label: "Great" },
 ];
 
-export const SummaryScreen = ({
-  workout,
-  notes,
-  totalTime,
-  streakData,
-  onFinish,
-}: SummaryScreenProps) => {
+const formatDuration = (seconds: number): string => {
+  const mins = Math.floor(seconds / 60);
+  return `${mins} min`;
+};
+
+export const SummaryScreen = () => {
+  const navigate = useNavigate();
+  const { generatedWorkout, workoutNotes, totalTime, handleFinishSession } = useWorkoutFlowContext();
+  const { streakData } = useHomeDataContext();
+
   const [selectedMood, setSelectedMood] = useState<number | null>(null);
   const [sessionNotes, setSessionNotes] = useState("");
 
-  // Calculate new streak (current + 1 for completing today's workout)
+  if (!generatedWorkout || !workoutNotes) {
+    return <Navigate to="/" replace />;
+  }
+
   const newStreak = streakData.currentStreak + 1;
 
-  // Get week days for streak view
   const getWeekDays = () => {
     const days = ["M", "T", "W", "T", "F", "S", "S"];
     const today = new Date();
@@ -57,7 +52,6 @@ export const SummaryScreen = ({
       const dateKey = date.toISOString().split("T")[0];
       const todayKey = today.toISOString().split("T")[0];
 
-      // Today gets marked as workout (just completed)
       if (dateKey === todayKey) {
         return { label, status: "workout" as const, isToday: true };
       }
@@ -70,13 +64,25 @@ export const SummaryScreen = ({
   const weekDays = getWeekDays();
 
   const handleFinish = () => {
-    onFinish(selectedMood, sessionNotes);
+    handleFinishSession(selectedMood, sessionNotes, () => navigate("/"));
   };
 
+  const finishFooter = (
+    <div
+      className="fixed bottom-0 left-0 right-0 pt-8 pb-4 px-4"
+      style={{ background: 'linear-gradient(to top, var(--color-neutral-900), var(--color-neutral-900) 60%, transparent)' }}
+    >
+      <div className="max-w-md mx-auto">
+        <CTAButton onClick={handleFinish} size="lg" fullWidth>
+          Finish
+        </CTAButton>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen grain-overlay">
-      <div className="max-w-md mx-auto px-4 py-8 pb-32">
-        {/* Header */}
+    <AppLayout header={<PageHeader />} footer={finishFooter}>
+      <div className="pb-24">
         <h1
           className="text-heading-h4 font-bold uppercase tracking-wider mb-6"
           style={{ color: 'var(--text-header)' }}
@@ -84,7 +90,6 @@ export const SummaryScreen = ({
           Workout Complete
         </h1>
 
-        {/* Celebration */}
         <div className="text-center mb-6">
           <h2
             className="text-heading-h2 font-bold uppercase tracking-wide"
@@ -94,20 +99,18 @@ export const SummaryScreen = ({
           </h2>
         </div>
 
-        {/* Workout Summary Card */}
         <Card padding="md" className="mb-6 text-center">
           <p
             className="text-heading-h5 font-medium uppercase tracking-wide"
             style={{ color: 'var(--text-header)' }}
           >
-            {workout.goal ? `${workout.goal.replace('_', ' ')} · ` : ''}{workout.anchor} &bull; Intensity {workout.intensity}
+            {generatedWorkout.goal ? `${generatedWorkout.goal.replace('_', ' ')} · ` : ''}{generatedWorkout.anchor} &bull; Intensity {generatedWorkout.intensity}
           </p>
           <p className="text-paragraph-sm mt-1" style={{ color: 'var(--text-paragraph)' }}>
-            {formatDuration(totalTime)} &bull; {workout.sections.length} sections
+            {formatDuration(totalTime)} &bull; {generatedWorkout.sections.length} sections
           </p>
         </Card>
 
-        {/* Mood Tracker */}
         <div className="mb-6">
           <h3
             className="text-label-xs uppercase tracking-widest mb-3"
@@ -122,9 +125,7 @@ export const SummaryScreen = ({
                 <button
                   key={mood.value}
                   onClick={() => setSelectedMood(mood.value)}
-                  className={cn(
-                    "flex-1 py-3 flex items-center justify-center transition-all border",
-                  )}
+                  className={cn("flex-1 py-3 flex items-center justify-center transition-all border")}
                   style={
                     selectedMood === mood.value
                       ? { backgroundColor: 'var(--surface-radio-selected)', borderColor: 'var(--border-radio-select)', color: 'var(--text-label-selected)' }
@@ -139,7 +140,6 @@ export const SummaryScreen = ({
           </div>
         </div>
 
-        {/* Session Notes */}
         <div className="mb-6">
           <h3
             className="text-label-xs uppercase tracking-widest mb-3"
@@ -155,7 +155,6 @@ export const SummaryScreen = ({
           />
         </div>
 
-        {/* Streak Update */}
         <Card padding="md">
           <h3
             className="text-label-xs uppercase tracking-widest mb-4"
@@ -164,38 +163,22 @@ export const SummaryScreen = ({
             Streak
           </h3>
 
-          {/* Streak increment */}
           <div className="text-center mb-4">
-            <span
-              className="text-heading-h2 font-bold"
-              style={{ color: 'var(--text-disabled)' }}
-            >
+            <span className="text-heading-h2 font-bold" style={{ color: 'var(--text-disabled)' }}>
               {streakData.currentStreak}
             </span>
-            <span
-              className="text-heading-h2 font-bold mx-2"
-              style={{ color: 'var(--icon-badge)' }}
-            >
+            <span className="text-heading-h2 font-bold mx-2" style={{ color: 'var(--icon-badge)' }}>
               &rarr;
             </span>
-            <span
-              className="text-heading-h1 font-bold"
-              style={{ color: 'var(--text-header)' }}
-            >
+            <span className="text-heading-h1 font-bold" style={{ color: 'var(--text-header)' }}>
               {newStreak}
             </span>
             <span className="ml-2">
               <Flame className="inline w-7 h-7" style={{ color: 'var(--icon-badge)' }} />
             </span>
-            <p
-              className="text-label-sm mt-1"
-              style={{ color: 'var(--text-paragraph)' }}
-            >
-              days
-            </p>
+            <p className="text-label-sm mt-1" style={{ color: 'var(--text-paragraph)' }}>days</p>
           </div>
 
-          {/* Week view */}
           <div className="flex justify-between gap-1">
             {weekDays.map((day, index) => (
               <div key={index} className="flex flex-col items-center gap-1">
@@ -213,35 +196,14 @@ export const SummaryScreen = ({
                     ...(day.isToday ? { '--tw-ring-color': 'var(--border-card)', '--tw-ring-offset-color': 'var(--color-neutral-900)' } as React.CSSProperties : {}),
                   }}
                 >
-                  {day.status === "workout" ? "●" : day.status === "rest" ? "◐" : "○"}
+                  {day.status === "workout" ? "\u25CF" : day.status === "rest" ? "\u25D0" : "\u25CB"}
                 </div>
-                <span
-                  className="text-label-xs"
-                  style={{ color: 'var(--text-disabled)' }}
-                >
-                  {day.label}
-                </span>
+                <span className="text-label-xs" style={{ color: 'var(--text-disabled)' }}>{day.label}</span>
               </div>
             ))}
           </div>
         </Card>
       </div>
-
-      {/* Fixed Bottom Action */}
-      <div
-        className="fixed bottom-0 left-0 right-0 pt-8 pb-4 px-4"
-        style={{ background: 'linear-gradient(to top, var(--color-neutral-900), var(--color-neutral-900) 60%, transparent)' }}
-      >
-        <div className="max-w-md mx-auto">
-          <CTAButton
-            onClick={handleFinish}
-            size="lg"
-            fullWidth
-          >
-            Finish
-          </CTAButton>
-        </div>
-      </div>
-    </div>
+    </AppLayout>
   );
 };

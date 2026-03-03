@@ -1,36 +1,38 @@
 import { useState, useRef, useCallback } from "react";
-import { GeneratedWorkout } from "@/types/workout";
+import { Navigate, useNavigate } from "react-router-dom";
 import { WorkoutNavigation } from "@/components/workout/WorkoutNavigation";
-import { GlobalTimer } from "@/components/workout/GlobalTimer";
+import { PageHeader } from "@/components/PageHeader";
+import { WorkoutLayout } from "@/layouts";
 import { SectionRenderer, StructureResultData } from "@/components/workout/SectionRenderer";
 import { ProgressTracker } from "@/components/workout/ProgressTracker";
+import { useWorkoutFlowContext } from "@/contexts/WorkoutFlowContext";
 
-interface WorkoutScreenProps {
-  workout: GeneratedWorkout;
-  onExit: () => void;
-  onFinish: (data: any) => void;
-}
+type LoggedExerciseData = Record<string, { weight?: string; reps?: string; notes?: string }>;
 
-export const WorkoutScreen = ({ workout, onExit, onFinish }: WorkoutScreenProps) => {
+export const WorkoutScreen = () => {
+  const navigate = useNavigate();
+  const { generatedWorkout, handleFinishWorkout } = useWorkoutFlowContext();
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
-  const [loggedData, setLoggedData] = useState<Record<string, any>>({});
+  const [loggedData, setLoggedData] = useState<LoggedExerciseData>({});
   const [structureResults, setStructureResults] = useState<Record<string, StructureResultData>>({});
 
   const touchStartX = useRef<number | null>(null);
   const startTime = useRef(Date.now());
 
-  const currentSection = workout.sections[currentSectionIndex];
-  const isLastSection = currentSectionIndex === workout.sections.length - 1;
-  const progress = ((currentSectionIndex + 1) / workout.sections.length) * 100;
+  if (!generatedWorkout) {
+    return <Navigate to="/generate" replace />;
+  }
 
-  // Swipe gesture handlers
+  const currentSection = generatedWorkout.sections[currentSectionIndex];
+  const isLastSection = currentSectionIndex === generatedWorkout.sections.length - 1;
+  const progress = ((currentSectionIndex + 1) / generatedWorkout.sections.length) * 100;
+
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
     if (touchStartX.current === null) return;
-
     const touchEndX = e.changedTouches[0].clientX;
     const diff = touchStartX.current - touchEndX;
     const threshold = 50;
@@ -52,18 +54,18 @@ export const WorkoutScreen = ({ workout, onExit, onFinish }: WorkoutScreenProps)
 
   const handleNext = () => {
     if (isLastSection) {
-      onFinish({
+      handleFinishWorkout({
         loggedData,
         structureResults,
         durationSeconds: Math.floor((Date.now() - startTime.current) / 1000)
-      });
+      }, () => navigate("/summary"));
     } else {
       setCurrentSectionIndex((prev) => prev + 1);
       window.scrollTo(0, 0);
     }
   };
 
-  const handleLog = (id: string, data: any) => {
+  const handleLog = (id: string, data: { weight?: string; reps?: string; notes?: string }) => {
     setLoggedData(prev => ({
       ...prev,
       [id]: { ...(prev[id] || {}), ...data }
@@ -75,40 +77,44 @@ export const WorkoutScreen = ({ workout, onExit, onFinish }: WorkoutScreenProps)
   }, []);
 
   return (
-    <div
-      className="min-h-screen grain-overlay flex flex-col pb-28 relative"
+    <WorkoutLayout
+      header={
+        <PageHeader
+          left="back"
+          onBack={() => navigate("/review")}
+          center="timer"
+          right="menu"
+          onMenu={() => navigate("/settings")}
+          timerProps={{ isRunning: true, startTime: startTime.current }}
+        />
+      }
+      footer={
+        <WorkoutNavigation
+          currentSection={currentSectionIndex}
+          onBack={handleBack}
+          onNext={handleNext}
+          isLastSection={isLastSection}
+        />
+      }
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <GlobalTimer isRunning={true} startTime={startTime.current} />
-
-      <div className="max-w-md mx-auto w-full px-4 pt-2">
-        {/* Section Header */}
-        <div className="mb-6 space-y-2">
-          <ProgressTracker progress={progress} />
-          <span
-            className="text-label-xs uppercase tracking-widest"
-            style={{ color: 'var(--text-paragraph)' }}
-          >
-            {workout.goal ? `${workout.goal.replace('_', ' ')} · ` : ''}{workout.anchor} &bull; Intensity {workout.intensity}
-          </span>
-        </div>
-
-        {/* Exercises */}
-        <SectionRenderer
-          key={currentSectionIndex}
-          section={currentSection}
-          onLog={handleLog}
-          onStructureResult={handleStructureResult}
-        />
+      <div className="mb-6 space-y-2">
+        <ProgressTracker progress={progress} />
+        <span
+          className="text-label-xs uppercase tracking-widest"
+          style={{ color: 'var(--text-paragraph)' }}
+        >
+          {generatedWorkout.goal ? `${generatedWorkout.goal.replace('_', ' ')} · ` : ''}{generatedWorkout.anchor} &bull; Intensity {generatedWorkout.intensity}
+        </span>
       </div>
 
-      <WorkoutNavigation
-        currentSection={currentSectionIndex}
-        onBack={handleBack}
-        onNext={handleNext}
-        isLastSection={isLastSection}
+      <SectionRenderer
+        key={currentSectionIndex}
+        section={currentSection}
+        onLog={handleLog}
+        onStructureResult={handleStructureResult}
       />
-    </div>
+    </WorkoutLayout>
   );
 };

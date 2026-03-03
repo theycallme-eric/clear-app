@@ -1,101 +1,61 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import { fetchWorkoutHistory, fetchStreakData } from '@/lib/home-data';
-import { WorkoutHistoryEntry, StreakData } from '@/types/workout';
+import { useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { fetchWorkoutHistory, fetchStreakData, fetchIncompleteSession } from '@/lib/home-data';
+import { queryKeys } from '@/lib/query-keys';
+import type { WorkoutHistoryEntry, StreakData } from '@/types/workout';
 
 export interface IncompleteSession {
   id: string;
   date: string;
 }
 
-interface HomeDataState {
-  workoutHistory: WorkoutHistoryEntry[];
-  streakData: StreakData;
-  incompleteSession: IncompleteSession | null;
-  isLoading: boolean;
-  hasError: boolean;
-}
+const DEFAULT_STREAK: StreakData = { currentStreak: 0, lastWorkoutDate: null, weekView: {} };
 
 export function useHomeData(userId: string | null) {
-  const [state, setState] = useState<HomeDataState>({
-    workoutHistory: [],
-    streakData: { currentStreak: 0, lastWorkoutDate: null, weekView: {} },
-    incompleteSession: null,
-    isLoading: false,
-    hasError: false,
+  const queryClient = useQueryClient();
+
+  const historyQuery = useQuery({
+    queryKey: queryKeys.workoutHistory(userId!),
+    queryFn: () => fetchWorkoutHistory(10),
+    enabled: !!userId,
   });
 
-  const mountedRef = useRef(true);
+  const streakQuery = useQuery({
+    queryKey: queryKeys.streakData(userId!),
+    queryFn: fetchStreakData,
+    enabled: !!userId,
+  });
 
-  useEffect(() => {
-    mountedRef.current = true;
-    return () => { mountedRef.current = false; };
-  }, []);
+  const incompleteQuery = useQuery({
+    queryKey: queryKeys.incompleteSession(userId!),
+    queryFn: () => fetchIncompleteSession(userId!),
+    enabled: !!userId,
+  });
 
   const loadHomeData = useCallback(async () => {
     if (!userId) return;
-
-    setState(prev => ({ ...prev, isLoading: true, hasError: false }));
-
-    try {
-      const [history, streak] = await Promise.all([
-        fetchWorkoutHistory(10),
-        fetchStreakData(),
-      ]);
-
-      if (!mountedRef.current) return;
-
-      setState(prev => ({
-        ...prev,
-        workoutHistory: history,
-        streakData: streak,
-        isLoading: false,
-      }));
-    } catch (err) {
-      console.error('Error loading home data:', err);
-      if (mountedRef.current) {
-        setState(prev => ({ ...prev, isLoading: false, hasError: true }));
-      }
-    }
-  }, [userId]);
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: queryKeys.workoutHistory(userId) }),
+      queryClient.invalidateQueries({ queryKey: queryKeys.streakData(userId) }),
+    ]);
+  }, [userId, queryClient]);
 
   const checkForIncompleteSession = useCallback(async () => {
     if (!userId) return;
-
-    try {
-      const { data: incomplete } = await supabase
-        .from('workout_sessions')
-        .select('id, date')
-        .eq('user_id', userId)
-        .eq('is_rest_day', false)
-        .is('completed_at', null)
-        .order('created_at', { ascending: false })
-        .limit(1);
-
-      if (!mountedRef.current) return;
-
-      if (incomplete && incomplete.length > 0) {
-        const session = incomplete[0];
-        const dateStr = new Date(session.date + 'T00:00:00').toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-        });
-        setState(prev => ({
-          ...prev,
-          incompleteSession: { id: session.id, date: dateStr }
-        }));
-      }
-    } catch (err) {
-      console.error('Error checking incomplete session:', err);
-    }
-  }, [userId]);
+    await queryClient.invalidateQueries({ queryKey: queryKeys.incompleteSession(userId) });
+  }, [userId, queryClient]);
 
   const clearIncompleteSession = useCallback(() => {
-    setState(prev => ({ ...prev, incompleteSession: null }));
-  }, []);
+    if (!userId) return;
+    queryClient.setQueryData(queryKeys.incompleteSession(userId), null);
+  }, [userId, queryClient]);
 
   return {
-    ...state,
+    workoutHistory: (historyQuery.data ?? []) as WorkoutHistoryEntry[],
+    streakData: (streakQuery.data ?? DEFAULT_STREAK) as StreakData,
+    incompleteSession: (incompleteQuery.data ?? null) as IncompleteSession | null,
+    isLoading: historyQuery.isLoading || streakQuery.isLoading,
+    hasError: historyQuery.isError || streakQuery.isError,
     loadHomeData,
     checkForIncompleteSession,
     clearIncompleteSession,

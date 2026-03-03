@@ -1,17 +1,17 @@
 import { useState } from "react";
-import { ArrowLeft, ArrowRight, Loader2, Eye, EyeOff } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ArrowRight, Loader2, Eye, EyeOff } from "lucide-react";
+import { PageHeader } from "@/components/PageHeader";
+import { AuthLayout } from "@/layouts";
 import { supabase } from "@/lib/supabase";
+import { logger } from "@/lib/logger";
 import { toast } from "@/components/ui/sonner";
 import { CTAButton } from "@/components/CTAButton";
 import { Card } from "@/components/Card";
 import { Input } from "@/components/ui/input";
 
-interface CreateAccountScreenProps {
-  onBack: () => void;
-  onSuccess: () => void;
-}
-
-export const CreateAccountScreen = ({ onBack, onSuccess }: CreateAccountScreenProps) => {
+export const CreateAccountScreen = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -62,28 +62,18 @@ export const CreateAccountScreen = ({ onBack, onSuccess }: CreateAccountScreenPr
         toast.success("Account created!", {
           description: "Let's set up your profile.",
         });
-        onSuccess();
+        // Auth listener + route guards will redirect to /onboarding
       }
     } catch (err) {
       toast.error("An unexpected error occurred");
-      console.error(err);
+      logger.auth.error('Account creation failed', { error: err instanceof Error ? err.message : String(err) });
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen grain-overlay flex flex-col px-6 py-8">
-      {/* Header */}
-      <button
-        onClick={onBack}
-        className="flex items-center gap-2 transition-colors mb-8"
-        style={{ color: 'var(--icon-cta)' }}
-      >
-        <ArrowLeft size={20} />
-        <span className="text-cta-sm">Back</span>
-      </button>
-
+    <AuthLayout header={<PageHeader left="back" onBack={() => navigate("/welcome")} />}>
       <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full">
         {/* Title */}
         <h1
@@ -187,6 +177,6 @@ export const CreateAccountScreen = ({ onBack, onSuccess }: CreateAccountScreenPr
           By creating an account, you agree to our Terms of Service and Privacy Policy.
         </p>
       </div>
-    </div>
+    </AuthLayout>
   );
 };

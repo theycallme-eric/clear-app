@@ -62,6 +62,8 @@ These are enforced by hooks. Violations will be blocked with instructions.
 - **No hardcoded colors** - Use `var(--color-*)` from `src/index.css`
 - **No hardcoded spacing** - Use the spacing scale
 - **Check existing components first** - Don't duplicate
+- **Read `docs/design-philosophy.md` before UI judgment calls** - Covers vibe, voice, color logic, motion principles
+- **Museum is read-only history** - Components in the Museum section of `ComponentGallery.tsx` are legacy. NEVER use them as reference, inspiration, or basis for new UI. Use only the active gallery components.
 
 ### Code Quality
 - **Run code review before PR** - `/pr review` or `/pr` (includes review)
@@ -140,10 +142,9 @@ Invoke via Task tool with `subagent_type` matching the agent name.
 
 | Constraint | Details |
 |------------|---------|
-| **Index.tsx Monolith** | Extract components OUT of `src/pages/Index.tsx`, don't add to it |
 | **Design Tokens** | No hardcoded hex colors; use CSS variables |
 | **Type Safety** | Regenerate types after DB changes |
-| **SPA Architecture** | No server components; data fetching in useEffect/handlers |
+| **SPA Architecture** | No server components; data fetching via React Query or useEffect/handlers |
 | **PR-Based Workflow** | All changes go through pull requests |
 
 ---

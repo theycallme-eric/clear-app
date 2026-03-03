@@ -50,8 +50,6 @@ export function Chip({
   const isLabel = variant === "label";
   const isSelectable = variant === "selectable";
   const isSelected = isSelectable && selected;
-  const isUnselected = isSelectable && !selected;
-
   // Token-based colors based on variant and state
   const surfaceColor = isLabel
     ? "var(--surface-chip)"

@@ -187,6 +187,31 @@ export interface GeneratedWorkout {
   sections: WorkoutSection[];
 }
 
+// Generation parameters (what user selects before generating)
+export interface WorkoutParams {
+  intensity: number;
+  anchor: AnchorType | null;
+  goal: GoalPreset | null;
+  location: string;
+  time: string;
+  notes: string;
+}
+
+// Workout notes collected during and after workout
+export interface WorkoutNotes {
+  loggedData: Record<string, { weight?: string; reps?: string; notes?: string }>;
+  structureResults: Record<string, {
+    structure_type: string;
+    rounds_completed?: number;
+    completion_time_seconds?: number;
+    completed_under_cap?: boolean;
+    rep_scheme?: string;
+    highest_rung?: number | null;
+    notes?: string | null;
+  }>;
+  durationSeconds: number;
+}
+
 // Mock data generator for prototype
 // Generate mock workout history with full detail data
 export const generateMockWorkoutHistory = (): WorkoutHistoryEntry[] => {
@@ -450,8 +475,6 @@ export const generateMockStreakData = (): StreakData => {
 
 // Get suggested anchor based on least recently worked body region
 export const getSuggestedAnchor = (history: WorkoutHistoryEntry[]): AnchorType => {
-  const allAnchors: AnchorType[] = ['LOWER BODY', 'UPPER BODY', 'FULL BODY', 'POWER', 'SURPRISE'];
-
   if (history.length === 0) {
     return 'FULL BODY'; // Default for new users
   }
