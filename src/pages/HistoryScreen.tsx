@@ -188,7 +188,7 @@ export const HistoryScreen = () => {
             description={isActiveFilter ? "Try adjusting your filters" : "Complete a workout to see it here"}
           />
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-6 stagger-reveal">
             {Object.entries(groupedByMonth).map(([month, workouts]) => (
               <div key={month}>
                 <h2

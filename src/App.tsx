@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HomeDataProvider } from "@/contexts/HomeDataContext";
 import { WorkoutFlowProvider } from "@/contexts/WorkoutFlowContext";
 import { ProtectedRoute, PublicOnlyRoute, OnboardingRoute } from "@/routes/guards";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
 
 // Screens
 import { HomeScreen } from "@/pages/HomeScreen";
@@ -41,6 +42,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <AnimatedBackground />
       <BrowserRouter>
         <HomeDataProvider>
           <WorkoutFlowProvider>
@@ -80,7 +82,7 @@ const App = () => (
         </HomeDataProvider>
       </BrowserRouter>
     </TooltipProvider>
-    <ReactQueryDevtools initialIsOpen={false} />
+    <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
   </QueryClientProvider>
 );
 

@@ -58,7 +58,7 @@ export const GenerationScreen = () => {
 
   return (
     <AppLayout header={<PageHeader right="menu" onMenu={() => navigate("/settings")} />}>
-      <div className="space-y-6">
+      <div className="space-y-6 stagger-reveal">
         <GoalSelector selected={goal} onSelect={handleGoalChange} />
 
         <AnchorGrid
