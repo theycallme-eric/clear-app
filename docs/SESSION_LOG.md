@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-03-03
+**Last Session:** 2026-03-03 (2nd session)
 
 ---
 
@@ -13,14 +13,53 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Infrastructure Hardening
-**Current Task:** Complete — PR #7 updated with infrastructure improvements
-**Last Completed:** Error boundaries, React Query activation, dead code cleanup, test infrastructure
+**Current Phase:** Navigation System Complete
+**Current Task:** Complete — Route transitions implemented, handoff written for vibe tuning session
+**Last Completed:** Phase 4 route transition animations (mechanical/stepped, design-philosophy-aligned)
 **Blocking Issues:** Superset connector horizontal spacing needs fine-tuning (cosmetic)
 
 ---
 
 ## Session Entries
+
+### Session: 2026-03-03 - Navigation System: Route Transitions (Phase 4)
+
+**Duration:** ~30 min
+**Mode:** Claude Code
+**Branch:** `feature/codebase-streamline` (uncommitted — ready to stage)
+
+#### What Got Done
+- **Route transition animations**: Created `transitions.css` with 5 animation types: forward (shift right), back (shift left), workout entry (shift up), workout exit (shift down), and hard cut (opacity). All aligned with design philosophy — `steps(4, end)` timing, `linear` easing, 150-180ms durations
+- **Transition direction hook**: `useTransitionDirection.ts` tracks previous vs current pathname, uses route depth map for forward/back inference, special-case overrides for workout entry/exit and summary→home
+- **RouteTransition wrapper**: Component keyed by pathname, applies correct CSS class. Wired into all 3 route guards (`ProtectedRoute`, `PublicOnlyRoute`, `OnboardingRoute`)
+- **Design philosophy compliance**: Initial implementation used smooth ease-out curves and 300ms crossfades. After reading `design-philosophy.md`, rewrote to use stepped timing functions, linear easing, smaller translate distances, and tighter durations to match the "mechanical, not organic" directive
+- **Vibe tuning handoff**: Created `SESSION_PLAN_vibe_tuning.md` with tuning areas (timing, distances, step count, atmosphere layers, progressive reveal), key file map, and acceptance criteria
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| `steps(4, end)` timing function | Design philosophy: "Ratcheting, discrete steps" not "continuous fluid interpolation" |
+| 150ms standard / 180ms mode transitions | Design philosophy: "Brief mechanical transitions (150-200ms)" |
+| 16px translate distance (not 30px) | Smaller distance with stepped timing reads as mechanical shift, not fluid slide |
+| Hard cut for summary→home (not crossfade) | Design philosophy: "Hard cuts between states (for speed)" not "slow crossfades" |
+| Enter-only animations (no exit) | Old page unmounts immediately in React Router — exit animations would require keeping stale component mounted |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/transitions.css` | Created — keyframes + CSS variables for 5 animation types + prefers-reduced-motion |
+| `src/hooks/useTransitionDirection.ts` | Created — route depth map, special cases, CSS class resolver |
+| `src/components/RouteTransition.tsx` | Created — pathname-keyed animation wrapper |
+| `src/routes/guards.tsx` | Modified — wrapped `<Outlet />` with `<RouteTransition>` in all 3 guards |
+| `src/main.tsx` | Modified — imported `transitions.css` |
+| `.claude/plans/SESSION_PLAN_vibe_tuning.md` | Created — handoff for next session |
+
+#### Status
+- TypeScript compiles cleanly, build passes
+- Changes uncommitted on `feature/codebase-streamline` branch
+- Handoff prompt written for vibe tuning session
+
+---
 
 ### Session: 2026-03-03 - Infrastructure: Error Boundaries, React Query, Tests
 
