@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-02-27
+**Last Session:** 2026-03-03
 
 ---
 
@@ -13,14 +13,81 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Design System Hardening
-**Current Task:** Complete
-**Last Completed:** History system research & favorite/redo feature scoping
+**Current Phase:** Codebase Streamline
+**Current Task:** Complete — PR #7 open
+**Last Completed:** Codebase streamline (strict types, god file splits, logger, cleanup)
 **Blocking Issues:** Superset connector horizontal spacing needs fine-tuning (cosmetic)
 
 ---
 
 ## Session Entries
+
+### Session: 2026-03-03 - Codebase Streamline
+
+**Duration:** ~2 hours
+**Mode:** Claude Code
+**Branch:** `feature/codebase-streamline` → PR #7
+
+#### What Got Done
+- **TypeScript strict mode**: Enabled `strict: true`, `noUnusedLocals`, `noUnusedParameters`, `noFallthroughCasesInSwitch`. Fixed ~14 type errors with proper solutions — zero `as any` or `@ts-ignore` escape hatches
+- **Real bug found**: Strict mode surfaced `anchor: 'rest'` in Index.tsx — 'rest' is not a valid `anchor_type` enum, this insert would fail at DB level. Fixed to `'full_body'`
+- **Logger standardization**: Replaced all `console.error/log/warn` in hooks and lib files with structured `logger.*` calls. Added ESLint `no-console` rule to prevent regression
+- **Supabase call extraction**: Moved direct `supabase.from()` calls from hooks to `lib/workout-api.ts` and `lib/home-data.ts`. Hooks now import zero supabase dependencies
+- **God file splits**:
+  - `useWorkoutFlow.ts` (297→38 lines) → orchestrator + `useWorkoutGeneration.ts` (199) + `useWorkoutSession.ts` (125)
+  - `SettingsScreen.tsx` (757→388 lines) → router + `SettingsHub.tsx` (174) + `LocationSettings.tsx` (194) + `StructureSettings.tsx` (144) + `LimitationsSettings.tsx` (48)
+  - `SectionRenderer.tsx` (569→216 lines) → dispatcher + `TimedRenderer.tsx` (330) + `SupersetRenderer.tsx` (27) + `CircuitRenderer.tsx` (27) + `LadderRenderer.tsx` (58)
+- **Gallery Museum**: Audited all gallery components for app usage. Moved ActionButton and ActionCard to Museum section. Added CLAUDE.md rule: Museum items must never be used as inspiration for new UI
+- **Cleanup**: Removed unused `next-themes` dependency, renamed hook files to camelCase, consolidated duplicate section-type mappings into `lib/section-mapping.ts`, removed unused exports
+
+#### What Came Up (Unexpected)
+- Strict mode revealed a real runtime bug (`anchor: 'rest'` invalid enum) — not just type noise
+- ActionButton (241 lines of code) was only ever used in ComponentGallery — a full duplicate of CTAButton that was never wired into the actual app
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Zero escape hatches for strict mode | Proper type fixes prevent real bugs; `as any` just hides them |
+| Keep god files as thin orchestrators after split | Preserves public API — no changes needed in consumers |
+| Museum = read-only history, never inspiration | Prevents accidental use of legacy patterns in new UI work |
+| Don't delete legacy components | Keep as "where we came from" reference in Museum section |
+| ESLint no-console rule (warn level) | Catches regressions without breaking builds; allows `console.warn` |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `tsconfig.app.json` | Modified — enabled strict mode and lint flags |
+| `src/vite-env.d.ts` | Created — Vite type declarations for `import.meta.env` |
+| `src/types/workout.ts` | Modified — added WorkoutParams, WorkoutNotes types |
+| `src/types/database.ts` | Regenerated — includes new migrations |
+| `src/lib/section-mapping.ts` | Created — consolidated SECTION_TO_DB/DB_TO_SECTION |
+| `src/lib/workout-api.ts` | Modified — type fixes, added completeWorkoutSession() |
+| `src/lib/home-data.ts` | Modified — type fixes, logger migration, added fetchIncompleteSession() |
+| `src/contexts/AuthContext.tsx` | Modified — proper DB types, logger, section-mapping import |
+| `src/hooks/useWorkoutFlow.ts` | Modified — thin 38-line orchestrator |
+| `src/hooks/useWorkoutGeneration.ts` | Created — generation logic extracted |
+| `src/hooks/useWorkoutSession.ts` | Created — session lifecycle extracted |
+| `src/hooks/useHomeData.ts` | Modified — uses lib functions, no supabase import |
+| `src/hooks/useOnboardingFlow.ts` | Modified — logger migration |
+| `src/hooks/useHistoryDetail.ts` | Modified — logger migration |
+| `src/hooks/useAppNavigation.ts` | Modified — removed unused export |
+| `src/hooks/useMobile.ts` | Renamed from use-mobile.tsx |
+| `src/hooks/useToast.ts` | Renamed from use-toast.ts |
+| `src/pages/SettingsScreen.tsx` | Modified — router shell (757→388 lines) |
+| `src/pages/settings/*.tsx` | Created — 4 sub-screen files |
+| `src/components/workout/SectionRenderer.tsx` | Modified — dispatcher (569→216 lines) |
+| `src/components/workout/{Timed,Superset,Circuit,Ladder}Renderer.tsx` | Created — 4 renderer files |
+| `src/pages/ComponentGallery.tsx` | Modified — moved ActionButton/ActionCard to Museum |
+| `CLAUDE.md` | Modified — added Museum rule |
+| `eslint.config.js` | Modified — added no-console rule |
+| `package.json` | Modified — removed next-themes |
+
+#### Status
+- Build passes, types compile cleanly
+- PR #7 open for review
+- 46 files changed, +2090 / -1375 lines
+
+---
 
 ### Session: 2026-02-27 - History System Research & Favorite/Redo Scoping
 
