@@ -10,6 +10,7 @@ import type {
   GeneratedWorkout as APIGeneratedWorkout,
 } from '@/types/generation';
 import type { GeneratedWorkout, WorkoutSection, Exercise } from '@/types/workout';
+import type { Database } from '@/types/database';
 
 export { isGenerationError } from '@/types/generation';
 
@@ -40,14 +41,20 @@ export function transformAPIWorkoutToFrontend(
       sets: ex.sets || 1,
       reps: typeof ex.reps === 'string' && ex.reps.includes(' ')
         ? ex.reps  // Keep string reps like "30 sec" or "8 each side"
-        : parseInt(ex.reps) || 1,
+        : String(parseInt(ex.reps) || 1),
       effort: ex.effort_percent ? `${ex.effort_percent}%` : undefined,
       tempo: ex.tempo || undefined,
       rest: ex.rest_seconds ? `${ex.rest_seconds}s` : undefined,
-      coachingCues: ex.coaching_cues?.join('. ') || undefined,
+      coachingCues: ex.coaching_cues || undefined,
       regression: ex.regression || undefined,
       equipment: ex.equipment || undefined,
-      structure: ex.structure || { type: 'standard' },
+      structure: ex.structure
+        ? ex.structure.type === 'circuit'
+          ? { ...ex.structure, rounds: (ex.structure as { rounds?: number }).rounds || 1 }
+          : ex.structure.type === 'afap' || ex.structure.type === 'timed'
+            ? { type: 'for_time' as const, time_cap_mins: ('time_cap_mins' in ex.structure ? ex.structure.time_cap_mins : 0) }
+            : ex.structure as Exercise['structure']
+        : undefined,
     }));
 
     return {
@@ -55,6 +62,7 @@ export function transformAPIWorkoutToFrontend(
       name: section.section_title,
       type: typeMap[section.section_type] || 'accessory',
       exercises,
+      status: 'not_started' as const,
     };
   });
 
@@ -203,11 +211,11 @@ export async function saveGeneratedWorkout(
       p_user_id: user.id,
       p_location_id: locationId,
       p_date: new Date().toISOString().split('T')[0],
-      p_anchor: workout.metadata.request.anchor,
+      p_anchor: workout.metadata.request.anchor as Database['public']['Enums']['anchor_type'],
       p_intensity: workout.metadata.request.intensity,
-      p_time_target_mins: workout.metadata.request.duration_mins || null,
-      p_prompt_version: workout.metadata.prompt_version || null,
-      p_goal_preset: workout.metadata.request.goal || 'balanced',
+      p_time_target_mins: workout.metadata.request.duration_mins || undefined,
+      p_prompt_version: workout.metadata.prompt_version || undefined,
+      p_goal_preset: (workout.metadata.request.goal || 'balanced') as Database['public']['Enums']['goal_preset'],
       p_sections: sectionsForRpc,
     });
 
@@ -244,4 +252,35 @@ export async function saveGeneratedWorkout(
       details: err instanceof Error ? err.message : 'Unknown error',
     };
   }
+}
+
+/**
+ * Complete a workout session — marks it as finished with duration, mood, and notes.
+ */
+export async function completeWorkoutSession(
+  sessionId: string,
+  data: {
+    durationMins: number;
+    mood: number | null;
+    sessionNotes: string;
+  }
+): Promise<{ error?: string }> {
+  const { error } = await supabase
+    .from('workout_sessions')
+    .update({
+      completed_at: new Date().toISOString(),
+      duration_mins: data.durationMins,
+      mood: data.mood !== null ? String(data.mood) : null,
+      session_notes: data.sessionNotes || null,
+      counts_for_streak: data.durationMins >= 5,
+    })
+    .eq('id', sessionId);
+
+  if (error) {
+    logger.workout.error('completeWorkoutSession failed', { error: error.message, sessionId });
+    return { error: error.message };
+  }
+
+  logger.workout.info('completeWorkoutSession succeeded', { sessionId, durationMins: String(data.durationMins) });
+  return {};
 }

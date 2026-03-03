@@ -36,6 +36,5 @@ export const useAppNavigation = () => {
     return {
         currentScreen,
         navigateTo,
-        setCurrentScreen, // Exposing setter for flexibility during refactor, ideally use navigateTo
     };
 };

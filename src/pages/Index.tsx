@@ -16,6 +16,7 @@ import { TestWorkoutScreen } from "@/pages/TestWorkoutScreen";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { AbandonmentModal } from "@/components/AbandonmentModal";
 import { supabase } from "@/lib/supabase";
+import { logger } from "@/lib/logger";
 import { toast } from "@/components/ui/sonner";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useHomeData } from "@/hooks/useHomeData";
@@ -158,7 +159,7 @@ const Index = () => {
           date: today,
           is_rest_day: true,
           counts_for_streak: true,
-          anchor: 'rest',
+          anchor: 'full_body', // Placeholder — anchor is meaningless for rest days
           intensity: 0,
         });
 
@@ -166,7 +167,7 @@ const Index = () => {
         if (error.code === '23505') {
           toast.info("Already logged today");
         } else {
-          console.error('Error marking rest day:', error);
+          logger.data.error('Error marking rest day', { error: error.message });
           toast.error("Failed to mark rest day");
         }
         return;
@@ -177,7 +178,7 @@ const Index = () => {
       });
       await loadHomeData();
     } catch (err) {
-      console.error('Error marking rest day:', err);
+      logger.data.error('Error marking rest day', { error: err instanceof Error ? err.message : String(err) });
       toast.error("Something went wrong");
     }
   };

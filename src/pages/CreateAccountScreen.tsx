@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowLeft, ArrowRight, Loader2, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { logger } from "@/lib/logger";
 import { toast } from "@/components/ui/sonner";
 import { CTAButton } from "@/components/CTAButton";
 import { Card } from "@/components/Card";
@@ -66,7 +67,7 @@ export const CreateAccountScreen = ({ onBack, onSuccess }: CreateAccountScreenPr
       }
     } catch (err) {
       toast.error("An unexpected error occurred");
-      console.error(err);
+      logger.auth.error('Account creation failed', { error: err instanceof Error ? err.message : String(err) });
     } finally {
       setIsLoading(false);
     }

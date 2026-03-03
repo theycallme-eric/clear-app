@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { toast } from "@/components/ui/sonner";
+import { logger } from "@/lib/logger";
 import { WorkoutHistoryEntry } from "@/types/workout";
 import { fetchWorkoutDetail } from "@/lib/home-data";
 
@@ -22,7 +23,7 @@ export const useHistoryDetail = () => {
                 toast.error("Couldn't load workout details");
             }
         } catch (err) {
-            console.error('Error fetching workout detail:', err);
+            logger.data.error('Error fetching workout detail', { error: err instanceof Error ? err.message : String(err) });
             toast.error("Failed to load workout");
         } finally {
             setIsLoadingDetail(false);

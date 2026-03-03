@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import { fetchWorkoutHistory, fetchStreakData } from '@/lib/home-data';
+import { logger } from '@/lib/logger';
+import { fetchWorkoutHistory, fetchStreakData, fetchIncompleteSession } from '@/lib/home-data';
 import { WorkoutHistoryEntry, StreakData } from '@/types/workout';
 
 export interface IncompleteSession {
@@ -52,7 +52,7 @@ export function useHomeData(userId: string | null) {
         isLoading: false,
       }));
     } catch (err) {
-      console.error('Error loading home data:', err);
+      logger.data.error('loadHomeData failed', { error: err instanceof Error ? err.message : String(err) });
       if (mountedRef.current) {
         setState(prev => ({ ...prev, isLoading: false, hasError: true }));
       }
@@ -63,30 +63,17 @@ export function useHomeData(userId: string | null) {
     if (!userId) return;
 
     try {
-      const { data: incomplete } = await supabase
-        .from('workout_sessions')
-        .select('id, date')
-        .eq('user_id', userId)
-        .eq('is_rest_day', false)
-        .is('completed_at', null)
-        .order('created_at', { ascending: false })
-        .limit(1);
-
+      const session = await fetchIncompleteSession(userId);
       if (!mountedRef.current) return;
 
-      if (incomplete && incomplete.length > 0) {
-        const session = incomplete[0];
-        const dateStr = new Date(session.date + 'T00:00:00').toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-        });
+      if (session) {
         setState(prev => ({
           ...prev,
-          incompleteSession: { id: session.id, date: dateStr }
+          incompleteSession: session
         }));
       }
     } catch (err) {
-      console.error('Error checking incomplete session:', err);
+      logger.data.error('checkForIncompleteSession failed', { error: err instanceof Error ? err.message : String(err) });
     }
   }, [userId]);
 

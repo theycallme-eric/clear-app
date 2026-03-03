@@ -1,19 +1,21 @@
 import { useState, useRef, useCallback } from "react";
-import { GeneratedWorkout } from "@/types/workout";
+import { GeneratedWorkout, WorkoutNotes } from "@/types/workout";
 import { WorkoutNavigation } from "@/components/workout/WorkoutNavigation";
 import { GlobalTimer } from "@/components/workout/GlobalTimer";
 import { SectionRenderer, StructureResultData } from "@/components/workout/SectionRenderer";
 import { ProgressTracker } from "@/components/workout/ProgressTracker";
 
+type LoggedExerciseData = Record<string, { weight?: string; reps?: string; notes?: string }>;
+
 interface WorkoutScreenProps {
   workout: GeneratedWorkout;
   onExit: () => void;
-  onFinish: (data: any) => void;
+  onFinish: (data: WorkoutNotes) => void;
 }
 
-export const WorkoutScreen = ({ workout, onExit, onFinish }: WorkoutScreenProps) => {
+export const WorkoutScreen = ({ workout, onExit: _onExit, onFinish }: WorkoutScreenProps) => {
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
-  const [loggedData, setLoggedData] = useState<Record<string, any>>({});
+  const [loggedData, setLoggedData] = useState<LoggedExerciseData>({});
   const [structureResults, setStructureResults] = useState<Record<string, StructureResultData>>({});
 
   const touchStartX = useRef<number | null>(null);
@@ -63,7 +65,7 @@ export const WorkoutScreen = ({ workout, onExit, onFinish }: WorkoutScreenProps)
     }
   };
 
-  const handleLog = (id: string, data: any) => {
+  const handleLog = (id: string, data: { weight?: string; reps?: string; notes?: string }) => {
     setLoggedData(prev => ({
       ...prev,
       [id]: { ...(prev[id] || {}), ...data }

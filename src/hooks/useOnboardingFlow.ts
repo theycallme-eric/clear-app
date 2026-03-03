@@ -1,5 +1,6 @@
 import { useAuthContext } from '@/contexts/AuthContext';
 import { toast } from '@/components/ui/sonner';
+import { logger } from '@/lib/logger';
 import { UserPreferences } from '@/types/workout';
 
 export const useOnboardingFlow = (onSuccess: () => void) => {
@@ -31,7 +32,7 @@ export const useOnboardingFlow = (onSuccess: () => void) => {
 
       onSuccess();
     } catch (err) {
-      console.error('Onboarding error:', err);
+      logger.auth.error('Onboarding error', { error: err instanceof Error ? err.message : String(err) });
       toast.error('Something went wrong', {
         description: 'Please try again.',
       });

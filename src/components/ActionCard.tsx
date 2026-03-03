@@ -34,14 +34,6 @@ export function ActionCard({
   showChevron = true,
 }: ActionCardProps) {
   // Size in pixels map, matching RightColumn/CornerAngle logic
-  const sizeMap = {
-    sm: 8,
-    md: 12,
-    lg: 24,
-  };
-  const px = sizeMap[cornerSize];
-
-
   // Map corner size to left column size
   // sm -> sm (8px)
   // md -> md (12px)

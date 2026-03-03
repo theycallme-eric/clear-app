@@ -34,6 +34,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      exercise_anchors: {
+        Row: {
+          anchor: Database["public"]["Enums"]["anchor_type"]
+          created_at: string | null
+          exercise_id: string
+          id: string
+          is_primary: boolean | null
+        }
+        Insert: {
+          anchor: Database["public"]["Enums"]["anchor_type"]
+          created_at?: string | null
+          exercise_id: string
+          id?: string
+          is_primary?: boolean | null
+        }
+        Update: {
+          anchor?: Database["public"]["Enums"]["anchor_type"]
+          created_at?: string | null
+          exercise_id?: string
+          id?: string
+          is_primary?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_anchors_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercise_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_anchors_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercise_definitions_with_anchors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       exercise_definitions: {
         Row: {
           can_be_primary: boolean
@@ -96,10 +135,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "exercise_definitions_progression_fkey"
+            columns: ["progression"]
+            isOneToOne: false
+            referencedRelation: "exercise_definitions_with_anchors"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "exercise_definitions_regression_fkey"
             columns: ["regression"]
             isOneToOne: false
             referencedRelation: "exercise_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_definitions_regression_fkey"
+            columns: ["regression"]
+            isOneToOne: false
+            referencedRelation: "exercise_definitions_with_anchors"
             referencedColumns: ["id"]
           },
         ]
@@ -162,6 +215,13 @@ export type Database = {
             columns: ["exercise_id"]
             isOneToOne: false
             referencedRelation: "exercise_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercises_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercise_definitions_with_anchors"
             referencedColumns: ["id"]
           },
           {
@@ -500,6 +560,62 @@ export type Database = {
       }
     }
     Views: {
+      exercise_definitions_with_anchors: {
+        Row: {
+          anchors: Database["public"]["Enums"]["anchor_type"][] | null
+          can_be_primary: boolean | null
+          coaching_cues: string[] | null
+          created_at: string | null
+          default_equipment: string | null
+          equipment_display_names: Json | null
+          equipment_options: string[] | null
+          id: string | null
+          name: string | null
+          pattern_id: string | null
+          primary_anchor: Database["public"]["Enums"]["anchor_type"] | null
+          progression: string | null
+          regression: string | null
+          sections: Database["public"]["Enums"]["section_type"][] | null
+          updated_at: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_definitions_pattern_id_fkey"
+            columns: ["pattern_id"]
+            isOneToOne: false
+            referencedRelation: "movement_patterns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_definitions_progression_fkey"
+            columns: ["progression"]
+            isOneToOne: false
+            referencedRelation: "exercise_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_definitions_progression_fkey"
+            columns: ["progression"]
+            isOneToOne: false
+            referencedRelation: "exercise_definitions_with_anchors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_definitions_regression_fkey"
+            columns: ["regression"]
+            isOneToOne: false
+            referencedRelation: "exercise_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_definitions_regression_fkey"
+            columns: ["regression"]
+            isOneToOne: false
+            referencedRelation: "exercise_definitions_with_anchors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       exercises_with_context: {
         Row: {
           anchor: Database["public"]["Enums"]["anchor_type"] | null
@@ -541,6 +657,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "exercises_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercise_definitions_with_anchors"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "exercises_section_id_fkey"
             columns: ["section_id"]
             isOneToOne: false
@@ -560,14 +683,28 @@ export type Database = {
     Functions: {
       complete_onboarding: {
         Args: {
-          p_user_id: string
-          p_location_name: string
-          p_location_tier: Database["public"]["Enums"]["equipment_tier"]
           p_equipment: string[]
           p_experience_level: Database["public"]["Enums"]["experience_level"]
           p_goal_preset: Database["public"]["Enums"]["goal_preset"]
+          p_limitations?: string
+          p_location_name: string
+          p_location_tier: Database["public"]["Enums"]["equipment_tier"]
           p_sections: Database["public"]["Enums"]["section_type"][]
-          p_limitations?: string | null
+          p_user_id: string
+        }
+        Returns: string
+      }
+      save_generated_workout: {
+        Args: {
+          p_anchor: Database["public"]["Enums"]["anchor_type"]
+          p_date: string
+          p_goal_preset?: Database["public"]["Enums"]["goal_preset"]
+          p_intensity: number
+          p_location_id: string
+          p_prompt_version?: string
+          p_sections: Json
+          p_time_target_mins?: number
+          p_user_id: string
         }
         Returns: string
       }
@@ -585,7 +722,13 @@ export type Database = {
         | "full_body"
       equipment_tier: "minimal" | "home" | "building" | "full"
       experience_level: "new" | "some" | "confident"
-      goal_preset: "strength" | "balanced" | "conditioning" | "quick"
+      goal_preset:
+        | "strength"
+        | "balanced"
+        | "conditioning"
+        | "quick"
+        | "hypertrophy"
+        | "active_recovery"
       movement_category: "lower_body" | "upper_body" | "core" | "full_body"
       rest_day_reason: "rest" | "injury" | "sick"
       section_status: "not_started" | "completed" | "skipped"
@@ -745,7 +888,14 @@ export const Constants = {
       ],
       equipment_tier: ["minimal", "home", "building", "full"],
       experience_level: ["new", "some", "confident"],
-      goal_preset: ["strength", "balanced", "conditioning", "quick"],
+      goal_preset: [
+        "strength",
+        "balanced",
+        "conditioning",
+        "quick",
+        "hypertrophy",
+        "active_recovery",
+      ],
       movement_category: ["lower_body", "upper_body", "core", "full_body"],
       rest_day_reason: ["rest", "injury", "sick"],
       section_status: ["not_started", "completed", "skipped"],

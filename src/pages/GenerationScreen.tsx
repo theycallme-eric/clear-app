@@ -6,22 +6,15 @@ import { GoalSelector } from "@/components/GoalSelector";
 import { LocationAccordion } from "@/components/LocationAccordion";
 import { OptionalFields } from "@/components/OptionalFields";
 import { GenerateButton } from "@/components/GenerateButton";
-import { UserPreferences, GoalPreset, INTENSITY_RANGE_BY_GOAL } from "@/types/workout";
+import { UserPreferences, GoalPreset, WorkoutParams, INTENSITY_RANGE_BY_GOAL } from "@/types/workout";
+
+export type { WorkoutParams } from "@/types/workout";
 
 interface GenerationScreenProps {
   onGenerate: (params: WorkoutParams) => void;
   userPreferences: UserPreferences;
   isGenerating?: boolean;
   onOpenSettings?: () => void;
-}
-
-export interface WorkoutParams {
-  intensity: number;
-  anchor: AnchorType | null;
-  goal: GoalPreset | null;
-  location: string;
-  time: string;
-  notes: string;
 }
 
 export const GenerationScreen = ({ onGenerate, userPreferences, isGenerating = false, onOpenSettings }: GenerationScreenProps) => {

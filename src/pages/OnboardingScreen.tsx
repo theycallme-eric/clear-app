@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { CTAButton } from "@/components/CTAButton";
 import { Card } from "@/components/Card";
 import { RadioButton } from "@/components/RadioButton";

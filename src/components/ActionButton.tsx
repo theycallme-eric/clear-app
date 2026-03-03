@@ -38,8 +38,6 @@ export function ActionButton({
 }: ActionButtonProps) {
   const isTransparent = variant === "transparent";
   const isPrimary = variant === "primary";
-  const isSecondary = variant === "secondary";
-
   // Transparent variant - simple button without columns
   if (isTransparent) {
     return (
@@ -81,18 +79,6 @@ export function ActionButton({
 
   // Primary and Secondary variants with 3-column layout
   // Token mappings based on variant and state
-  const getBorderColor = () => {
-    if (disabled) return "var(--border-disabled)";
-    if (isPrimary) return "var(--border-cta-primary)";
-    return "var(--border-cta-secondary)";
-  };
-
-  const getHoverBorderColor = () => {
-    if (disabled) return "var(--border-disabled)";
-    if (isPrimary) return "var(--border-cta-primary-hover)";
-    return "var(--border-cta-secondary)"; // secondary doesn't change on hover
-  };
-
   const getAccentBg = () => {
     if (disabled) {
       return isPrimary
@@ -100,24 +86,6 @@ export function ActionButton({
         : "var(--surface-cta-secondary-disabled)";
     }
     return "var(--surface-cta-accent)";
-  };
-
-  const getBodyBg = () => {
-    if (disabled) {
-      return isPrimary
-        ? "var(--surface-cta-primary-disabled)"
-        : "var(--surface-cta-secondary-disabled)";
-    }
-    return isPrimary
-      ? "var(--surface-cta-primary)"
-      : "var(--surface-cta-secondary)";
-  };
-
-  const getHoverBodyBg = () => {
-    if (disabled) return getBodyBg();
-    return isPrimary
-      ? "var(--surface-cta-primary-hover)"
-      : "var(--surface-cta-secondary-hover)";
   };
 
   return (

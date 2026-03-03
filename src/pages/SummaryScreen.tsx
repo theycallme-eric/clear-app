@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Flame, Frown, Meh, Smile, SmilePlus, ThumbsDown } from "lucide-react";
-import { GeneratedWorkout, StreakData } from "@/types/workout";
-import { WorkoutNotes } from "./WorkoutScreen";
+import { GeneratedWorkout, StreakData, WorkoutNotes } from "@/types/workout";
 import { cn } from "@/lib/utils";
 import { CTAButton } from "@/components/CTAButton";
 import { Card } from "@/components/Card";
@@ -30,7 +29,7 @@ const MOOD_OPTIONS = [
 
 export const SummaryScreen = ({
   workout,
-  notes,
+  notes: _notes,
   totalTime,
   streakData,
   onFinish,

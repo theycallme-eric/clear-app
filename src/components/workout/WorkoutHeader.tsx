@@ -20,7 +20,7 @@ export const WorkoutHeader = ({
   currentSection,
   totalSections,
   sectionTime,
-  overallTime
+  overallTime: _overallTime
 }: WorkoutHeaderProps) => {
   return (
     <Card cornerSize="md" padding="md">

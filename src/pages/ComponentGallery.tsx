@@ -15,7 +15,6 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { IntensitySlider } from "@/components/IntensitySlider";
 import { AnchorGrid, AnchorType } from "@/components/AnchorGrid";
 import { LocationAccordion } from "@/components/LocationAccordion";
-import { GenerateButton } from "@/components/GenerateButton";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { LoadingSkeleton, SkeletonCard } from "@/components/LoadingSkeleton";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
@@ -144,34 +143,6 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
           </Section>
 
           {/* ─── BUTTONS ─── */}
-
-          <Section title="ActionButton — Figma Design System">
-            <div className="space-y-4">
-              <Subsection label="Primary variant">
-                <div className="flex flex-wrap gap-3 items-center">
-                  <ActionButton variant="primary">Primary</ActionButton>
-                  <ActionButton variant="primary" iconLeft={<Zap className="w-4 h-4" />}>With Icon</ActionButton>
-                  <ActionButton variant="primary" disabled>Disabled</ActionButton>
-                </div>
-              </Subsection>
-
-              <Subsection label="Secondary variant">
-                <div className="flex flex-wrap gap-3 items-center">
-                  <ActionButton variant="secondary">Secondary</ActionButton>
-                  <ActionButton variant="secondary" iconRight={<Dumbbell className="w-4 h-4" />}>With Icon</ActionButton>
-                  <ActionButton variant="secondary" disabled>Disabled</ActionButton>
-                </div>
-              </Subsection>
-
-              <Subsection label="Transparent variant">
-                <div className="flex flex-wrap gap-3 items-center">
-                  <ActionButton variant="transparent">Transparent</ActionButton>
-                  <ActionButton variant="transparent" iconLeft={<Zap className="w-4 h-4" />}>With Icon</ActionButton>
-                  <ActionButton variant="transparent" disabled>Disabled</ActionButton>
-                </div>
-              </Subsection>
-            </div>
-          </Section>
 
           <Section title="CTAButton — Using ChamferedFrame">
             <div className="space-y-4">
@@ -313,31 +284,6 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
                   </Chip>
                 </div>
               </Subsection>
-            </div>
-          </Section>
-
-          {/* ─── CHAMFERED FRAME EXAMPLES ─── */}
-          <Section title="ChamferedFrame Example">
-            <div className="space-y-6">
-
-              <Subsection label="Small (8px Chamfer / 8px Left Col)">
-                <ActionCard cornerSize="sm">
-                  Small Chamfer
-                </ActionCard>
-              </Subsection>
-
-              <Subsection label="Medium (12px Chamfer / 12px Left Col)">
-                <ActionCard cornerSize="md">
-                  Medium Chamfer (Default)
-                </ActionCard>
-              </Subsection>
-
-              <Subsection label="Large (24px Chamfer / 12px Left Col)">
-                <ActionCard cornerSize="lg">
-                  Large Chamfer
-                </ActionCard>
-              </Subsection>
-
             </div>
           </Section>
 
@@ -588,9 +534,59 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
               Museum
             </p>
             <p className="text-paragraph-sm mb-8" style={{ color: 'var(--text-paragraph)' }}>
-              Legacy shadcn/ui components preserved for reference. These are not used in the app and will be removed in a future cleanup.
+              Legacy components preserved to see where we came from. NOT used in the app. Do NOT reference these for any new UI work.
             </p>
           </div>
+
+          <Section title="Museum — ActionButton (pre-ChamferedFrame)">
+            <div className="space-y-4">
+              <Subsection label="Primary variant">
+                <div className="flex flex-wrap gap-3 items-center">
+                  <ActionButton variant="primary">Primary</ActionButton>
+                  <ActionButton variant="primary" iconLeft={<Zap className="w-4 h-4" />}>With Icon</ActionButton>
+                  <ActionButton variant="primary" disabled>Disabled</ActionButton>
+                </div>
+              </Subsection>
+
+              <Subsection label="Secondary variant">
+                <div className="flex flex-wrap gap-3 items-center">
+                  <ActionButton variant="secondary">Secondary</ActionButton>
+                  <ActionButton variant="secondary" iconRight={<Dumbbell className="w-4 h-4" />}>With Icon</ActionButton>
+                  <ActionButton variant="secondary" disabled>Disabled</ActionButton>
+                </div>
+              </Subsection>
+
+              <Subsection label="Transparent variant">
+                <div className="flex flex-wrap gap-3 items-center">
+                  <ActionButton variant="transparent">Transparent</ActionButton>
+                  <ActionButton variant="transparent" iconLeft={<Zap className="w-4 h-4" />}>With Icon</ActionButton>
+                  <ActionButton variant="transparent" disabled>Disabled</ActionButton>
+                </div>
+              </Subsection>
+            </div>
+          </Section>
+
+          <Section title="Museum — ActionCard (pre-Card)">
+            <div className="space-y-6">
+              <Subsection label="Small (8px Chamfer / 8px Left Col)">
+                <ActionCard cornerSize="sm">
+                  Small Chamfer
+                </ActionCard>
+              </Subsection>
+
+              <Subsection label="Medium (12px Chamfer / 12px Left Col)">
+                <ActionCard cornerSize="md">
+                  Medium Chamfer (Default)
+                </ActionCard>
+              </Subsection>
+
+              <Subsection label="Large (24px Chamfer / 12px Left Col)">
+                <ActionCard cornerSize="lg">
+                  Large Chamfer
+                </ActionCard>
+              </Subsection>
+            </div>
+          </Section>
 
           <Section title="Museum — shadcn/ui Buttons">
             <div className="space-y-4">

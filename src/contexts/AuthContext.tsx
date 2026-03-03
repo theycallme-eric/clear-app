@@ -3,6 +3,8 @@ import { supabase } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
 import { clearStayLoggedIn } from '@/lib/auth-storage';
 import { UserLocation, SectionType, ExperienceLevel, GoalPreset, EquipmentTier } from '@/types/workout';
+import type { Database } from '@/types/database';
+import { SECTION_TO_DB, DB_TO_SECTION } from '@/lib/section-mapping';
 
 // Types
 type AuthStatus = 'loading' | 'unauthenticated' | 'authenticated';
@@ -45,33 +47,6 @@ interface AuthContextValue extends AuthState {
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
-
-// Section type mapping (frontend ↔ database)
-const SECTION_TO_DB: Record<string, string> = {
-  warmup: 'warmup',
-  mobility: 'mobility',
-  primary: 'primary_lift',
-  accessory: 'accessory',
-  skill: 'skill_power',
-  carries: 'carries',
-  core: 'core',
-  stability: 'stability_balance',
-  conditioning: 'conditioning',
-  cooldown: 'cooldown',
-};
-
-const DB_TO_SECTION: Record<string, SectionType> = {
-  warmup: 'warmup',
-  mobility: 'mobility',
-  primary_lift: 'primary',
-  accessory: 'accessory',
-  skill_power: 'skill',
-  carries: 'carries',
-  core: 'core',
-  stability_balance: 'stability',
-  conditioning: 'conditioning',
-  cooldown: 'cooldown',
-};
 
 // Auth configuration - can be adjusted based on observed performance
 const AUTH_CONFIG = {
@@ -155,7 +130,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         defaultLocationId: dbProfile.default_location_id,
       };
 
-      const locations: UserLocation[] = dbLocations.map((loc: any) => ({
+      type LocationRow = Database['public']['Tables']['locations']['Row'];
+      const locations: UserLocation[] = dbLocations.map((loc: LocationRow) => ({
         id: loc.id,
         name: loc.name,
         tier: loc.tier as EquipmentTier,
@@ -413,12 +389,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }));
 
     // Prepare database update
-    const dbUpdates: Record<string, any> = {};
+    type ProfileUpdate = Database['public']['Tables']['profiles']['Update'];
+    const dbUpdates: ProfileUpdate = {};
     if (updates.experienceLevel !== undefined) dbUpdates.experience_level = updates.experienceLevel;
     if (updates.goal !== undefined) dbUpdates.goal_preset = updates.goal;
     if (updates.limitations !== undefined) dbUpdates.limitations = updates.limitations || null;
     if (updates.enabledSections !== undefined) {
-      dbUpdates.enabled_sections = updates.enabledSections.map(s => SECTION_TO_DB[s] || s);
+      dbUpdates.enabled_sections = updates.enabledSections.map(
+        s => SECTION_TO_DB[s] || s
+      ) as Database['public']['Enums']['section_type'][];
     }
     if (updates.defaultLocationId !== undefined) dbUpdates.default_location_id = updates.defaultLocationId;
     if (updates.onboardingComplete !== undefined) dbUpdates.onboarding_completed = updates.onboardingComplete;
@@ -563,8 +542,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         p_equipment: equipmentForDb,
         p_experience_level: data.experienceLevel,
         p_goal_preset: data.goal,
-        p_sections: enabledSectionsForDb,
-        p_limitations: data.limitations || null,
+        p_sections: enabledSectionsForDb as Database['public']['Enums']['section_type'][],
+        p_limitations: data.limitations || undefined,
       });
 
       if (rpcError) {
