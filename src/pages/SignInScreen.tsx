@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { ArrowLeft, ArrowRight, Loader2, Eye, EyeOff } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ArrowRight, Loader2, Eye, EyeOff } from "lucide-react";
+import { PageHeader } from "@/components/PageHeader";
+import { AuthLayout } from "@/layouts";
 import { supabase } from "@/lib/supabase";
 import { getStayLoggedIn, setStayLoggedIn } from "@/lib/auth-storage";
 import { logger } from "@/lib/logger";
@@ -9,13 +12,8 @@ import { Card } from "@/components/Card";
 import { Checkbox } from "@/components/Checkbox";
 import { Input } from "@/components/ui/input";
 
-interface SignInScreenProps {
-  onBack: () => void;
-  onSuccess: () => void;  // No longer passes onboardingComplete - AuthContext handles navigation
-  onForgotPassword: () => void;
-}
-
-export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScreenProps) => {
+export const SignInScreen = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -54,7 +52,7 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
         // fetch the profile simultaneously
         logger.auth.info('Sign-in succeeded, AuthContext will handle profile fetch', { userId: data.user.id });
         toast.success("Welcome back!");
-        onSuccess();
+        // Auth listener (AuthContext) will handle route guards
       }
     } catch (err) {
       logger.auth.error('Sign-in exception', { error: err instanceof Error ? err.message : String(err) });
@@ -65,17 +63,7 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
   };
 
   return (
-    <div className="min-h-screen grain-overlay flex flex-col px-6 py-8">
-      {/* Header */}
-      <button
-        onClick={onBack}
-        className="flex items-center gap-2 transition-colors mb-8"
-        style={{ color: 'var(--icon-cta)' }}
-      >
-        <ArrowLeft size={20} />
-        <span className="text-cta-sm">Back</span>
-      </button>
-
+    <AuthLayout header={<PageHeader left="back" onBack={() => navigate("/welcome")} />}>
       <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full">
         {/* Title */}
         <h1
@@ -147,7 +135,7 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
 
             <button
               type="button"
-              onClick={onForgotPassword}
+              onClick={() => toast.info("Password reset", { description: "Enter your email on the sign in screen to reset." })}
               className="text-cta-sm transition-colors"
               style={{ color: 'var(--text-cta)' }}
             >
@@ -173,6 +161,6 @@ export const SignInScreen = ({ onBack, onSuccess, onForgotPassword }: SignInScre
           </CTAButton>
         </form>
       </div>
-    </div>
+    </AuthLayout>
   );
 };

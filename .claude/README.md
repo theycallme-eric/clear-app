@@ -187,6 +187,7 @@ Hooks run automatically before/after tool calls. Configured in `.claude/settings
 
 | Hook | Event | What It Does |
 |------|-------|--------------|
+| `session-start-check.sh` | SessionStart | Warns about in-progress work (dirty files, unpushed branches, stashes) |
 | `git-safety-check.sh` | PreToolUse (Bash) | Blocks direct pushes/merges to main |
 
 ### What Gets Blocked
@@ -270,6 +271,7 @@ debug.md → [fix] → token-check.md (if UI) → pr-workflow.md
 │   └── todo.md
 │
 ├── hooks/
+│   ├── session-start-check.sh  ← Session start awareness
 │   └── git-safety-check.sh
 │
 ├── plans/

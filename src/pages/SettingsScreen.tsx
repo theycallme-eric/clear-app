@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { PageHeader } from "@/components/PageHeader";
+import { AppLayout } from "@/layouts";
 import { CTAButton } from "@/components/CTAButton";
 import {
   UserPreferences,
@@ -16,15 +18,7 @@ import { SettingsHub } from "@/pages/settings/SettingsHub";
 import { LocationList, LocationEditor } from "@/pages/settings/LocationSettings";
 import { StructureSettings } from "@/pages/settings/StructureSettings";
 import { LimitationsSettings } from "@/pages/settings/LimitationsSettings";
-
-interface SettingsScreenProps {
-  userPreferences: UserPreferences;
-  onSavePreferences: (preferences: UserPreferences) => void;
-  onBack: () => void;
-  onOpenDeveloper?: () => void;
-  onLaunchTestWorkout?: () => void;
-  onSignOut: () => void;
-}
+import { useAuthContext } from "@/contexts/AuthContext";
 
 type SettingsView =
   | "hub"
@@ -34,14 +28,32 @@ type SettingsView =
   | "structure"
   | "limitations";
 
-export const SettingsScreen = ({
-  userPreferences,
-  onSavePreferences,
-  onBack,
-  onOpenDeveloper,
-  onLaunchTestWorkout,
-  onSignOut,
-}: SettingsScreenProps) => {
+export const SettingsScreen = () => {
+  const navigate = useNavigate();
+  const { profile, locations, updateProfile, updateLocations, signOut } = useAuthContext();
+
+  // Build preferences from AuthContext
+  const userPreferences: UserPreferences = {
+    onboardingComplete: profile?.onboardingComplete || false,
+    locations,
+    defaultLocationId: profile?.defaultLocationId || null,
+    experienceLevel: profile?.experienceLevel || null,
+    goal: profile?.goal || null,
+    sections: profile?.enabledSections || [],
+    limitations: profile?.limitations || '',
+  };
+
+  const handleSavePreferences = async (newPreferences: UserPreferences) => {
+    await updateProfile({
+      experienceLevel: newPreferences.experienceLevel,
+      goal: newPreferences.goal,
+      limitations: newPreferences.limitations,
+      enabledSections: newPreferences.sections,
+      defaultLocationId: newPreferences.defaultLocationId,
+    });
+    await updateLocations(newPreferences.locations);
+  };
+
   const [currentView, setCurrentView] = useState<SettingsView>("hub");
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const [preferences, setPreferences] = useState<UserPreferences>({ ...userPreferences });
@@ -148,7 +160,7 @@ export const SettingsScreen = ({
       defaultLocationId: preferences.defaultLocationId || newLocation.id,
     };
     setPreferences(updatedPrefs);
-    onSavePreferences(updatedPrefs);
+    handleSavePreferences(updatedPrefs);
     toast.success(editingLocationId ? "Location updated" : "Location added");
     setCurrentView("locations");
   };
@@ -171,7 +183,7 @@ export const SettingsScreen = ({
       defaultLocationId: newDefaultId,
     };
     setPreferences(updatedPrefs);
-    onSavePreferences(updatedPrefs);
+    handleSavePreferences(updatedPrefs);
     toast.success("Location deleted");
     setCurrentView("locations");
   };
@@ -183,7 +195,7 @@ export const SettingsScreen = ({
       defaultLocationId: locationId,
     };
     setPreferences(updatedPrefs);
-    onSavePreferences(updatedPrefs);
+    handleSavePreferences(updatedPrefs);
   };
 
   // Save workout structure
@@ -194,7 +206,7 @@ export const SettingsScreen = ({
       sections: selectedSections,
     };
     setPreferences(updatedPrefs);
-    onSavePreferences(updatedPrefs);
+    handleSavePreferences(updatedPrefs);
     toast.success("Workout structure updated");
     setCurrentView("hub");
   };
@@ -206,7 +218,7 @@ export const SettingsScreen = ({
       limitations: limitations,
     };
     setPreferences(updatedPrefs);
-    onSavePreferences(updatedPrefs);
+    handleSavePreferences(updatedPrefs);
     toast.success("Limitations updated");
     setCurrentView("hub");
   };
@@ -220,7 +232,7 @@ export const SettingsScreen = ({
   const handleBack = () => {
     switch (currentView) {
       case "hub":
-        onBack();
+        navigate("/");
         break;
       case "editLocation":
       case "addLocation":
@@ -261,128 +273,105 @@ export const SettingsScreen = ({
   // Get default location
   const defaultLocation = preferences.locations.find(loc => loc.id === preferences.defaultLocationId);
 
-  return (
-    <div className="min-h-screen grain-overlay">
-      <div className="max-w-md mx-auto pb-32">
-        {/* Header */}
-        <header className="flex items-center justify-between px-4 py-4">
-          <button
-            onClick={handleBack}
-            className="p-2 hover:opacity-80 transition-colors"
-            style={{ color: 'var(--icon-cta)' }}
-            aria-label="Back"
-          >
-            <ArrowLeft size={24} />
-          </button>
-          <h1 className="text-heading-h4 font-bold tracking-wider uppercase" style={{ color: 'var(--text-header)' }}>
-            {getTitle()}
-          </h1>
-          <div className="w-10" />
-        </header>
-
-        <div className="px-4">
-          {/* Settings Hub */}
-          {currentView === "hub" && (
-            <SettingsHub
-              preferences={preferences}
-              defaultLocation={defaultLocation}
-              onNavigateLocations={() => setCurrentView("locations")}
-              onNavigateStructure={navigateToStructure}
-              onNavigateLimitations={navigateToLimitations}
-              onOpenDeveloper={onOpenDeveloper}
-              onLaunchTestWorkout={onLaunchTestWorkout}
-              onSignOutRequest={() => setShowSignOutConfirm(true)}
-            />
-          )}
-
-          {/* Locations List */}
-          {currentView === "locations" && (
-            <LocationList
-              preferences={preferences}
-              onSetDefault={setDefaultLocation}
-              onEditLocation={startEditLocation}
-              onAddLocation={startAddLocation}
-            />
-          )}
-
-          {/* Edit/Add Location */}
-          {(currentView === "editLocation" || currentView === "addLocation") && (
-            <LocationEditor
-              isEditing={currentView === "editLocation"}
-              locationName={locationName}
-              onLocationNameChange={setLocationName}
-              selectedTier={selectedTier}
-              onTierSelect={handleTierSelect}
-              selectedEquipment={selectedEquipment}
-              onEquipmentToggle={handleEquipmentToggle}
-              equipmentAccordionOpen={equipmentAccordionOpen}
-              onToggleEquipmentAccordion={() => setEquipmentAccordionOpen(!equipmentAccordionOpen)}
-              canDelete={preferences.locations.length > 1}
-              onDelete={deleteLocation}
-            />
-          )}
-
-          {/* Workout Structure */}
-          {currentView === "structure" && (
-            <StructureSettings
-              selectedGoal={selectedGoal}
-              onGoalSelect={handleGoalSelect}
-              selectedSections={selectedSections}
-              onSectionToggle={handleSectionToggle}
-              sectionsAccordionOpen={sectionsAccordionOpen}
-              onToggleSectionsAccordion={() => setSectionsAccordionOpen(!sectionsAccordionOpen)}
-              legendOpen={legendOpen}
-              onToggleLegend={() => setLegendOpen(!legendOpen)}
-            />
-          )}
-
-          {/* Limitations */}
-          {currentView === "limitations" && (
-            <LimitationsSettings
-              limitations={limitations}
-              onLimitationsChange={setLimitations}
-              onClear={clearLimitations}
-            />
-          )}
-        </div>
-
-        {/* Fixed Bottom Save Button */}
-        {(currentView === "editLocation" || currentView === "addLocation" ||
-          currentView === "structure" || currentView === "limitations") && (
-          <div
-            className="fixed bottom-0 left-0 right-0 p-4"
-            style={{ background: 'linear-gradient(to top, var(--color-neutral-900), var(--color-neutral-900) 60%, transparent)' }}
-          >
-            <div className="max-w-md mx-auto">
-              <CTAButton
-                onClick={() => {
-                  if (currentView === "editLocation" || currentView === "addLocation") {
-                    saveLocation();
-                  } else if (currentView === "structure") {
-                    saveStructure();
-                  } else if (currentView === "limitations") {
-                    saveLimitations();
-                  }
-                }}
-                size="lg"
-                fullWidth
-              >
-                Save
-              </CTAButton>
-            </div>
-          </div>
-        )}
+  const saveFooter = (currentView === "editLocation" || currentView === "addLocation" ||
+    currentView === "structure" || currentView === "limitations") ? (
+    <div
+      className="fixed bottom-0 left-0 right-0 p-4"
+      style={{ background: 'linear-gradient(to top, var(--color-neutral-900), var(--color-neutral-900) 60%, transparent)' }}
+    >
+      <div className="max-w-md mx-auto">
+        <CTAButton
+          onClick={() => {
+            if (currentView === "editLocation" || currentView === "addLocation") {
+              saveLocation();
+            } else if (currentView === "structure") {
+              saveStructure();
+            } else if (currentView === "limitations") {
+              saveLimitations();
+            }
+          }}
+          size="lg"
+          fullWidth
+        >
+          Save
+        </CTAButton>
       </div>
+    </div>
+  ) : undefined;
+
+  return (
+    <AppLayout
+      header={<PageHeader left="back" onBack={handleBack} center={getTitle()} />}
+      footer={saveFooter}
+    >
+      {currentView === "hub" && (
+        <SettingsHub
+          preferences={preferences}
+          defaultLocation={defaultLocation}
+          onNavigateLocations={() => setCurrentView("locations")}
+          onNavigateStructure={navigateToStructure}
+          onNavigateLimitations={navigateToLimitations}
+          onOpenDeveloper={() => navigate("/dev/gallery")}
+          onLaunchTestWorkout={() => navigate("/dev/test-workout")}
+          onSignOutRequest={() => setShowSignOutConfirm(true)}
+        />
+      )}
+
+      {currentView === "locations" && (
+        <LocationList
+          preferences={preferences}
+          onSetDefault={setDefaultLocation}
+          onEditLocation={startEditLocation}
+          onAddLocation={startAddLocation}
+        />
+      )}
+
+      {(currentView === "editLocation" || currentView === "addLocation") && (
+        <LocationEditor
+          isEditing={currentView === "editLocation"}
+          locationName={locationName}
+          onLocationNameChange={setLocationName}
+          selectedTier={selectedTier}
+          onTierSelect={handleTierSelect}
+          selectedEquipment={selectedEquipment}
+          onEquipmentToggle={handleEquipmentToggle}
+          equipmentAccordionOpen={equipmentAccordionOpen}
+          onToggleEquipmentAccordion={() => setEquipmentAccordionOpen(!equipmentAccordionOpen)}
+          canDelete={preferences.locations.length > 1}
+          onDelete={deleteLocation}
+        />
+      )}
+
+      {currentView === "structure" && (
+        <StructureSettings
+          selectedGoal={selectedGoal}
+          onGoalSelect={handleGoalSelect}
+          selectedSections={selectedSections}
+          onSectionToggle={handleSectionToggle}
+          sectionsAccordionOpen={sectionsAccordionOpen}
+          onToggleSectionsAccordion={() => setSectionsAccordionOpen(!sectionsAccordionOpen)}
+          legendOpen={legendOpen}
+          onToggleLegend={() => setLegendOpen(!legendOpen)}
+        />
+      )}
+
+      {currentView === "limitations" && (
+        <LimitationsSettings
+          limitations={limitations}
+          onLimitationsChange={setLimitations}
+          onClear={clearLimitations}
+        />
+      )}
 
       {showSignOutConfirm && (
         <SignOutConfirmModal
           onConfirm={() => {
             setShowSignOutConfirm(false);
-            onSignOut();
+            signOut();
           }}
           onCancel={() => setShowSignOutConfirm(false)}
         />
       )}
-    </div>
+    </AppLayout>
   );
 };

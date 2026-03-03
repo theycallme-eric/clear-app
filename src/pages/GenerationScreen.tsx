@@ -1,26 +1,25 @@
 import { useState, useCallback } from "react";
-import { Header } from "@/components/Header";
+import { useNavigate } from "react-router-dom";
+import { PageHeader } from "@/components/PageHeader";
+import { AppLayout } from "@/layouts";
 import { IntensitySlider } from "@/components/IntensitySlider";
 import { AnchorGrid, AnchorType } from "@/components/AnchorGrid";
 import { GoalSelector } from "@/components/GoalSelector";
 import { LocationAccordion } from "@/components/LocationAccordion";
 import { OptionalFields } from "@/components/OptionalFields";
 import { GenerateButton } from "@/components/GenerateButton";
-import { UserPreferences, GoalPreset, WorkoutParams, INTENSITY_RANGE_BY_GOAL } from "@/types/workout";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { useWorkoutFlowContext } from "@/contexts/WorkoutFlowContext";
+import { GoalPreset, INTENSITY_RANGE_BY_GOAL } from "@/types/workout";
 
-export type { WorkoutParams } from "@/types/workout";
+export const GenerationScreen = () => {
+  const navigate = useNavigate();
+  const { profile, locations } = useAuthContext();
+  const { handleGenerate: generateWorkout, isGenerating } = useWorkoutFlowContext();
 
-interface GenerationScreenProps {
-  onGenerate: (params: WorkoutParams) => void;
-  userPreferences: UserPreferences;
-  isGenerating?: boolean;
-  onOpenSettings?: () => void;
-}
-
-export const GenerationScreen = ({ onGenerate, userPreferences, isGenerating = false, onOpenSettings }: GenerationScreenProps) => {
-  const defaultLocation = userPreferences.locations.find(
-    l => l.id === userPreferences.defaultLocationId
-  ) || userPreferences.locations[0];
+  const defaultLocation = locations.find(
+    l => l.id === profile?.defaultLocationId
+  ) || locations[0];
 
   const [goal, setGoal] = useState<GoalPreset | null>(null);
   const [intensity, setIntensity] = useState(7);
@@ -29,7 +28,6 @@ export const GenerationScreen = ({ onGenerate, userPreferences, isGenerating = f
   const [time, setTime] = useState("45");
   const [notes, setNotes] = useState("");
 
-  // When goal changes, clamp intensity to the valid range
   const handleGoalChange = useCallback((newGoal: GoalPreset) => {
     setGoal(newGoal);
     const range = INTENSITY_RANGE_BY_GOAL[newGoal];
@@ -39,61 +37,54 @@ export const GenerationScreen = ({ onGenerate, userPreferences, isGenerating = f
       return prev;
     });
 
-    // If switching to active_recovery and Power is selected, deselect anchor
     if (newGoal === 'active_recovery' && anchor === 'POWER') {
       setAnchor(null);
     }
   }, [anchor]);
 
   const handleGenerate = () => {
-    onGenerate({
+    generateWorkout({
       intensity,
       anchor,
       goal,
       location,
       time,
       notes,
-    });
+    }, () => navigate("/review"));
   };
 
   const canGenerate = goal !== null && anchor !== null && time !== "";
-
-  // Get intensity range for current goal (or full range if no goal selected)
   const intensityRange = goal ? INTENSITY_RANGE_BY_GOAL[goal] : { min: 1, max: 10 };
 
   return (
-    <div className="min-h-screen grain-overlay">
-      <div className="max-w-md mx-auto pb-24">
-        <Header onMenuClick={onOpenSettings} />
+    <AppLayout header={<PageHeader right="menu" onMenu={() => navigate("/settings")} />}>
+      <div className="space-y-6">
+        <GoalSelector selected={goal} onSelect={handleGoalChange} />
 
-        <div className="px-4 space-y-6">
-          <GoalSelector selected={goal} onSelect={handleGoalChange} />
+        <AnchorGrid
+          selected={anchor}
+          onSelect={setAnchor}
+          disablePower={goal === 'active_recovery'}
+        />
 
-          <AnchorGrid
-            selected={anchor}
-            onSelect={setAnchor}
-            disablePower={goal === 'active_recovery'}
-          />
+        <IntensitySlider
+          value={intensity}
+          onChange={setIntensity}
+          min={intensityRange.min}
+          max={intensityRange.max}
+        />
 
-          <IntensitySlider
-            value={intensity}
-            onChange={setIntensity}
-            min={intensityRange.min}
-            max={intensityRange.max}
-          />
+        <LocationAccordion selected={location} onSelect={setLocation} locations={locations} />
 
-          <LocationAccordion selected={location} onSelect={setLocation} locations={userPreferences.locations} />
-
-          <OptionalFields
-            time={time}
-            notes={notes}
-            onTimeChange={setTime}
-            onNotesChange={setNotes}
-          />
-        </div>
-
-        <GenerateButton onClick={handleGenerate} disabled={!canGenerate} isLoading={isGenerating} />
+        <OptionalFields
+          time={time}
+          notes={notes}
+          onTimeChange={setTime}
+          onNotesChange={setNotes}
+        />
       </div>
-    </div>
+
+      <GenerateButton onClick={handleGenerate} disabled={!canGenerate} isLoading={isGenerating} />
+    </AppLayout>
   );
 };

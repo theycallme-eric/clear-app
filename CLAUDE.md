@@ -141,10 +141,9 @@ Invoke via Task tool with `subagent_type` matching the agent name.
 
 | Constraint | Details |
 |------------|---------|
-| **Index.tsx Monolith** | Extract components OUT of `src/pages/Index.tsx`, don't add to it |
 | **Design Tokens** | No hardcoded hex colors; use CSS variables |
 | **Type Safety** | Regenerate types after DB changes |
-| **SPA Architecture** | No server components; data fetching in useEffect/handlers |
+| **SPA Architecture** | No server components; data fetching via React Query or useEffect/handlers |
 | **PR-Based Workflow** | All changes go through pull requests |
 
 ---

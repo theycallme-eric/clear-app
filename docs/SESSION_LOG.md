@@ -13,14 +13,48 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Codebase Streamline
-**Current Task:** Complete — PR #7 open
-**Last Completed:** Codebase streamline (strict types, god file splits, logger, cleanup)
+**Current Phase:** Developer Workflow
+**Current Task:** Complete — PR #8 merged
+**Last Completed:** Session awareness hook + auto-branching in /execute
 **Blocking Issues:** Superset connector horizontal spacing needs fine-tuning (cosmetic)
 
 ---
 
 ## Session Entries
+
+### Session: 2026-03-03 - Session Awareness Hook + Auto-Branching
+
+**Duration:** ~20 min
+**Mode:** Claude Code
+**Branch:** `feature/session-awareness` → PR #8
+
+#### What Got Done
+- **SessionStart hook**: Created `.claude/hooks/session-start-check.sh` that runs when a new Claude Code session opens. Detects uncommitted files, feature branches with unpushed commits, and stashed changes. Outputs a summary so Claude can relay it to the user; silent on clean start.
+- **Auto-branching in /execute**: Added Step 2 ("Create Working Branch") to `execute-plan.md` skill. Derives branch name from plan filename (`SESSION_PLAN_auth_refactor.md` → `feature/auth-refactor`), handles three cases (on main, already on target, on different branch), warns about dirty working tree.
+- **Documentation updates**: Added hook to `.claude/settings.json`, updated `.claude/README.md` registry (hooks table + file structure), updated `.claude/commands/execute.md` flow summary.
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| SessionStart hook (not manual check) | Passive awareness — user sees in-progress work automatically without remembering to check |
+| Branch derived from plan filename | Consistent naming, no user input needed, easy to match branches back to plans |
+| Three-case branch handling (main/target/other) | Covers fresh start, resume, and conflict scenarios without losing work |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `.claude/hooks/session-start-check.sh` | Created — SessionStart awareness script |
+| `.claude/settings.json` | Modified — added SessionStart hook config |
+| `.claude/skills/execute-plan.md` | Modified — added Step 2: Create Working Branch, renumbered steps 3-9 |
+| `.claude/commands/execute.md` | Modified — mentioned branch creation in flow |
+| `.claude/README.md` | Modified — added hook to registry table and file structure |
+
+#### Status
+- PR #8 created on `feature/session-awareness` branch
+- Code review passed (0 issues)
+- All changes are .claude/ config and documentation — no source code changes
+
+---
 
 ### Session: 2026-03-03 - Codebase Streamline
 

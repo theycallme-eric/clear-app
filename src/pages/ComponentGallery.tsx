@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { ArrowLeft, Dumbbell, Zap, AlertCircle, User, HelpCircle, Maximize2, Pencil } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Dumbbell, Zap, AlertCircle, User, HelpCircle, Maximize2, Pencil } from "lucide-react";
+import { PageHeader } from "@/components/PageHeader";
+import { AppLayout } from "@/layouts";
 
 // shadcn/ui components
 import { Button } from "@/components/ui/button";
@@ -28,10 +31,6 @@ import { RadioButton } from "@/components/RadioButton";
 import { Chip } from "@/components/Chip";
 import { toast } from "@/components/ui/sonner";
 
-interface ComponentGalleryProps {
-  onBack: () => void;
-}
-
 /**
  * Component Gallery — Developer tool for auditing the design system.
  *
@@ -45,7 +44,8 @@ interface ComponentGalleryProps {
  * 2. Add a new <Section> block in the appropriate category
  * 3. Render with sensible default props
  */
-export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
+export const ComponentGallery = () => {
+  const navigate = useNavigate();
   // Local state for interactive demos (no app side effects)
   const [intensityValue, setIntensityValue] = useState(7);
   const [anchorValue, setAnchorValue] = useState<AnchorType | null>("LOWER BODY");
@@ -60,25 +60,8 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
   ];
 
   return (
-    <div className="min-h-screen grain-overlay">
-      <div className="max-w-md mx-auto pb-32">
-        {/* Header */}
-        <header className="flex items-center justify-between px-4 py-4">
-          <button
-            onClick={onBack}
-            className="p-2 transition-colors"
-            style={{ color: 'var(--icon-cta)' }}
-            aria-label="Back"
-          >
-            <ArrowLeft size={24} />
-          </button>
-          <h1 className="text-heading-h4 font-bold tracking-wider uppercase" style={{ color: 'var(--text-header)' }}>
-            Component Gallery
-          </h1>
-          <div className="w-10" />
-        </header>
-
-        <div className="px-4 space-y-8">
+    <AppLayout header={<PageHeader left="back" onBack={() => navigate("/settings")} center="Gallery" />}>
+      <div className="space-y-8">
 
           {/* ─── TYPOGRAPHY ─── */}
           <Section title="Typography — Headings (Rajdhani)">
@@ -675,9 +658,8 @@ export const ComponentGallery = ({ onBack }: ComponentGalleryProps) => {
             </Card>
           </Section>
 
-        </div>
       </div>
-    </div >
+    </AppLayout>
   );
 };
 

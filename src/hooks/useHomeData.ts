@@ -1,88 +1,61 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
-import { logger } from '@/lib/logger';
+import { useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchWorkoutHistory, fetchStreakData, fetchIncompleteSession } from '@/lib/home-data';
-import { WorkoutHistoryEntry, StreakData } from '@/types/workout';
+import { queryKeys } from '@/lib/query-keys';
+import type { WorkoutHistoryEntry, StreakData } from '@/types/workout';
 
 export interface IncompleteSession {
   id: string;
   date: string;
 }
 
-interface HomeDataState {
-  workoutHistory: WorkoutHistoryEntry[];
-  streakData: StreakData;
-  incompleteSession: IncompleteSession | null;
-  isLoading: boolean;
-  hasError: boolean;
-}
+const DEFAULT_STREAK: StreakData = { currentStreak: 0, lastWorkoutDate: null, weekView: {} };
 
 export function useHomeData(userId: string | null) {
-  const [state, setState] = useState<HomeDataState>({
-    workoutHistory: [],
-    streakData: { currentStreak: 0, lastWorkoutDate: null, weekView: {} },
-    incompleteSession: null,
-    isLoading: false,
-    hasError: false,
+  const queryClient = useQueryClient();
+
+  const historyQuery = useQuery({
+    queryKey: queryKeys.workoutHistory(userId!),
+    queryFn: () => fetchWorkoutHistory(10),
+    enabled: !!userId,
   });
 
-  const mountedRef = useRef(true);
+  const streakQuery = useQuery({
+    queryKey: queryKeys.streakData(userId!),
+    queryFn: fetchStreakData,
+    enabled: !!userId,
+  });
 
-  useEffect(() => {
-    mountedRef.current = true;
-    return () => { mountedRef.current = false; };
-  }, []);
+  const incompleteQuery = useQuery({
+    queryKey: queryKeys.incompleteSession(userId!),
+    queryFn: () => fetchIncompleteSession(userId!),
+    enabled: !!userId,
+  });
 
   const loadHomeData = useCallback(async () => {
     if (!userId) return;
-
-    setState(prev => ({ ...prev, isLoading: true, hasError: false }));
-
-    try {
-      const [history, streak] = await Promise.all([
-        fetchWorkoutHistory(10),
-        fetchStreakData(),
-      ]);
-
-      if (!mountedRef.current) return;
-
-      setState(prev => ({
-        ...prev,
-        workoutHistory: history,
-        streakData: streak,
-        isLoading: false,
-      }));
-    } catch (err) {
-      logger.data.error('loadHomeData failed', { error: err instanceof Error ? err.message : String(err) });
-      if (mountedRef.current) {
-        setState(prev => ({ ...prev, isLoading: false, hasError: true }));
-      }
-    }
-  }, [userId]);
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: queryKeys.workoutHistory(userId) }),
+      queryClient.invalidateQueries({ queryKey: queryKeys.streakData(userId) }),
+    ]);
+  }, [userId, queryClient]);
 
   const checkForIncompleteSession = useCallback(async () => {
     if (!userId) return;
-
-    try {
-      const session = await fetchIncompleteSession(userId);
-      if (!mountedRef.current) return;
-
-      if (session) {
-        setState(prev => ({
-          ...prev,
-          incompleteSession: session
-        }));
-      }
-    } catch (err) {
-      logger.data.error('checkForIncompleteSession failed', { error: err instanceof Error ? err.message : String(err) });
-    }
-  }, [userId]);
+    await queryClient.invalidateQueries({ queryKey: queryKeys.incompleteSession(userId) });
+  }, [userId, queryClient]);
 
   const clearIncompleteSession = useCallback(() => {
-    setState(prev => ({ ...prev, incompleteSession: null }));
-  }, []);
+    if (!userId) return;
+    queryClient.setQueryData(queryKeys.incompleteSession(userId), null);
+  }, [userId, queryClient]);
 
   return {
-    ...state,
+    workoutHistory: (historyQuery.data ?? []) as WorkoutHistoryEntry[],
+    streakData: (streakQuery.data ?? DEFAULT_STREAK) as StreakData,
+    incompleteSession: (incompleteQuery.data ?? null) as IncompleteSession | null,
+    isLoading: historyQuery.isLoading || streakQuery.isLoading,
+    hasError: historyQuery.isError || streakQuery.isError,
     loadHomeData,
     checkForIncompleteSession,
     clearIncompleteSession,

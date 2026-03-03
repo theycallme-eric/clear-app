@@ -1,22 +1,21 @@
 import { useState } from "react";
-import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { PageHeader } from "@/components/PageHeader";
+import { OnboardingLayout } from "@/layouts";
 import { CTAButton } from "@/components/CTAButton";
 import { Card } from "@/components/Card";
 import { RadioButton } from "@/components/RadioButton";
 import { Chip } from "@/components/Chip";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  UserPreferences,
   EquipmentTier,
   SectionType,
   EQUIPMENT_BY_TIER,
   WORKOUT_SECTIONS,
   SECTIONS_BY_GOAL,
 } from "@/types/workout";
-
-interface OnboardingScreenProps {
-  onComplete: (preferences: UserPreferences) => void;
-}
+import { useOnboardingFlow } from "@/hooks/useOnboardingFlow";
 
 type OnboardingStep = 1 | 2 | 3 | 4;
 
@@ -30,7 +29,9 @@ const TIER_OPTIONS: { value: EquipmentTier; label: string; description: string }
 // Default sections for new users (balanced preset)
 const DEFAULT_SECTIONS: SectionType[] = SECTIONS_BY_GOAL.balanced;
 
-export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
+export const OnboardingScreen = () => {
+  const navigate = useNavigate();
+  const { handleOnboardingComplete } = useOnboardingFlow(() => navigate("/"));
   const [step, setStep] = useState<OnboardingStep>(1);
 
   // Step 1: Equipment/Location
@@ -109,7 +110,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
       sections: sections,
       limitations: limitations,
     };
-    onComplete(preferences);
+    handleOnboardingComplete(preferences);
   };
 
   // Check if current step is complete
@@ -123,33 +124,63 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
     }
   };
 
-  return (
-    <div className="min-h-screen grain-overlay">
-      <div className="max-w-md mx-auto pb-32">
-        {/* Header */}
-        <header className="flex items-center justify-between px-4 py-4">
-          {step > 1 ? (
-            <button
-              onClick={handleBack}
-              className="p-2 transition-colors"
-              style={{ color: 'var(--icon-cta)' }}
-              aria-label="Back"
+  const onboardingFooter = (
+    <div
+      className="fixed bottom-0 left-0 right-0 p-4"
+      style={{ background: 'linear-gradient(to top, var(--color-neutral-900), var(--color-neutral-900) 60%, transparent)' }}
+    >
+      <div className="max-w-md mx-auto space-y-3">
+        {step === 3 ? (
+          <div className="flex gap-3">
+            <CTAButton
+              onClick={handleNext}
+              variant="secondary"
+              size="sm"
+              className="flex-1"
             >
-              <ArrowLeft size={24} />
-            </button>
-          ) : (
-            <div className="w-10" />
-          )}
-          <h1
-            className="text-heading-h2 font-bold tracking-wider"
-            style={{ color: 'var(--text-header)' }}
+              Skip for Now
+            </CTAButton>
+            <CTAButton
+              onClick={handleNext}
+              disabled={!canProceed()}
+              size="sm"
+              className="flex-1"
+            >
+              Next
+            </CTAButton>
+          </div>
+        ) : step === 4 ? (
+          <CTAButton
+            onClick={handleComplete}
+            size="lg"
+            fullWidth
           >
-            CLEAR
-          </h1>
-          <div className="w-10" />
-        </header>
+            Complete
+          </CTAButton>
+        ) : (
+          <CTAButton
+            onClick={handleNext}
+            disabled={!canProceed()}
+            size="lg"
+            fullWidth
+          >
+            Next
+          </CTAButton>
+        )}
 
-        <div className="px-4">
+        <p className="text-center text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
+          Step {step} of 4
+        </p>
+      </div>
+    </div>
+  );
+
+  return (
+    <OnboardingLayout
+      header={<PageHeader left={step > 1 ? 'back' : undefined} onBack={handleBack} />}
+      footer={onboardingFooter}
+    >
+      <div>
           {/* Step 1: Equipment/Location */}
           {step === 1 && (
             <div className="space-y-6">
@@ -429,58 +460,7 @@ export const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
               </Card>
             </div>
           )}
-        </div>
-
-        {/* Fixed Bottom Navigation */}
-        <div
-          className="fixed bottom-0 left-0 right-0 p-4"
-          style={{ background: 'linear-gradient(to top, var(--color-neutral-900), var(--color-neutral-900) 60%, transparent)' }}
-        >
-          <div className="max-w-md mx-auto space-y-3">
-            {step === 3 ? (
-              <div className="flex gap-3">
-                <CTAButton
-                  onClick={handleNext}
-                  variant="secondary"
-                  size="sm"
-                  className="flex-1"
-                >
-                  Skip for Now
-                </CTAButton>
-                <CTAButton
-                  onClick={handleNext}
-                  disabled={!canProceed()}
-                  size="sm"
-                  className="flex-1"
-                >
-                  Next
-                </CTAButton>
-              </div>
-            ) : step === 4 ? (
-              <CTAButton
-                onClick={handleComplete}
-                size="lg"
-                fullWidth
-              >
-                Complete
-              </CTAButton>
-            ) : (
-              <CTAButton
-                onClick={handleNext}
-                disabled={!canProceed()}
-                size="lg"
-                fullWidth
-              >
-                Next
-              </CTAButton>
-            )}
-
-            <p className="text-center text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
-              Step {step} of 4
-            </p>
-          </div>
-        </div>
       </div>
-    </div>
+    </OnboardingLayout>
   );
 };

@@ -1,45 +1,42 @@
+import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/sonner";
-import { ReviewHeader } from "@/components/ReviewHeader";
+import { PageHeader } from "@/components/PageHeader";
+import { AppLayout } from "@/layouts";
 import { WorkoutOverview } from "@/components/WorkoutOverview";
 import { WorkoutSectionCard } from "@/components/WorkoutSectionCard";
 import { StartWorkoutButton } from "@/components/StartWorkoutButton";
-import { GeneratedWorkout } from "@/types/workout";
+import { useWorkoutFlowContext } from "@/contexts/WorkoutFlowContext";
 
-interface ReviewScreenProps {
-  workout: GeneratedWorkout;
-  onBack: () => void;
-  onStartWorkout: () => void;
-}
+export const ReviewScreen = () => {
+  const navigate = useNavigate();
+  const { generatedWorkout, handleStartWorkout } = useWorkoutFlowContext();
 
-export const ReviewScreen = ({ workout, onBack, onStartWorkout }: ReviewScreenProps) => {
+  if (!generatedWorkout) {
+    return <Navigate to="/generate" replace />;
+  }
+
   const handleRandomizeSection = (sectionId: string) => {
     toast.info("Section randomized", {
       description: `${sectionId} has been regenerated`,
     });
-    // TODO: Implement actual randomization logic
   };
 
   return (
-    <div className="min-h-screen grain-overlay">
-      <div className="max-w-md mx-auto pb-24">
-        <ReviewHeader onBack={onBack} />
-        
-        <div className="px-4 space-y-6">
-          <WorkoutOverview workout={workout} />
-          
-          <div className="space-y-4">
-            {workout.sections.map((section) => (
-              <WorkoutSectionCard
-                key={section.id}
-                section={section}
-                onRandomize={() => handleRandomizeSection(section.name)}
-              />
-            ))}
-          </div>
+    <AppLayout header={<PageHeader left="back" onBack={() => navigate("/generate")} right="menu" onMenu={() => navigate("/settings")} />}>
+      <div className="space-y-6">
+        <WorkoutOverview workout={generatedWorkout} />
+
+        <div className="space-y-4">
+          {generatedWorkout.sections.map((section) => (
+            <WorkoutSectionCard
+              key={section.id}
+              section={section}
+              onRandomize={() => handleRandomizeSection(section.name)}
+            />
+          ))}
         </div>
-        
-        <StartWorkoutButton onClick={onStartWorkout} />
       </div>
-    </div>
+      <StartWorkoutButton onClick={() => handleStartWorkout(() => navigate("/workout"))} />
+    </AppLayout>
   );
 };
