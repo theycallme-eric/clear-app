@@ -43,12 +43,12 @@ Items that should be addressed soon, possibly before V1.
   - Completed: 2026-02-10
   - Context: Profile was fetched 3-4 times on init. Multiple hooks (useAuth, usePreferencesSync, useHomeData) independently managed auth state causing race conditions. Fixed with unified AuthContext. Index.tsx reduced from 280 to cleaner status-based navigation.
 
-- [x] **Refactor Index.tsx** - Extract auth state into React Context
+- [x] **Refactor Index.tsx** - Extract auth state into React Context, then replace entirely with react-router-dom
   - Priority: High
   - Type: Tech Debt
   - Added: 2026-02-02
-  - Completed: 2026-02-10
-  - Context: Index.tsx now uses AuthContext for auth state. Auth-related useEffects simplified to single status-based navigation. Remaining: could still extract more screen-specific logic, but auth/profile handling is now clean.
+  - Completed: 2026-03-03
+  - Context: Phase 1 (2026-02-10): AuthContext replaced multi-hook auth. Phase 2 (2026-03-03): Index.tsx fully deleted, replaced by App.tsx routes + auth guards (ProtectedRoute, PublicOnlyRoute, OnboardingRoute).
 
 ---
 
@@ -125,8 +125,8 @@ New functionality to build.
 ### 🔧 Tech Debt
 Code quality, refactoring, cleanup.
 
-- [x] **Codebase streamline** - TypeScript strict mode, logger standardization, god file splits, dependency cleanup (PR #7)
-- [ ] **Refactor Index.tsx** - See High Priority section for details
+- [x] **Codebase streamline** - TypeScript strict mode, logger standardization, god file splits, dependency cleanup, error boundaries, React Query, test infra (PR #7)
+- [x] **Refactor Index.tsx** - Replaced by react-router-dom routes + auth guards. Index.tsx deleted. (Completed 2026-03-03)
 
 ---
 

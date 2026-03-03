@@ -13,14 +13,70 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Developer Workflow
-**Current Task:** Complete — PR #8 merged
-**Last Completed:** Session awareness hook + auto-branching in /execute
+**Current Phase:** Infrastructure Hardening
+**Current Task:** Complete — PR #7 updated with infrastructure improvements
+**Last Completed:** Error boundaries, React Query activation, dead code cleanup, test infrastructure
 **Blocking Issues:** Superset connector horizontal spacing needs fine-tuning (cosmetic)
 
 ---
 
 ## Session Entries
+
+### Session: 2026-03-03 - Infrastructure: Error Boundaries, React Query, Tests
+
+**Duration:** ~1.5 hours
+**Mode:** Claude Code
+**Branch:** `feature/codebase-streamline` → PR #7 (updated)
+
+#### What Got Done
+- **Error boundaries**: Installed `react-error-boundary`. Created two-layer system: `AppErrorFallback` (catastrophic crash screen with design tokens, dev-only error details) wrapping AuthProvider in `main.tsx`, and `RouteErrorFallback` (uses AppLayout + ErrorState with retry/navigate) wrapping Outlet in all three route guards with `resetKeys={[location.pathname]}` for auto-clear on navigation
+- **React Query activation**: Configured `QueryClient` with 5min staleTime, 10min gcTime, retry:1, refetchOnWindowFocus:false. Created `lib/query-keys.ts` factory. Rewrote `useHomeData` from useState/useEffect/mountedRef to three `useQuery` calls — `loadHomeData()` now calls `invalidateQueries`, `clearIncompleteSession()` uses `setQueryData(key, null)`. Removed auto-fetch `useEffect` from `HomeDataContext` (React Query's `enabled` flag handles it). Migrated `SessionDetailScreen` data fetch to `useQuery`. Added `@tanstack/react-query-devtools`
+- **Dead code cleanup**: Confirmed `Index.tsx`, `useAppNavigation.ts`, `useHistoryDetail.ts` already deleted from previous session. Removed obsolete "Index.tsx Monolith" constraint from CLAUDE.md
+- **Test infrastructure**: Installed vitest + @testing-library/react + jest-dom + user-event + jsdom. Created `vitest.config.ts`, `test/setup.ts` (jest-dom + ResizeObserver polyfill), `test/test-utils.tsx` (custom render with QueryClientProvider + MemoryRouter). Added `test` and `test:run` scripts to package.json
+- **28 foundational tests across 4 files**: `ErrorState.test.tsx` (5 — render, retry, click), `workout-api.test.ts` (10 — isGenerationError type guard + transformAPIWorkoutToFrontend mapping), `guards.test.tsx` (9 — all redirect/render scenarios for 3 guards), `home-data.test.ts` (4 — error resilience + data mapping)
+
+#### What Came Up (Unexpected)
+- `ResizeObserver is not defined` in jsdom — `ChamferedFrame` (used by `Card`, used by `ErrorState`) relies on ResizeObserver. Fixed with polyfill stub in test setup
+- Dead code files were already deleted in working tree from previous session but not yet committed — just needed staging
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Two-layer error boundary (app + route) | App-level catches provider/router failures where components can't render; route-level uses existing UI chrome |
+| `resetKeys={[location.pathname]}` on route boundaries | Auto-clears error state when user navigates away — no stale error screens |
+| 5min staleTime, 10min gcTime for React Query | Mobile-app feel: data stays fresh during a session, doesn't refetch on every navigation, but cleans up after idle |
+| `refetchOnWindowFocus: false` | Mobile PWA — tab switching shouldn't trigger refetches |
+| ResizeObserver stub (not full polyfill) | Tests only need to not crash; actual resize behavior is visual and not under test |
+| Preserved useHomeData return shape exactly | Zero changes needed in consumers (HomeScreen, HistoryScreen, SummaryScreen, WorkoutFlowContext) |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/components/AppErrorFallback.tsx` | Created — full-screen dark crash page with design tokens |
+| `src/components/RouteErrorFallback.tsx` | Created — route-level fallback using AppLayout + ErrorState |
+| `src/main.tsx` | Modified — wrapped with ErrorBoundary + AppErrorFallback |
+| `src/routes/guards.tsx` | Modified — wrapped Outlet in each guard with ErrorBoundary |
+| `src/lib/query-keys.ts` | Created — centralized query key factory |
+| `src/hooks/useHomeData.ts` | Rewritten — useState/useEffect → three useQuery calls |
+| `src/contexts/HomeDataContext.tsx` | Modified — removed auto-fetch useEffect |
+| `src/App.tsx` | Modified — configured QueryClient defaults, added ReactQueryDevtools |
+| `src/pages/SessionDetailScreen.tsx` | Modified — useState/useEffect → useQuery |
+| `vitest.config.ts` | Created — jsdom, globals, @ alias, setup file |
+| `src/test/setup.ts` | Created — jest-dom matchers + ResizeObserver polyfill |
+| `src/test/test-utils.tsx` | Created — custom render with QueryClient + MemoryRouter |
+| `src/components/ErrorState.test.tsx` | Created — 5 tests |
+| `src/lib/workout-api.test.ts` | Created — 10 tests |
+| `src/routes/guards.test.tsx` | Created — 9 tests |
+| `src/lib/home-data.test.ts` | Created — 4 tests |
+| `CLAUDE.md` | Modified — removed Index.tsx constraint, updated SPA architecture note |
+| `package.json` | Modified — added test deps + scripts |
+
+#### Status
+- Build passes, TypeScript compiles cleanly, 28 tests pass
+- PR #7 updated with new commit, pushed to remote
+- Code review: 0 critical issues, ready for merge
+
+---
 
 ### Session: 2026-03-03 - Session Awareness Hook + Auto-Branching
 
