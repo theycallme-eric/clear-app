@@ -1,25 +1,27 @@
 # Clear - Implementation Action Plan (Jan 22, 2026)
-**Purpose:** Handoff document for Antigravity implementation
+**Purpose:** Handoff document for the implementation agent
+
+> **Implementation agent:** Currently Claude Code. If the tool changes, update this line.
 **Based on:** Session Recap (Jan 21, 2026)
 **Pattern:** Follows established documentation format from project files
 **Updated:** February 2026
 
 > **Workflow Note:** This document was originally created for Claude Code. The workflow has changed:
 > - **Claude.ai (Opus):** Planning, prompt crafting, architecture decisions
-> - **Antigravity:** All code implementation, file creation, deployment
+> - **The implementation agent:** All code implementation, file creation, deployment
 
 ---
 
 ## Document Purpose
 
-This is a **handoff document for Antigravity**. Each phase contains:
+This is a **handoff document for the implementation agent**. Each phase contains:
 - Clear goals and success criteria
 - Specific files to create/modify
 - Code examples and database operations
 - References to existing project documentation
 - Implementation guidelines
 
-Use this document to maintain context and direction across Antigravity sessions. Each phase is self-contained and can be tackled independently.
+Use this document to maintain context and direction across implementation sessions. Each phase is self-contained and can be tackled independently.
 
 ---
 
@@ -687,23 +689,23 @@ if (incomplete) {
 
 ---
 
-## Implementation Guidelines for Antigravity
+## Implementation Guidelines
 
 ### How to Use This Document
 1. **Pick a phase** based on current progress and dependencies
-2. **Reference the specific task** you want Antigravity to implement
+2. **Reference the specific task** you want the agent to implement
 3. **Copy the relevant context** (goal, files, code examples, success criteria)
-4. **Use the prompt template** below to start your Antigravity session
+4. **Use the prompt template** below to start your session
 
 ### Session Structure
-Each Antigravity session should:
+Each implementation session should:
 - State which phase/task you're working on
 - Reference this action plan document
 - Include relevant wireframe/data model docs
 - Specify expected deliverables
 - End with testing the implementation
 
-### Example Antigravity Prompt
+### Example Prompt
 ```
 I'm working on Clear (workout app). I need to implement Phase 2, Task 2.1
 from the Implementation Action Plan (Jan 22, 2026).
@@ -846,7 +848,7 @@ docs: update README with setup instructions
 **Immediate Action (Today):**
 Start with Phase 1 - Complete Auth Flow. Use this document as reference.
 
-**Antigravity Prompt Template:**
+**Prompt Template:**
 ```
 I'm working on the Clear workout app. I need to implement [PHASE/TASK]
 from the Implementation Action Plan (Jan 22, 2026).
@@ -869,5 +871,5 @@ After completing each phase, update:
 ---
 
 *Action Plan created: January 22, 2026*
-*Updated: February 2026 - Migrated from Claude Code to Antigravity workflow*
-*Ready for Antigravity implementation*
+*Updated: February 2026 - Now uses generic 'implementation agent' references*
+*Ready for implementation*

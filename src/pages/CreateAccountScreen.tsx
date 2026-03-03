@@ -77,18 +77,22 @@ export const CreateAccountScreen = ({ onBack, onSuccess }: CreateAccountScreenPr
       {/* Header */}
       <button
         onClick={onBack}
-        className="flex items-center gap-2 text-foreground/70 hover:text-foreground transition-colors mb-8"
+        className="flex items-center gap-2 transition-colors mb-8"
+        style={{ color: 'var(--icon-cta)' }}
       >
         <ArrowLeft size={20} />
-        <span className="font-body">Back</span>
+        <span className="text-cta-sm">Back</span>
       </button>
 
       <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full">
         {/* Title */}
-        <h1 className="font-display text-4xl font-bold tracking-wider text-foreground mb-2">
+        <h1
+          className="text-heading-h1 font-bold tracking-wider mb-2"
+          style={{ color: 'var(--text-header)' }}
+        >
           Create Account
         </h1>
-        <p className="text-foreground/60 mb-8">
+        <p className="text-paragraph-sm mb-8" style={{ color: 'var(--text-paragraph)' }}>
           Start your training journey
         </p>
 
@@ -97,7 +101,7 @@ export const CreateAccountScreen = ({ onBack, onSuccess }: CreateAccountScreenPr
           <Card cornerSize="md" padding="md">
             {/* Email */}
             <div className="space-y-2 mb-4">
-              <label className="block text-paragraph-sm text-foreground">
+              <label className="block text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
                 Email
               </label>
               <Input
@@ -111,7 +115,7 @@ export const CreateAccountScreen = ({ onBack, onSuccess }: CreateAccountScreenPr
 
             {/* Password */}
             <div className="space-y-2 mb-4">
-              <label className="block text-paragraph-sm text-foreground">
+              <label className="block text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
                 Password
               </label>
               <Input
@@ -134,7 +138,7 @@ export const CreateAccountScreen = ({ onBack, onSuccess }: CreateAccountScreenPr
 
             {/* Confirm Password */}
             <div className="space-y-2">
-              <label className="block text-paragraph-sm text-foreground">
+              <label className="block text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
                 Confirm Password
               </label>
               <Input
@@ -176,7 +180,10 @@ export const CreateAccountScreen = ({ onBack, onSuccess }: CreateAccountScreenPr
         </form>
 
         {/* Terms */}
-        <p className="text-xs text-foreground/50 text-center mt-6">
+        <p
+          className="text-label-xs text-center mt-6"
+          style={{ color: 'var(--text-disabled)' }}
+        >
           By creating an account, you agree to our Terms of Service and Privacy Policy.
         </p>
       </div>

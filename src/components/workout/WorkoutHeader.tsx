@@ -44,7 +44,7 @@ export const WorkoutHeader = ({
         {/* C: Timer - centered */}
         <span
           className="text-time-lg font-bold tracking-wider"
-          style={{ color: "var(--color-green-500)" }}
+          style={{ color: "var(--text-timer)" }}
         >
           {formatTime(sectionTime)}
         </span>

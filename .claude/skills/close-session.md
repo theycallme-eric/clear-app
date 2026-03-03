@@ -34,7 +34,7 @@ Track completed work for project history and continuity between agents. This ens
 ```markdown
 ## [Date] - [Brief Title]
 
-**Agent:** [Antigravity / Claude Code / etc.]
+**Agent:** [Claude Code / other]
 
 **Work Completed:**
 - [What was built/changed]

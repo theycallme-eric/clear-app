@@ -11,12 +11,15 @@ export const WelcomeScreen = ({ onSignIn, onCreateAccount }: WelcomeScreenProps)
     <div className="min-h-screen grain-overlay flex flex-col items-center justify-center px-6">
       <div className="flex flex-col items-center text-center max-w-sm">
         {/* Logo */}
-        <h1 className="text-heading-h1 font-bold tracking-wider text-foreground mb-4">
+        <h1
+          className="text-heading-h1 font-bold tracking-wider mb-4"
+          style={{ color: 'var(--text-header)' }}
+        >
           CLEAR
         </h1>
 
         {/* Tagline */}
-        <p className="text-paragraph-lg text-foreground/70 mb-12">
+        <p className="text-paragraph-lg mb-12" style={{ color: 'var(--text-paragraph)' }}>
           Strength training, simplified.
         </p>
 

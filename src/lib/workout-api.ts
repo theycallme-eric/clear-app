@@ -19,16 +19,17 @@ export { isGenerationError } from '@/types/generation';
 export function transformAPIWorkoutToFrontend(
   apiWorkout: APIGeneratedWorkout,
   intensity: number,
-  anchor: string
+  anchor: string,
+  goal?: string
 ): GeneratedWorkout {
   const sections: WorkoutSection[] = apiWorkout.sections.map((section, sectionIndex) => {
     // Map API section_type to frontend type
     const typeMap: Record<string, WorkoutSection['type']> = {
       warmup: 'warmup',
-      mobility: 'warmup',
+      mobility: 'mobility',
       primary_lift: 'primary',
       accessory: 'accessory',
-      core: 'rotational',
+      core: 'core',
       conditioning: 'conditioning',
       cooldown: 'cooldown',
     };
@@ -64,6 +65,7 @@ export function transformAPIWorkoutToFrontend(
     duration: `${apiWorkout.estimated_duration_mins}m`,
     intensity,
     anchor: anchor.toUpperCase(),
+    goal,
     sections,
   };
 }
@@ -205,6 +207,7 @@ export async function saveGeneratedWorkout(
       p_intensity: workout.metadata.request.intensity,
       p_time_target_mins: workout.metadata.request.duration_mins || null,
       p_prompt_version: workout.metadata.prompt_version || null,
+      p_goal_preset: workout.metadata.request.goal || 'balanced',
       p_sections: sectionsForRpc,
     });
 

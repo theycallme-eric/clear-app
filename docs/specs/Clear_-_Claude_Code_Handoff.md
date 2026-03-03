@@ -1,11 +1,9 @@
-# Clear - Antigravity Handoff
+# Clear - Implementation Agent Handoff
 **Created:** December 22, 2025
 **Updated:** February 2026
-**Purpose:** Everything Antigravity needs to build the remaining screens
+**Purpose:** Everything the implementation agent needs to build the remaining screens
 
-> **Workflow Note:** This document was originally created for Claude Code. The workflow has changed:
-> - **Claude.ai (Opus):** Planning, prompt crafting, architecture decisions
-> - **Antigravity:** All code implementation, file creation, deployment
+> **Implementation agent:** Currently Claude Code. If the tool changes, update this line.
 
 ---
 
@@ -435,7 +433,7 @@ Existing code is in the code folder (Lovable export).
 
 ---
 
-## Notes for Antigravity
+## Notes for the Implementation Agent
 
 1. **Match existing patterns.** Look at how Lovable structured Screen 1-3 and follow the same conventions.
 

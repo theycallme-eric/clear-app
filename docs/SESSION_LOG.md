@@ -15,12 +15,40 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ## Quick Status
 **Current Phase:** Design System Hardening
 **Current Task:** Complete
-**Last Completed:** Spacing audit & standardization — all Tailwind spacing backed by CSS tokens
+**Last Completed:** History system research & favorite/redo feature scoping
 **Blocking Issues:** Superset connector horizontal spacing needs fine-tuning (cosmetic)
 
 ---
 
 ## Session Entries
+
+### Session: 2026-02-27 - History System Research & Favorite/Redo Scoping
+
+**Duration:** ~15 min
+**Mode:** Claude Code
+**Branch:** `main` (no code changes)
+
+#### What Got Done
+- Deep-dive research into the history system: what's saved, what's displayed, how generation uses history
+- Mapped the full data flow: generation → completion → history display → next generation
+- Identified that `buildUserPrompt()` already queries last 5 workouts and injects recent anchors + exercises into the prompt for variation
+- Scoped a **Favorite / Redo** feature with two sub-features and key design decisions documented
+- Identified dependency: exercise-level logging persistence (existing backlog item) needed before "redo with logged weights" is viable
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Add Favorite/Redo to backlog as Medium priority | Not blocking current work; needs design decisions before implementation |
+| Two sub-features: Favorite (mark + filter) and Redo (clone vs re-gen) | Different complexity and UX implications — should be evaluated separately |
+
+#### Backlog Additions
+- [ ] **Favorite / Redo workout** → Added to BACKLOG.md (Medium priority, Feature)
+
+#### Status
+- Research only, no code changes
+- Backlog updated with full context for next-week pickup
+
+---
 
 ### Session: 2026-02-27 - Spacing Audit & Token Standardization
 

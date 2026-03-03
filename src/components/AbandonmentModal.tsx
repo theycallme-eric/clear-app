@@ -13,12 +13,18 @@ interface AbandonmentModalProps {
  */
 export const AbandonmentModal = ({ workoutDate, onResume, onAbandon }: AbandonmentModalProps) => {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm"
+      style={{ backgroundColor: 'rgba(23, 23, 23, 0.8)' }}
+    >
       <Card padding="lg" className="mx-4 max-w-sm w-full text-center">
-        <h2 className="text-heading-h4 font-bold uppercase tracking-wider text-foreground mb-2">
+        <h2
+          className="text-heading-h4 font-bold uppercase tracking-wider mb-2"
+          style={{ color: 'var(--text-header)' }}
+        >
           Incomplete Workout
         </h2>
-        <p className="text-paragraph-sm text-muted-foreground mb-6">
+        <p className="text-paragraph-sm mb-6" style={{ color: 'var(--text-paragraph)' }}>
           You have an unfinished workout from {workoutDate}. Would you like to continue or start fresh?
         </p>
         <div className="space-y-2">

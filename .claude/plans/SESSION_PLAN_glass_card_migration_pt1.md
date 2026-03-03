@@ -13,7 +13,7 @@ Replace all `glass-card` CSS class usages with the chamfered `Card` component in
 
 ## Migration Patterns Reference
 
-Antigravity should use these patterns throughout. Each maps a `glass-card` usage to a Card component configuration.
+The agent should use these patterns throughout. Each maps a `glass-card` usage to a Card component configuration.
 
 **Pattern A — Static Display Card:**
 ```

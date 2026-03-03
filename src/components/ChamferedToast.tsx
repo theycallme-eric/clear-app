@@ -90,11 +90,11 @@ function ChamferedToast({
 
           {/* Title + Description */}
           <div className="flex flex-col justify-center">
-            <p className="font-label text-base font-medium">
+            <p className="text-label-md font-medium">
               {title}
             </p>
             {description && (
-              <p className="font-label text-sm opacity-80">
+              <p className="text-label-sm opacity-80">
                 {description}
               </p>
             )}

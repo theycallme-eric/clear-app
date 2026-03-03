@@ -90,7 +90,7 @@ export const WorkoutScreen = ({ workout, onExit, onFinish }: WorkoutScreenProps)
             className="text-label-xs uppercase tracking-widest"
             style={{ color: 'var(--text-paragraph)' }}
           >
-            {workout.anchor} &bull; Intensity {workout.intensity}
+            {workout.goal ? `${workout.goal.replace('_', ' ')} · ` : ''}{workout.anchor} &bull; Intensity {workout.intensity}
           </span>
         </div>
 

@@ -1,7 +1,9 @@
 # Implementation Plan: Workout Generation System v2
 
 **Purpose:** Implement the refined workout generation system with new structure types, intensity model, and UI components.  
-**Format:** Phased implementation with Antigravity-ready task handoffs  
+**Format:** Phased implementation with agent-ready task handoffs
+
+> **Implementation agent:** Currently Claude Code. If the tool changes, update this line.  
 **Estimated Total:** 6-8 sessions
 
 ---
@@ -954,7 +956,7 @@ End-to-end testing of complete workout generation v2 system.
 
 ---
 
-## Key Constraints (Remind Antigravity)
+## Key Constraints (Remind the Implementation Agent)
 
 | Constraint | Details |
 |------------|---------|

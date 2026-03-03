@@ -2,6 +2,8 @@
 
 **Purpose:** Reference for creating and executing implementation plans in the Clear project.
 
+> **Implementation agent:** Currently Claude Code. If the tool changes, update this line.
+
 ---
 
 ## Overview
