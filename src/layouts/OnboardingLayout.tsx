@@ -9,8 +9,8 @@ interface OnboardingLayoutProps {
 export const OnboardingLayout = ({ header, footer, children }: OnboardingLayoutProps) => {
   return (
     <div className="min-h-screen grain-overlay">
-      <div className="max-w-md mx-auto pb-32">
-        {header}
+      {header}
+      <div className="max-w-md mx-auto pt-12 pb-32">
         <div className="px-4">
           {children}
         </div>
