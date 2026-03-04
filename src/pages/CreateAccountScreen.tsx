@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, Loader2, Eye, EyeOff } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
+import { PageHeading } from "@/components/PageHeading";
 import { AuthLayout } from "@/layouts";
 import { supabase } from "@/lib/supabase";
 import { logger } from "@/lib/logger";
@@ -74,20 +75,14 @@ export const CreateAccountScreen = () => {
 
   return (
     <AuthLayout header={<PageHeader left="back" onBack={() => navigate("/welcome")} />}>
-      <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full">
-        {/* Title */}
-        <h1
-          className="text-heading-h1 font-bold tracking-wider mb-2"
-          style={{ color: 'var(--text-header)' }}
-        >
-          Create Account
-        </h1>
-        <p className="text-paragraph-sm mb-8" style={{ color: 'var(--text-paragraph)' }}>
+      <div className="flex-1 flex flex-col justify-center">
+        <PageHeading level="h1" className="-mx-6 px-6 mb-2">Create Account</PageHeading>
+        <p className="text-paragraph-sm mb-8 text-center" style={{ color: 'var(--text-paragraph)' }}>
           Start your training journey
         </p>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 max-w-sm mx-auto w-full">
           <Card cornerSize="md" padding="md">
             {/* Email */}
             <div className="space-y-2 mb-4">

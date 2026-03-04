@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
+import { PageHeading } from "@/components/PageHeading";
 import { OnboardingLayout } from "@/layouts";
 import { CTAButton } from "@/components/CTAButton";
 import { Card } from "@/components/Card";
@@ -184,12 +185,7 @@ export const OnboardingScreen = () => {
           {/* Step 1: Equipment/Location */}
           {step === 1 && (
             <div className="space-y-6">
-              <h2
-                className="text-heading-h2 font-bold uppercase tracking-wider"
-                style={{ color: 'var(--text-header)' }}
-              >
-                What's Your Gym Setup?
-              </h2>
+              <PageHeading>What's Your Gym Setup?</PageHeading>
 
               <Card cornerSize="md" padding="md">
                 <label
@@ -265,13 +261,8 @@ export const OnboardingScreen = () => {
           {step === 2 && (
             <div className="space-y-6">
               <div>
-                <h2
-                  className="text-heading-h2 font-bold uppercase tracking-wider"
-                  style={{ color: 'var(--text-header)' }}
-                >
-                  Workout Sections
-                </h2>
-                <p className="text-paragraph-sm mt-2" style={{ color: 'var(--text-paragraph)' }}>
+                <PageHeading>Workout Sections</PageHeading>
+                <p className="text-paragraph-sm mt-2 text-center" style={{ color: 'var(--text-paragraph)' }}>
                   Choose which parts to include in your workouts.
                 </p>
               </div>
@@ -341,13 +332,8 @@ export const OnboardingScreen = () => {
           {step === 3 && (
             <div className="space-y-6">
               <div>
-                <h2
-                  className="text-heading-h2 font-bold uppercase tracking-wider"
-                  style={{ color: 'var(--text-header)' }}
-                >
-                  Anything We Should<br />Work Around?
-                </h2>
-                <p className="text-paragraph-sm mt-2" style={{ color: 'var(--text-paragraph)' }}>
+                <PageHeading>Anything We Should Work Around?</PageHeading>
+                <p className="text-paragraph-sm mt-2 text-center" style={{ color: 'var(--text-paragraph)' }}>
                   Old injuries, problem areas, or movements you want to avoid.
                 </p>
               </div>
@@ -364,12 +350,7 @@ export const OnboardingScreen = () => {
           {/* Step 4: Confirmation */}
           {step === 4 && (
             <div className="space-y-6">
-              <h2
-                className="text-heading-h2 font-bold uppercase tracking-wider"
-                style={{ color: 'var(--text-header)' }}
-              >
-                Here's Your Setup
-              </h2>
+              <PageHeading>Here's Your Setup</PageHeading>
 
               {/* Location */}
               <Card padding="md">

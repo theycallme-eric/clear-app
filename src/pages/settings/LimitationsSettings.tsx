@@ -1,5 +1,6 @@
 import { CTAButton } from "@/components/CTAButton";
 import { Card } from "@/components/Card";
+import { PageHeading } from "@/components/PageHeading";
 import { Textarea } from "@/components/ui/textarea";
 
 interface LimitationsSettingsProps {
@@ -15,15 +16,12 @@ export const LimitationsSettings = ({
 }: LimitationsSettingsProps) => {
   return (
     <div className="space-y-6">
+      <PageHeading level="h2" textSize="h4">Anything We Should Work Around?</PageHeading>
+
       <Card cornerSize="md" padding="md">
-        <div className="mb-4">
-          <h2 className="text-heading-h4 font-bold uppercase tracking-wider" style={{ color: 'var(--text-header)' }}>
-            Anything We Should<br />Work Around?
-          </h2>
-          <p className="text-paragraph-sm mt-2" style={{ color: 'var(--text-paragraph)' }}>
-            Old injuries, problem areas, or movements you want to avoid.
-          </p>
-        </div>
+        <p className="text-paragraph-sm mb-4" style={{ color: 'var(--text-paragraph)' }}>
+          Old injuries, problem areas, or movements you want to avoid.
+        </p>
 
         <Textarea
           value={limitations}
