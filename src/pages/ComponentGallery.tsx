@@ -504,7 +504,7 @@ export const ComponentGallery = () => {
 
           <Section title="App — LoadingScreen">
             <ChamferedCard padding="none" className="overflow-hidden h-48 relative">
-              <LoadingScreen message="CLEAR" subtitle="Loading your data..." className="min-h-0 h-full" />
+              <LoadingScreen subtitle="Loading your data..." className="min-h-0 h-full" />
             </ChamferedCard>
           </Section>
 

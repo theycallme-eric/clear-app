@@ -1,4 +1,5 @@
 import { ArrowLeft, Menu } from "lucide-react";
+import { ClearLogo } from "@/components/ClearLogo";
 import { TimerDisplay } from "@/components/TimerDisplay";
 import { useEffect, useState } from "react";
 
@@ -62,14 +63,7 @@ export const PageHeader = ({
   // Center slot
   const renderCenter = () => {
     if (center === 'logo') {
-      return (
-        <h1
-          className="text-heading-h2 font-bold tracking-wider glow-emissive"
-          style={{ color: 'var(--text-header)' }}
-        >
-          CLEAR
-        </h1>
-      );
+      return <ClearLogo size="md" />;
     }
     if (center === 'timer') {
       return <TimerDisplay elapsedSeconds={elapsedSeconds} />;
