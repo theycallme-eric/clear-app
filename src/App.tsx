@@ -1,8 +1,14 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
+const ReactQueryDevtools = lazy(() =>
+  import("@tanstack/react-query-devtools").then((m) => ({
+    default: m.ReactQueryDevtools,
+  }))
+);
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HomeDataProvider } from "@/contexts/HomeDataContext";
 import { WorkoutFlowProvider } from "@/contexts/WorkoutFlowContext";
@@ -82,7 +88,11 @@ const App = () => (
         </HomeDataProvider>
       </BrowserRouter>
     </TooltipProvider>
-    <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
+    {import.meta.env.DEV && (
+      <Suspense fallback={null}>
+        <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
+      </Suspense>
+    )}
   </QueryClientProvider>
 );
 
