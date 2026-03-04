@@ -1,21 +1,21 @@
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { Flame, Frown, Meh, Smile, SmilePlus, ThumbsDown } from "lucide-react";
+import { Flame } from "lucide-react";
+import { MoodIcon, MoodValue } from "@/components/MoodIcon";
 import { PageHeader } from "@/components/PageHeader";
 import { AppLayout } from "@/layouts";
-import { cn } from "@/lib/utils";
 import { CTAButton } from "@/components/CTAButton";
 import { Card } from "@/components/Card";
 import { Textarea } from "@/components/ui/textarea";
 import { useWorkoutFlowContext } from "@/contexts/WorkoutFlowContext";
 import { useHomeDataContext } from "@/contexts/HomeDataContext";
 
-const MOOD_OPTIONS = [
-  { value: 1, icon: ThumbsDown, label: "Exhausted" },
-  { value: 2, icon: Frown, label: "Tough" },
-  { value: 3, icon: Meh, label: "Okay" },
-  { value: 4, icon: Smile, label: "Good" },
-  { value: 5, icon: SmilePlus, label: "Great" },
+const MOOD_OPTIONS: { value: MoodValue; label: string }[] = [
+  { value: 1, label: "Exhausted" },
+  { value: 2, label: "Tough" },
+  { value: 3, label: "Okay" },
+  { value: 4, label: "Good" },
+  { value: 5, label: "Great" },
 ];
 
 const formatDuration = (seconds: number): string => {
@@ -92,7 +92,7 @@ export const SummaryScreen = () => {
 
         <div className="text-center mb-6">
           <h2
-            className="text-heading-h2 font-bold uppercase tracking-wide"
+            className="text-heading-h2 font-bold uppercase tracking-wide glow-emissive"
             style={{ color: 'var(--text-header)' }}
           >
             Nice Work!
@@ -111,38 +111,36 @@ export const SummaryScreen = () => {
           </p>
         </Card>
 
-        <div className="mb-6">
+        <Card padding="md" className="mb-6">
           <h3
-            className="text-label-xs uppercase tracking-widest mb-3"
+            className="text-label-xs uppercase tracking-widest mb-4"
             style={{ color: 'var(--text-card-label)' }}
           >
             How Do You Feel?
           </h3>
           <div className="flex justify-between gap-2">
-            {MOOD_OPTIONS.map((mood) => {
-              const Icon = mood.icon;
-              return (
-                <button
-                  key={mood.value}
-                  onClick={() => setSelectedMood(mood.value)}
-                  className={cn("flex-1 py-3 flex items-center justify-center transition-all border")}
-                  style={
-                    selectedMood === mood.value
-                      ? { backgroundColor: 'var(--surface-radio-selected)', borderColor: 'var(--border-radio-select)', color: 'var(--text-label-selected)' }
-                      : { backgroundColor: 'transparent', borderColor: 'transparent', color: 'var(--text-paragraph)' }
-                  }
-                  aria-label={mood.label}
-                >
-                  <Icon size={24} />
-                </button>
-              );
-            })}
+            {MOOD_OPTIONS.map((mood) => (
+              <button
+                key={mood.value}
+                onClick={() => setSelectedMood(mood.value)}
+                className="flex-1 py-3 flex flex-col items-center justify-center gap-2 transition-all border"
+                style={
+                  selectedMood === mood.value
+                    ? { backgroundColor: 'var(--surface-radio-selected)', borderColor: 'var(--border-radio-select)', color: 'var(--text-label-selected)' }
+                    : { backgroundColor: 'transparent', borderColor: 'transparent', color: 'var(--text-paragraph)', opacity: 0.5 }
+                }
+                aria-label={mood.label}
+              >
+                <MoodIcon mood={mood.value} size={28} />
+                <span className="text-label-xs">{mood.label}</span>
+              </button>
+            ))}
           </div>
-        </div>
+        </Card>
 
-        <div className="mb-6">
+        <Card padding="md" className="mb-6">
           <h3
-            className="text-label-xs uppercase tracking-widest mb-3"
+            className="text-label-xs uppercase tracking-widest mb-4"
             style={{ color: 'var(--text-card-label)' }}
           >
             Session Notes (Optional)
@@ -153,7 +151,7 @@ export const SummaryScreen = () => {
             placeholder="Add any notes about this workout..."
             className="min-h-[96px]"
           />
-        </div>
+        </Card>
 
         <Card padding="md">
           <h3
@@ -170,7 +168,7 @@ export const SummaryScreen = () => {
             <span className="text-heading-h2 font-bold mx-2" style={{ color: 'var(--icon-badge)' }}>
               &rarr;
             </span>
-            <span className="text-heading-h1 font-bold" style={{ color: 'var(--text-header)' }}>
+            <span className="text-heading-h1 font-bold glow-emissive" style={{ color: 'var(--text-header)' }}>
               {newStreak}
             </span>
             <span className="ml-2">
@@ -179,22 +177,18 @@ export const SummaryScreen = () => {
             <p className="text-label-sm mt-1" style={{ color: 'var(--text-paragraph)' }}>days</p>
           </div>
 
-          <div className="flex justify-between gap-1">
+          <div className="grid grid-cols-7 gap-2">
             {weekDays.map((day, index) => (
               <div key={index} className="flex flex-col items-center gap-1">
                 <div
-                  className={cn(
-                    "w-8 h-8 flex items-center justify-center border transition-all",
-                    day.isToday && "ring-2 ring-offset-1"
-                  )}
-                  style={{
-                    ...(day.status === "workout"
-                      ? { backgroundColor: 'var(--color-green-alpha-200)', borderColor: 'var(--border-success)', color: 'var(--text-label-selected)' }
+                  className="aspect-square w-full max-w-10 flex items-center justify-center border transition-all"
+                  style={
+                    day.status === "workout"
+                      ? { backgroundColor: 'var(--surface-radio-selected)', borderColor: 'var(--border-radio-select)', color: 'var(--text-label-selected)' }
                       : day.status === "rest"
-                      ? { backgroundColor: 'var(--color-blue-alpha-200)', borderColor: 'var(--border-info)', color: 'var(--icon-cta)' }
-                      : { backgroundColor: 'transparent', borderColor: 'var(--color-neutral-alpha-300)', color: 'var(--text-disabled)' }),
-                    ...(day.isToday ? { '--tw-ring-color': 'var(--border-card)', '--tw-ring-offset-color': 'var(--color-neutral-900)' } as React.CSSProperties : {}),
-                  }}
+                      ? { backgroundColor: 'var(--surface-radio-unselect)', borderColor: 'var(--border-radio-unselected)', color: 'var(--icon-cta)' }
+                      : { backgroundColor: 'transparent', borderColor: 'transparent', color: 'var(--text-disabled)' }
+                  }
                 >
                   {day.status === "workout" ? "\u25CF" : day.status === "rest" ? "\u25D0" : "\u25CB"}
                 </div>

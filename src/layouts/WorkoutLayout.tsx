@@ -16,7 +16,7 @@ export const WorkoutLayout = ({ header, footer, children, onTouchStart, onTouchE
       onTouchEnd={onTouchEnd}
     >
       {header}
-      <div className="max-w-md mx-auto w-full px-4 pt-2">
+      <div className="max-w-md mx-auto w-full px-4 pt-14">
         {children}
       </div>
       {footer}
