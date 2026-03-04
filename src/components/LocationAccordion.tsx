@@ -31,8 +31,8 @@ export const LocationAccordion = ({ selected, onSelect, locations }: LocationAcc
             Location
           </span>
           <span
-            className="text-heading-h5 font-medium"
-            style={{ color: "var(--text-header)" }}
+            className="text-heading-h5 font-bold"
+            style={{ color: "var(--text-cta)" }}
           >
             {displayName}
           </span>
@@ -43,7 +43,7 @@ export const LocationAccordion = ({ selected, onSelect, locations }: LocationAcc
             "transition-transform duration-200",
             isOpen && "rotate-180"
           )}
-          style={{ color: "var(--text-paragraph)" }}
+          style={{ color: "var(--icon-cta)" }}
         />
       </button>
 

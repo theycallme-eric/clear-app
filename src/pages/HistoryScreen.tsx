@@ -78,7 +78,7 @@ export const HistoryScreen = () => {
 
   return (
     <AppLayout header={<PageHeader left="back" onBack={() => navigate("/")} center="History" right="menu" onMenu={() => navigate("/settings")} />}>
-      <div>
+      <div className="pt-6">
         {/* Filter Section */}
         <div className="mb-6">
           <p

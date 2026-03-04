@@ -9,7 +9,7 @@ interface AppLayoutProps {
 export const AppLayout = ({ header, footer, children }: AppLayoutProps) => {
   return (
     <div className="min-h-screen grain-overlay">
-      <div className="max-w-md mx-auto pb-8">
+      <div className={`max-w-md mx-auto ${footer ? 'pb-32' : 'pb-8'}`}>
         {header}
         <div className="px-4">
           {children}

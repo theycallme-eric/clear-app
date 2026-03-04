@@ -126,7 +126,7 @@ export const OnboardingScreen = () => {
 
   const onboardingFooter = (
     <div
-      className="fixed bottom-0 left-0 right-0 p-4"
+      className="fixed bottom-0 left-0 right-0 p-4 z-40"
       style={{ background: 'linear-gradient(to top, var(--color-neutral-900), var(--color-neutral-900) 60%, transparent)' }}
     >
       <div className="max-w-md mx-auto space-y-3">
@@ -180,16 +180,21 @@ export const OnboardingScreen = () => {
       header={<PageHeader left={step > 1 ? 'back' : undefined} onBack={handleBack} />}
       footer={onboardingFooter}
     >
-      <div>
+      <div className="pt-6">
           {/* Step 1: Equipment/Location */}
           {step === 1 && (
             <div className="space-y-6">
-              <h2
-                className="text-heading-h2 font-bold uppercase tracking-wider"
-                style={{ color: 'var(--text-header)' }}
-              >
-                What's Your Gym Setup?
-              </h2>
+              <div>
+                <h2
+                  className="text-heading-h2 font-bold uppercase tracking-wider"
+                  style={{ color: 'var(--text-header)' }}
+                >
+                  What's Your Gym Setup?
+                </h2>
+                <p className="text-paragraph-sm mt-2" style={{ color: 'var(--text-paragraph)' }}>
+                  What equipment do you have access to?
+                </p>
+              </div>
 
               <Card cornerSize="md" padding="md">
                 <label
@@ -220,7 +225,7 @@ export const OnboardingScreen = () => {
                     onClick={() => setEquipmentAccordionOpen(!equipmentAccordionOpen)}
                     className="w-full p-4 flex items-center justify-between"
                   >
-                    <span className="text-cta-sm font-medium" style={{ color: 'var(--text-header)' }}>
+                    <span className="text-cta-sm font-bold" style={{ color: 'var(--text-cta)' }}>
                       Customize Equipment
                     </span>
                     {equipmentAccordionOpen ? (
@@ -277,6 +282,12 @@ export const OnboardingScreen = () => {
               </div>
 
               <Card cornerSize="md" padding="md">
+                <label
+                  className="text-label-xs uppercase tracking-widest mb-4 block"
+                  style={{ color: "var(--text-paragraph)" }}
+                >
+                  Workout Areas
+                </label>
                 <div className="flex flex-wrap gap-2">
                   {WORKOUT_SECTIONS.map((section) => {
                     const isSelected = sections.includes(section.id);
@@ -305,7 +316,7 @@ export const OnboardingScreen = () => {
                   onClick={() => setLegendOpen(!legendOpen)}
                   className="w-full p-4 flex items-center justify-between"
                 >
-                  <span className="text-cta-sm font-medium" style={{ color: 'var(--text-header)' }}>
+                  <span className="text-cta-sm font-bold" style={{ color: 'var(--text-cta)' }}>
                     What do these mean?
                   </span>
                   {legendOpen ? (
@@ -352,12 +363,20 @@ export const OnboardingScreen = () => {
                 </p>
               </div>
 
-              <Textarea
-                value={limitations}
-                onChange={(e) => setLimitations(e.target.value)}
-                placeholder="Bad left shoulder from years ago. Overhead press feels sketchy sometimes."
-                className="min-h-[120px]"
-              />
+              <Card cornerSize="md" padding="md">
+                <label
+                  className="text-label-xs uppercase tracking-widest mb-4 block"
+                  style={{ color: "var(--text-paragraph)" }}
+                >
+                  Limitations
+                </label>
+                <Textarea
+                  value={limitations}
+                  onChange={(e) => setLimitations(e.target.value)}
+                  placeholder="Bad left shoulder from years ago. Overhead press feels sketchy sometimes."
+                  className="min-h-[120px]"
+                />
+              </Card>
             </div>
           )}
 

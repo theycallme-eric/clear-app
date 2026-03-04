@@ -9,7 +9,11 @@ interface GenerateButtonProps {
 
 export const GenerateButton = ({ onClick, disabled, isLoading }: GenerateButtonProps) => {
   return (
-    <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background/95 to-transparent">
+    <div
+      className="fixed bottom-0 left-0 right-0 p-4 z-40"
+      style={{ background: 'linear-gradient(to top, var(--color-neutral-900), var(--color-neutral-900) 60%, transparent)' }}
+    >
+      <div className="max-w-md mx-auto">
       <CTAButton
         onClick={onClick}
         disabled={disabled || isLoading}
@@ -25,6 +29,7 @@ export const GenerateButton = ({ onClick, disabled, isLoading }: GenerateButtonP
       >
         {isLoading ? "Generating..." : "Initiate Workout"}
       </CTAButton>
+      </div>
     </div>
   );
 };

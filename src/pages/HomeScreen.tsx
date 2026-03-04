@@ -6,7 +6,6 @@ import { Card } from "@/components/Card";
 import { Zap, Clock, Flame, Dumbbell } from "lucide-react";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import { ErrorState } from "@/components/ErrorState";
-import { EmptyState } from "@/components/EmptyState";
 import { AbandonmentModal } from "@/components/AbandonmentModal";
 import { useHomeDataContext } from "@/contexts/HomeDataContext";
 import { useWorkoutFlowContext } from "@/contexts/WorkoutFlowContext";
@@ -125,15 +124,21 @@ export const HomeScreen = () => {
 
   return (
     <AppLayout header={<PageHeader right="menu" onMenu={() => navigate("/settings")} />}>
-      <div className="space-y-6 stagger-reveal">
-        <Card onClick={() => navigate("/generate")} padding="lg">
+      <div className="pt-6 space-y-6 stagger-reveal">
+        <Card
+          onClick={() => navigate("/generate")}
+          padding="lg"
+          borderColor="var(--border-cta-primary)"
+          accentColor="var(--surface-cta-accent)"
+          surfaceColor="var(--surface-cta-primary)"
+        >
           <h2
             className="text-heading-h2 font-bold uppercase tracking-wider mb-2"
-            style={{ color: 'var(--text-header)' }}
+            style={{ color: 'var(--text-on-cta)' }}
           >
             Generate Workout
           </h2>
-          <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
+          <p className="text-paragraph-sm" style={{ color: 'var(--text-on-cta)' }}>
             Set intensity, anchor, and build your session
           </p>
         </Card>
@@ -142,22 +147,25 @@ export const HomeScreen = () => {
           onClick={hasHistory ? () => workoutFlow.handleQuickStart(suggestedIntensity, suggestedAnchor, () => navigate("/review")) : undefined}
           padding="md"
           className={!hasHistory ? "opacity-50 cursor-not-allowed" : ""}
+          borderColor="var(--border-cta-primary)"
+          accentColor="var(--surface-cta-accent)"
+          surfaceColor="var(--surface-cta-primary)"
         >
           <div className="flex items-center gap-2 mb-2">
-            <Zap className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
+            <Zap className="w-5 h-5" style={{ color: 'var(--icon-on-cta)' }} />
             <span
-              className="text-heading-h5 font-medium uppercase tracking-wider"
-              style={{ color: 'var(--text-header)' }}
+              className="text-heading-h5 font-bold uppercase tracking-wider"
+              style={{ color: 'var(--text-on-cta)' }}
             >
               Quick Start
             </span>
           </div>
           {hasHistory ? (
-            <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
+            <p className="text-paragraph-sm" style={{ color: 'var(--text-on-cta)' }}>
               Intensity: {suggestedIntensity} &bull; Anchor: {suggestedAnchor}
             </p>
           ) : (
-            <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
+            <p className="text-paragraph-sm" style={{ color: 'var(--text-on-cta)' }}>
               Start your first workout
             </p>
           )}
@@ -181,17 +189,17 @@ export const HomeScreen = () => {
             <p className="text-label-sm mt-1" style={{ color: 'var(--text-paragraph)' }}>days</p>
           </div>
 
-          <div className="grid grid-cols-7 gap-1 mb-4">
+          <div className="grid grid-cols-7 gap-2 mb-4">
             {weekDays.map((day, index) => (
               <div key={index} className="flex flex-col items-center gap-1">
                 <div
-                  className="aspect-square w-full max-w-10 flex items-center justify-center border"
+                  className="aspect-square w-full max-w-10 flex items-center justify-center border transition-all"
                   style={
                     day.status === "workout"
-                      ? { backgroundColor: 'var(--color-green-alpha-200)', borderColor: 'var(--border-success)', color: 'var(--text-label-selected)' }
+                      ? { backgroundColor: 'var(--surface-radio-selected)', borderColor: 'var(--border-radio-select)', color: 'var(--text-label-selected)' }
                       : day.status === "rest"
-                      ? { backgroundColor: 'var(--color-blue-alpha-200)', borderColor: 'var(--border-info)', color: 'var(--icon-cta)' }
-                      : { backgroundColor: 'transparent', borderColor: 'var(--color-neutral-alpha-300)', color: 'var(--text-disabled)' }
+                      ? { backgroundColor: 'var(--surface-radio-unselect)', borderColor: 'var(--border-radio-unselected)', color: 'var(--icon-cta)' }
+                      : { backgroundColor: 'transparent', borderColor: 'transparent', color: 'var(--text-disabled)' }
                   }
                 >
                   {day.status === "workout" ? "\u25CF" : day.status === "rest" ? "\u25D0" : "\u25CB"}
@@ -206,62 +214,91 @@ export const HomeScreen = () => {
           </CTAButton>
         </Card>
 
-        <div>
-          <h3
-            className="text-label-xs uppercase tracking-widest mb-3 px-1"
-            style={{ color: 'var(--text-card-label)' }}
-          >
-            Recent
-          </h3>
-
-          {isLoading ? (
+        {isLoading ? (
+          <div>
+            <h3
+              className="text-label-xs uppercase tracking-widest mb-3 px-1"
+              style={{ color: 'var(--text-card-label)' }}
+            >
+              Recent
+            </h3>
             <LoadingSkeleton count={3} />
-          ) : hasError ? (
+          </div>
+        ) : hasError ? (
+          <div>
+            <h3
+              className="text-label-xs uppercase tracking-widest mb-3 px-1"
+              style={{ color: 'var(--text-card-label)' }}
+            >
+              Recent
+            </h3>
             <ErrorState message="Couldn't load workouts" onRetry={loadHomeData} />
-          ) : workoutHistory.length === 0 ? (
-            <EmptyState
-              icon={Dumbbell}
-              title="No Workouts Yet"
-              description="Generate your first workout to get started"
-              actionLabel="Generate"
-              onAction={() => navigate("/generate")}
-            />
-          ) : (
-            <>
-              <div className="space-y-2">
-                {workoutHistory.slice(0, 3).map((workout) => (
-                  <Card key={workout.id} onClick={() => navigate(`/history/${workout.id}`)} padding="md">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p
-                          className="text-label-sm uppercase tracking-wide"
-                          style={{ color: 'var(--text-header)' }}
-                        >
-                          {formatDate(workout.date)} &bull; {workout.goal ? `${workout.goal} · ` : ''}{workout.anchor} &bull; Int. {workout.intensity}
-                        </p>
-                        <p
-                          className="text-paragraph-sm flex items-center gap-1 mt-1"
-                          style={{ color: 'var(--text-paragraph)' }}
-                        >
-                          <Clock className="w-3 h-3" />
-                          {workout.duration} min
-                        </p>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-
-              <button
-                onClick={() => navigate("/history")}
-                className="w-full mt-3 py-2 text-center text-paragraph-sm font-medium transition-colors"
-                style={{ color: 'var(--text-cta)' }}
+          </div>
+        ) : workoutHistory.length === 0 ? (
+          <Card padding="md">
+            <h3
+              className="text-label-xs uppercase tracking-widest mb-4"
+              style={{ color: 'var(--text-card-label)' }}
+            >
+              Recent
+            </h3>
+            <div className="text-center">
+              <Dumbbell className="w-10 h-10 mx-auto mb-4" style={{ color: 'var(--text-disabled)' }} />
+              <p
+                className="text-heading-h5 font-medium uppercase tracking-wide mb-1"
+                style={{ color: 'var(--text-header)' }}
               >
-                View All History
-              </button>
-            </>
-          )}
-        </div>
+                No Workouts Yet
+              </p>
+              <p className="text-paragraph-sm mb-4" style={{ color: 'var(--text-paragraph)' }}>
+                Generate your first workout to get started
+              </p>
+              <CTAButton onClick={() => navigate("/generate")} variant="secondary" size="sm" fullWidth>
+                Generate
+              </CTAButton>
+            </div>
+          </Card>
+        ) : (
+          <div>
+            <h3
+              className="text-label-xs uppercase tracking-widest mb-3 px-1"
+              style={{ color: 'var(--text-card-label)' }}
+            >
+              Recent
+            </h3>
+            <div className="space-y-2">
+              {workoutHistory.slice(0, 3).map((workout) => (
+                <Card key={workout.id} onClick={() => navigate(`/history/${workout.id}`)} padding="md">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p
+                        className="text-label-sm uppercase tracking-wide"
+                        style={{ color: 'var(--text-header)' }}
+                      >
+                        {formatDate(workout.date)} &bull; {workout.goal ? `${workout.goal} · ` : ''}{workout.anchor} &bull; Int. {workout.intensity}
+                      </p>
+                      <p
+                        className="text-paragraph-sm flex items-center gap-1 mt-1"
+                        style={{ color: 'var(--text-paragraph)' }}
+                      >
+                        <Clock className="w-3 h-3" />
+                        {workout.duration} min
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+
+            <button
+              onClick={() => navigate("/history")}
+              className="w-full mt-3 py-2 text-center text-paragraph-sm font-medium transition-colors"
+              style={{ color: 'var(--text-cta)' }}
+            >
+              View All History
+            </button>
+          </div>
+        )}
       </div>
 
       {incompleteSession && (

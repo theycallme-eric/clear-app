@@ -1,6 +1,6 @@
 # Backlog
 **Project:** Clear App (5-3-1 Workout Generator)
-**Last Updated:** 2026-03-03
+**Last Updated:** 2026-03-04
 
 ---
 
@@ -104,7 +104,12 @@ Nice to have. Address when time permits or for future versions.
 ### 🐛 Bugs
 Known issues that need fixing.
 
-- [ ] 
+- [ ] **Restore TestWorkoutScreen** - Test workout was gutted in PR #7 (codebase streamline). Screen now shows a placeholder instead of launching a real workout with fixture data. Branch `fix/restore-test-workout` exists with no changes yet. Fix: expose `setGeneratedWorkout` through WorkoutFlowContext, inject test fixture, navigate to `/workout`.
+  - Priority: Medium
+  - Added: 2026-03-04
+  - Context: Original screen rendered `<WorkoutScreen>` directly with props. Post-routing refactor, WorkoutScreen reads from context. Need to bridge the gap.
+
+- [ ]
 
 ---
 
@@ -118,7 +123,13 @@ Improvements to existing features.
 ### 🚀 Features
 New functionality to build.
 
-- [ ] 
+- [ ] **Exercise edit/swap/randomize** - Per-exercise swap (replace one exercise with AI-generated alternative respecting constraints), per-section randomize (regenerate all exercises in a section), inline edit (modify sets/reps/tempo directly)
+  - Priority: Medium
+  - Type: Feature
+  - Added: 2026-03-04
+  - Context: Discussed during UI refinement session. Randomize section button already exists in WorkoutSectionCard UI. Would need API call for swap/randomize. Edit could be client-only. Consider UX for confirmation and undo.
+
+- [ ]
 
 ---
 
@@ -133,7 +144,10 @@ Code quality, refactoring, cleanup.
 ### 💡 Ideas
 Things to explore, not committed.
 
-- [ ] 
+- [ ] **Parallel branch previewing with git worktree** - Use `git worktree add ../clear-app-fix <branch>` to check out a second branch in a sibling directory, then run `npx vite --port 5175` alongside the main dev server on 5174. Enables side-by-side comparison of two branches in the browser.
+  - Added: 2026-03-04
+
+- [ ]
 
 ---
 

@@ -28,7 +28,7 @@
 }
 
 .route-enter-forward {
-  animation: shift-in-right var(--transition-duration) var(--transition-steps) both;
+  animation: shift-in-right var(--transition-duration) var(--transition-steps) backwards;
 }
 
 /* --- Back (stepped shift from left) -------------------------------------- */
@@ -44,7 +44,7 @@
 }
 
 .route-enter-back {
-  animation: shift-in-left var(--transition-duration) var(--transition-steps) both;
+  animation: shift-in-left var(--transition-duration) var(--transition-steps) backwards;
 }
 
 /* --- Workout entry (mechanical shift up — entering focused mode) --------- */
@@ -60,7 +60,7 @@
 }
 
 .route-enter-up {
-  animation: shift-in-up var(--transition-duration-mode) var(--transition-steps) both;
+  animation: shift-in-up var(--transition-duration-mode) var(--transition-steps) backwards;
 }
 
 /* --- Workout exit (mechanical shift down — leaving focused mode) --------- */
@@ -76,7 +76,7 @@
 }
 
 .route-enter-down {
-  animation: shift-in-down var(--transition-duration-mode) var(--transition-steps) both;
+  animation: shift-in-down var(--transition-duration-mode) var(--transition-steps) backwards;
 }
 
 /* --- Hard cut with brief flash (summary → home, debrief complete) -------- */
@@ -90,7 +90,7 @@
 }
 
 .route-enter-fade {
-  animation: cut-in var(--transition-duration) var(--transition-easing) both;
+  animation: cut-in var(--transition-duration) var(--transition-easing) backwards;
 }
 
 /* --- No animation -------------------------------------------------------- */

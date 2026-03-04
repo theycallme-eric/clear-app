@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { ClearLogo } from "@/components/ClearLogo";
 import { CTAButton } from "@/components/CTAButton";
 import { AuthLayout } from "@/layouts";
 
@@ -10,12 +11,7 @@ export const WelcomeScreen = () => {
     <AuthLayout>
       <div className="flex-1 flex flex-col items-center justify-center">
         <div className="flex flex-col items-center text-center max-w-sm">
-          <h1
-            className="text-heading-h1 font-bold tracking-wider mb-4"
-            style={{ color: 'var(--text-header)' }}
-          >
-            CLEAR
-          </h1>
+          <ClearLogo size="xl" boot className="mb-4" />
 
           <p className="text-paragraph-lg mb-12" style={{ color: 'var(--text-paragraph)' }}>
             Strength training, simplified.

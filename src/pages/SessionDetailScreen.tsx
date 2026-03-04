@@ -51,7 +51,7 @@ export const SessionDetailScreen = () => {
 
   return (
     <AppLayout header={<PageHeader left="back" onBack={() => navigate("/history")} center="Session" right="menu" onMenu={() => navigate("/settings")} />}>
-      <div>
+      <div className="pt-6">
         {isLoading || !workout ? (
           <LoadingSkeleton count={4} />
         ) : (

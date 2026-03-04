@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600&family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -245,6 +245,7 @@
     /* Surfaces */
     --surface-card: var(--color-orange-alpha-100);
     --surface-card-accent: var(--color-orange-alpha-400);
+    --surface-heading: var(--color-orange-alpha-100);
     --surface-cta: var(--color-blue-alpha-400);
     --surface-cta-hover: var(--color-blue-alpha-600);
     --surface-cta-accent: var(--color-blue-alpha-600);
@@ -286,6 +287,7 @@
 
     /* Borders */
     --border-card: var(--color-orange-500);
+    --border-heading: var(--color-orange-500);
     --border-cta: var(--color-blue-500);
     --border-cta-hover: var(--color-blue-400);
     /* CTA Button borders — primary uses complement (blue) */
@@ -321,11 +323,13 @@
     --border-chip-unselected: var(--color-orange-alpha-300);
 
     /* Text Colors */
-    --text-header: var(--color-blue-300);
+    --text-header: var(--color-blue-100);
+    --text-card-header: var(--color-blue-300);
     --text-paragraph: var(--color-blue-100);
     --text-card-label: var(--color-orange-100);
     --text-cta: var(--color-blue-100);
     --text-cta-hover: var(--color-blue-500);
+    --text-on-cta: var(--color-orange-100);
     --text-timer: var(--color-green-400);
     --text-timer-low: var(--color-red-900);
     --text-label-info: var(--color-blue-100);
@@ -351,6 +355,7 @@
     /* Icons */
     --icon-cta: var(--color-blue-500);
     --icon-cta-hover: var(--color-blue-500);
+    --icon-on-cta: var(--color-orange-500);
     --icon-disabled: var(--color-neutral-400);
     --icon-success: var(--color-green-900);
     --icon-error: var(--color-red-900);
@@ -420,6 +425,7 @@
     /* Surfaces */
     --surface-card: var(--color-blue-alpha-100);
     --surface-card-accent: var(--color-blue-alpha-400);
+    --surface-heading: var(--color-blue-alpha-100);
     --surface-cta: var(--color-orange-alpha-400);
     --surface-cta-hover: var(--color-orange-alpha-600);
     --surface-cta-accent: var(--color-orange-alpha-600);
@@ -445,6 +451,7 @@
 
     /* Borders */
     --border-card: var(--color-blue-500);
+    --border-heading: var(--color-blue-500);
     --border-cta: var(--color-orange-500);
     --border-cta-hover: var(--color-orange-400);
     --border-radio-unselected: var(--color-blue-alpha-600);
@@ -471,11 +478,13 @@
     --icon-badge: var(--color-blue-500);
 
     /* Text Colors */
-    --text-header: var(--color-orange-300);
+    --text-header: var(--color-orange-100);
+    --text-card-header: var(--color-orange-300);
     --text-paragraph: var(--color-orange-100);
     --text-card-label: var(--color-blue-100);
     --text-cta: var(--color-orange-100);
     --text-cta-hover: var(--color-orange-500);
+    --text-on-cta: var(--color-blue-100);
     --text-label-info: var(--color-orange-100);
     --text-label-unselected: var(--color-orange-100);
     --text-radio-text-unselected: var(--color-blue-100);
@@ -489,6 +498,7 @@
     /* Icons */
     --icon-cta: var(--color-orange-500);
     --icon-cta-hover: var(--color-orange-500);
+    --icon-on-cta: var(--color-blue-500);
     --icon-radio-unselected: var(--color-blue-100);
     /* Input field icons - blue theme */
     --icon-input: var(--color-orange-400);
@@ -777,9 +787,6 @@
 
   /* Exercise Card - consistent styling for workout exercises */
   .exercise-card {
-    background: var(--surface-card);
-    border: 1px solid var(--border-card);
-    padding: var(--spacing-400);
   }
 
   .exercise-card-title {
@@ -978,6 +985,49 @@
 
   .group:hover .corner-cut-border.corner-cut-border-secondary:not(.corner-cut-border-disabled)::before {
     border-color: var(--border-cta-secondary);
+  }
+
+  /* =========================================================================
+     CLEAR LOGO — Boot Animation (two-phase)
+     Phase 1 (0–60%): Scan line sweeps top → bottom, mask recedes, full brightness.
+     Phase 2 (60–100%): Scan line returns to 57%, bottom text dims to 55%.
+     ========================================================================= */
+  @keyframes clear-logo-scan-down {
+    0% {
+      top: 0%;
+      opacity: 1;
+      animation-timing-function: cubic-bezier(0.16, 0.6, 0.4, 1);
+    }
+    60% {
+      top: 100%;
+      animation-timing-function: cubic-bezier(0.33, 0, 0.15, 1);
+    }
+    100% { top: 57%; opacity: 1; }
+  }
+
+  @keyframes clear-logo-text-reveal {
+    0% {
+      clip-path: inset(0 0 100% 0);
+      animation-timing-function: cubic-bezier(0.16, 0.6, 0.4, 1);
+    }
+    60%, 100% { clip-path: inset(0 0 0 0); }
+  }
+
+  @keyframes clear-logo-bottom-dim {
+    0%, 60% { opacity: 1; }
+    100% { opacity: 0.55; }
+  }
+
+  .clear-logo-scanline-sweep {
+    animation: clear-logo-scan-down 1s forwards;
+  }
+
+  .clear-logo-text-reveal {
+    animation: clear-logo-text-reveal 1s forwards;
+  }
+
+  .clear-logo-bottom-dim {
+    animation: clear-logo-bottom-dim 1s forwards;
   }
 }
 

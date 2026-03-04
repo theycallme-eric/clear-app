@@ -10,7 +10,7 @@ import "./transitions.css";
 initTheme();
 
 createRoot(document.getElementById("root")!).render(
-  <ErrorBoundary fallbackRender={AppErrorFallback}>
+  <ErrorBoundary FallbackComponent={AppErrorFallback}>
     <AuthProvider>
       <App />
     </AuthProvider>
