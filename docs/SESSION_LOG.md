@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-03-03 (4th session)
+**Last Session:** 2026-03-04 (5th session)
 
 ---
 
@@ -13,14 +13,93 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Vibe Tuning — merged
-**Current Task:** Complete — atmosphere, theme toggle, animated background all merged to main
-**Last Completed:** Animated background (user-authored), PR #9 merged, branch deleted
-**Blocking Issues:** Superset connector horizontal spacing needs fine-tuning (cosmetic)
+**Current Phase:** UI Refinement — design token compliance, exercise card rework
+**Current Task:** Complete — full UI sweep across 31 files on `feature/clear-logo`
+**Last Completed:** Exercise card accordion rewrite, CTA token compliance, sticky/blur fixes
+**Blocking Issues:** None — build passes, ready for PR
 
 ---
 
 ## Session Entries
+
+### Session: 2026-03-04 - UI Refinement: Design Token Compliance & Exercise Card Rework
+
+**Duration:** ~2.5 hours
+**Mode:** Claude Code
+**Branch:** `feature/clear-logo`
+
+#### What Got Done
+- **New design tokens**: Created `--text-on-cta` / `--icon-on-cta` (content on interaction surfaces) and `--text-card-header` (300-level for exercise name headers). Enforces color hierarchy: 100-level for page headers, 300-level for card headers, 500-level for icons on CTA surfaces
+- **CTA color compliance**: HomeScreen Generate Workout and Quick Start cards now use CTA surface/border/accent tokens (blue in orange mode, orange in blue mode). CTAButton primary/secondary variants switched to on-cta tokens
+- **ExerciseCard complete rewrite**: Transformed from static display into individually expandable accordion with chevron. Equipment moved from name line to prescription line with bullet separator. Matches ActiveExerciseCard structure for preview ↔ workout parity
+- **WorkoutSectionCard simplification**: Removed section-level accordion. Each exercise is now its own expandable accordion via ExerciseCard. Section label stays static/visible
+- **ActiveExerciseCard alignment**: Equipment moved to prescription line (matching ExerciseCard), name color changed to 300-level `--text-card-header`
+- **Route transition fix**: Changed all `animation-fill-mode` from `both` to `backwards` in transitions.css — the persisting `transform: translateX(0)` was creating a containing block that broke `position: fixed/sticky` on every navigated-to screen
+- **PageHeader structural band**: Reworked as sticky header with ChamferedFrame (new `bottomBorderOnly` prop), `backdrop-blur-xl`, surface/border heading tokens
+- **Deleted PageHeading component**: Replaced with inline headings across all screens (onboarding, summary, auth, session detail, settings, 404, test workout)
+- **Footer gradient unification**: All bottom-fixed buttons (GenerateButton, StartWorkoutButton, SummaryScreen, OnboardingScreen) now use consistent inline gradient style with `z-40`
+- **WorkoutLayout cleanup**: Removed redundant sticky wrapper div around header
+- **Onboarding refinements**: Headings restructured, limitations wrapped in Card, accordion triggers use interaction colors (`--text-cta`), section labels added
+- **Auth screen restructure**: Sign In / Create Account headings moved inside content flow, form max-w-sm applied at wrapper level
+- **Streak day cells**: Switched from hardcoded primitives to radio button tokens (`--surface-radio-selected`, `--border-radio-select`, etc.)
+- **LocationAccordion**: Chevron and value text switched to interaction colors
+
+#### What Came Up (Unexpected)
+- Route transition `animation-fill-mode: both` was the root cause of broken `position: fixed/sticky` across the entire app — not just the preview screen. The persisting `transform` creates a new containing block per CSS spec. Switching to `backwards` preserves the enter animation while letting the transform clear after animation completes
+- PageHeading component (created in earlier commit on this branch) was deleted in the same session — the structural band treatment moved into PageHeader itself via ChamferedFrame's new `bottomBorderOnly` prop
+- Exercise card work required multiple careful reverts — user initially requested removing "containers around accordions" which was ambiguous between section-level Card wrappers and individual exercise borders
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| `animation-fill-mode: backwards` not `both` | `both` leaves `transform` persisting which breaks fixed/sticky positioning. `backwards` applies pre-animation state only |
+| `--text-card-header` at 300-level (not 100) | Creates visual hierarchy: page headers (100) > card headers (300) > paragraph text |
+| `--text-on-cta` / `--icon-on-cta` as separate token class | Content on CTA surfaces needs theme color (not interaction color). 100-level for text, 500-level for icons |
+| Delete PageHeading, keep heading logic inline | PageHeader already handles the structural band. Screen headings are contextual enough to stay inline |
+| Equipment on prescription line (not name line) | Keeps exercise name clean, groups equipment with the physical prescription (sets × reps) |
+| ExerciseCard as accordion (not static) | Preview screen should match workout screen behavior — individually expandable exercises |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/index.css` | Modified — added `--text-on-cta`, `--icon-on-cta`, `--text-card-header` tokens, cleaned `.exercise-card` |
+| `src/components/ExerciseCard.tsx` | Rewritten — static display → individually expandable accordion |
+| `src/components/WorkoutSectionCard.tsx` | Modified — removed section-level accordion, individual exercise accordions |
+| `src/components/workout/ActiveExerciseCard.tsx` | Modified — equipment to prescription line, 300-level header |
+| `src/components/CTAButton.tsx` | Modified — on-cta tokens for primary/secondary |
+| `src/components/PageHeader.tsx` | Modified — sticky ChamferedFrame band with backdrop-blur-xl |
+| `src/components/ChamferedFrame.tsx` | Modified — added `bottomBorderOnly` prop |
+| `src/components/PageHeading.tsx` | Deleted — replaced by inline headings |
+| `src/transitions.css` | Modified — animation-fill-mode both → backwards |
+| `src/components/GenerateButton.tsx` | Modified — consistent gradient, max-w-md wrapper |
+| `src/components/StartWorkoutButton.tsx` | Modified — consistent gradient |
+| `src/components/LocationAccordion.tsx` | Modified — interaction colors |
+| `src/components/ChamferedToast.tsx` | Modified — added backdrop-blur |
+| `src/layouts/WorkoutLayout.tsx` | Modified — removed redundant sticky wrapper |
+| `src/layouts/AppLayout.tsx` | Modified — minor layout adjustment |
+| `src/components/workout/WorkoutNavigation.tsx` | Modified — consistent gradient |
+| `src/pages/HomeScreen.tsx` | Modified — CTA tokens on action cards, streak radio tokens, recent section |
+| `src/pages/OnboardingScreen.tsx` | Modified — headings, cards, interaction colors, labels |
+| `src/pages/GenerationScreen.tsx` | Modified — footer prop for GenerateButton |
+| `src/pages/ReviewScreen.tsx` | Modified — footer prop for StartWorkoutButton |
+| `src/pages/SummaryScreen.tsx` | Modified — inline headings, footer z-40 |
+| `src/pages/SignInScreen.tsx` | Modified — heading restructure |
+| `src/pages/CreateAccountScreen.tsx` | Modified — heading restructure |
+| `src/pages/SessionDetailScreen.tsx` | Modified — inline heading |
+| `src/pages/SettingsScreen.tsx` | Modified — heading update |
+| `src/pages/HistoryScreen.tsx` | Modified — minor update |
+| `src/pages/NotFound.tsx` | Modified — inline heading |
+| `src/pages/TestWorkoutScreen.tsx` | Modified — inline heading |
+| `src/pages/settings/LimitationsSettings.tsx` | Modified — heading extracted from Card |
+| `src/pages/ComponentGallery.tsx` | Modified — gallery update |
+| `docs/BACKLOG.md` | Modified — added restore TestWorkoutScreen bug, git worktree idea |
+
+#### Status
+- Build passes, TypeScript compiles cleanly
+- 4 commits on `feature/clear-logo` ahead of main
+- Ready for PR
+
+---
 
 ### Session: 2026-03-03 - Vibe Tuning: Animated Background + Branch Close
 

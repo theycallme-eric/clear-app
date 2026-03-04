@@ -1,6 +1,6 @@
 # Backlog
 **Project:** Clear App (5-3-1 Workout Generator)
-**Last Updated:** 2026-03-03
+**Last Updated:** 2026-03-04
 
 ---
 
@@ -123,7 +123,13 @@ Improvements to existing features.
 ### 🚀 Features
 New functionality to build.
 
-- [ ] 
+- [ ] **Exercise edit/swap/randomize** - Per-exercise swap (replace one exercise with AI-generated alternative respecting constraints), per-section randomize (regenerate all exercises in a section), inline edit (modify sets/reps/tempo directly)
+  - Priority: Medium
+  - Type: Feature
+  - Added: 2026-03-04
+  - Context: Discussed during UI refinement session. Randomize section button already exists in WorkoutSectionCard UI. Would need API call for swap/randomize. Edit could be client-only. Consider UX for confirmation and undo.
+
+- [ ]
 
 ---
 
