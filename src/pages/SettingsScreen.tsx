@@ -304,7 +304,7 @@ export const SettingsScreen = () => {
       header={<PageHeader left="back" onBack={handleBack} center={getTitle()} />}
       footer={saveFooter}
     >
-      <div className="pt-6">
+      <div className="pt-6 stagger-reveal">
       {currentView === "hub" && (
         <SettingsHub
           preferences={preferences}

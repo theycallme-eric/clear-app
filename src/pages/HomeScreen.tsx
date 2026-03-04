@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { AppLayout } from "@/layouts";
 import { CTAButton } from "@/components/CTAButton";
 import { Card } from "@/components/Card";
+import { ChamferedFrame } from "@/components/ChamferedFrame";
 import { Zap, Clock, Flame, Dumbbell } from "lucide-react";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import { ErrorState } from "@/components/ErrorState";
@@ -190,28 +191,34 @@ export const HomeScreen = () => {
           </div>
 
           <div className="grid grid-cols-7 gap-2 mb-4">
-            {weekDays.map((day, index) => (
-              <div key={index} className="flex flex-col items-center gap-1">
-                <div
-                  className="aspect-square w-full max-w-10 flex items-center justify-center border transition-all"
-                  style={
-                    day.status === "workout"
-                      ? { backgroundColor: 'var(--surface-radio-selected)', borderColor: 'var(--border-radio-select)', color: 'var(--text-label-selected)' }
-                      : day.status === "rest"
-                      ? { backgroundColor: 'var(--surface-radio-unselect)', borderColor: 'var(--border-radio-unselected)', color: 'var(--icon-cta)' }
-                      : { backgroundColor: 'transparent', borderColor: 'transparent', color: 'var(--text-disabled)' }
-                  }
-                >
-                  {day.status === "workout" ? "\u25CF" : day.status === "rest" ? "\u25D0" : "\u25CB"}
+            {weekDays.map((day, index) => {
+              const isWorkout = day.status === "workout";
+              const isRest = day.status === "rest";
+              return (
+                <div key={index} className="flex flex-col items-center gap-1">
+                  <ChamferedFrame
+                    cornerSize="sm"
+                    surfaceColor={isWorkout ? 'var(--surface-radio-selected)' : isRest ? 'var(--surface-info)' : 'transparent'}
+                    borderColor={isWorkout ? 'var(--border-radio-select)' : isRest ? 'var(--border-info)' : 'var(--border-radio-unselected)'}
+                    hasLeftBorder={true}
+                    className="aspect-square w-full max-w-10"
+                  >
+                    <div
+                      className="w-full h-full flex items-center justify-center text-label-sm"
+                      style={{ color: isWorkout ? 'var(--text-label-selected)' : isRest ? 'var(--color-purple-500)' : 'var(--text-disabled)' }}
+                    >
+                      {isWorkout ? "\u25CF" : isRest ? "\u25D0" : "\u25CB"}
+                    </div>
+                  </ChamferedFrame>
+                  <span className="text-label-xs" style={{ color: 'var(--text-disabled)' }}>{day.label}</span>
                 </div>
-                <span className="text-label-xs" style={{ color: 'var(--text-disabled)' }}>{day.label}</span>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
-          <CTAButton onClick={handleMarkRestDay} variant="secondary" size="sm" fullWidth>
+          {streakData.weekView[new Date().toISOString().split('T')[0]] !== 'workout' && <CTAButton onClick={handleMarkRestDay} variant="secondary" size="sm" fullWidth>
             Mark Rest Day
-          </CTAButton>
+          </CTAButton>}
         </Card>
 
         {isLoading ? (

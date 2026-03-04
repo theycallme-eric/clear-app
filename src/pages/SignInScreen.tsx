@@ -64,7 +64,7 @@ export const SignInScreen = () => {
 
   return (
     <AuthLayout header={<PageHeader left="back" onBack={() => navigate("/welcome")} />}>
-      <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full">
+      <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full stagger-reveal">
         {/* Title */}
         <h1
           className="text-heading-h1 font-bold tracking-wider mb-2"

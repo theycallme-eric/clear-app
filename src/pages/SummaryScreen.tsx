@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { AppLayout } from "@/layouts";
 import { CTAButton } from "@/components/CTAButton";
 import { Card } from "@/components/Card";
+import { ChamferedFrame } from "@/components/ChamferedFrame";
 import { Textarea } from "@/components/ui/textarea";
 import { useWorkoutFlowContext } from "@/contexts/WorkoutFlowContext";
 import { useHomeDataContext } from "@/contexts/HomeDataContext";
@@ -63,8 +64,8 @@ export const SummaryScreen = () => {
 
   const weekDays = getWeekDays();
 
-  const handleFinish = () => {
-    handleFinishSession(selectedMood, sessionNotes, () => navigate("/"));
+  const handleFinish = async () => {
+    await handleFinishSession(selectedMood, sessionNotes, () => navigate("/"));
   };
 
   const finishFooter = (
@@ -81,15 +82,8 @@ export const SummaryScreen = () => {
   );
 
   return (
-    <AppLayout header={<PageHeader />} footer={finishFooter}>
-      <div className="pt-6 pb-24">
-        <h1
-          className="text-heading-h4 font-bold uppercase tracking-wider mb-6"
-          style={{ color: 'var(--text-header)' }}
-        >
-          Workout Complete
-        </h1>
-
+    <AppLayout header={<PageHeader center="Workout Complete" />} footer={finishFooter}>
+      <div className="pt-6 pb-24 stagger-reveal">
         <div className="text-center mb-6">
           <h2
             className="text-heading-h2 font-bold uppercase tracking-wide glow-emissive"
@@ -101,7 +95,7 @@ export const SummaryScreen = () => {
 
         <Card padding="md" className="mb-6 text-center">
           <p
-            className="text-heading-h5 font-medium uppercase tracking-wide"
+            className="text-heading-h5 font-semibold uppercase tracking-wide"
             style={{ color: 'var(--text-header)' }}
           >
             {generatedWorkout.goal ? `${generatedWorkout.goal.replace('_', ' ')} · ` : ''}{generatedWorkout.anchor} &bull; Intensity {generatedWorkout.intensity}
@@ -119,22 +113,21 @@ export const SummaryScreen = () => {
             How Do You Feel?
           </h3>
           <div className="flex justify-between gap-2">
-            {MOOD_OPTIONS.map((mood) => (
-              <button
-                key={mood.value}
-                onClick={() => setSelectedMood(mood.value)}
-                className="flex-1 py-3 flex flex-col items-center justify-center gap-2 transition-all border"
-                style={
-                  selectedMood === mood.value
-                    ? { backgroundColor: 'var(--surface-radio-selected)', borderColor: 'var(--border-radio-select)', color: 'var(--text-label-selected)' }
-                    : { backgroundColor: 'transparent', borderColor: 'transparent', color: 'var(--text-paragraph)', opacity: 0.5 }
-                }
-                aria-label={mood.label}
-              >
-                <MoodIcon mood={mood.value} size={28} />
-                <span className="text-label-xs">{mood.label}</span>
-              </button>
-            ))}
+            {MOOD_OPTIONS.map((mood) => {
+              const isSelected = selectedMood === mood.value;
+              return (
+                <button
+                  key={mood.value}
+                  onClick={() => setSelectedMood(mood.value)}
+                  className="flex-1 py-3 flex flex-col items-center justify-center gap-2 transition-all"
+                  style={{ color: isSelected ? 'var(--text-label-selected)' : 'var(--text-paragraph)', opacity: isSelected ? 1 : 0.5 }}
+                  aria-label={mood.label}
+                >
+                  <MoodIcon mood={mood.value} size={32} selected={isSelected} />
+                  <span className="text-label-xs">{mood.label}</span>
+                </button>
+              );
+            })}
           </div>
         </Card>
 
@@ -178,23 +171,29 @@ export const SummaryScreen = () => {
           </div>
 
           <div className="grid grid-cols-7 gap-2">
-            {weekDays.map((day, index) => (
-              <div key={index} className="flex flex-col items-center gap-1">
-                <div
-                  className="aspect-square w-full max-w-10 flex items-center justify-center border transition-all"
-                  style={
-                    day.status === "workout"
-                      ? { backgroundColor: 'var(--surface-radio-selected)', borderColor: 'var(--border-radio-select)', color: 'var(--text-label-selected)' }
-                      : day.status === "rest"
-                      ? { backgroundColor: 'var(--surface-radio-unselect)', borderColor: 'var(--border-radio-unselected)', color: 'var(--icon-cta)' }
-                      : { backgroundColor: 'transparent', borderColor: 'transparent', color: 'var(--text-disabled)' }
-                  }
-                >
-                  {day.status === "workout" ? "\u25CF" : day.status === "rest" ? "\u25D0" : "\u25CB"}
+            {weekDays.map((day, index) => {
+              const isWorkout = day.status === "workout";
+              const isRest = day.status === "rest";
+              return (
+                <div key={index} className="flex flex-col items-center gap-1">
+                  <ChamferedFrame
+                    cornerSize="sm"
+                    surfaceColor={isWorkout ? 'var(--surface-radio-selected)' : isRest ? 'var(--surface-info)' : 'transparent'}
+                    borderColor={isWorkout ? 'var(--border-radio-select)' : isRest ? 'var(--border-info)' : 'var(--border-radio-unselected)'}
+                    hasLeftBorder={true}
+                    className="aspect-square w-full max-w-10"
+                  >
+                    <div
+                      className="w-full h-full flex items-center justify-center text-label-sm"
+                      style={{ color: isWorkout ? 'var(--text-label-selected)' : isRest ? 'var(--color-purple-500)' : 'var(--text-disabled)' }}
+                    >
+                      {isWorkout ? "\u25CF" : isRest ? "\u25D0" : "\u25CB"}
+                    </div>
+                  </ChamferedFrame>
+                  <span className="text-label-xs" style={{ color: 'var(--text-disabled)' }}>{day.label}</span>
                 </div>
-                <span className="text-label-xs" style={{ color: 'var(--text-disabled)' }}>{day.label}</span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </Card>
       </div>
