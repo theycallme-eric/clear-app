@@ -103,12 +103,12 @@ export const ActiveExerciseCard = ({
                     <div className="flex items-center justify-between gap-2">
                         <h3
                             className="text-heading-h6 font-bold leading-tight uppercase"
-                            style={{ color: isEmomInactive ? 'var(--text-disabled)' : 'var(--text-header)' }}
+                            style={{ color: isEmomInactive ? 'var(--text-disabled)' : 'var(--text-card-header)' }}
                         >
                             {pairLabel && (
                                 <span
                                     className="text-label-xs font-bold uppercase tracking-widest mr-2"
-                                    style={{ color: 'var(--text-header)' }}
+                                    style={{ color: 'var(--text-card-header)' }}
                                 >
                                     {pairLabel}
                                 </span>
@@ -131,6 +131,12 @@ export const ActiveExerciseCard = ({
                     >
                         {!hideReps && (
                             <span>{formatPrescription(exercise.sets, exercise.reps)}</span>
+                        )}
+                        {exercise.equipment && (
+                            <>
+                                <span>&bull;</span>
+                                <span>{exercise.equipment.replace(/_/g, ' ')}</span>
+                            </>
                         )}
                     </div>
                 </div>

@@ -1,6 +1,7 @@
 import { ArrowLeft, Menu } from "lucide-react";
 import { ClearLogo } from "@/components/ClearLogo";
 import { TimerDisplay } from "@/components/TimerDisplay";
+import { ChamferedFrame } from "@/components/ChamferedFrame";
 import { useEffect, useState } from "react";
 
 interface TimerProps {
@@ -98,16 +99,28 @@ export const PageHeader = ({
   };
 
   return (
-    <header className="grid grid-cols-[48px_1fr_48px] items-center px-4 py-4">
-      <div className="flex items-center justify-start">
-        {renderLeft()}
-      </div>
-      <div className="flex items-center justify-center">
-        {renderCenter()}
-      </div>
-      <div className="flex items-center justify-end">
-        {renderRight()}
-      </div>
+    <header className="sticky top-0 z-40 flex items-stretch h-12 backdrop-blur-xl">
+      {/* Main body — chamfered frame, bottom border only, no accent bar */}
+      <ChamferedFrame
+        cornerSize="md"
+        surfaceColor="var(--surface-heading)"
+        borderColor="var(--border-heading)"
+        hasLeftBorder={true}
+        bottomBorderOnly
+        className="flex-1"
+      >
+        <div className="grid grid-cols-[48px_1fr_48px] items-center h-full px-4">
+          <div className="flex items-center justify-start">
+            {renderLeft()}
+          </div>
+          <div className="flex items-center justify-center">
+            {renderCenter()}
+          </div>
+          <div className="flex items-center justify-end">
+            {renderRight()}
+          </div>
+        </div>
+      </ChamferedFrame>
     </header>
   );
 };

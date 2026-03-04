@@ -57,8 +57,11 @@ export const GenerationScreen = () => {
   const intensityRange = goal ? INTENSITY_RANGE_BY_GOAL[goal] : { min: 1, max: 10 };
 
   return (
-    <AppLayout header={<PageHeader right="menu" onMenu={() => navigate("/settings")} />}>
-      <div className="space-y-6 stagger-reveal">
+    <AppLayout
+      header={<PageHeader right="menu" onMenu={() => navigate("/settings")} />}
+      footer={<GenerateButton onClick={handleGenerate} disabled={!canGenerate} isLoading={isGenerating} />}
+    >
+      <div className="pt-6 space-y-6 stagger-reveal">
         <GoalSelector selected={goal} onSelect={handleGoalChange} />
 
         <AnchorGrid
@@ -83,8 +86,6 @@ export const GenerationScreen = () => {
           onNotesChange={setNotes}
         />
       </div>
-
-      <GenerateButton onClick={handleGenerate} disabled={!canGenerate} isLoading={isGenerating} />
     </AppLayout>
   );
 };

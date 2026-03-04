@@ -11,6 +11,8 @@ interface ChamferedFrameProps extends React.HTMLAttributes<HTMLDivElement> {
     borderWidth?: number;
     /** Whether to draw the left border. Defaults to false (open for LeftColumn) */
     hasLeftBorder?: boolean;
+    /** Only draw the bottom edge + chamfer border. Overrides hasLeftBorder. */
+    bottomBorderOnly?: boolean;
 }
 
 /**
@@ -25,6 +27,7 @@ export function ChamferedFrame({
     borderColor = "var(--border-cta-primary)",
     borderWidth = 2,
     hasLeftBorder = false,
+    bottomBorderOnly = false,
     className,
     children,
     ...props
@@ -85,7 +88,13 @@ export function ChamferedFrame({
     // But we still need the CLIP to include it so the background fills.
 
     // Path for stroking:
-    const strokePath = hasLeftBorder
+    const strokePath = bottomBorderOnly
+        ? `
+      M 0 ${h}
+      L ${w - s} ${h}
+      L ${w} ${h - s}
+    ` // Bottom edge + chamfer only
+        : hasLeftBorder
         ? shapePath // Full loop
         : `
       M 0 0

@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { FileText, Frown, Meh, Smile, SmilePlus, ThumbsDown } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
-import { PageHeading } from "@/components/PageHeading";
 import { AppLayout } from "@/layouts";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import { Card } from "@/components/Card";
@@ -52,12 +51,17 @@ export const SessionDetailScreen = () => {
 
   return (
     <AppLayout header={<PageHeader left="back" onBack={() => navigate("/history")} center="Session" right="menu" onMenu={() => navigate("/settings")} />}>
-      <div>
+      <div className="pt-6">
         {isLoading || !workout ? (
           <LoadingSkeleton count={4} />
         ) : (
           <>
-            <PageHeading level="h1" textSize="h4" className="mb-2">{formatDateTitle(workout.date)}</PageHeading>
+            <h1
+              className="text-heading-h4 font-bold tracking-wider mb-2"
+              style={{ color: 'var(--text-header)' }}
+            >
+              {formatDateTitle(workout.date)}
+            </h1>
 
             <div className="mb-6">
               <p

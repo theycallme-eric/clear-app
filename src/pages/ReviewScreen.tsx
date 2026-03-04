@@ -22,8 +22,11 @@ export const ReviewScreen = () => {
   };
 
   return (
-    <AppLayout header={<PageHeader left="back" onBack={() => navigate("/generate")} right="menu" onMenu={() => navigate("/settings")} />}>
-      <div className="space-y-6">
+    <AppLayout
+      header={<PageHeader left="back" onBack={() => navigate("/generate")} right="menu" onMenu={() => navigate("/settings")} />}
+      footer={<StartWorkoutButton onClick={() => handleStartWorkout(() => navigate("/workout"))} />}
+    >
+      <div className="pt-6 space-y-6">
         <WorkoutOverview workout={generatedWorkout} />
 
         <div className="space-y-4">
@@ -36,7 +39,6 @@ export const ReviewScreen = () => {
           ))}
         </div>
       </div>
-      <StartWorkoutButton onClick={() => handleStartWorkout(() => navigate("/workout"))} />
     </AppLayout>
   );
 };

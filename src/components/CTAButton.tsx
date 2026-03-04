@@ -55,21 +55,21 @@ export function CTAButton({
       text: "text-cta-sm",
       icon: "size-5",
       padding: "px-3 py-2",
-      leftColSize: "sm" as const,
+      leftColSize: "md" as const,
     },
     md: {
       height: "h-10",
       text: "text-cta-md",
       icon: "size-6",
       padding: "px-3 py-2",
-      leftColSize: "sm" as const,
+      leftColSize: "md" as const,
     },
     lg: {
       height: "h-14",
       text: "text-cta-lg",
       icon: "size-6",
       padding: "px-4 py-3",
-      leftColSize: "sm" as const,
+      leftColSize: "md" as const,
     },
   };
 
@@ -135,7 +135,7 @@ export function CTAButton({
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        "group inline-flex items-stretch",
+        "group inline-flex items-stretch backdrop-blur-md",
         currentSize.height,
         disabled ? "cursor-not-allowed" : "cursor-pointer",
         fullWidth && "w-full",
@@ -196,7 +196,7 @@ export function CTAButton({
                 "flex items-center justify-center shrink-0 transition-colors",
                 disabled
                   ? "text-[var(--text-disabled)]"
-                  : "text-[var(--icon-cta)] group-hover:text-[var(--text-cta-hover)]"
+                  : "text-[var(--icon-on-cta)] group-hover:text-[var(--text-cta-hover)]"
               )}
             >
               {iconLeft}
@@ -208,7 +208,7 @@ export function CTAButton({
               "font-bold whitespace-nowrap uppercase transition-colors",
               disabled
                 ? "text-[var(--text-disabled)]"
-                : "text-[var(--text-cta)] group-hover:text-[var(--text-cta-hover)]"
+                : "text-[var(--text-on-cta)] group-hover:text-[var(--text-cta-hover)]"
             )}
           >
             {children}
@@ -220,7 +220,7 @@ export function CTAButton({
                 "flex items-center justify-center shrink-0 transition-colors",
                 disabled
                   ? "text-[var(--text-disabled)]"
-                  : "text-[var(--icon-cta)] group-hover:text-[var(--text-cta-hover)]"
+                  : "text-[var(--icon-on-cta)] group-hover:text-[var(--text-cta-hover)]"
               )}
             >
               {iconRight}

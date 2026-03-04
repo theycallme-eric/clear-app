@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Flame, Frown, Meh, Smile, SmilePlus, ThumbsDown } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
-import { PageHeading } from "@/components/PageHeading";
 import { AppLayout } from "@/layouts";
 import { cn } from "@/lib/utils";
 import { CTAButton } from "@/components/CTAButton";
@@ -70,7 +69,7 @@ export const SummaryScreen = () => {
 
   const finishFooter = (
     <div
-      className="fixed bottom-0 left-0 right-0 pt-8 pb-4 px-4"
+      className="fixed bottom-0 left-0 right-0 pt-8 pb-4 px-4 z-40"
       style={{ background: 'linear-gradient(to top, var(--color-neutral-900), var(--color-neutral-900) 60%, transparent)' }}
     >
       <div className="max-w-md mx-auto">
@@ -83,10 +82,22 @@ export const SummaryScreen = () => {
 
   return (
     <AppLayout header={<PageHeader />} footer={finishFooter}>
-      <div className="pb-24">
-        <PageHeading level="h1" textSize="h4" className="mb-6">Workout Complete</PageHeading>
+      <div className="pt-6 pb-24">
+        <h1
+          className="text-heading-h4 font-bold uppercase tracking-wider mb-6"
+          style={{ color: 'var(--text-header)' }}
+        >
+          Workout Complete
+        </h1>
 
-        <PageHeading className="mb-6">Nice Work!</PageHeading>
+        <div className="text-center mb-6">
+          <h2
+            className="text-heading-h2 font-bold uppercase tracking-wide"
+            style={{ color: 'var(--text-header)' }}
+          >
+            Nice Work!
+          </h2>
+        </div>
 
         <Card padding="md" className="mb-6 text-center">
           <p

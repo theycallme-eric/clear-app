@@ -323,11 +323,13 @@
     --border-chip-unselected: var(--color-orange-alpha-300);
 
     /* Text Colors */
-    --text-header: var(--color-blue-300);
+    --text-header: var(--color-blue-100);
+    --text-card-header: var(--color-blue-300);
     --text-paragraph: var(--color-blue-100);
     --text-card-label: var(--color-orange-100);
     --text-cta: var(--color-blue-100);
     --text-cta-hover: var(--color-blue-500);
+    --text-on-cta: var(--color-orange-100);
     --text-timer: var(--color-green-400);
     --text-timer-low: var(--color-red-900);
     --text-label-info: var(--color-blue-100);
@@ -353,6 +355,7 @@
     /* Icons */
     --icon-cta: var(--color-blue-500);
     --icon-cta-hover: var(--color-blue-500);
+    --icon-on-cta: var(--color-orange-500);
     --icon-disabled: var(--color-neutral-400);
     --icon-success: var(--color-green-900);
     --icon-error: var(--color-red-900);
@@ -475,11 +478,13 @@
     --icon-badge: var(--color-blue-500);
 
     /* Text Colors */
-    --text-header: var(--color-orange-300);
+    --text-header: var(--color-orange-100);
+    --text-card-header: var(--color-orange-300);
     --text-paragraph: var(--color-orange-100);
     --text-card-label: var(--color-blue-100);
     --text-cta: var(--color-orange-100);
     --text-cta-hover: var(--color-orange-500);
+    --text-on-cta: var(--color-blue-100);
     --text-label-info: var(--color-orange-100);
     --text-label-unselected: var(--color-orange-100);
     --text-radio-text-unselected: var(--color-blue-100);
@@ -493,6 +498,7 @@
     /* Icons */
     --icon-cta: var(--color-orange-500);
     --icon-cta-hover: var(--color-orange-500);
+    --icon-on-cta: var(--color-blue-500);
     --icon-radio-unselected: var(--color-blue-100);
     /* Input field icons - blue theme */
     --icon-input: var(--color-orange-400);
@@ -781,9 +787,6 @@
 
   /* Exercise Card - consistent styling for workout exercises */
   .exercise-card {
-    background: var(--surface-card);
-    border: 1px solid var(--border-card);
-    padding: var(--spacing-400);
   }
 
   .exercise-card-title {

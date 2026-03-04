@@ -15,12 +15,7 @@ export const WorkoutLayout = ({ header, footer, children, onTouchStart, onTouchE
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      <div
-        className="sticky top-0 z-10 backdrop-blur-md"
-        style={{ backgroundColor: 'color-mix(in srgb, var(--color-neutral-900) 80%, transparent)' }}
-      >
-        {header}
-      </div>
+      {header}
       <div className="max-w-md mx-auto w-full px-4 pt-2">
         {children}
       </div>

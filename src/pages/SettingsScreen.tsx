@@ -276,7 +276,7 @@ export const SettingsScreen = () => {
   const saveFooter = (currentView === "editLocation" || currentView === "addLocation" ||
     currentView === "structure" || currentView === "limitations") ? (
     <div
-      className="fixed bottom-0 left-0 right-0 p-4"
+      className="fixed bottom-0 left-0 right-0 p-4 z-40"
       style={{ background: 'linear-gradient(to top, var(--color-neutral-900), var(--color-neutral-900) 60%, transparent)' }}
     >
       <div className="max-w-md mx-auto">
@@ -304,6 +304,7 @@ export const SettingsScreen = () => {
       header={<PageHeader left="back" onBack={handleBack} center={getTitle()} />}
       footer={saveFooter}
     >
+      <div className="pt-6">
       {currentView === "hub" && (
         <SettingsHub
           preferences={preferences}
@@ -372,6 +373,7 @@ export const SettingsScreen = () => {
           onCancel={() => setShowSignOutConfirm(false)}
         />
       )}
+      </div>
     </AppLayout>
   );
 };
