@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-03-04 (6th session)
+**Last Session:** 2026-03-04 (7th session)
 
 ---
 
@@ -13,14 +13,63 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** UI Polish — workout complete screen, fixed header, mood icons
-**Current Task:** Complete — workout complete polish on `feature/workout-complete-polish`
-**Last Completed:** Fixed header positioning, custom MoodIcon SVGs, Card wrapping, streak token alignment
-**Blocking Issues:** None — build passes, ready for PR
+**Current Phase:** UI Polish — workout complete round 2, finish flow, stagger-reveal
+**Current Task:** Complete — merged PRs #12 and #13 to main
+**Last Completed:** Mood fill states, ChamferedFrame streak cells, finish button fix, stagger-reveal on all screens
+**Blocking Issues:** None — on main, clean state
 
 ---
 
 ## Session Entries
+
+### Session: 2026-03-04 - Workout Complete Polish Round 2: Mood Fill, Streak Frames, Finish Fix, Stagger-Reveal
+
+**Duration:** ~1 hour
+**Mode:** Claude Code
+**Branch:** `feature/workout-complete-polish-2` → PR #13, merged
+
+#### What Got Done
+- **"Workout Complete" in header**: Moved title into PageHeader center slot, replacing the CLEAR logo on the summary screen. Removed redundant inline h1
+- **Summary line weight**: Bumped workout description from `font-medium` to `font-semibold` for better readability
+- **Mood icon fill states**: Selected mood now fills the MoodIcon's chamfered SVG frame with green (`--surface-radio-selected` fill + `--border-radio-select` stroke) instead of wrapping a box around the entire button. Icon size bumped to 32px
+- **ChamferedFrame streak cells**: Replaced plain bordered divs with `ChamferedFrame cornerSize="sm"` on both HomeScreen and SummaryScreen streak day cells — now have proper corner cuts matching the rest of the design system
+- **Rest day purple color scheme**: Rest day cells use `--surface-info` / `--border-info` / `--color-purple-500` (info/purple palette) instead of neutral radio-unselect, visually distinguishing rest from workout days
+- **Finish button fix**: `handleFinishSession` was async but called without `await` — any thrown error was a silently swallowed unhandled promise rejection causing "nothing happens". Fixed with try/catch in the hook + await in the caller. Navigation and state reset now always happen even if the Supabase save fails
+- **Dynamic "Mark Rest Day"**: Button hidden when today already has a workout logged in `streakData.weekView`
+- **Stagger-reveal on all screens**: Added load-in animation to 7 more screens (ReviewScreen, SummaryScreen, SessionDetailScreen, SettingsScreen, OnboardingScreen, SignInScreen, CreateAccountScreen). Skipped screens where it doesn't apply (NotFound, WorkoutScreen mid-workout, WelcomeScreen, TestWorkoutScreen)
+
+#### What Came Up (Unexpected)
+- Finish button "doing nothing" was a silent unhandled promise rejection — the async function was called without await, so errors were swallowed and the function died before reaching navigation/toast code. Not a Supabase issue, just a missing await + try/catch
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Fill MoodIcon SVG frame (not box around button) | More expressive — the icon itself changes, not just a highlight rectangle around it |
+| Purple for rest days (info color scheme) | Green = workout, purple = rest, neutral = empty — three distinct visual states. Purple already exists as info/contextual color in the design system |
+| Hide rest day button dynamically | Prevents confusion — marking rest on a workout day makes no sense |
+| try/catch + always navigate on finish | Save failure shouldn't trap user on summary screen. Show error toast but let them out |
+| Skip stagger-reveal on WorkoutScreen | Mid-workout shouldn't feel like a "page load" — it's a continuous active experience |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/components/MoodIcon.tsx` | Modified — added `selected` prop, fills frame with green when selected |
+| `src/hooks/useWorkoutSession.ts` | Modified — try/catch around Supabase call, always navigates |
+| `src/pages/SummaryScreen.tsx` | Modified — header title, mood fill, streak ChamferedFrames, await finish, stagger-reveal |
+| `src/pages/HomeScreen.tsx` | Modified — streak ChamferedFrames, purple rest days, dynamic rest button hide |
+| `src/pages/ReviewScreen.tsx` | Modified — added stagger-reveal |
+| `src/pages/SessionDetailScreen.tsx` | Modified — added stagger-reveal |
+| `src/pages/SettingsScreen.tsx` | Modified — added stagger-reveal |
+| `src/pages/OnboardingScreen.tsx` | Modified — added stagger-reveal |
+| `src/pages/SignInScreen.tsx` | Modified — added stagger-reveal |
+| `src/pages/CreateAccountScreen.tsx` | Modified — added stagger-reveal |
+
+#### Status
+- Build passes, TypeScript compiles cleanly
+- PR #13 squash-merged to main, branch deleted
+- Clean state on main
+
+---
 
 ### Session: 2026-03-04 - Workout Complete Polish: Fixed Header, Mood Icons, Card Wrapping
 
