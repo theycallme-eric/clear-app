@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-03-04 (5th session)
+**Last Session:** 2026-03-04 (6th session)
 
 ---
 
@@ -13,14 +13,59 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** UI Refinement — design token compliance, exercise card rework
-**Current Task:** Complete — full UI sweep across 31 files on `feature/clear-logo`
-**Last Completed:** Exercise card accordion rewrite, CTA token compliance, sticky/blur fixes
+**Current Phase:** UI Polish — workout complete screen, fixed header, mood icons
+**Current Task:** Complete — workout complete polish on `feature/workout-complete-polish`
+**Last Completed:** Fixed header positioning, custom MoodIcon SVGs, Card wrapping, streak token alignment
 **Blocking Issues:** None — build passes, ready for PR
 
 ---
 
 ## Session Entries
+
+### Session: 2026-03-04 - Workout Complete Polish: Fixed Header, Mood Icons, Card Wrapping
+
+**Duration:** ~1.5 hours
+**Mode:** Claude Code
+**Branch:** `feature/workout-complete-polish`
+
+#### What Got Done
+- **Fixed PageHeader positioning**: Changed from `sticky top-0` to `fixed top-0 left-0 right-0` so header stays locked to viewport on long-scrolling pages. Updated all 4 layouts (AppLayout, WorkoutLayout, OnboardingLayout, AuthLayout) with `pt-12` clearance for the fixed header height
+- **Custom MoodIcon component**: Created 5 angular/geometric SVG mood faces (Exhausted: X eyes + zigzag frown, Tough: dash eyes + angled frown, Okay: square dot eyes + flat mouth, Good: square dot eyes + V smile, Great: ^ happy eyes + wide V smile). All share a chamfered square frame matching the design system's low-tech sci-fi style. Uses `currentColor` for parent-controlled coloring
+- **Card wrapping**: Wrapped mood selector and session notes textarea in `<Card padding="md">` with section labels inside, matching the visual rhythm of summary and streak cards
+- **Glow treatment**: Added `.glow-emissive` to "Nice Work!" heading and new streak number for celebration emphasis
+- **Streak token alignment**: Replaced hardcoded color primitives in streak day cells with radio button tokens (`--surface-radio-selected`, `--border-radio-select`, etc.) matching HomeScreen. Changed from flex to grid layout for consistent cell sizing
+- **Cleanup**: Removed unused `cn` import, removed lucide mood icon dependency from SummaryScreen
+
+#### What Came Up (Unexpected)
+- `sticky` positioning was failing on long pages because of CSS stacking context issues — `fixed` was the proper solution but required coordinated padding changes across all layout components
+- Anthropic API billing issue caused ~30 min of debugging — Edge Function returned 500, turned out to be "credit balance too low" on Anthropic's side despite credits showing in dashboard. Resolved itself after propagation delay
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| `position: fixed` not `sticky` for PageHeader | Sticky can break in certain scroll/transform contexts; fixed locks to viewport reliably |
+| `pt-12` clearance on all layouts | Header is h-12 (48px). Top padding compensates so content doesn't render behind fixed header |
+| Angular/geometric mood faces (not rounded emoji) | Matches design philosophy: "low-tech sci-fi", shapes should be angular with chamfered frames |
+| MoodIcon uses `currentColor` inheritance | Parent controls color via style props, matching existing radio button selection pattern |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/components/MoodIcon.tsx` | Created — 5 geometric SVG mood faces with shared chamfered frame |
+| `src/components/PageHeader.tsx` | Modified — sticky → fixed positioning |
+| `src/layouts/AppLayout.tsx` | Modified — header outside max-w-md, pt-12 clearance |
+| `src/layouts/WorkoutLayout.tsx` | Modified — pt-14 clearance for fixed header |
+| `src/layouts/OnboardingLayout.tsx` | Modified — header outside max-w-md, pt-12 clearance |
+| `src/layouts/AuthLayout.tsx` | Modified — pt-12 clearance |
+| `src/pages/SummaryScreen.tsx` | Modified — Card wrapping, MoodIcon integration, glow, streak tokens |
+| `.claude/plans/SESSION_PLAN_clear_logo.md` | Added — archived plan from previous session |
+
+#### Status
+- Build passes, TypeScript compiles cleanly
+- 1 commit on `feature/workout-complete-polish` ahead of main
+- Ready for PR
+
+---
 
 ### Session: 2026-03-04 - UI Refinement: Design Token Compliance & Exercise Card Rework
 
