@@ -45,30 +45,36 @@ export const useWorkoutSession = ({
         logger.workout.debug('handleFinishSession called', { currentSessionId, totalTime: String(totalTime), durationMins: String(durationMins) });
 
         // Save completion data to database if we have a session
-        if (currentSessionId) {
-            const result = await completeWorkoutSession(currentSessionId, {
-                durationMins,
-                mood,
-                sessionNotes,
-            });
-
-            if (result.error) {
-                toast.error("Failed to save workout", {
-                    description: "Your progress may not have been recorded.",
+        try {
+            if (currentSessionId) {
+                const result = await completeWorkoutSession(currentSessionId, {
+                    durationMins,
+                    mood,
+                    sessionNotes,
                 });
+
+                if (result.error) {
+                    toast.error("Failed to save workout", {
+                        description: "Your progress may not have been recorded.",
+                    });
+                } else {
+                    toast.success("Session saved!", {
+                        description: "Your workout has been recorded.",
+                    });
+                }
             } else {
-                toast.success("Session saved!", {
-                    description: "Your workout has been recorded.",
+                toast.success("Session complete!", {
+                    description: "Demo workout - not saved to history.",
                 });
             }
-        } else {
-            // Mock workout, just show success
-            toast.success("Session complete!", {
-                description: "Demo workout - not saved to history.",
+        } catch (err) {
+            logger.workout.error('handleFinishSession error', { error: err instanceof Error ? err.message : String(err) });
+            toast.error("Something went wrong", {
+                description: "Your workout may not have been saved.",
             });
         }
 
-        // Navigate first, then reset state and reload data
+        // Always navigate and reset — even if save failed
         if (onSuccess) onSuccess();
         setGeneratedWorkout(null);
         setWorkoutNotes(null);

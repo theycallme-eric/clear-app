@@ -51,7 +51,7 @@ export const SessionDetailScreen = () => {
 
   return (
     <AppLayout header={<PageHeader left="back" onBack={() => navigate("/history")} center="Session" right="menu" onMenu={() => navigate("/settings")} />}>
-      <div className="pt-6">
+      <div className="pt-6 stagger-reveal">
         {isLoading || !workout ? (
           <LoadingSkeleton count={4} />
         ) : (

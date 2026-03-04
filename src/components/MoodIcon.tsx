@@ -3,14 +3,17 @@ export type MoodValue = 1 | 2 | 3 | 4 | 5;
 interface MoodIconProps {
   mood: MoodValue;
   size?: number;
+  /** When true, frame fills with green and features use on-fill color */
+  selected?: boolean;
 }
 
 /**
  * Geometric mood face SVGs for the workout complete screen.
  * Angular/square frames with minimal line features — cutesy but mechanical.
  * Color is inherited from the parent via currentColor.
+ * When selected, the frame fills with green and features render in a contrasting color.
  */
-export function MoodIcon({ mood, size = 32 }: MoodIconProps) {
+export function MoodIcon({ mood, size = 32, selected = false }: MoodIconProps) {
   const s = size;
   const strokeWidth = 2;
 
@@ -33,8 +36,12 @@ export function MoodIcon({ mood, size = 32 }: MoodIconProps) {
       strokeLinecap="square"
       strokeLinejoin="miter"
     >
-      {/* Shared frame */}
-      <path d={frame} />
+      {/* Shared frame — filled when selected */}
+      <path
+        d={frame}
+        fill={selected ? 'var(--surface-radio-selected)' : 'none'}
+        stroke={selected ? 'var(--border-radio-select)' : 'currentColor'}
+      />
 
       {/* Face features per mood */}
       {mood === 1 && <ExhaustedFace s={s} />}

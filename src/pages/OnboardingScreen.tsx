@@ -180,7 +180,7 @@ export const OnboardingScreen = () => {
       header={<PageHeader left={step > 1 ? 'back' : undefined} onBack={handleBack} />}
       footer={onboardingFooter}
     >
-      <div className="pt-6">
+      <div className="pt-6 stagger-reveal">
           {/* Step 1: Equipment/Location */}
           {step === 1 && (
             <div className="space-y-6">

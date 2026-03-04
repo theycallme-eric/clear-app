@@ -26,7 +26,7 @@ export const ReviewScreen = () => {
       header={<PageHeader left="back" onBack={() => navigate("/generate")} right="menu" onMenu={() => navigate("/settings")} />}
       footer={<StartWorkoutButton onClick={() => handleStartWorkout(() => navigate("/workout"))} />}
     >
-      <div className="pt-6 space-y-6">
+      <div className="pt-6 space-y-6 stagger-reveal">
         <WorkoutOverview workout={generatedWorkout} />
 
         <div className="space-y-4">
