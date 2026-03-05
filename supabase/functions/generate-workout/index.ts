@@ -39,6 +39,7 @@ interface ExerciseStructure {
   type: 'standard' | 'superset' | 'circuit' | 'emom' | 'amrap' | 'for_time';
   paired_with?: string;
   circuit_id?: string;
+  group_id?: string;
   rounds?: number;
   minutes?: number;
   time_cap_mins?: number;

@@ -127,11 +127,11 @@ export interface UserPreferences {
 
 export type ExerciseStructure =
   | { type: 'standard' }
-  | { type: 'superset'; paired_with: string }
-  | { type: 'circuit'; circuit_id: string; rounds: number }
-  | { type: 'emom'; minutes: number }
-  | { type: 'amrap'; minutes: number }
-  | { type: 'for_time'; time_cap_mins: number };
+  | { type: 'superset'; paired_with: string; group_id: string }
+  | { type: 'circuit'; circuit_id: string; rounds: number; group_id: string }
+  | { type: 'emom'; minutes: number; group_id: string }
+  | { type: 'amrap'; minutes: number; group_id: string }
+  | { type: 'for_time'; time_cap_mins: number; group_id: string };
 
 export interface StructureResult {
   id: string;

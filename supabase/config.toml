@@ -370,6 +370,9 @@ ANTHROPIC_API_KEY = "env(ANTHROPIC_API_KEY)"
 [functions.generate-workout]
 verify_jwt = false
 
+[functions.generate-section]
+verify_jwt = false
+
 [analytics]
 enabled = true
 port = 54327

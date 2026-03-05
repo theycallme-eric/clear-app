@@ -13,6 +13,7 @@ import {
 interface WorkoutFlowContextValue {
   workoutParams: WorkoutParams | null;
   generatedWorkout: GeneratedWorkout | null;
+  setGeneratedWorkout: React.Dispatch<React.SetStateAction<GeneratedWorkout | null>>;
   workoutNotes: WorkoutNotes | null;
   totalTime: number;
   isGenerating: boolean;
@@ -24,6 +25,7 @@ interface WorkoutFlowContextValue {
   handleFinishWorkout: (notes: WorkoutNotes, onSuccess?: () => void) => void;
   handleFinishSession: (mood: number | null, sessionNotes: string, onSuccess?: () => void) => Promise<void>;
   handleResumeIncomplete: (incompleteSessionId: string, onSuccess?: () => void) => Promise<boolean>;
+  cancelGeneration: () => void;
 }
 
 const WorkoutFlowContext = createContext<WorkoutFlowContextValue | null>(null);
