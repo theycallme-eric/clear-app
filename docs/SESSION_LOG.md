@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-03-04 (7th session)
+**Last Session:** 2026-03-05 (8th session)
 
 ---
 
@@ -13,14 +13,86 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** UI Polish — workout complete round 2, finish flow, stagger-reveal
-**Current Task:** Complete — merged PRs #12 and #13 to main
-**Last Completed:** Mood fill states, ChamferedFrame streak cells, finish button fix, stagger-reveal on all screens
+**Current Phase:** Feature — exercise swap, scan loader system, UI polish
+**Current Task:** Complete — merged PR #14 to main
+**Last Completed:** Exercise swap, ScanLoader system (boot/fullscreen/card), cancel generation, CRT static aesthetic, UI polish
 **Blocking Issues:** None — on main, clean state
 
 ---
 
 ## Session Entries
+
+### Session: 2026-03-05 - Exercise Swap, Scan Loader System, and UI Polish
+
+**Duration:** ~3 hours
+**Mode:** Claude Code
+**Branch:** `feature/exercise-swap` → PR #14, merged
+
+#### What Got Done
+- **Exercise swap system**: Per-exercise and unit-level (superset/block) swap via new `generate-section` Supabase edge function. Swap history tracking with undo (previous) support. Individual swap controls appear only when exercise card is expanded
+- **ScanLoader canvas system**: Shared `canvas-utils.ts` with 4×4px pixel-block CRT static rendering, scan line with glow, CRT horizontal lines. Theme-aware (reads `--primary-300` CSS variable at runtime), DPR-aware for retina displays
+- **BootScreen**: Interruptible boot sequence in `ProtectedRoute` — 5 status messages with typewriter effect, progress bar, exits cleanly after current sweep when auth resolves
+- **FullscreenLoader**: Bounce-mode overlay for workout generation — scan fills bottom→top then clears top→bottom in continuous loop. Typewriter message centered, secondary chamfered cancel CTA at bottom
+- **CardLoader**: Same bounce loop pattern for exercise/section swaps — loops while loading, fades out on completion
+- **Cancel generation**: `cancelledRef` flag in `useWorkoutGeneration`, threaded through context to FullscreenLoader's cancel button. Discards in-flight API response when cancelled
+- **CRT static aesthetic**: Changed from Matrix-style text characters to 4×4px pixel blocks. Iterative opacity/blur tuning to `rgba(23,23,23,0.15)` + `backdrop-blur-sm`. Bounce loop smoothed (no grid re-seeding between sweeps)
+- **UI polish**: Exercise title size reduction (h6 20px → label-md 16px), location text CTA color (`--icon-cta`), accordion persistence through swaps (position-based keys), generate card padding alignment, swap icon/text alignment and color
+- **Edge function config**: Added `verify_jwt = false` for `generate-section` in `supabase/config.toml` for local dev
+- **CSS token**: Added `--primary-300` variable (orange-300/blue-300) for desaturated scan loader pixels
+
+#### What Came Up (Unexpected)
+- Edge function 404: `generate-section` not found because local Supabase hadn't been restarted after adding the function. Required `npx supabase stop && npx supabase start`
+- Edge function 401: `config.toml` had `verify_jwt = false` for `generate-workout` but not `generate-section` — needed matching config
+- Abandon workout buttons silently failing: `handleAbandonIncomplete` had no error handling and didn't reload data. Added try/catch + `loadHomeData()` call
+- Exercise cards losing expanded state on swap: keyed by `exercise.id` which changes on swap, causing remount. Fixed with position-based keys (`exercise-${originalIndex}`)
+- Bounce loop jarring reset: grid re-seeded on direction flip causing instant noise refill. Fixed by removing re-seeding and alternating fill/clear sweep directions
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| 300-level primary for scan pixels (not 500) | Desaturated static feels more CRT-authentic, less saturated than full primary |
+| `--primary-300` as new CSS token | No existing token mapped same-color 300 level. Needed for canvas `readThemeRGB()` |
+| Position-based keys for exercise cards | `exercise.id` changes on swap causing remount/state reset. Position is stable |
+| Secondary chamfered CTA for cancel button | Matches design system, gets CTA color swap (blue in orange mode, orange in blue mode) for free |
+| Bounce loop: fill up then clear down, no re-seed | Seamless visual loop — no jarring instant refill between sweeps |
+| CardLoader uses same bounce as FullscreenLoader | Consistent animation language across all loading states |
+| `rgba(23,23,23,0.15)` + `backdrop-blur-sm` | See-through overlay that shows card outlines while maintaining CRT atmosphere |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/components/ScanLoader/canvas-utils.ts` | Created — shared drawing utilities, pixel-block rendering, theme-aware color |
+| `src/components/ScanLoader/ScanLoader.tsx` | Created — core canvas engine with bounce/down-once modes |
+| `src/components/ScanLoader/BootScreen.tsx` | Created — interruptible boot sequence with progress bar |
+| `src/components/ScanLoader/FullscreenLoader.tsx` | Created — generation overlay with cancel button |
+| `src/components/ScanLoader/CardLoader.tsx` | Created — card-level bounce loader with fade-out |
+| `src/components/ScanLoader/index.ts` | Created — barrel export |
+| `src/hooks/useExerciseSwap.ts` | Created — swap logic with history and undo |
+| `supabase/functions/generate-section/index.ts` | Created — edge function for exercise/section regeneration |
+| `src/components/ExerciseCard.tsx` | Modified — swap controls, CardLoader, expand callback, title size |
+| `src/components/WorkoutSectionCard.tsx` | Modified — group swap controls, expanded tracking, position-based keys |
+| `src/components/LocationAccordion.tsx` | Modified — CTA color for location name |
+| `src/contexts/WorkoutFlowContext.tsx` | Modified — added `cancelGeneration` to interface |
+| `src/hooks/useWorkoutFlow.ts` | Modified — threaded `cancelGeneration` |
+| `src/hooks/useWorkoutGeneration.ts` | Modified — cancel ref, cancellation check |
+| `src/index.css` | Modified — added `--primary-300` token |
+| `src/lib/workout-api.ts` | Modified — section swap API types |
+| `src/pages/GenerationScreen.tsx` | Modified — FullscreenLoader + cancel, back arrow |
+| `src/pages/HomeScreen.tsx` | Modified — padding alignment, abandon error handling |
+| `src/pages/ReviewScreen.tsx` | Modified — wired exercise swap controls |
+| `src/routes/guards.tsx` | Modified — BootScreen replaces LoadingScreen |
+| `src/types/generation.ts` | Modified — section swap types |
+| `src/types/workout.ts` | Modified — swap-related type additions |
+| `supabase/config.toml` | Modified — `generate-section` JWT config |
+| `supabase/functions/generate-workout/index.ts` | Modified — minor update |
+| `supabase/functions/generate-workout/prompt.ts` | Modified — prompt refinement |
+
+#### Status
+- Build passes, TypeScript compiles cleanly
+- PR #14 squash-merged to main, branch deleted
+- Clean state on main
+
+---
 
 ### Session: 2026-03-04 - Workout Complete Polish Round 2: Mood Fill, Streak Frames, Finish Fix, Stagger-Reveal
 
