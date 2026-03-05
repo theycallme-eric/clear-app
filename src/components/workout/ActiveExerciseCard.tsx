@@ -101,8 +101,8 @@ export const ActiveExerciseCard = ({
             >
                 <div className="flex-1 min-w-0 space-y-1">
                     <div className="flex items-center justify-between gap-2">
-                        <h3
-                            className="text-heading-h6 font-bold leading-tight uppercase"
+                        <h4
+                            className="text-label-md font-bold leading-tight uppercase"
                             style={{ color: isEmomInactive ? 'var(--text-disabled)' : 'var(--text-card-header)' }}
                         >
                             {pairLabel && (
@@ -114,7 +114,7 @@ export const ActiveExerciseCard = ({
                                 </span>
                             )}
                             {exercise.name}
-                        </h3>
+                        </h4>
                         {minuteLabel && (
                             <span
                                 className="text-label-xs uppercase tracking-wider shrink-0"

@@ -142,6 +142,18 @@ New functionality to build.
   - Added: 2026-03-05
   - Context: Split from original exercise edit/swap/randomize item. Swap is done; inline edit would be client-only changes to the generated workout before starting.
 
+- [ ] **1 Rep Max testing mode** - Dedicated workout mode for testing true 1RM on compound lifts
+  - Priority: Low
+  - Type: Feature
+  - Added: 2026-03-05
+  - Context: Separate goal/mode for maximal strength testing. Would need warmup ramp-up sets, attempt tracking, rest period guidance (3-5 min), and history to track PR progression over time.
+
+- [ ] **Progressive loading for strength workouts** - Add a progressive load section to strength-focused workouts
+  - Priority: Low
+  - Type: Feature
+  - Added: 2026-03-05
+  - Context: Strength training benefits from structured warm-up/ramp-up sets building toward working weight. Could be a new section type or integrated into primary_lift section with ascending load percentages (e.g., bar only → 50% → 70% → 85% → working sets).
+
 - [ ]
 
 ---
