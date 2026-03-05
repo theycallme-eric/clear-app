@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-03-05 (9th session)
+**Last Session:** 2026-03-05 (10th session)
 
 ---
 
@@ -13,14 +13,44 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Optimization — generation speed, DB constraint fix
-**Current Task:** Complete — coaching cues removed, section type constraint dropped
-**Last Completed:** Coaching cues output reduction, duplicate section type constraint fix, generation speed plan evaluation
-**Blocking Issues:** None — changes on main, need commit + PR
+**Current Phase:** Housekeeping — inbox processing, plan archival, workflow improvement
+**Current Task:** Complete — inbox cleared, plans archived, close-session skill updated
+**Last Completed:** Inbox processing, plan archival system, close-session plan archive step
+**Blocking Issues:** None — uncommitted housekeeping changes on main
 
 ---
 
 ## Session Entries
+
+### Session: 2026-03-05 - Housekeeping: Inbox, Plan Archival, Workflow Fix
+
+**Duration:** ~15 min
+**Mode:** Claude Code
+**Branch:** `main` (uncommitted)
+
+#### What Got Done
+- **Inbox processed**: Filed 2 session plans (`loading_screens`, `workout_complete_polish`) to `.claude/plans/` and 1 HTML prototype (`clear-loading-screen-prototype.html`) to `docs/specs/`
+- **Plan archival system**: Created `.claude/plans/done/` folder and archived all 24 completed session plans, leaving `plans/` empty for future work
+- **Close-session skill updated**: Added Step 4 "Archive Plan" to `close-session.md` so future sessions automatically move executed plans to `plans/done/` during close
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| `plans/done/` archive folder (not delete) | Preserves history — plans are reference material for session log entries |
+| Archive step in close-session (not execute) | Plan should only be archived after full session completion, not at execution start |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `.claude/skills/close-session.md` | Modified — added Step 4: Archive Plan + checklist item |
+| `.claude/plans/done/*.md` | Created — 24 archived plan files moved here |
+| `docs/specs/clear-loading-screen-prototype.html` | Filed — HTML prototype from inbox |
+
+#### Status
+- No commits — housekeeping changes uncommitted on main
+- Inbox empty, plans folder clean
+
+---
 
 ### Session: 2026-03-05 - Generation Speed + Save Bug Fix
 

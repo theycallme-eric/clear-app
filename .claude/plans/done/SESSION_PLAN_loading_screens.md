@@ -17,9 +17,9 @@ All three share the same design language — orange (#F87823 / `--color-orange-5
 
 | Variant | Logo | Message | Behavior | Used For |
 |---|---|---|---|---|
-| `boot` | Yes | Status sequence (up to 5 messages) | Plays sweeps until `ready`, then exits cleanly | App launch / auth check |
-| `fullscreen` | No | Single contextual string | Bidirectional loop until dismissed | Workout generation |
-| `card` | No | None | Fills card, sweeps, reveals content | Exercise swap |
+| `boot` | ✓ | Status sequence (5 messages) | Plays once, progress bar | App launch / auth check |
+| `fullscreen` | ✗ | Single contextual string | Bidirectional loop until dismissed | Workout generation |
+| `card` | ✗ | None | Fills card → sweeps → reveals content | Exercise swap |
 
 The prototype (`clear-loading-screen-prototype.html`) is the visual source of truth. Port the canvas logic directly — don't redesign.
 
@@ -48,8 +48,8 @@ interface ScanLoaderProps {
 
 Implementation notes from prototype:
 - Canvas characters: `'01ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%!?><|~-_+=:;'`
-- Cell size: 11px wide x 15px tall
-- Character opacity: `0.04-0.14` range, flicker at 90.5-99% frame survival rate
+- Cell size: 11px wide × 15px tall
+- Character opacity: `0.04–0.14` range, flicker at 90.5–99% frame survival rate
 - Scan line: 2px `#F87823` stroke + multi-layer glow (14px shadow blur, 4px core blur)
 - Noise clears on the trailing side of scan direction
 - Easing: ease-in-out-quad on scan position
@@ -66,9 +66,9 @@ Implementation notes from prototype:
 
 **Acceptance:**
 - [ ] Canvas fills parent container
-- [ ] `running=false` -> canvas is blank
-- [ ] `running=true, direction='down-once'` -> single downward sweep, `onComplete` fires
-- [ ] `running=true, direction='bounce'` -> continuous up/down loop
+- [ ] `running=false` → canvas is blank
+- [ ] `running=true, direction='down-once'` → single downward sweep, `onComplete` fires
+- [ ] `running=true, direction='bounce'` → continuous up/down loop
 - [ ] Scan line glow matches prototype visually
 - [ ] No hardcoded color values — uses CSS custom properties or token references
 - [ ] Handles `ResizeObserver` — canvas redraws correctly when container resizes
@@ -82,8 +82,7 @@ Create `src/components/ScanLoader/BootScreen.tsx`.
 
 ```typescript
 interface BootScreenProps {
-  ready: boolean;        // true once auth/data has resolved
-  onComplete: () => void; // called when boot animation is done — navigate to next screen
+  onComplete: () => void; // called after final sweep — navigate to next screen
 }
 ```
 
@@ -94,29 +93,21 @@ Layout (full screen, fixed position, z-index above everything):
 - Status message below logo — typewriter effect, 42ms per character
 - Progress bar + percentage — bottom center, `min(260px, 65vw)` wide, 1px track
 
-Status message sequence (one per sweep, shown in order as sweeps play):
+Status message sequence (one per sweep, ~2s each):
 1. `AUTHENTICATING USER`
 2. `LOADING TRAINING HISTORY`
 3. `CALIBRATING INTENSITY`
 4. `GENERATING WORKOUT`
 5. `SYSTEM READY`
 
-**Interruptible behavior:**
-- The boot sequence does NOT require all 5 sweeps to complete
-- When `ready` becomes true mid-sweep, finish the CURRENT sweep so the scan line exits cleanly (no sharp visual jump), then fire `onComplete()` immediately
-- If `ready` is already true when BootScreen mounts, still play at least one full sweep for visual continuity before firing `onComplete()`
-- Status messages advance in order as sweeps play, but stop advancing once `ready` triggers early exit
-- Progress bar: if exiting early, snap to 100% on the final sweep before calling `onComplete()`
+After sweep 5 completes → call `onComplete()`. Do not show a "done" state — just fire the callback and let Index.tsx navigate.
 
 **Acceptance:**
 - [ ] Full screen, renders above all other content
 - [ ] Logo visible and centered throughout
 - [ ] Each sweep triggers the next status message (typewriter)
-- [ ] Progress bar advances proportionally across played sweeps
-- [ ] When `ready` is true, current sweep finishes cleanly, then `onComplete` fires
-- [ ] If `ready` is true on mount, at least one full sweep plays before `onComplete`
-- [ ] Progress bar snaps to 100% on the final (exit) sweep
-- [ ] `onComplete` never fires before a sweep finishes — no mid-animation jumps
+- [ ] Progress bar advances from 0% → 100% over 5 sweeps
+- [ ] `onComplete` fires after final sweep — not before
 - [ ] Correct fonts: Oxanium for logo + messages, monospace for noise
 
 ---
@@ -157,7 +148,7 @@ Create `src/components/ScanLoader/CardLoader.tsx`.
 
 ```typescript
 interface CardLoaderProps {
-  running: boolean;      // true = start the fill->sweep sequence
+  running: boolean;      // true = start the fill→sweep sequence
   onSweepComplete: () => void; // fire at the moment the scan line exits the bottom
                                // parent swaps content here, THEN CardLoader fades out
 }
@@ -165,7 +156,7 @@ interface CardLoaderProps {
 
 Sequence (reference prototype for timing):
 1. **Fill phase** (200ms): Noise fades in over the card
-2. **Sweep phase** (750ms): Scan line sweeps top -> bottom, clearing noise
+2. **Sweep phase** (750ms): Scan line sweeps top → bottom, clearing noise
 3. At sweep complete: fire `onSweepComplete()` — parent updates content in DOM
 4. **Fade phase** (260ms): Canvas fades out, revealing new content beneath
 
@@ -175,92 +166,62 @@ No noise re-seed between phases — this is a single one-way pass. Content revea
 
 **Acceptance:**
 - [ ] Fills parent bounds via absolute positioning
-- [ ] `running=false` -> invisible (opacity 0, pointer-events none)
-- [ ] `running=true` -> fill -> sweep -> `onSweepComplete()` fires -> fade out
+- [ ] `running=false` → invisible (opacity 0, pointer-events none)
+- [ ] `running=true` → fill → sweep → `onSweepComplete()` fires → fade out
 - [ ] Parent content update happens between sweep complete and fade-out (content visible after canvas clears)
 - [ ] Card height does NOT shift during animation — layout stable throughout
-- [ ] Re-triggerable: `running` can go true -> false -> true for repeated swaps
+- [ ] Re-triggerable: `running` can go true → false → true for repeated swaps
 - [ ] Canvas teardown is clean — no rAF loops running when `running=false`
 
 ---
 
-### 5. Wire `BootScreen` into route guards
+### 5. Wire `BootScreen` into Index.tsx
 
 **Do:**
-Replace the `<LoadingScreen>` placeholder in `src/routes/guards.tsx` with `<BootScreen>`.
-
-The three route guard components (`ProtectedRoute`, `PublicOnlyRoute`, `OnboardingRoute`) each currently render `<LoadingScreen subtitle="Initializing..." />` when `status === 'loading'`. The BootScreen should replace `<LoadingScreen>` in these guards — at minimum in `ProtectedRoute`, which is the main entry point.
-
-The `ready` prop maps to `status !== 'loading'` (auth resolved). `onComplete` triggers the existing routing logic — the guard already handles redirect, so BootScreen just delays it visually until the animation finishes.
+Replace the `'loading'` screen state placeholder in `src/pages/Index.tsx` with `<BootScreen>`.
 
 ```typescript
-// In ProtectedRoute (src/routes/guards.tsx):
-const { status, profile } = useAuthContext();
-const [bootComplete, setBootComplete] = useState(false);
-
-// Show boot screen while loading OR while boot animation hasn't finished
-if (status === 'loading' || !bootComplete) {
-  return (
-    <BootScreen
-      ready={status !== 'loading'}
-      onComplete={() => setBootComplete(true)}
-    />
-  );
-}
-
-// After boot completes, existing routing logic runs:
-if (status === 'unauthenticated') {
-  return <Navigate to="/welcome" replace />;
-}
-// ...etc
+// In the screen render block:
+{currentScreen === 'loading' && (
+  <BootScreen onComplete={() => {
+    // Auth check should be done by now — route to correct next screen
+    // (this callback fires after the animation; routing logic already exists)
+  }} />
+)}
 ```
 
-For `PublicOnlyRoute` and `OnboardingRoute`, keep `<LoadingScreen>` or use a simpler treatment — the boot sequence is primarily for the main app entry.
+The existing auth + routing logic doesn't change — the boot animation just plays while auth resolves. If auth resolves before the animation finishes, wait for `onComplete` before navigating. If auth resolves after, navigate immediately on `onComplete`.
+
+Simplest implementation: kick off auth check on mount as before, store result in state, navigate when BOTH auth is resolved AND `onComplete` has fired.
 
 **Acceptance:**
-- [ ] App launch shows boot sequence in `ProtectedRoute`
-- [ ] Boot animation plays until `ready` becomes true, then finishes current sweep and fires `onComplete`
-- [ ] If auth resolves quickly, at least one full sweep plays
-- [ ] After `onComplete`, guard proceeds with normal routing (redirect or render outlet)
+- [ ] App launch shows boot sequence
+- [ ] Boot sequence plays to completion before navigating
+- [ ] Auth resolving early doesn't interrupt animation
+- [ ] Auth resolving late doesn't cause extra delay after animation
 - [ ] No regression to existing auth flow
-- [ ] `PublicOnlyRoute` and `OnboardingRoute` still show a loading state (either BootScreen or existing LoadingScreen)
 
 ---
 
 ### 6. Wire `FullscreenLoader` into workout generation flow
 
 **Do:**
-In `src/pages/GenerationScreen.tsx`, show `<FullscreenLoader message="GENERATING WORKOUT" />` while `isGenerating === true`. The `isGenerating` state is consumed at line 18 from `useWorkoutFlowContext()` and currently only drives the `GenerateButton` loading state.
-
-The FullscreenLoader should render in `GenerationScreen.tsx` alongside the existing content, overlaying the generation form while the API call is in progress.
+In the generation flow (currently in `src/hooks/useWorkoutFlow.ts` or `Index.tsx`), show `<FullscreenLoader message="GENERATING WORKOUT" />` while `isGenerating === true`.
 
 ```typescript
-// In GenerationScreen.tsx:
-import { FullscreenLoader } from "@/components/ScanLoader";
-
-// ... existing component code ...
-
-return (
-  <AppLayout
-    header={<PageHeader ... />}
-    footer={<GenerateButton onClick={handleGenerate} disabled={!canGenerate} isLoading={isGenerating} />}
-  >
-    <div className="pt-6 space-y-6 stagger-reveal">
-      {/* ...existing form fields... */}
-    </div>
-
-    <FullscreenLoader
-      message="GENERATING WORKOUT"
-      visible={isGenerating}
-    />
-  </AppLayout>
-);
+// Wherever the generation screen is rendered:
+<FullscreenLoader
+  message="GENERATING WORKOUT"
+  visible={isGenerating}
+/>
 ```
 
+This renders above the generation screen content. When `isGenerating` flips to false, `FullscreenLoader` hides and the review screen takes over.
+
 **Acceptance:**
-- [ ] FullscreenLoader appears immediately when generation starts (`isGenerating` becomes true)
-- [ ] FullscreenLoader disappears when generation completes (or errors) — `isGenerating` becomes false
-- [ ] FullscreenLoader renders above the generation form content
+- [ ] Loader appears immediately when generation starts
+- [ ] Loader disappears when generation completes (or errors)
+- [ ] No flash of generation screen content during loading
 - [ ] Error state: loader hides, error handling proceeds normally
 
 ---
@@ -268,48 +229,39 @@ return (
 ### 7. Wire `CardLoader` into exercise swap
 
 **Do:**
-Replace the existing opacity-dim loading pattern in `src/components/ExerciseCard.tsx` and `src/components/WorkoutSectionCard.tsx` with `<CardLoader>`.
+In the exercise card component used on the Review screen, replace the existing dim+spinner placeholder loading state with `<CardLoader>`.
 
-Currently:
-- `ExerciseCard.tsx` (line 41): `opacity: isSwapLoading ? 0.5 : 1` — dims the entire card when `isSwapLoading` is true
-- `WorkoutSectionCard.tsx` (line 163): `opacity: isLoading ? 0.5 : 1` — dims grouped exercises when `isSwapLoading` is true on the group controls
+Find the component handling single exercise swap (likely in `src/pages/ReviewScreen.tsx` or a child component). The swap flow currently:
+1. Sets loading state on the card
+2. Fires API call
+3. Updates exercise on response
 
-CardLoader replaces this `opacity: 0.5` dim pattern in both components:
+Update to:
+1. Set `cardLoading=true` → `<CardLoader running={true} />`
+2. Fire API call
+3. In `onSweepComplete`: call the state update that swaps the exercise content
+4. `CardLoader` fades out, revealing new content
 
 ```typescript
-// In ExerciseCard.tsx — replace the opacity dim wrapper:
 <div style={{ position: 'relative', overflow: 'hidden' }}>
-  {/* ...existing exercise card content... */}
+  <ExerciseCardContent exercise={currentExercise} />
   <CardLoader
-    running={isSwapLoading}
+    running={isSwapping}
     onSweepComplete={() => {
-      // Content update happens via parent state — CardLoader just provides the visual transition
-    }}
-  />
-</div>
-
-// In WorkoutSectionCard.tsx — replace the opacity dim on grouped exercises:
-<div
-  key={`group-${group.groupId || groupIdx}`}
-  style={{ position: 'relative', overflow: 'hidden' }}
->
-  {/* ...existing group content... */}
-  <CardLoader
-    running={isLoading}
-    onSweepComplete={() => {
-      // Content update happens via parent state
+      // This is where you update currentExercise to the new one
+      setCurrentExercise(newExercise);
+      setIsSwapping(false);
     }}
   />
 </div>
 ```
 
 **Acceptance:**
-- [ ] Swap tap triggers CardLoader instead of opacity dim in ExerciseCard (`isSwapLoading` prop)
-- [ ] Group swap triggers CardLoader instead of opacity dim in WorkoutSectionCard (`isLoading` from `groupControls?.isSwapLoading`)
+- [ ] Swap icon tap triggers CardLoader
 - [ ] Noise fills card, scan sweeps, content updates, canvas fades out
 - [ ] New exercise content revealed cleanly
 - [ ] Card height stable throughout
-- [ ] No remaining `opacity: 0.5` swap loading patterns
+- [ ] Works for single exercise swap only in this phase (section randomize can keep spinner for now)
 
 ---
 
@@ -340,11 +292,11 @@ useEffect(() => {
 
 ```
 src/components/ScanLoader/
---- ScanLoader.tsx        <- canvas engine (Tasks 1)
---- BootScreen.tsx        <- boot variant (Task 2)
---- FullscreenLoader.tsx  <- fullscreen variant (Task 3)
---- CardLoader.tsx        <- card variant (Task 4)
---- index.ts              <- barrel export
+├── ScanLoader.tsx        ← canvas engine (Tasks 1)
+├── BootScreen.tsx        ← boot variant (Task 2)
+├── FullscreenLoader.tsx  ← fullscreen variant (Task 3)
+├── CardLoader.tsx        ← card variant (Task 4)
+└── index.ts              ← barrel export
 ```
 
 ---
