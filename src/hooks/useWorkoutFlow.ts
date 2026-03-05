@@ -23,6 +23,7 @@ export const useWorkoutFlow = (
     return {
         workoutParams: generation.workoutParams,
         generatedWorkout: generation.generatedWorkout,
+        setGeneratedWorkout: generation.setGeneratedWorkout,
         workoutNotes: session.workoutNotes,
         totalTime: session.totalTime,
         isGenerating: generation.isGenerating,
@@ -30,6 +31,7 @@ export const useWorkoutFlow = (
         currentLocationId: generation.currentLocationId,
         handleGenerate: generation.handleGenerate,
         handleQuickStart: generation.handleQuickStart,
+        cancelGeneration: generation.cancelGeneration,
         handleStartWorkout: session.handleStartWorkout,
         handleFinishWorkout: session.handleFinishWorkout,
         handleFinishSession: session.handleFinishSession,

@@ -32,7 +32,7 @@ export const LocationAccordion = ({ selected, onSelect, locations }: LocationAcc
           </span>
           <span
             className="text-heading-h5 font-bold"
-            style={{ color: "var(--text-cta)" }}
+            style={{ color: "var(--icon-cta)" }}
           >
             {displayName}
           </span>

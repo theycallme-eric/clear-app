@@ -102,11 +102,17 @@ export const HomeScreen = () => {
 
   const handleAbandonIncomplete = async () => {
     if (!incompleteSession) return;
-    await supabase
+    const { error } = await supabase
       .from('workout_sessions')
       .delete()
       .eq('id', incompleteSession.id);
+    if (error) {
+      logger.data.error('Error abandoning incomplete session', { error: error.message });
+      toast.error("Failed to abandon workout");
+      return;
+    }
     clearIncompleteSession();
+    await loadHomeData();
   };
 
   const handleResumeIncomplete = async () => {
@@ -128,7 +134,7 @@ export const HomeScreen = () => {
       <div className="pt-6 space-y-6 stagger-reveal">
         <Card
           onClick={() => navigate("/generate")}
-          padding="lg"
+          padding="md"
           borderColor="var(--border-cta-primary)"
           accentColor="var(--surface-cta-accent)"
           surfaceColor="var(--surface-cta-primary)"

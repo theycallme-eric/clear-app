@@ -1,14 +1,121 @@
-import { RefreshCw } from "lucide-react";
-import { WorkoutSection } from "@/types/workout";
+import { useState, useCallback } from "react";
+import { RefreshCw, ChevronLeft, Loader2 } from "lucide-react";
+import { WorkoutSection, Exercise } from "@/types/workout";
 import { ExerciseCard } from "./ExerciseCard";
+import { CardLoader } from "./ScanLoader";
 import { Card } from "./Card";
+
+interface SwapControlsForExercise {
+  onSwap: () => void;
+  onPrevious: () => void;
+  isSwapLoading: boolean;
+  isSwapDisabled: boolean;
+  hasPrevious: boolean;
+  swapError: string | null;
+  showSwapControls: boolean;
+}
+
+interface GroupSwapControls {
+  onSwap: () => void;
+  onPrevious: () => void;
+  isSwapLoading: boolean;
+  isSwapDisabled: boolean;
+  hasPrevious: boolean;
+  label: string; // "Swap Pair" | "Swap Block"
+}
 
 interface WorkoutSectionCardProps {
   section: WorkoutSection;
-  onRandomize?: () => void;
+  /** Per-exercise swap controls, keyed by exercise index */
+  exerciseSwapControls?: Record<number, SwapControlsForExercise>;
+  /** Per-group swap controls, keyed by group_id */
+  groupSwapControls?: Record<string, GroupSwapControls>;
 }
 
-export const WorkoutSectionCard = ({ section, onRandomize }: WorkoutSectionCardProps) => {
+/** Group exercises by group_id for unit swap rendering */
+interface ExerciseGroup {
+  type: 'standalone' | 'group';
+  exercises: { exercise: Exercise; originalIndex: number }[];
+  groupId?: string;
+  structureType?: string;
+}
+
+function groupSectionExercises(exercises: Exercise[]): ExerciseGroup[] {
+  const groups: ExerciseGroup[] = [];
+  const processedIndices = new Set<number>();
+
+  for (let i = 0; i < exercises.length; i++) {
+    if (processedIndices.has(i)) continue;
+
+    const exercise = exercises[i];
+    const structure = exercise.structure;
+
+    // Check if this exercise belongs to a group (non-standard, non-circuit with group_id)
+    const groupId = structure && 'group_id' in structure ? structure.group_id : undefined;
+    const isGroupedType = structure && structure.type !== 'standard' && structure.type !== 'circuit';
+
+    if (groupId && isGroupedType) {
+      // Find all exercises with this group_id
+      const groupMembers: { exercise: Exercise; originalIndex: number }[] = [];
+      for (let j = i; j < exercises.length; j++) {
+        const ex = exercises[j];
+        const exGroupId = ex.structure && 'group_id' in ex.structure ? ex.structure.group_id : undefined;
+        if (exGroupId === groupId) {
+          groupMembers.push({ exercise: ex, originalIndex: j });
+          processedIndices.add(j);
+        }
+      }
+
+      groups.push({
+        type: 'group',
+        exercises: groupMembers,
+        groupId,
+        structureType: structure.type,
+      });
+    } else {
+      // Standalone exercise (standard or circuit)
+      groups.push({
+        type: 'standalone',
+        exercises: [{ exercise, originalIndex: i }],
+      });
+      processedIndices.add(i);
+    }
+  }
+
+  return groups;
+}
+
+function getGroupLabel(structureType?: string): string {
+  if (structureType === 'superset') return 'Superset';
+  if (structureType === 'emom') return 'EMOM';
+  if (structureType === 'amrap') return 'AMRAP';
+  if (structureType === 'for_time') return 'For Time';
+  if (structureType === 'timed') return 'Timed';
+  return structureType || 'Block';
+}
+
+function getSwapLabel(structureType?: string): string {
+  if (structureType === 'superset') return 'Swap Pair';
+  return 'Swap Block';
+}
+
+export const WorkoutSectionCard = ({
+  section,
+  exerciseSwapControls,
+  groupSwapControls,
+}: WorkoutSectionCardProps) => {
+  const groups = groupSectionExercises(section.exercises);
+
+  // Track which exercises are expanded (by originalIndex) for showing group swap controls
+  const [expandedExercises, setExpandedExercises] = useState<Set<number>>(new Set());
+  const handleExpandChange = useCallback((index: number, expanded: boolean) => {
+    setExpandedExercises(prev => {
+      const next = new Set(prev);
+      if (expanded) next.add(index); else next.delete(index);
+      return next;
+    });
+  }, []);
+
   return (
     <Card padding="none" className="overflow-hidden">
       {/* Section label */}
@@ -21,37 +128,113 @@ export const WorkoutSectionCard = ({ section, onRandomize }: WorkoutSectionCardP
         </span>
       </div>
 
-      {/* Exercises - each individually expandable */}
+      {/* Exercises — grouped by structure */}
       <div className="pb-3">
-        {section.exercises.map((exercise, i) => (
-          <div key={exercise.id}>
-            {i > 0 && (
-              <div className="mx-4" style={{ borderTop: '2px solid var(--border-spacer)' }} />
-            )}
-            <ExerciseCard exercise={exercise} />
-          </div>
-        ))}
-      </div>
+        {groups.map((group, groupIdx) => {
+          if (group.type === 'standalone') {
+            // Single exercise — standard or circuit with individual swap
+            const { exercise, originalIndex } = group.exercises[0];
+            const swapProps = exerciseSwapControls?.[originalIndex];
 
-      {/* Randomize button */}
-      {onRandomize && (
-        <div className="px-4 pb-3">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onRandomize();
-            }}
-            className="w-full flex items-center justify-center gap-2 py-3 border transition-colors"
-            style={{
-              borderColor: 'var(--border-card)',
-              color: 'var(--icon-cta)',
-            }}
-          >
-            <RefreshCw size={16} />
-            <span className="text-paragraph-sm font-medium">Randomize Section</span>
-          </button>
-        </div>
-      )}
+            return (
+              <div key={`exercise-${originalIndex}`}>
+                {groupIdx > 0 && (
+                  <div className="mx-4" style={{ borderTop: '2px solid var(--border-spacer)' }} />
+                )}
+                <ExerciseCard
+                  exercise={exercise}
+                  onSwap={swapProps?.onSwap}
+                  onPrevious={swapProps?.onPrevious}
+                  isSwapLoading={swapProps?.isSwapLoading}
+                  isSwapDisabled={swapProps?.isSwapDisabled}
+                  hasPrevious={swapProps?.hasPrevious}
+                  swapError={swapProps?.swapError}
+                  showSwapControls={swapProps?.showSwapControls}
+                />
+              </div>
+            );
+          } else {
+            // Grouped exercises (superset, emom, amrap, for_time) — unit swap
+            const groupControls = group.groupId ? groupSwapControls?.[group.groupId] : undefined;
+            const isLoading = groupControls?.isSwapLoading ?? false;
+
+            return (
+              <div
+                key={`group-${group.groupId || groupIdx}`}
+                style={{ position: 'relative', overflow: 'hidden' }}
+              >
+                {/* Card loader overlay for unit swap */}
+                {groupControls && <CardLoader running={isLoading} />}
+                {groupIdx > 0 && (
+                  <div className="mx-4" style={{ borderTop: '2px solid var(--border-spacer)' }} />
+                )}
+
+                {/* Group label */}
+                <div className="px-4 pt-2 pb-1">
+                  <span
+                    className="text-label-xs font-bold uppercase tracking-widest"
+                    style={{ color: 'var(--text-card-label)' }}
+                  >
+                    {getGroupLabel(group.structureType)}
+                  </span>
+                </div>
+
+                {/* Group exercises — no individual swap controls */}
+                {group.exercises.map(({ exercise, originalIndex }, exIdx) => (
+                  <div key={`exercise-${originalIndex}`}>
+                    {exIdx > 0 && (
+                      <div className="mx-4" style={{ borderTop: '1px solid var(--border-spacer)' }} />
+                    )}
+                    <ExerciseCard
+                      exercise={exercise}
+                      onExpandChange={(expanded) => handleExpandChange(originalIndex, expanded)}
+                    />
+                  </div>
+                ))}
+
+                {/* Unit swap controls — only when any group member is expanded */}
+                {groupControls && group.exercises.some(({ originalIndex }) => expandedExercises.has(originalIndex)) && (
+                  <div className="flex items-center gap-2 px-4 pb-2">
+                    {groupControls.hasPrevious && (
+                      <button
+                        onClick={groupControls.onPrevious}
+                        className="flex items-center gap-1 pr-3 transition-colors"
+                        style={{
+                          color: 'var(--icon-cta)',
+                          minHeight: '44px',
+                          minWidth: '44px',
+                        }}
+                      >
+                        <ChevronLeft size={16} />
+                        <span className="text-label-xs uppercase tracking-wider">Previous</span>
+                      </button>
+                    )}
+
+                    <button
+                      onClick={groupControls.onSwap}
+                      disabled={groupControls.isSwapDisabled || isLoading}
+                      className="flex items-center gap-1 pr-3 transition-colors"
+                      style={{
+                        color: groupControls.isSwapDisabled ? 'var(--text-disabled)' : 'var(--icon-cta)',
+                        minHeight: '44px',
+                        minWidth: '44px',
+                        cursor: groupControls.isSwapDisabled ? 'not-allowed' : 'pointer',
+                      }}
+                    >
+                      {isLoading ? (
+                        <Loader2 size={16} className="animate-spin" />
+                      ) : (
+                        <RefreshCw size={16} />
+                      )}
+                      <span className="text-label-xs uppercase tracking-wider">{groupControls.label}</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          }
+        })}
+      </div>
     </Card>
   );
 };

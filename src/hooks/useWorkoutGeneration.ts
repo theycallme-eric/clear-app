@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { toast } from "@/components/ui/sonner";
 import { logger } from "@/lib/logger";
 import {
@@ -27,10 +27,18 @@ export const useWorkoutGeneration = (
     const [isGenerating, setIsGenerating] = useState(false);
     const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
     const [currentLocationId, setCurrentLocationId] = useState<string | null>(null);
+    const cancelledRef = useRef(false);
+
+    const cancelGeneration = useCallback(() => {
+        cancelledRef.current = true;
+        setIsGenerating(false);
+        toast.info("Generation cancelled");
+    }, []);
 
     const handleGenerate = async (params: WorkoutParams, onSuccess?: () => void) => {
         setWorkoutParams(params);
         setIsGenerating(true);
+        cancelledRef.current = false;
 
         try {
             // Parse duration from "45 min" or "45" format
@@ -101,6 +109,9 @@ export const useWorkoutGeneration = (
                 enabled_sections: enabledSections.length > 0 ? enabledSections : undefined,
                 notes: params.notes || undefined,
             });
+
+            // If cancelled while waiting, discard result
+            if (cancelledRef.current) return;
 
             if (isGenerationError(result)) {
                 // Fallback to mock workout on error
@@ -195,5 +206,6 @@ export const useWorkoutGeneration = (
         setCurrentLocationId,
         handleGenerate,
         handleQuickStart,
+        cancelGeneration,
     };
 };

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLEAR — Loading Screen Variants</title>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;700&family=Rajdhani:wght@700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: #171717; min-height: 100vh; font-family: 'Oxanium', monospace; color: #F1F1F1; }
+
+  .shell { padding: 48px 32px; max-width: 900px; margin: 0 auto; }
+  .shell-label { font-size: 9px; letter-spacing: .3em; color: rgba(248,120,35,.45); text-transform: uppercase; margin-bottom: 48px; }
+  .section { margin-bottom: 56px; }
+  .section-title { font-family: 'Rajdhani', sans-serif; font-size: 11px; letter-spacing: .2em; color: rgba(241,241,241,.3); text-transform: uppercase; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,.05); }
+  .hint { font-size: 10px; letter-spacing: .14em; color: rgba(241,241,241,.22); line-height: 1.9; margin-top: 12px; }
+  .btn-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
+  .dbtn { font-family: 'Oxanium', monospace; font-size: 10px; letter-spacing: .24em; color: rgba(248,120,35,.65); background: transparent; border: 1px solid rgba(248,120,35,.22); padding: 10px 18px; cursor: pointer; text-transform: uppercase; transition: all .18s; }
+  .dbtn:hover { color: #F87823; border-color: rgba(248,120,35,.55); }
+
+  .card-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .mock-card { background: rgba(248,120,35,.06); border: 1px solid rgba(248,120,35,.2); padding: 20px; width: 260px; position: relative; overflow: hidden; min-height: 110px; }
+  .card-canvas { position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0; }
+  .ex-name { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: .05em; color: #F1F1F1; margin-bottom: 6px; }
+  .ex-meta { font-size: 10px; letter-spacing: .18em; color: rgba(248,120,35,.65); }
+  .ex-detail { font-size: 9px; letter-spacing: .14em; color: rgba(241,241,241,.3); margin-top: 6px; }
+
+  #overlay { display: none; position: fixed; inset: 0; z-index: 200; background: #171717; }
+  #ov-canvas { position: absolute; inset: 0; }
+  #ov-ui { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
+  #ov-logo { font-weight: 700; font-size: clamp(52px, 12vw, 80px); letter-spacing: .18em; color: #F1F1F1; position: relative; line-height: 1; text-transform: uppercase; }
+  #ov-logoline { position: absolute; left: -12%; right: -12%; height: 2px; top: 57%; background: #F87823; box-shadow: 0 0 8px rgba(248,120,35,.9), 0 0 20px rgba(248,120,35,.4), 0 0 40px rgba(248,120,35,.15); }
+  #ov-msg { margin-top: 28px; font-weight: 500; font-size: 11px; letter-spacing: .32em; color: #F87823; text-transform: uppercase; min-height: 18px; }
+  #ov-footer { position: absolute; bottom: 52px; left: 50%; transform: translateX(-50%); width: min(260px,65vw); }
+  #ov-pct { font-size: 9px; letter-spacing: .3em; color: rgba(248,120,35,.4); text-align: right; margin-bottom: 6px; }
+  #ov-track { height: 1px; background: rgba(248,120,35,.1); }
+  #ov-fill { height: 100%; background: #F87823; width: 0%; box-shadow: 0 0 6px rgba(248,120,35,.7); transition: width .08s linear; }
+  #ov-close { position: absolute; bottom: 36px; right: 36px; font-family: 'Oxanium', monospace; font-size: 9px; letter-spacing: .28em; color: rgba(248,120,35,.55); background: transparent; border: 1px solid rgba(248,120,35,.2); padding: 10px 16px; cursor: pointer; text-transform: uppercase; transition: all .2s; display: none; }
+  #ov-close:hover { color: #F87823; border-color: rgba(248,120,35,.5); }
+</style>
+</head>
+<body>
+
+<div id="overlay">
+  <canvas id="ov-canvas"></canvas>
+  <div id="ov-ui">
+    <div id="ov-logo" style="display:none">CLEAR<div id="ov-logoline"></div></div>
+    <div id="ov-msg"></div>
+  </div>
+  <div id="ov-footer" style="display:none">
+    <div id="ov-pct">0%</div>
+    <div id="ov-track"><div id="ov-fill"></div></div>
+  </div>
+  <button id="ov-close">✕ CLOSE</button>
+</div>
+
+<div class="shell">
+  <div class="shell-label">Clear — Loading Screen / Variants Prototype</div>
+
+  <div class="section">
+    <div class="section-title">01 — Boot / Splash &nbsp;·&nbsp; full screen · with logo · plays once</div>
+    <div class="btn-row">
+      <button class="dbtn" onclick="runBoot()">▶ Play Boot Sequence</button>
+    </div>
+    <div class="hint">Plays on app launch during auth check.<br>5 sweeps downward with status messages. Progress bar. ~10s total.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">02 — Fullscreen Overlay &nbsp;·&nbsp; no logo · bidirectional · loops until ready</div>
+    <div class="btn-row">
+      <button class="dbtn" onclick="runFullscreen('GENERATING WORKOUT')">▶ Generating Workout</button>
+      <button class="dbtn" onclick="runFullscreen('LOADING')">▶ Generic</button>
+    </div>
+    <div class="hint">Scan line bounces up and down, noise fills ahead of it and clears behind.<br>Loops indefinitely. ✕ CLOSE simulates content ready.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">03 — Card Loader &nbsp;·&nbsp; contained · clears to reveal new content</div>
+    <div class="btn-row">
+      <button class="dbtn" onclick="runCard('ca')">▶ Swap Card A</button>
+      <button class="dbtn" onclick="runCard('cb')">▶ Swap Card B</button>
+    </div>
+    <div class="card-row">
+      <div class="mock-card" id="ca">
+        <canvas class="card-canvas" id="ca-canvas"></canvas>
+        <div id="ca-content">
+          <div class="ex-name">BARBELL ROW</div>
+          <div class="ex-meta">4 × 8 &nbsp;·&nbsp; 65% &nbsp;·&nbsp; REST 90s</div>
+          <div class="ex-detail">Last: 135–155 lbs</div>
+        </div>
+      </div>
+      <div class="mock-card" id="cb">
+        <canvas class="card-canvas" id="cb-canvas"></canvas>
+        <div id="cb-content">
+          <div class="ex-name">ARM CIRCLES</div>
+          <div class="ex-meta">1 × 10 &nbsp;·&nbsp; EACH DIRECTION</div>
+          <div class="ex-detail">Bodyweight</div>
+        </div>
+      </div>
+    </div>
+    <div class="hint">Noise fills the card, scan sweeps down, clears to reveal new exercise.<br>Tap repeatedly to keep swapping.</div>
+  </div>
+</div>
+
+<script>
+// ─── shared ───────────────────────────────────────────────
+const CHARS = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%!?><|~-_+=:;';
+const CW = 11, CH = 15;
+
+function makeGrid(cols, rows) {
+  return Array.from({ length: rows }, () =>
+    Array.from({ length: cols }, () => ({
+      ch: CHARS[Math.random() * CHARS.length | 0],
+      op: .04 + Math.random() * .10,
+      fr: .905 + Math.random() * .085,
+    }))
+  );
+}
+
+// Draw noise. Clears on the "trailing" side of scanY based on direction.
+// dir=1 → sweeping down (noise below scanY, clear above)
+// dir=-1 → sweeping up (noise above scanY, clear below)
+function drawNoise(ctx, grid, scanY, cols, rows, dir = 1, globalAlpha = 1) {
+  ctx.font = `bold ${CH * .70 | 0}px 'Courier New', monospace`;
+  for (let r = 0; r < rows; r++) {
+    const cy   = r * CH;
+    const dist = dir === 1 ? cy - scanY : scanY - cy; // positive = in "noise zone"
+    if (dist < -CH) continue; // fully cleared — skip
+    for (let c = 0; c < cols; c++) {
+      const cell = grid[r][c];
+      if (Math.random() > cell.fr) cell.ch = CHARS[Math.random() * CHARS.length | 0];
+      const fadeIn = Math.min(dist / 32, 1);
+      const prox   = Math.max(0, 1 - Math.abs(dist) / 60) * .06;
+      const a      = (cell.op + prox) * Math.max(0, fadeIn) * globalAlpha;
+      if (a < .004) continue;
+      ctx.fillStyle = `rgba(248,120,35,${a.toFixed(3)})`;
+      ctx.fillText(cell.ch, c * CW, cy + CH * .76);
+    }
+  }
+}
+
+function drawScanLine(ctx, scanY, width, height) {
+  if (scanY < -4 || scanY > height + 4) return;
+  const g = ctx.createLinearGradient(0, scanY - 12, 0, scanY + 12);
+  g.addColorStop(0,  'rgba(248,120,35,0)');
+  g.addColorStop(.5, 'rgba(248,120,35,.15)');
+  g.addColorStop(1,  'rgba(248,120,35,0)');
+  ctx.fillStyle = g; ctx.fillRect(0, scanY - 12, width, 24);
+  ctx.save();
+  ctx.shadowColor = 'rgba(248,120,35,.7)'; ctx.shadowBlur = 14;
+  ctx.beginPath(); ctx.moveTo(0, scanY); ctx.lineTo(width, scanY);
+  ctx.strokeStyle = '#F87823'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.shadowBlur = 4;
+  ctx.beginPath(); ctx.moveTo(0, scanY); ctx.lineTo(width, scanY);
+  ctx.strokeStyle = 'rgba(255,205,130,.7)'; ctx.lineWidth = .7; ctx.stroke();
+  ctx.restore();
+}
+
+function ease(p) { return p < .5 ? 2*p*p : 1 - Math.pow(-2*p+2, 2)/2; }
+
+
+// ─── variant 1: boot (one-directional, plays once) ────────
+// ─── variant 2: fullscreen overlay (bidirectional, loops) ─
+const overlay  = document.getElementById('overlay');
+const ovCanvas = document.getElementById('ov-canvas');
+const ovCtx    = ovCanvas.getContext('2d');
+const ovLogo   = document.getElementById('ov-logo');
+const ovMsg    = document.getElementById('ov-msg');
+const ovFooter = document.getElementById('ov-footer');
+const ovPct    = document.getElementById('ov-pct');
+const ovFill   = document.getElementById('ov-fill');
+const ovClose  = document.getElementById('ov-close');
+
+const BOOT_MSGS = [
+  'AUTHENTICATING USER',
+  'LOADING TRAINING HISTORY',
+  'CALIBRATING INTENSITY',
+  'GENERATING WORKOUT',
+  'SYSTEM READY',
+];
+const SWEEP_MS = 2000;
+
+let fsGrid, fsCols, fsRows;
+let fsRunning = false, fsScan = 0, fsT0 = null, fsSweep = 0;
+let fsMode = 'boot', fsSingleMsg = '';
+let fsDir = 1; // 1 = down, -1 = up (used by fullscreen looping mode)
+let fsTypeT = null;
+
+function fsResize() {
+  ovCanvas.width  = innerWidth;
+  ovCanvas.height = innerHeight;
+  fsCols = Math.ceil(ovCanvas.width  / CW) + 2;
+  fsRows = Math.ceil(ovCanvas.height / CH) + 2;
+  fsGrid = makeGrid(fsCols, fsRows);
+}
+
+function fsType(text) {
+  clearInterval(fsTypeT);
+  ovMsg.textContent = '';
+  let i = 0;
+  fsTypeT = setInterval(() => {
+    if (i < text.length) ovMsg.textContent = text.slice(0, ++i);
+    else clearInterval(fsTypeT);
+  }, 42);
+}
+
+function fsFrame(ts) {
+  if (!fsRunning) return;
+  if (fsT0 === null) {
+    fsT0 = ts;
+    if (fsMode === 'boot') fsType(BOOT_MSGS[fsSweep] || '');
+    else if (fsSweep === 0) fsType(fsSingleMsg); // type once, leave it
+  }
+
+  const p = Math.min((ts - fsT0) / SWEEP_MS, 1);
+  const e = ease(p);
+
+  // Boot: top → bottom only
+  // Fullscreen: alternates direction each sweep
+  if (fsMode === 'boot') {
+    fsScan = e * ovCanvas.height;
+  } else {
+    fsScan = fsDir === 1
+      ? e * ovCanvas.height          // 0 → bottom
+      : ovCanvas.height * (1 - e);   // bottom → 0
+  }
+
+  // Progress bar (boot only)
+  if (fsMode === 'boot') {
+    const tot = Math.min(((fsSweep + p) / BOOT_MSGS.length) * 100, 100);
+    ovFill.style.width = tot + '%';
+    ovPct.textContent  = Math.round(tot) + '%';
+  }
+
+  ovCtx.clearRect(0, 0, ovCanvas.width, ovCanvas.height);
+  // Subtle CRT scanlines
+  ovCtx.fillStyle = 'rgba(0,0,0,.04)';
+  for (let y = 0; y < ovCanvas.height; y += 3) ovCtx.fillRect(0, y, ovCanvas.width, 1);
+
+  drawNoise(ovCtx, fsGrid, fsScan, fsCols, fsRows, fsMode === 'boot' ? 1 : fsDir);
+  drawScanLine(ovCtx, fsScan, ovCanvas.width, ovCanvas.height);
+
+  if (p >= 1) {
+    fsSweep++;
+    fsT0 = null;
+
+    if (fsMode === 'boot') {
+      if (fsSweep >= BOOT_MSGS.length) {
+        // Boot complete
+        fsRunning = false;
+        ovCtx.clearRect(0, 0, ovCanvas.width, ovCanvas.height);
+        ovFill.style.width = '100%'; ovPct.textContent = '100%';
+        ovClose.style.display = 'block';
+        return;
+      }
+    } else {
+      // Fullscreen: flip direction and re-fill noise on the new "trailing" side
+      fsDir *= -1;
+      // Re-seed grid so there's always fresh noise ahead of the returning scan
+      fsGrid = makeGrid(fsCols, fsRows);
+    }
+  }
+
+  requestAnimationFrame(fsFrame);
+}
+
+function runBoot() {
+  fsResize();
+  fsMode = 'boot'; fsDir = 1; fsRunning = true; fsSweep = 0; fsT0 = null; fsScan = 0;
+  ovFill.style.width = '0%'; ovPct.textContent = '0%'; ovMsg.textContent = '';
+  ovLogo.style.display   = 'block';
+  ovFooter.style.display = 'block';
+  ovClose.style.display  = 'none';
+  overlay.style.display  = 'block';
+  requestAnimationFrame(fsFrame);
+}
+
+function runFullscreen(label) {
+  fsResize();
+  fsMode = 'fullscreen'; fsSingleMsg = label; fsDir = 1;
+  fsRunning = true; fsSweep = 0; fsT0 = null; fsScan = 0; ovMsg.textContent = '';
+  ovLogo.style.display   = 'none';
+  ovFooter.style.display = 'none';
+  ovClose.style.display  = 'block';
+  overlay.style.display  = 'block';
+  requestAnimationFrame(fsFrame);
+}
+
+ovClose.addEventListener('click', () => {
+  fsRunning = false;
+  overlay.style.display = 'none';
+  ovCtx.clearRect(0, 0, ovCanvas.width, ovCanvas.height);
+});
+
+window.addEventListener('resize', () => {
+  if (overlay.style.display !== 'none') fsResize();
+});
+
+
+// ─── variant 3: card loader ───────────────────────────────
+const CARD_CONTENT = {
+  ca: [
+    { name: 'BARBELL ROW',         meta: '4 × 8 · 65% · REST 90s',       detail: 'Last: 135–155 lbs'  },
+    { name: 'CABLE SEATED ROW',    meta: '4 × 10 · MODERATE · REST 75s', detail: 'Last: 120 lbs'       },
+    { name: 'CHEST-SUPPORTED ROW', meta: '3 × 12 · RPE 7 · REST 60s',    detail: 'Last: 45 lbs / DB'  },
+  ],
+  cb: [
+    { name: 'ARM CIRCLES',    meta: '1 × 10 · EACH DIRECTION',        detail: 'Bodyweight'       },
+    { name: 'BAND PULL-APARTS', meta: '2 × 15 · EACH DIRECTION',      detail: 'Resistance band'  },
+    { name: 'SHOULDER CARs',  meta: '1 × 8 · EACH ARM · CONTROLLED',  detail: 'Bodyweight'       },
+  ],
+};
+const cardIdx     = { ca: 0, cb: 0 };
+const cardRunning = { ca: false, cb: false };
+
+function runCard(id) {
+  if (cardRunning[id]) return;
+  cardRunning[id] = true;
+
+  const card    = document.getElementById(id);
+  const canvas  = document.getElementById(id + '-canvas');
+  const content = document.getElementById(id + '-content');
+  const ctx2    = canvas.getContext('2d');
+  const rect    = card.getBoundingClientRect();
+  canvas.width  = rect.width;
+  canvas.height = rect.height;
+  canvas.style.opacity = '1';
+
+  const cols2 = Math.ceil(canvas.width  / CW) + 2;
+  const rows2 = Math.ceil(canvas.height / CH) + 2;
+  const grid2 = makeGrid(cols2, rows2);
+
+  const FILL_MS  = 200;
+  const SWEEP_C  = 750;
+  let phase = 'fill', t0c = null, fillStart = null;
+
+  function cardFrame(ts) {
+    if (phase === 'fill') {
+      // Fade noise in over the card
+      if (!fillStart) fillStart = ts;
+      const alpha = Math.min((ts - fillStart) / FILL_MS, 1);
+      ctx2.clearRect(0, 0, canvas.width, canvas.height);
+      ctx2.font = `bold ${CH * .70 | 0}px 'Courier New', monospace`;
+      for (let r = 0; r < rows2; r++) {
+        for (let c = 0; c < cols2; c++) {
+          const cell = grid2[r][c];
+          const a = cell.op * alpha;
+          if (a < .004) continue;
+          ctx2.fillStyle = `rgba(248,120,35,${a.toFixed(3)})`;
+          ctx2.fillText(cell.ch, c * CW, r * CH + CH * .76);
+        }
+      }
+      if (alpha >= 1) { phase = 'sweep'; t0c = null; }
+      requestAnimationFrame(cardFrame);
+      return;
+    }
+
+    if (phase === 'sweep') {
+      // Scan line sweeps downward, clearing noise → reveals new content beneath
+      if (!t0c) t0c = ts;
+      const p      = Math.min((ts - t0c) / SWEEP_C, 1);
+      const scanY2 = ease(p) * canvas.height;
+
+      ctx2.clearRect(0, 0, canvas.width, canvas.height);
+      drawNoise(ctx2, grid2, scanY2, cols2, rows2, 1);
+      drawScanLine(ctx2, scanY2, canvas.width, canvas.height);
+
+      if (p >= 1) {
+        // Swap content, then fade canvas out to reveal it
+        cardIdx[id] = (cardIdx[id] + 1) % CARD_CONTENT[id].length;
+        const src   = CARD_CONTENT[id][cardIdx[id]];
+        content.querySelector('.ex-name').textContent   = src.name;
+        content.querySelector('.ex-meta').textContent   = src.meta;
+        content.querySelector('.ex-detail').textContent = src.detail;
+
+        let fadeStart2 = null;
+        function fadeOut(ts2) {
+          if (!fadeStart2) fadeStart2 = ts2;
+          const fp = Math.min((ts2 - fadeStart2) / 260, 1);
+          canvas.style.opacity = (1 - fp).toFixed(3);
+          if (fp < 1) requestAnimationFrame(fadeOut);
+          else {
+            canvas.style.opacity = '0';
+            ctx2.clearRect(0, 0, canvas.width, canvas.height);
+            cardRunning[id] = false;
+          }
+        }
+        requestAnimationFrame(fadeOut);
+        return;
+      }
+      requestAnimationFrame(cardFrame);
+    }
+  }
+
+  requestAnimationFrame(cardFrame);
+}
+</script>
+</body>
+</html>

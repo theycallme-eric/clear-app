@@ -392,6 +392,7 @@
     --popover: var(--color-neutral-900);
     --popover-foreground: var(--color-neutral-50);
     --primary: var(--color-orange-500);
+    --primary-300: var(--color-orange-300);
     --primary-foreground: var(--color-neutral-50);
     --secondary: var(--color-blue-500);
     --secondary-foreground: var(--color-neutral-50);
@@ -508,6 +509,7 @@
 
     /* Legacy mappings for blue theme */
     --primary: var(--color-blue-500);
+    --primary-300: var(--color-blue-300);
     --accent: var(--color-blue-700);
     --ring: var(--color-blue-500);
     --clear-orange: var(--color-blue-500);

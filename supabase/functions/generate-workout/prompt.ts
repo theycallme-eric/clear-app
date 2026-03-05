@@ -95,30 +95,36 @@ superset
 - Use for: Accessory, core (for efficiency or added intensity)
 - Best pairings: Antagonist muscles (push/pull, biceps/triceps), non-competing muscle groups (upper/lower), or same muscle group for intensity (agonist superset)
 - BAD pairings: Two exercises that compete for the same stabilizers (e.g., bench press + overhead press), or two exercises that require different fixed equipment (e.g., cable row + lat pulldown)
-- Parameters: { type: 'superset', paired_with: 'exercise-id' }
+- Parameters: { type: 'superset', paired_with: 'exercise-id', group_id: 'unique-group-id' }
 
 circuit
 - What: 3+ exercises in sequence, prescribed rounds, rest after each round
 - Use for: Conditioning (primary), accessory (for efficiency)
 - Movement flow: Order exercises so transitions are smooth. Prefer: standing → standing → floor, or barbell → bodyweight → KB. Avoid: floor → barbell → floor (too much setup/teardown). If using one piece of equipment, keep it for consecutive exercises.
-- Parameters: { type: 'circuit', circuit_id: 'unique-id', rounds: 3 }
+- Parameters: { type: 'circuit', circuit_id: 'unique-id', group_id: 'unique-group-id', rounds: 3 }
 
 emom
 - What: Fixed work at top of each minute, remaining time is rest
 - Use for: Conditioning, accessory, skill work (NOT warm-up or cooldown)
 - Minute allocation: 1-2 movements per minute. If 2, alternate minutes (odd/even). Don't cram 3+ movements into one minute — use circuit instead.
-- Parameters: { type: 'emom', minutes: 8 }
+- Parameters: { type: 'emom', minutes: 8, group_id: 'unique-group-id' }
 
 amrap
 - What: Fixed time, goal is maximum rounds completed
 - Use for: Conditioning
 - Movement count: 2-4 movements per round. More than 4 loses the "how many rounds" signal.
-- Parameters: { type: 'amrap', minutes: 8 }
+- Parameters: { type: 'amrap', minutes: 8, group_id: 'unique-group-id' }
 
 for_time
 - What: Fixed work, goal is fast completion, always has time cap
 - Use for: Conditioning
-- Parameters: { type: 'for_time', time_cap_mins: 8 }
+- Parameters: { type: 'for_time', time_cap_mins: 8, group_id: 'unique-group-id' }
+
+IMPORTANT: group_id rules
+- Every non-standard structure MUST include a group_id string
+- All exercises that belong to the same group (superset pair, circuit, EMOM block, AMRAP block, For Time block) MUST share the same group_id
+- Use a unique, descriptive ID per group (e.g., 'superset-1', 'circuit-conditioning-1', 'emom-1')
+- Standard exercises do NOT get a group_id
 
 ---
 
@@ -370,7 +376,7 @@ Return valid JSON matching this exact schema. No markdown, no explanation — ju
           "rest_seconds": number|null,
           "coaching_cues": ["array of coaching cue strings"],
           "regression": "string|null - easier alternative",
-          "structure": { "type": "standard|superset|circuit|emom|amrap|for_time|timed", ...params }
+          "structure": { "type": "standard|superset|circuit|emom|amrap|for_time|timed", "group_id": "string (required for all non-standard types, same for exercises in the same group)", ...params }
         }
       ]
     }

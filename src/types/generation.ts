@@ -82,12 +82,12 @@ export interface GeneratedExercise {
 
 export type ExerciseStructure =
   | { type: 'standard' }
-  | { type: 'superset'; paired_with: string }
-  | { type: 'circuit'; circuit_id: string }
-  | { type: 'emom'; minutes: number }
-  | { type: 'amrap'; minutes: number }
-  | { type: 'afap'; time_cap_mins: number; pattern: string }
-  | { type: 'timed'; work_seconds: number; rest_seconds: number };
+  | { type: 'superset'; paired_with: string; group_id: string }
+  | { type: 'circuit'; circuit_id: string; group_id: string }
+  | { type: 'emom'; minutes: number; group_id: string }
+  | { type: 'amrap'; minutes: number; group_id: string }
+  | { type: 'afap'; time_cap_mins: number; pattern: string; group_id: string }
+  | { type: 'timed'; work_seconds: number; rest_seconds: number; group_id: string };
 
 export type SectionType =
   | 'warmup'
@@ -97,6 +97,41 @@ export type SectionType =
   | 'core'
   | 'conditioning'
   | 'cooldown';
+
+// ============================================
+// SWAP / SECTION GENERATION TYPES
+// ============================================
+
+export interface SwapTarget {
+  exercise_name?: string;
+  group_id?: string;
+  structure_type?: 'superset' | 'emom' | 'amrap' | 'afap' | 'timed';
+}
+
+export interface GenerateSectionRequest {
+  session_context: {
+    intensity: number;
+    anchor: string;
+    goal?: string;
+    location_id?: string;
+    equipment?: string[];
+  };
+  section_type: SectionType;
+  exclude_exercises?: string[];
+  swap_mode: 'section' | 'single' | 'unit';
+  swap_target: SwapTarget;
+  keep_exercises: GeneratedExercise[];
+  current_section: GeneratedSection;
+}
+
+export interface GenerateSectionResponse {
+  section: GeneratedSection;
+  metadata: {
+    swap_mode: string;
+    swap_target: SwapTarget;
+    generated_at: string;
+  };
+}
 
 // ============================================
 // ERROR TYPES
@@ -119,36 +154,36 @@ export function isGenerationError(
 
 export function isStructureSuperset(
   structure: ExerciseStructure
-): structure is { type: 'superset'; paired_with: string } {
+): structure is { type: 'superset'; paired_with: string; group_id: string } {
   return structure.type === 'superset';
 }
 
 export function isStructureCircuit(
   structure: ExerciseStructure
-): structure is { type: 'circuit'; circuit_id: string } {
+): structure is { type: 'circuit'; circuit_id: string; group_id: string } {
   return structure.type === 'circuit';
 }
 
 export function isStructureEmom(
   structure: ExerciseStructure
-): structure is { type: 'emom'; minutes: number } {
+): structure is { type: 'emom'; minutes: number; group_id: string } {
   return structure.type === 'emom';
 }
 
 export function isStructureAmrap(
   structure: ExerciseStructure
-): structure is { type: 'amrap'; minutes: number } {
+): structure is { type: 'amrap'; minutes: number; group_id: string } {
   return structure.type === 'amrap';
 }
 
 export function isStructureAfap(
   structure: ExerciseStructure
-): structure is { type: 'afap'; time_cap_mins: number; pattern: string } {
+): structure is { type: 'afap'; time_cap_mins: number; pattern: string; group_id: string } {
   return structure.type === 'afap';
 }
 
 export function isStructureTimed(
   structure: ExerciseStructure
-): structure is { type: 'timed'; work_seconds: number; rest_seconds: number } {
+): structure is { type: 'timed'; work_seconds: number; rest_seconds: number; group_id: string } {
   return structure.type === 'timed';
 }

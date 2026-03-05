@@ -8,6 +8,7 @@ import { GoalSelector } from "@/components/GoalSelector";
 import { LocationAccordion } from "@/components/LocationAccordion";
 import { OptionalFields } from "@/components/OptionalFields";
 import { GenerateButton } from "@/components/GenerateButton";
+import { FullscreenLoader } from "@/components/ScanLoader";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useWorkoutFlowContext } from "@/contexts/WorkoutFlowContext";
 import { GoalPreset, INTENSITY_RANGE_BY_GOAL } from "@/types/workout";
@@ -15,7 +16,7 @@ import { GoalPreset, INTENSITY_RANGE_BY_GOAL } from "@/types/workout";
 export const GenerationScreen = () => {
   const navigate = useNavigate();
   const { profile, locations } = useAuthContext();
-  const { handleGenerate: generateWorkout, isGenerating } = useWorkoutFlowContext();
+  const { handleGenerate: generateWorkout, isGenerating, cancelGeneration } = useWorkoutFlowContext();
 
   const defaultLocation = locations.find(
     l => l.id === profile?.defaultLocationId
@@ -57,8 +58,10 @@ export const GenerationScreen = () => {
   const intensityRange = goal ? INTENSITY_RANGE_BY_GOAL[goal] : { min: 1, max: 10 };
 
   return (
+    <>
+    <FullscreenLoader message="GENERATING WORKOUT" visible={isGenerating} onCancel={cancelGeneration} />
     <AppLayout
-      header={<PageHeader right="menu" onMenu={() => navigate("/settings")} />}
+      header={<PageHeader left="back" onBack={() => navigate("/")} right="menu" onMenu={() => navigate("/settings")} />}
       footer={<GenerateButton onClick={handleGenerate} disabled={!canGenerate} isLoading={isGenerating} />}
     >
       <div className="pt-6 space-y-6 stagger-reveal">
@@ -87,5 +90,6 @@ export const GenerationScreen = () => {
         />
       </div>
     </AppLayout>
+    </>
   );
 };

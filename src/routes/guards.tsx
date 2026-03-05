@@ -1,6 +1,8 @@
+import { useState, useCallback } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useAuthContext } from '@/contexts/AuthContext';
+import { BootScreen } from '@/components/ScanLoader';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { RouteErrorFallback } from '@/components/RouteErrorFallback';
 import { RouteTransition } from '@/components/RouteTransition';
@@ -8,13 +10,25 @@ import { RouteTransition } from '@/components/RouteTransition';
 /**
  * Wraps authenticated routes. Redirects to /welcome if unauthenticated,
  * /onboarding if authenticated but not onboarded.
+ * Shows boot sequence while auth resolves.
  */
 export function ProtectedRoute() {
   const { status, profile } = useAuthContext();
   const location = useLocation();
+  const [bootComplete, setBootComplete] = useState(false);
 
-  if (status === 'loading') {
-    return <LoadingScreen subtitle="Initializing..." />;
+  const handleBootComplete = useCallback(() => {
+    setBootComplete(true);
+  }, []);
+
+  // Show boot sequence while loading OR while boot animation hasn't finished
+  if (status === 'loading' || !bootComplete) {
+    return (
+      <BootScreen
+        ready={status !== 'loading'}
+        onComplete={handleBootComplete}
+      />
+    );
   }
 
   if (status === 'unauthenticated') {

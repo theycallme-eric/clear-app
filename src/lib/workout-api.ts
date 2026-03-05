@@ -6,6 +6,8 @@ import { logger } from './logger';
 import type {
   GenerateWorkoutRequest,
   GenerateWorkoutResponse,
+  GenerateSectionRequest,
+  GenerateSectionResponse,
   GenerationError,
   GeneratedWorkout as APIGeneratedWorkout,
 } from '@/types/generation';
@@ -52,7 +54,7 @@ export function transformAPIWorkoutToFrontend(
         ? ex.structure.type === 'circuit'
           ? { ...ex.structure, rounds: (ex.structure as { rounds?: number }).rounds || 1 }
           : ex.structure.type === 'afap' || ex.structure.type === 'timed'
-            ? { type: 'for_time' as const, time_cap_mins: ('time_cap_mins' in ex.structure ? ex.structure.time_cap_mins : 0) }
+            ? { type: 'for_time' as const, time_cap_mins: ('time_cap_mins' in ex.structure ? ex.structure.time_cap_mins : 0), group_id: ex.structure.group_id }
             : ex.structure as Exercise['structure']
         : undefined,
     }));
@@ -151,6 +153,61 @@ export async function generateWorkout(
   } catch (err) {
     const durationMs = Math.round(performance.now() - startTime);
     logger.workout.error('generateWorkout exception', {
+      error: err instanceof Error ? err.message : String(err),
+      durationMs,
+    });
+    return {
+      error: 'Network error',
+      details: err instanceof Error ? err.message : 'Unknown error occurred',
+    };
+  }
+}
+
+/**
+ * Generate a replacement section using the AI Edge Function (exercise swap)
+ */
+export async function generateSection(
+  request: GenerateSectionRequest
+): Promise<GenerateSectionResponse | GenerationError> {
+  logger.workout.info('generateSection started', {
+    swapMode: request.swap_mode,
+    sectionType: request.section_type,
+  });
+  const startTime = performance.now();
+
+  try {
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+    if (sessionError || !session) {
+      logger.workout.error('generateSection: not authenticated');
+      return { error: 'Not authenticated', details: 'Please sign in to swap exercises' };
+    }
+
+    const { data, error } = await supabase.functions.invoke('generate-section', {
+      body: request,
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+
+    const durationMs = Math.round(performance.now() - startTime);
+
+    if (error) {
+      const errorMsg = data?.error || error.message || 'Unknown error';
+      logger.workout.error('generateSection error', { error: errorMsg, durationMs });
+      return { error: 'Failed to generate section', details: errorMsg };
+    }
+
+    logger.workout.info('generateSection succeeded', {
+      durationMs,
+      swapMode: request.swap_mode,
+      exerciseCount: data?.section?.exercises?.length,
+    });
+    return data as GenerateSectionResponse;
+
+  } catch (err) {
+    const durationMs = Math.round(performance.now() - startTime);
+    logger.workout.error('generateSection exception', {
       error: err instanceof Error ? err.message : String(err),
       durationMs,
     });
