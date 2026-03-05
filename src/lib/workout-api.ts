@@ -47,7 +47,7 @@ export function transformAPIWorkoutToFrontend(
       effort: ex.effort_percent ? `${ex.effort_percent}%` : undefined,
       tempo: ex.tempo || undefined,
       rest: ex.rest_seconds ? `${ex.rest_seconds}s` : undefined,
-      coachingCues: ex.coaching_cues || undefined,
+      coachingCues: undefined,
       regression: ex.regression || undefined,
       equipment: ex.equipment || undefined,
       structure: ex.structure
@@ -258,7 +258,7 @@ export async function saveGeneratedWorkout(
         effort_percent: exercise.effort_percent || null,
         tempo: exercise.tempo || null,
         rest_seconds: exercise.rest_seconds || null,
-        coaching_cues: exercise.coaching_cues?.join('\n') || null,
+        coaching_cues: null,
         order_index: exerciseIndex,
       })),
     }));

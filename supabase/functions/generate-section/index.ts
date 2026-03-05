@@ -108,7 +108,6 @@ OUTPUT FORMAT:
       "effort_percent": number|null,
       "tempo": "string|null",
       "rest_seconds": number|null,
-      "coaching_cues": ["array"],
       "regression": "string|null",
       "structure": { "type": "standard|superset|circuit|emom|amrap|for_time|timed", "group_id": "string (required for non-standard)", ...params }
     }

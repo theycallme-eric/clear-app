@@ -297,8 +297,9 @@ When time is tight (under 30 min):
 - For balanced goal under 30 min: Drop conditioning entirely. You can't do everything in 25 minutes.
 
 When time is generous (over 60 min):
-- Add volume (more sets, more accessory exercises), NOT more sections
+- Add volume (more sets, more accessory exercises), or split into multiple sections of the same type (e.g., two accessory blocks)
 - Don't pad with filler. If the goal is Strength and you have 75 minutes, do more sets of the primary and more accessory work. Don't add a random AMRAP.
+- You CAN use multiple sections of the same type when it makes sense (e.g., upper accessories + lower accessories). Don't duplicate warmup or cooldown.
 
 ---
 
@@ -374,7 +375,6 @@ Return valid JSON matching this exact schema. No markdown, no explanation — ju
           "effort_percent": number|null,
           "tempo": "string|null - e.g. '3-1-2'",
           "rest_seconds": number|null,
-          "coaching_cues": ["array of coaching cue strings"],
           "regression": "string|null - easier alternative",
           "structure": { "type": "standard|superset|circuit|emom|amrap|for_time|timed", "group_id": "string (required for all non-standard types, same for exercises in the same group)", ...params }
         }
