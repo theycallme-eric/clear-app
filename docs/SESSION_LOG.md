@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-03-05 (8th session)
+**Last Session:** 2026-03-05 (9th session)
 
 ---
 
@@ -13,14 +13,53 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Feature — exercise swap, scan loader system, UI polish
-**Current Task:** Complete — merged PR #14 to main
-**Last Completed:** Exercise swap, ScanLoader system (boot/fullscreen/card), cancel generation, CRT static aesthetic, UI polish
-**Blocking Issues:** None — on main, clean state
+**Current Phase:** Optimization — generation speed, DB constraint fix
+**Current Task:** Complete — coaching cues removed, section type constraint dropped
+**Last Completed:** Coaching cues output reduction, duplicate section type constraint fix, generation speed plan evaluation
+**Blocking Issues:** None — changes on main, need commit + PR
 
 ---
 
 ## Session Entries
+
+### Session: 2026-03-05 - Generation Speed + Save Bug Fix
+
+**Duration:** ~45 min
+**Mode:** Claude Code
+**Branch:** `main` (direct, uncommitted)
+
+#### What Got Done
+- **Coaching cues removed from generation output**: Dropped `coaching_cues` from output schema in both `generate-workout/prompt.ts` and `generate-section/index.ts`. Reduces output tokens by 300-750 per workout (30-50 tokens per exercise × 10-15 exercises). Frontend transform and DB save updated to pass null/empty. UI already handles absence gracefully.
+- **Workout save bug fixed**: `idx_workout_sections_unique_type` constraint on `(session_id, section_type)` was rejecting workouts with multiple sections of the same type (e.g., two accessory blocks). Dropped the constraint via migration `00022`. Added prompt guidance allowing multiple same-type sections when appropriate.
+- **Generation speed plan evaluated**: Reviewed all 5 steps of the speed plan. Steps 1 (parallelize queries), 4 (defer save), and 5 (progressive stages) deprioritized as marginal or risky. Step 2 (prompt caching) noted as low-effort future win. Step 3 partially executed (coaching cues only, kept regression). Plan updated with rationale.
+- **Backlog updated**: Added low-priority item for re-enabling coaching cues with restore instructions.
+- **Migration pushed to production**: `00022_drop_unique_section_type.sql` applied to hosted Supabase via `supabase db push`.
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Remove coaching cues, keep regression | Cues are generic fitness knowledge (high token cost, low value). Regression is actionable for users ("Easier: goblet squat"). |
+| Drop DB constraint, don't tighten prompt | Multiple same-type sections are legitimate (two accessory blocks). Prompt already guides section composition via goal templates. |
+| Deprioritize other speed plan steps | DB queries are ~200ms total (marginal). Deferred save risks silent data loss. Progressive stages would be fake (no intermediate signal from edge function). |
+| Soft prompt guardrail instead of hard constraint | "Don't duplicate warmup or cooldown" in prompt vs DB enforcement. Allows flexibility while preventing obvious problems. |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `supabase/functions/generate-workout/prompt.ts` | Modified — removed coaching_cues from output schema, added multi-section guidance |
+| `supabase/functions/generate-section/index.ts` | Modified — removed coaching_cues from output schema |
+| `src/lib/workout-api.ts` | Modified — nulled coaching_cues in transform and DB save |
+| `src/hooks/useExerciseSwap.ts` | Modified — empty array for coaching_cues mapping |
+| `supabase/migrations/00022_drop_unique_section_type.sql` | Created — drops unique section type constraint |
+| `docs/BACKLOG.md` | Modified — added re-enable coaching cues item |
+| `~/.claude/plans/lexical-scribbling-lamport.md` | Modified — Step 3 marked partially done, other steps deprioritized |
+
+#### Status
+- Build passes, types clean
+- Migration applied locally and to production
+- Changes uncommitted on main — needs commit + PR
+
+---
 
 ### Session: 2026-03-05 - Exercise Swap, Scan Loader System, and UI Polish
 

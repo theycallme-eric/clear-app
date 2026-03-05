@@ -85,6 +85,12 @@ Important but not blocking. Address after core features complete.
 ### Low Priority
 Nice to have. Address when time permits or for future versions.
 
+- [ ] **Re-enable coaching cues in generation** - Add `coaching_cues` back to output schema in prompt files
+  - Priority: Low
+  - Type: Enhancement
+  - Added: 2026-03-05
+  - Context: Removed from `generate-workout/prompt.ts` and `generate-section/index.ts` output schemas to reduce output tokens and speed up generation. Regression was kept. To restore: add `"coaching_cues": ["array of coaching cue strings"],` back to each prompt's output schema. Frontend (`ExerciseCard.tsx`) already renders them conditionally — no UI changes needed. DB column still exists.
+
 - [ ] **Superset connector spacing** - Horizontal gap between vertical connector line and exercise text needs fine-tuning
   - Priority: Low
   - Type: Enhancement

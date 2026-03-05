@@ -133,7 +133,7 @@ export function useExerciseSwap(
       effort_percent: exercise.effort ? parseInt(exercise.effort) || null : null,
       tempo: exercise.tempo || null,
       rest_seconds: exercise.rest ? parseInt(exercise.rest) || null : null,
-      coaching_cues: exercise.coachingCues || [],
+      coaching_cues: [],
       regression: exercise.regression || null,
       structure: apiStructure,
     };
