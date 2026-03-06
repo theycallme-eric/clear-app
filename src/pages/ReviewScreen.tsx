@@ -19,6 +19,7 @@ export const ReviewScreen = () => {
     handleStartWorkout,
     workoutParams,
     currentLocationId,
+    isRepeat,
   } = useWorkoutFlowContext();
 
   const {
@@ -34,6 +35,8 @@ export const ReviewScreen = () => {
   if (!generatedWorkout) {
     return <Navigate to="/generate" replace />;
   }
+
+  const backRoute = isRepeat ? "/history" : "/generate";
 
   // Build session context for swap API calls
   const sessionContext: SwapSessionContext = useMemo(() => {
@@ -53,6 +56,8 @@ export const ReviewScreen = () => {
 
   // Build swap control props for each section
   const buildExerciseSwapControls = (sectionId: string, exercises: typeof generatedWorkout.sections[0]['exercises']) => {
+    if (isRepeat) return {}; // No swap controls for repeat workouts
+
     const controls: Record<number, any> = {};
 
     exercises.forEach((exercise, index) => {
@@ -95,6 +100,8 @@ export const ReviewScreen = () => {
   };
 
   const buildGroupSwapControls = (sectionId: string, exercises: typeof generatedWorkout.sections[0]['exercises']) => {
+    if (isRepeat) return {}; // No swap controls for repeat workouts
+
     const controls: Record<string, any> = {};
     const seenGroups = new Set<string>();
 
@@ -137,7 +144,7 @@ export const ReviewScreen = () => {
 
   return (
     <AppLayout
-      header={<PageHeader left="back" onBack={() => navigate("/generate")} right="menu" onMenu={() => navigate("/settings")} />}
+      header={<PageHeader left="back" onBack={() => navigate(backRoute)} right="menu" onMenu={() => navigate("/settings")} />}
       footer={<StartWorkoutButton onClick={() => handleStartWorkout(() => navigate("/workout"))} />}
     >
       <div className="pt-6 space-y-6 stagger-reveal">

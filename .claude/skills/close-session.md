@@ -26,14 +26,18 @@ Track completed work for project history and continuity between agents. This ens
    - If you added a new Page, Service, or major component
    - Run [project-map](.claude/skills/project-map.md) skill
 
-4. **Branch Cleanup**
+4. **Archive Plan** (if session was driven by a plan)
+   - Move the executed plan to the done folder: `mv .claude/plans/SESSION_PLAN_*.md .claude/plans/done/`
+   - Only archive if all tasks in the plan were completed or explicitly skipped
+
+5. **Branch Cleanup**
    - Switch to main and pull latest: `git checkout main && git pull origin main`
    - Delete local branches already merged to main: `git branch --merged main | grep -v 'main' | xargs -r git branch -d`
    - Delete their remote counterparts via GitHub API: `gh api repos/{owner}/{repo}/git/refs/heads/{branch} -X DELETE`
    - Prune stale remote tracking refs: `git remote prune origin`
    - Verify only `main` remains: `git branch -a`
 
-5. **Final Message**
+6. **Final Message**
    - Tell user: "Session complete. Log and backlog updated. Branches cleaned up. Ready for next plan."
 
 ## Session Log Entry Format
@@ -79,5 +83,6 @@ Track completed work for project history and continuity between agents. This ens
 - [ ] Completed items marked in BACKLOG.md
 - [ ] New items added to BACKLOG.md (if any)
 - [ ] PROJECT_MAP.md updated (if major changes)
+- [ ] Executed plan archived to `.claude/plans/done/` (if applicable)
 - [ ] Merged branches deleted (local + remote)
 - [ ] User notified session is complete

@@ -209,6 +209,21 @@ export async function fetchWorkoutDetail(sessionId: string): Promise<import('@/t
     logger.data.error('fetchWorkoutDetail sections failed', { error: sectionsError.message });
   }
 
+  // Fetch structure results separately — optional enrichment that shouldn't break the page
+  const sectionIds = (sections || []).map(s => s.id);
+  let structureResultsMap: Record<string, Database['public']['Tables']['structure_results']['Row']> = {};
+  if (sectionIds.length > 0) {
+    const { data: srData } = await supabase
+      .from('structure_results')
+      .select('*')
+      .in('section_id', sectionIds);
+    if (srData) {
+      for (const sr of srData) {
+        if (sr.section_id) structureResultsMap[sr.section_id] = sr;
+      }
+    }
+  }
+
   // Map section type to display name
   const sectionNameMap: Record<string, string> = {
     warmup: 'Warm-up',
@@ -223,20 +238,38 @@ export async function fetchWorkoutDetail(sessionId: string): Promise<import('@/t
     cooldown: 'Cooldown',
   };
 
-  const loggedSections: import('@/types/workout').LoggedSection[] = (sections || []).map(section => ({
-    id: section.id,
-    name: sectionNameMap[section.section_type] || section.section_type,
-    exercises: (section.exercises || [])
-      .sort((a: { order_index?: number }, b: { order_index?: number }) => (a.order_index || 0) - (b.order_index || 0))
-      .map((ex: Database['public']['Tables']['exercises']['Row']) => ({
-        id: ex.id,
-        name: ex.exercise_id?.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()) || 'Unknown',
-        sets: ex.sets || 1,
-        reps: ex.reps || '—',
-        weight: ex.weight_logged || undefined,
-        note: ex.exercise_notes || undefined,
-      })),
-  }));
+  const loggedSections: import('@/types/workout').LoggedSection[] = (sections || []).map(section => {
+    // Extract structure result if present
+    const sr = structureResultsMap[section.id];
+    const structureResult: import('@/types/workout').LoggedStructureResult | undefined = sr ? {
+      structureType: sr.structure_type,
+      roundsCompleted: sr.rounds_completed,
+      completionTimeSeconds: sr.completion_time_seconds,
+      completedUnderCap: sr.completed_under_cap,
+      highestRung: sr.highest_rung,
+      repScheme: sr.rep_scheme,
+      notes: sr.notes,
+    } : undefined;
+
+    return {
+      id: section.id,
+      name: sectionNameMap[section.section_type] || section.section_type,
+      exercises: (section.exercises || [])
+        .sort((a: { order_index?: number }, b: { order_index?: number }) => (a.order_index || 0) - (b.order_index || 0))
+        .map((ex: Database['public']['Tables']['exercises']['Row']) => ({
+          id: ex.id,
+          name: ex.exercise_id?.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()) || 'Unknown',
+          sets: ex.sets || 1,
+          reps: ex.reps || '—',
+          weight: ex.weight_logged || undefined,
+          note: ex.exercise_notes || undefined,
+          equipment: ex.equipment_used && ex.equipment_used !== 'bodyweight'
+            ? ex.equipment_used.replace(/_/g, ' ')
+            : undefined,
+        })),
+      structureResult,
+    };
+  });
 
   return {
     id: session.id,

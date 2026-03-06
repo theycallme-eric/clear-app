@@ -72,8 +72,8 @@ export const WorkoutScreen = () => {
     }));
   };
 
-  const handleStructureResult = useCallback((sectionName: string, data: StructureResultData) => {
-    setStructureResults(prev => ({ ...prev, [sectionName]: data }));
+  const handleStructureResult = useCallback((sectionId: string, data: StructureResultData) => {
+    setStructureResults(prev => ({ ...prev, [sectionId]: data }));
   }, []);
 
   return (

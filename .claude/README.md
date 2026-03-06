@@ -50,6 +50,9 @@ What are you doing?
 │   ├─► Implementing from Figma?
 │   │   └─► Use AGENT: figma-ui-implementer
 │   │
+│   ├─► Using a new icon?
+│   │   └─► icon-transform.md (add to src/components/icons.tsx)
+│   │
 │   └─► Checking design tokens?
 │       └─► token-check.md
 │
@@ -141,6 +144,7 @@ Agents are specialized AI personas. Invoke via Task tool with matching `subagent
 | [`gallery-add`](skills/gallery-add.md) | After creating a component | Add visual test case to gallery |
 | [`token-check`](skills/token-check.md) | Reviewing component styles | Verify design tokens, no hardcoded values |
 | [`token-audit`](skills/token-audit.md) | Comprehensive token review | Full audit of design token usage |
+| [`icon-transform`](skills/icon-transform.md) | New Lucide icon introduced | Convert to CLEAR-style solid geometric icon |
 
 ### Backend Skills
 
@@ -287,6 +291,7 @@ debug.md → [fix] → token-check.md (if UI) → pr-workflow.md
 │   ├── gallery-add.md
 │   ├── token-check.md
 │   ├── token-audit.md
+│   ├── icon-transform.md
 │   ├── supabase-workflow.md
 │   ├── debug.md
 │   ├── backlog.md

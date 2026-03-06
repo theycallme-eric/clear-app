@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ChevronDown, ChevronUp } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import { Exercise } from "@/types/workout";
 import { Card } from "../Card";
@@ -54,11 +54,22 @@ export const ActiveExerciseCard = ({
     className
 }: ActiveExerciseCardProps) => {
     const [isExpanded, setIsExpanded] = useState(defaultExpanded);
-    const [weight, setWeight] = useState(exercise.weight_logged || "");
+    const [weight, setWeight] = useState(exercise.weight_logged || exercise.lastWeight || "");
     const [reps, setReps] = useState(exercise.reps || "");
-    const [note, setNote] = useState("");
+    const [note, setNote] = useState(exercise.lastNotes || "");
 
     const showInputs = !sectionType || !HIDE_INPUTS_SECTIONS.includes(sectionType);
+
+    // Log pre-filled values on mount so they persist even if user doesn't edit
+    useEffect(() => {
+        const prefilled: { weight?: string; notes?: string } = {};
+        if (exercise.lastWeight) prefilled.weight = exercise.lastWeight;
+        if (exercise.lastNotes) prefilled.notes = exercise.lastNotes;
+        if (Object.keys(prefilled).length > 0) {
+            onLog(exercise.id, prefilled);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     const WEIGHTED_EQUIPMENT = ['barbell', 'dumbbell', 'dumbbells', 'kettlebell', 'cable', 'machine', 'ez bar', 'trap bar', 'smith machine', 'plate'];
     const hasWeight = exercise.equipment && WEIGHTED_EQUIPMENT.includes(exercise.equipment.toLowerCase());
 
@@ -200,7 +211,7 @@ export const ActiveExerciseCard = ({
                                     <Input
                                         value={weight}
                                         onChange={(e) => handleWeightChange(e.target.value)}
-                                        placeholder={exercise.lastWeight || "lbs/kg"}
+                                        placeholder="lbs/kg"
                                     />
                                 </div>
                             )}

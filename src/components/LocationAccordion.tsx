@@ -47,29 +47,22 @@ export const LocationAccordion = ({ selected, onSelect, locations }: LocationAcc
         />
       </button>
 
-      <div
-        className={cn(
-          "grid transition-all duration-200 ease-out",
-          isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
-        )}
-      >
-        <div className="overflow-hidden">
-          <div className="px-4 pb-4 flex flex-col gap-2">
-            {locations.map((location) => (
-              <RadioButton
-                key={location.id}
-                selected={selected === location.name}
-                onClick={() => {
-                  onSelect(location.name);
-                  setIsOpen(false);
-                }}
-                label={location.name}
-                className="w-full"
-              />
-            ))}
-          </div>
+      {isOpen && (
+        <div className="px-4 pb-4 flex flex-col gap-2">
+          {locations.map((location) => (
+            <RadioButton
+              key={location.id}
+              selected={selected === location.name}
+              onClick={() => {
+                onSelect(location.name);
+                setIsOpen(false);
+              }}
+              label={location.name}
+              className="w-full"
+            />
+          ))}
         </div>
-      </div>
+      )}
     </Card>
   );
 };

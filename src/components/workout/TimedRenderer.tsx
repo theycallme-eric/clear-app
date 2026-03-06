@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus } from "@/components/icons";
 import { WorkoutSection, Exercise } from "@/types/workout";
 import { ActiveExerciseCard } from "./ActiveExerciseCard";
 import { SectionTimer, TimerState } from "./SectionTimer";
@@ -13,7 +13,7 @@ interface TimedRendererProps {
     section: WorkoutSection;
     firstStructure: NonNullable<Exercise['structure']>;
     onLog: (id: string, data: { weight?: string; reps?: string; notes?: string }) => void;
-    onStructureResult?: (sectionName: string, data: StructureResultData) => void;
+    onStructureResult?: (sectionId: string, data: StructureResultData) => void;
 }
 
 /** Helper: generate EMOM minute assignment label for an exercise */
@@ -66,19 +66,30 @@ export const TimedRenderer = ({
     // Report AMRAP results to parent when data changes
     useEffect(() => {
         if (isAmrap && isComplete && onStructureResult) {
-            onStructureResult(section.name, {
+            onStructureResult(section.id, {
                 structure_type: 'amrap',
                 rounds_completed: roundsCompleted,
                 completion_time_seconds: elapsedSeconds,
                 notes: partialNote || null,
             });
         }
-    }, [isAmrap, isComplete, roundsCompleted, elapsedSeconds, partialNote, onStructureResult, section.name]);
+    }, [isAmrap, isComplete, roundsCompleted, elapsedSeconds, partialNote, onStructureResult, section.id]);
+
+    // Report non-ladder For Time results to parent
+    useEffect(() => {
+        if (isForTime && !isLadder && isComplete && onStructureResult) {
+            onStructureResult(section.id, {
+                structure_type: 'for_time',
+                completion_time_seconds: elapsedSeconds,
+                completed_under_cap: finishedEarly,
+            });
+        }
+    }, [isForTime, isLadder, isComplete, elapsedSeconds, finishedEarly, onStructureResult, section.id]);
 
     // Report ladder For Time results to parent
     useEffect(() => {
         if (isLadder && isComplete && onStructureResult) {
-            onStructureResult(section.name, {
+            onStructureResult(section.id, {
                 structure_type: 'for_time',
                 completion_time_seconds: elapsedSeconds,
                 completed_under_cap: finishedEarly,
@@ -86,7 +97,17 @@ export const TimedRenderer = ({
                 highest_rung: finishedEarly ? null : (selectedRung ?? null),
             });
         }
-    }, [isLadder, isComplete, elapsedSeconds, finishedEarly, selectedRung, ladderPattern, onStructureResult, section.name]);
+    }, [isLadder, isComplete, elapsedSeconds, finishedEarly, selectedRung, ladderPattern, onStructureResult, section.id]);
+
+    // Report EMOM completion to parent (data only, no UI treatment)
+    useEffect(() => {
+        if (isEmom && isComplete && onStructureResult) {
+            onStructureResult(section.id, {
+                structure_type: 'emom',
+                completion_time_seconds: elapsedSeconds,
+            });
+        }
+    }, [isEmom, isComplete, elapsedSeconds, onStructureResult, section.id]);
 
     const timerMode = firstStructure.type === 'for_time' ? 'countup' as const : 'countdown' as const;
     const initialSeconds = (firstStructure.type === 'emom' || firstStructure.type === 'amrap')
@@ -94,6 +115,7 @@ export const TimedRenderer = ({
         : (firstStructure.type === 'for_time' ? (firstStructure.time_cap_mins || 0) * 60 : 0);
 
     const timerLabel = firstStructure.type?.replace('_', ' ') || '';
+    const previousBest = section.previousBest;
 
     const handleMinuteChange = useCallback((minute: number) => {
         setCurrentMinute(minute);
@@ -138,6 +160,20 @@ export const TimedRenderer = ({
                 </span>
             </div>
 
+            {/* Previous Best badge — visible before starting */}
+            {previousBest && timerState === 'idle' && (
+                <div className="px-4 -mt-1 pb-1">
+                    <span
+                        className="text-paragraph-sm"
+                        style={{ color: 'var(--text-timer)' }}
+                    >
+                        Previous Best: {previousBest.structureType === 'for_time'
+                            ? formatTime(previousBest.value)
+                            : `${previousBest.value} round${previousBest.value !== 1 ? 's' : ''}`}
+                    </span>
+                </div>
+            )}
+
             {/* Timer + controls */}
             <div className="px-4 py-3">
                 <SectionTimer
@@ -150,6 +186,27 @@ export const TimedRenderer = ({
                     hideControls={(isAmrap && isComplete) || (isLadder && isComplete)}
                 />
             </div>
+
+            {/* For Time: PR comparison (non-ladder) */}
+            {isForTime && !isLadder && isComplete && (
+                <div className="px-4 pb-2 text-center">
+                    {previousBest && previousBest.structureType === 'for_time' ? (
+                        elapsedSeconds < previousBest.value ? (
+                            <p className="text-label-sm font-bold glow-emissive" style={{ color: 'var(--text-header)' }}>
+                                New Personal Best! (Previous: {formatTime(previousBest.value)})
+                            </p>
+                        ) : (
+                            <p className="text-paragraph-sm" style={{ color: 'var(--text-disabled)' }}>
+                                Previous Best: {formatTime(previousBest.value)}
+                            </p>
+                        )
+                    ) : (
+                        <p className="text-paragraph-sm" style={{ color: 'var(--text-disabled)' }}>
+                            First attempt recorded.
+                        </p>
+                    )}
+                </div>
+            )}
 
             {/* Ladder: cap reached -- interactive rung selector (Path B only) */}
             {isLadder && isComplete && !finishedEarly && (
@@ -222,6 +279,7 @@ export const TimedRenderer = ({
                                     cornerSize="sm"
                                     surfaceColor="var(--surface-cta-secondary)"
                                     borderColor="var(--border-cta-secondary)"
+                                    hasLeftBorder
                                 >
                                     <div className="px-3 py-2">
                                         <Minus size={24} style={{ color: 'var(--text-cta)' }} />
@@ -244,6 +302,7 @@ export const TimedRenderer = ({
                                     cornerSize="sm"
                                     surfaceColor="var(--surface-cta-primary)"
                                     borderColor="var(--border-cta-primary)"
+                                    hasLeftBorder
                                 >
                                     <div className="px-3 py-2">
                                         <Plus size={24} style={{ color: 'var(--text-cta)' }} />
@@ -252,6 +311,28 @@ export const TimedRenderer = ({
                             </button>
                         </div>
                     </div>
+
+                    {/* Previous best comparison for AMRAP */}
+                    {previousBest && previousBest.structureType === 'amrap' && roundsCompleted > 0 && (
+                        <div className="text-center">
+                            {roundsCompleted > previousBest.value ? (
+                                <p className="text-label-sm font-bold glow-emissive" style={{ color: 'var(--text-header)' }}>
+                                    New Personal Best! (Previous: {previousBest.value} round{previousBest.value !== 1 ? 's' : ''})
+                                </p>
+                            ) : (
+                                <p className="text-paragraph-sm" style={{ color: 'var(--text-disabled)' }}>
+                                    Previous Best: {previousBest.value} round{previousBest.value !== 1 ? 's' : ''}
+                                </p>
+                            )}
+                        </div>
+                    )}
+                    {!previousBest && isAmrap && roundsCompleted > 0 && (
+                        <div className="text-center">
+                            <p className="text-paragraph-sm" style={{ color: 'var(--text-disabled)' }}>
+                                First attempt recorded.
+                            </p>
+                        </div>
+                    )}
 
                     {/* Partial round notes */}
                     <ExerciseNotes

@@ -21,7 +21,7 @@ interface SectionRendererProps {
     section: WorkoutSection;
     onLog: (id: string, data: { weight?: string; reps?: string; notes?: string }) => void;
     /** Called when a timed section completes with structure-level result data */
-    onStructureResult?: (sectionName: string, data: StructureResultData) => void;
+    onStructureResult?: (sectionId: string, data: StructureResultData) => void;
 }
 
 const TIMED_TYPES = ['emom', 'amrap', 'for_time'];
@@ -37,19 +37,23 @@ function groupExercises(exercises: Exercise[]) {
         const structure = ex.structure || { type: 'standard' };
 
         if (structure.type === 'superset') {
+            const groupId = 'group_id' in structure ? structure.group_id : undefined;
             const supersetGroup = [ex];
-            if (i + 1 < exercises.length) {
-                const next = exercises[i + 1];
-                const nextStruct = next.structure;
-
-                if (nextStruct?.type === 'superset' && nextStruct.paired_with === ex.id) {
-                    supersetGroup.push(next);
-                    i++;
-                } else if (structure.paired_with === next.id) {
-                    supersetGroup.push(next);
-                    i++;
+            // Collect all subsequent exercises with the same superset group_id
+            let j = i + 1;
+            while (j < exercises.length) {
+                const nextStruct = exercises[j].structure;
+                if (nextStruct?.type === 'superset') {
+                    const nextGroupId = 'group_id' in nextStruct ? nextStruct.group_id : undefined;
+                    if (groupId && nextGroupId === groupId) {
+                        supersetGroup.push(exercises[j]);
+                        j++;
+                        continue;
+                    }
                 }
+                break;
             }
+            i = j - 1;
             groups.push({ type: 'superset', exercises: supersetGroup, structure });
         } else if (structure.type === 'circuit') {
             const circuitId = structure.circuit_id;

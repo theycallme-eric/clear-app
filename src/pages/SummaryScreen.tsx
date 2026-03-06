@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { Flame } from "lucide-react";
+import { Flame, Star } from "@/components/icons";
 import { MoodIcon, MoodValue } from "@/components/MoodIcon";
 import { PageHeader } from "@/components/PageHeader";
 import { AppLayout } from "@/layouts";
@@ -10,6 +10,10 @@ import { ChamferedFrame } from "@/components/ChamferedFrame";
 import { Textarea } from "@/components/ui/textarea";
 import { useWorkoutFlowContext } from "@/contexts/WorkoutFlowContext";
 import { useHomeDataContext } from "@/contexts/HomeDataContext";
+import { saveFavorite, removeFavorite } from "@/lib/favorites-api";
+import { toast } from "@/components/ui/sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/lib/query-keys";
 
 const MOOD_OPTIONS: { value: MoodValue; label: string }[] = [
   { value: 1, label: "Exhausted" },
@@ -26,16 +30,21 @@ const formatDuration = (seconds: number): string => {
 
 export const SummaryScreen = () => {
   const navigate = useNavigate();
-  const { generatedWorkout, workoutNotes, totalTime, handleFinishSession } = useWorkoutFlowContext();
+  const { generatedWorkout, workoutNotes, totalTime, handleFinishSession, currentSessionId, repeatSavedWorkoutId } = useWorkoutFlowContext();
   const { streakData } = useHomeDataContext();
+  const queryClient = useQueryClient();
 
   const [selectedMood, setSelectedMood] = useState<number | null>(null);
   const [sessionNotes, setSessionNotes] = useState("");
+  const [isFavorited, setIsFavorited] = useState(!!repeatSavedWorkoutId);
+  const [savedWorkoutId, setSavedWorkoutId] = useState<string | null>(repeatSavedWorkoutId);
+  const [favoriteSaving, setFavoriteSaving] = useState(false);
 
   if (!generatedWorkout || !workoutNotes) {
     return <Navigate to="/" replace />;
   }
 
+  const notesHistory = generatedWorkout.sessionNotesHistory || [];
   const newStreak = streakData.currentStreak + 1;
 
   const getWeekDays = () => {
@@ -63,6 +72,38 @@ export const SummaryScreen = () => {
   };
 
   const weekDays = getWeekDays();
+
+  const handleToggleFavorite = async () => {
+    if (!currentSessionId || favoriteSaving) return;
+    setFavoriteSaving(true);
+
+    if (isFavorited && savedWorkoutId) {
+      // Undo — remove favorite
+      setIsFavorited(false);
+      const result = await removeFavorite(savedWorkoutId);
+      setFavoriteSaving(false);
+      if (!result.success) {
+        setIsFavorited(true);
+        toast.error("Couldn't remove favorite");
+      } else {
+        setSavedWorkoutId(null);
+        queryClient.invalidateQueries({ queryKey: queryKeys.favorites() });
+      }
+    } else {
+      // Save as favorite
+      setIsFavorited(true);
+      const result = await saveFavorite(currentSessionId, true);
+      setFavoriteSaving(false);
+      if ('error' in result) {
+        setIsFavorited(false);
+        toast.error("Couldn't save favorite");
+      } else {
+        setSavedWorkoutId(result.savedWorkoutId);
+        queryClient.invalidateQueries({ queryKey: queryKeys.favorites() });
+        toast.success("Added to favorites");
+      }
+    }
+  };
 
   const handleFinish = async () => {
     await handleFinishSession(selectedMood, sessionNotes, () => navigate("/"));
@@ -93,16 +134,35 @@ export const SummaryScreen = () => {
           </h2>
         </div>
 
-        <Card padding="md" className="mb-6 text-center">
-          <p
-            className="text-heading-h5 font-semibold uppercase tracking-wide"
-            style={{ color: 'var(--text-header)' }}
-          >
-            {generatedWorkout.goal ? `${generatedWorkout.goal.replace('_', ' ')} · ` : ''}{generatedWorkout.anchor} &bull; Intensity {generatedWorkout.intensity}
-          </p>
-          <p className="text-paragraph-sm mt-1" style={{ color: 'var(--text-paragraph)' }}>
-            {formatDuration(totalTime)} &bull; {generatedWorkout.sections.length} sections
-          </p>
+        <Card padding="md" className="mb-6">
+          <div className="flex items-start justify-between">
+            <div className="text-center flex-1">
+              <p
+                className="text-heading-h5 font-semibold uppercase tracking-wide"
+                style={{ color: 'var(--text-header)' }}
+              >
+                {generatedWorkout.goal ? `${generatedWorkout.goal.replace('_', ' ')} · ` : ''}{generatedWorkout.anchor} &bull; Intensity {generatedWorkout.intensity}
+              </p>
+              <p className="text-paragraph-sm mt-1" style={{ color: 'var(--text-paragraph)' }}>
+                {formatDuration(totalTime)} &bull; {generatedWorkout.sections.length} sections
+              </p>
+            </div>
+            {currentSessionId && (
+              <button
+                onClick={handleToggleFavorite}
+                disabled={favoriteSaving}
+                className="min-w-[44px] min-h-[44px] flex items-center justify-center -mr-2 -mt-1"
+              >
+                <Star
+                  size={24}
+                  style={{
+                    color: isFavorited ? 'var(--icon-badge)' : 'var(--text-disabled)',
+                    opacity: favoriteSaving ? 0.3 : 1,
+                  }}
+                />
+              </button>
+            )}
+          </div>
         </Card>
 
         <Card padding="md" className="mb-6">
@@ -136,12 +196,42 @@ export const SummaryScreen = () => {
             className="text-label-xs uppercase tracking-widest mb-4"
             style={{ color: 'var(--text-card-label)' }}
           >
-            Session Notes (Optional)
+            Session Notes
           </h3>
+
+          {/* Previous session notes (favorite repeats only) */}
+          {notesHistory.length > 0 && (
+            <div className="space-y-3 mb-4">
+              {notesHistory.map((entry, i) => (
+                <div key={i}>
+                  <p
+                    className="text-label-xs uppercase tracking-wider mb-0.5"
+                    style={{ color: 'var(--text-disabled)' }}
+                  >
+                    {new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </p>
+                  <p
+                    className="text-paragraph-sm"
+                    style={{ color: 'var(--text-paragraph)' }}
+                  >
+                    {entry.notes}
+                  </p>
+                </div>
+              ))}
+              <div
+                className="h-px"
+                style={{ backgroundColor: 'var(--border-spacer)' }}
+              />
+            </div>
+          )}
+
           <Textarea
             value={sessionNotes}
             onChange={(e) => setSessionNotes(e.target.value)}
-            placeholder="Add any notes about this workout..."
+            placeholder={notesHistory.length > 0 ? "Add notes for this session..." : "Add any notes about this workout..."}
             className="min-h-[96px]"
           />
         </Card>
@@ -165,7 +255,7 @@ export const SummaryScreen = () => {
               {newStreak}
             </span>
             <span className="ml-2">
-              <Flame className="inline w-7 h-7" style={{ color: 'var(--icon-badge)' }} />
+              <Flame size={28} className="inline" style={{ color: 'var(--icon-badge)' }} />
             </span>
             <p className="text-label-sm mt-1" style={{ color: 'var(--text-paragraph)' }}>days</p>
           </div>

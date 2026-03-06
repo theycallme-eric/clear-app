@@ -15,7 +15,7 @@ export const AbandonmentModal = ({ workoutDate, onResume, onAbandon }: Abandonme
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm"
-      style={{ backgroundColor: 'rgba(23, 23, 23, 0.8)' }}
+      style={{ backgroundColor: 'var(--surface-overlay)' }}
     >
       <Card padding="lg" className="mx-4 max-w-sm w-full text-center">
         <h2
