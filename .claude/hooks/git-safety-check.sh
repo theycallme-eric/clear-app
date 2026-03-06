@@ -90,7 +90,7 @@ fi
 # ============================================
 # BLOCK: Force pushes
 # ============================================
-if echo "$COMMAND" | grep -qE "git push.*(-f|--force|--force-with-lease)"; then
+if echo "$COMMAND" | grep -qE "git push.* (-f|--force|--force-with-lease)( |$)"; then
   # Allow force-with-lease on feature branches (safer)
   if echo "$COMMAND" | grep -q "\-\-force-with-lease" && ! echo "$COMMAND" | grep -qE "(main|master)"; then
     exit 0
