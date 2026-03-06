@@ -59,7 +59,7 @@ function ChamferedToast({
 
   return (
     <div
-      className={`grid w-[calc(100vw-32px)] sm:w-[349px] cursor-pointer backdrop-blur-md ${description ? 'min-h-[68px]' : 'h-[68px]'}`}
+      className={`relative grid w-[calc(100vw-32px)] sm:w-[349px] cursor-pointer backdrop-blur-md scanlines ${description ? 'min-h-[68px]' : 'h-[68px]'}`}
       style={{ gridTemplateColumns: '10px 1fr' }}
       onClick={() => toast.dismiss(id)}
     >

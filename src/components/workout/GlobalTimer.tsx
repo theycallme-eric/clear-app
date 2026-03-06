@@ -29,7 +29,7 @@ export const GlobalTimer = ({ isRunning, onTimeUpdate, startTime }: GlobalTimerP
 
     return (
         <div
-            className="sticky top-0 z-10 flex items-center justify-center px-5 py-3 backdrop-blur-md"
+            className="sticky top-0 z-10 flex items-center justify-center px-5 py-3 backdrop-blur-md scanlines"
             style={{ backgroundColor: 'color-mix(in srgb, var(--color-neutral-900) 80%, transparent)' }}
         >
             <TimerDisplay elapsedSeconds={elapsedSeconds} />

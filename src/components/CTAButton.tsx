@@ -135,7 +135,7 @@ export function CTAButton({
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        "group inline-flex items-stretch backdrop-blur-md",
+        "group relative inline-flex items-stretch backdrop-blur-md scanlines",
         currentSize.height,
         disabled ? "cursor-not-allowed" : "cursor-pointer",
         fullWidth && "w-full",

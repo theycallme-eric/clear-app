@@ -1,12 +1,15 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { PageHeader } from "@/components/PageHeader";
 import { AppLayout } from "@/layouts";
 import { CTAButton } from "@/components/CTAButton";
 import { Card } from "@/components/Card";
 import { ChamferedFrame } from "@/components/ChamferedFrame";
-import { Zap, Clock, Flame, Dumbbell } from "lucide-react";
+import { Zap, Clock, Flame, Dumbbell, Star } from "@/components/icons";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import { ErrorState } from "@/components/ErrorState";
+import { EmptyState } from "@/components/EmptyState";
 import { AbandonmentModal } from "@/components/AbandonmentModal";
 import { useHomeDataContext } from "@/contexts/HomeDataContext";
 import { useWorkoutFlowContext } from "@/contexts/WorkoutFlowContext";
@@ -15,10 +18,102 @@ import { supabase } from "@/lib/supabase";
 import { logger } from "@/lib/logger";
 import { toast } from "@/components/ui/sonner";
 import { getSuggestedAnchor, getSuggestedIntensity } from "@/types/workout";
+import { getFavorites, getMostRecentSessionId, type SavedWorkoutSummary } from "@/lib/favorites-api";
+import { queryKeys } from "@/lib/query-keys";
+
+type HomeTab = 'history' | 'favorites';
+
+function HomeFavoritesList() {
+  const navigate = useNavigate();
+  const { data: favorites = [], isLoading } = useQuery({
+    queryKey: queryKeys.favorites(),
+    queryFn: getFavorites,
+  });
+
+  if (isLoading) {
+    return <LoadingSkeleton count={3} />;
+  }
+
+  if (favorites.length === 0) {
+    return (
+      <EmptyState
+        icon={Star}
+        title="No Favorites Yet"
+        description="Star a workout from history or after completing one"
+      />
+    );
+  }
+
+  const formatLastCompleted = (dateStr: string | null): string => {
+    if (!dateStr) return 'Never completed';
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  const handleFavoriteClick = async (fav: SavedWorkoutSummary) => {
+    if (!fav.originalSessionId) return;
+    const sessionId = await getMostRecentSessionId(fav.id, fav.originalSessionId);
+    navigate(`/history/${sessionId}`, { state: { savedWorkoutId: fav.id } });
+  };
+
+  return (
+    <>
+      <div className="space-y-2">
+        {favorites.map((fav) => (
+          <Card
+            key={fav.id}
+            onClick={() => handleFavoriteClick(fav)}
+            padding="md"
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <p
+                  className="text-label-sm font-bold uppercase tracking-wide"
+                  style={{ color: 'var(--text-card-header)' }}
+                >
+                  {fav.title}
+                </p>
+                <p
+                  className="text-paragraph-sm uppercase mt-1"
+                  style={{ color: 'var(--text-paragraph)' }}
+                >
+                  {fav.anchor && `${fav.anchor} \u2022 `}
+                  {fav.durationMins && `${fav.durationMins} min \u2022 `}
+                  Int. {fav.intensity}
+                </p>
+                <p
+                  className="text-paragraph-sm mt-1"
+                  style={{ color: 'var(--text-paragraph)' }}
+                >
+                  {fav.timesCompleted}× completed {'\u2022'} {formatLastCompleted(fav.lastCompletedAt)}
+                </p>
+              </div>
+              <Star size={16} style={{ color: 'var(--icon-badge)' }} />
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      <button
+        onClick={() => navigate("/history")}
+        className="w-full mt-3 py-2 text-center text-paragraph-sm font-medium transition-colors"
+        style={{ color: 'var(--text-cta)' }}
+      >
+        View All Favorites
+      </button>
+    </>
+  );
+}
 
 export const HomeScreen = () => {
   const navigate = useNavigate();
   const { user } = useAuthContext();
+  const [activeTab, setActiveTab] = useState<HomeTab>('favorites');
   const {
     workoutHistory,
     streakData,
@@ -227,91 +322,93 @@ export const HomeScreen = () => {
           </CTAButton>}
         </Card>
 
-        {isLoading ? (
-          <div>
-            <h3
-              className="text-label-xs uppercase tracking-widest mb-3 px-1"
-              style={{ color: 'var(--text-card-label)' }}
-            >
-              Recent
-            </h3>
-            <LoadingSkeleton count={3} />
-          </div>
-        ) : hasError ? (
-          <div>
-            <h3
-              className="text-label-xs uppercase tracking-widest mb-3 px-1"
-              style={{ color: 'var(--text-card-label)' }}
-            >
-              Recent
-            </h3>
-            <ErrorState message="Couldn't load workouts" onRetry={loadHomeData} />
-          </div>
-        ) : workoutHistory.length === 0 ? (
-          <Card padding="md">
-            <h3
-              className="text-label-xs uppercase tracking-widest mb-4"
-              style={{ color: 'var(--text-card-label)' }}
-            >
-              Recent
-            </h3>
-            <div className="text-center">
-              <Dumbbell className="w-10 h-10 mx-auto mb-4" style={{ color: 'var(--text-disabled)' }} />
-              <p
-                className="text-heading-h5 font-medium uppercase tracking-wide mb-1"
-                style={{ color: 'var(--text-header)' }}
+        {/* History / Favorites tabs */}
+        <div>
+          <div className="flex mb-4 border-b" style={{ borderColor: 'var(--border-spacer)' }}>
+            {(['favorites', 'history'] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className="flex-1 py-2 text-label-xs font-bold uppercase tracking-widest text-center transition-colors"
+                style={{
+                  color: activeTab === tab ? 'var(--text-cta)' : 'var(--text-disabled)',
+                  borderBottom: activeTab === tab ? '2px solid var(--border-cta-primary)' : '2px solid transparent',
+                }}
               >
-                No Workouts Yet
-              </p>
-              <p className="text-paragraph-sm mb-4" style={{ color: 'var(--text-paragraph)' }}>
-                Generate your first workout to get started
-              </p>
-              <CTAButton onClick={() => navigate("/generate")} variant="secondary" size="sm" fullWidth>
-                Generate
-              </CTAButton>
-            </div>
-          </Card>
-        ) : (
-          <div>
-            <h3
-              className="text-label-xs uppercase tracking-widest mb-3 px-1"
-              style={{ color: 'var(--text-card-label)' }}
-            >
-              Recent
-            </h3>
-            <div className="space-y-2">
-              {workoutHistory.slice(0, 3).map((workout) => (
-                <Card key={workout.id} onClick={() => navigate(`/history/${workout.id}`)} padding="md">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p
-                        className="text-label-sm uppercase tracking-wide"
-                        style={{ color: 'var(--text-header)' }}
-                      >
-                        {formatDate(workout.date)} &bull; {workout.goal ? `${workout.goal} · ` : ''}{workout.anchor} &bull; Int. {workout.intensity}
-                      </p>
-                      <p
-                        className="text-paragraph-sm flex items-center gap-1 mt-1"
-                        style={{ color: 'var(--text-paragraph)' }}
-                      >
-                        <Clock className="w-3 h-3" />
-                        {workout.duration} min
-                      </p>
-                    </div>
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          {activeTab === 'history' && (
+            <>
+              {isLoading ? (
+                <LoadingSkeleton count={3} />
+              ) : hasError ? (
+                <ErrorState message="Couldn't load workouts" onRetry={loadHomeData} />
+              ) : workoutHistory.length === 0 ? (
+                <Card padding="md">
+                  <div className="text-center">
+                    <Dumbbell className="w-10 h-10 mx-auto mb-4" style={{ color: 'var(--text-disabled)' }} />
+                    <p
+                      className="text-heading-h5 font-medium uppercase tracking-wide mb-1"
+                      style={{ color: 'var(--text-header)' }}
+                    >
+                      No Workouts Yet
+                    </p>
+                    <p className="text-paragraph-sm mb-4" style={{ color: 'var(--text-paragraph)' }}>
+                      Generate your first workout to get started
+                    </p>
+                    <CTAButton onClick={() => navigate("/generate")} variant="secondary" size="sm" fullWidth>
+                      Generate
+                    </CTAButton>
                   </div>
                 </Card>
-              ))}
-            </div>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    {workoutHistory.slice(0, 3).map((workout) => (
+                      <Card key={workout.id} onClick={() => navigate(`/history/${workout.id}`)} padding="md">
+                        <p
+                          className="text-label-sm font-bold uppercase tracking-wide"
+                          style={{ color: 'var(--text-card-header)' }}
+                        >
+                          {formatDate(workout.date)}
+                        </p>
+                        <p
+                          className="text-paragraph-sm uppercase mt-1"
+                          style={{ color: 'var(--text-paragraph)' }}
+                        >
+                          {workout.anchor} {'\u2022'} Int. {workout.intensity}
+                          {workout.goal ? ` \u2022 ${workout.goal}` : ''}
+                        </p>
+                        <p
+                          className="text-paragraph-sm flex items-center gap-1 mt-1"
+                          style={{ color: 'var(--text-paragraph)' }}
+                        >
+                          <Clock className="w-3 h-3" />
+                          {workout.duration} min
+                        </p>
+                      </Card>
+                    ))}
+                  </div>
 
-            <button
-              onClick={() => navigate("/history")}
-              className="w-full mt-3 py-2 text-center text-paragraph-sm font-medium transition-colors"
-              style={{ color: 'var(--text-cta)' }}
-            >
-              View All History
-            </button>
-          </div>
-        )}
+                  <button
+                    onClick={() => navigate("/history")}
+                    className="w-full mt-3 py-2 text-center text-paragraph-sm font-medium transition-colors"
+                    style={{ color: 'var(--text-cta)' }}
+                  >
+                    View All History
+                  </button>
+                </>
+              )}
+            </>
+          )}
+
+          {activeTab === 'favorites' && (
+            <HomeFavoritesList />
+          )}
+        </div>
       </div>
 
       {incompleteSession && (

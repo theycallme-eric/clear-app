@@ -99,7 +99,7 @@ export const PageHeader = ({
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 flex items-stretch h-12 backdrop-blur-xl">
+    <header className="fixed top-0 left-0 right-0 z-40 flex items-stretch h-12 backdrop-blur-md scanlines">
       {/* Main body — chamfered frame, bottom border only, no accent bar */}
       <ChamferedFrame
         cornerSize="md"

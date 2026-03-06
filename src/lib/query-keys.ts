@@ -3,4 +3,6 @@ export const queryKeys = {
   streakData: (userId: string) => ['streakData', userId] as const,
   incompleteSession: (userId: string) => ['incompleteSession', userId] as const,
   workoutDetail: (sessionId: string) => ['workoutDetail', sessionId] as const,
+  favorites: () => ['favorites'] as const,
+  isFavorited: (sessionId: string) => ['isFavorited', sessionId] as const,
 };

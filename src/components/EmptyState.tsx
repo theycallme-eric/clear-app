@@ -1,10 +1,9 @@
 import { cn } from "@/lib/utils";
-import { LucideIcon } from "lucide-react";
 import { Card } from "./Card";
 import { CTAButton } from "./CTAButton";
 
 interface EmptyStateProps {
-  icon?: LucideIcon;
+  icon?: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   title: string;
   description?: string;
   actionLabel?: string;

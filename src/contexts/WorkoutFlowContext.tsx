@@ -17,6 +17,8 @@ interface WorkoutFlowContextValue {
   workoutNotes: WorkoutNotes | null;
   totalTime: number;
   isGenerating: boolean;
+  isRepeat: boolean;
+  repeatSavedWorkoutId: string | null;
   currentSessionId: string | null;
   currentLocationId: string | null;
   handleGenerate: (params: WorkoutParams, onSuccess?: () => void) => Promise<void>;
@@ -25,6 +27,8 @@ interface WorkoutFlowContextValue {
   handleFinishWorkout: (notes: WorkoutNotes, onSuccess?: () => void) => void;
   handleFinishSession: (mood: number | null, sessionNotes: string, onSuccess?: () => void) => Promise<void>;
   handleResumeIncomplete: (incompleteSessionId: string, onSuccess?: () => void) => Promise<boolean>;
+  handleRepeatFromHistory: (sessionId: string, onSuccess?: () => void) => Promise<void>;
+  handleRepeatFromFavorite: (savedWorkoutId: string, onSuccess?: () => void) => Promise<void>;
   cancelGeneration: () => void;
 }
 

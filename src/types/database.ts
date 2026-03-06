@@ -171,6 +171,7 @@ export type Database = {
           rest_seconds: number | null
           section_id: string
           sets: number | null
+          structure: Json | null
           tempo: string | null
           updated_at: string
           weight_logged: string | null
@@ -188,6 +189,7 @@ export type Database = {
           rest_seconds?: number | null
           section_id: string
           sets?: number | null
+          structure?: Json | null
           tempo?: string | null
           updated_at?: string
           weight_logged?: string | null
@@ -205,6 +207,7 @@ export type Database = {
           rest_seconds?: number | null
           section_id?: string
           sets?: number | null
+          structure?: Json | null
           tempo?: string | null
           updated_at?: string
           weight_logged?: string | null
@@ -375,6 +378,95 @@ export type Database = {
             columns: ["default_location_id"]
             isOneToOne: false
             referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saved_workout_completions: {
+        Row: {
+          completed_at: string | null
+          id: string
+          saved_workout_id: string
+          session_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          id?: string
+          saved_workout_id: string
+          session_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          id?: string
+          saved_workout_id?: string
+          session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_workout_completions_saved_workout_id_fkey"
+            columns: ["saved_workout_id"]
+            isOneToOne: false
+            referencedRelation: "saved_workouts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_workout_completions_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "workout_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saved_workouts: {
+        Row: {
+          anchor: string | null
+          created_at: string | null
+          duration_mins: number | null
+          id: string
+          intensity: number | null
+          last_completed_at: string | null
+          original_session_id: string | null
+          times_completed: number | null
+          title: string
+          updated_at: string | null
+          user_id: string
+          workout_snapshot: Json
+        }
+        Insert: {
+          anchor?: string | null
+          created_at?: string | null
+          duration_mins?: number | null
+          id?: string
+          intensity?: number | null
+          last_completed_at?: string | null
+          original_session_id?: string | null
+          times_completed?: number | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+          workout_snapshot: Json
+        }
+        Update: {
+          anchor?: string | null
+          created_at?: string | null
+          duration_mins?: number | null
+          id?: string
+          intensity?: number | null
+          last_completed_at?: string | null
+          original_session_id?: string | null
+          times_completed?: number | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+          workout_snapshot?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_workouts_original_session_id_fkey"
+            columns: ["original_session_id"]
+            isOneToOne: false
+            referencedRelation: "workout_sessions"
             referencedColumns: ["id"]
           },
         ]
@@ -706,7 +798,7 @@ export type Database = {
           p_time_target_mins?: number
           p_user_id: string
         }
-        Returns: string
+        Returns: Json
       }
     }
     Enums: {

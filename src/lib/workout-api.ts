@@ -11,8 +11,9 @@ import type {
   GenerationError,
   GeneratedWorkout as APIGeneratedWorkout,
 } from '@/types/generation';
-import type { GeneratedWorkout, WorkoutSection, Exercise } from '@/types/workout';
+import type { GeneratedWorkout, WorkoutSection, Exercise, SectionType } from '@/types/workout';
 import type { Database } from '@/types/database';
+import { DB_TO_SECTION } from './section-mapping';
 
 export { isGenerationError } from '@/types/generation';
 
@@ -218,22 +219,27 @@ export async function generateSection(
   }
 }
 
+/** UUID mapping returned by save_generated_workout RPC */
+export interface SavedWorkoutUUIDs {
+  session_id: string;
+  sections: Array<{
+    id: string;
+    order_index: number;
+    exercises: Array<{ id: string; order_index: number }>;
+  }>;
+}
+
 /**
- * Save a generated workout to the database using atomic RPC
+ * Save a generated workout to the database using atomic RPC.
  *
- * Uses save_generated_workout RPC to ensure all-or-nothing save:
- * - Session, sections, and exercises are saved in a single transaction
- * - If any part fails, the entire operation rolls back
- * - No orphaned data from partial saves
- *
- * @param workout - The generated workout response
- * @param locationId - The location ID for this session
- * @returns The created workout session ID or error
+ * Returns the session ID and all section/exercise UUIDs in a single atomic call.
+ * This ensures the frontend can map logged data directly to DB rows without
+ * a separate fetch that could fail independently.
  */
 export async function saveGeneratedWorkout(
   workout: GenerateWorkoutResponse,
   locationId: string
-): Promise<{ sessionId: string } | GenerationError> {
+): Promise<{ sessionId: string; uuids: SavedWorkoutUUIDs } | GenerationError> {
   logger.workout.info('saveGeneratedWorkout started (atomic RPC)', { locationId });
   const startTime = performance.now();
 
@@ -258,13 +264,14 @@ export async function saveGeneratedWorkout(
         effort_percent: exercise.effort_percent || null,
         tempo: exercise.tempo || null,
         rest_seconds: exercise.rest_seconds || null,
-        coaching_cues: null,
+        coaching_cues: exercise.coaching_cues || null,
         order_index: exerciseIndex,
+        structure: exercise.structure || null,
       })),
     }));
 
-    // Single atomic RPC call - all or nothing
-    const { data: sessionId, error: rpcError } = await supabase.rpc('save_generated_workout', {
+    // Single atomic RPC call — returns session ID + all section/exercise UUIDs
+    const { data: rpcResult, error: rpcError } = await supabase.rpc('save_generated_workout', {
       p_user_id: user.id,
       p_location_id: locationId,
       p_date: new Date().toISOString().split('T')[0],
@@ -289,14 +296,16 @@ export async function saveGeneratedWorkout(
       };
     }
 
+    const uuids = rpcResult as SavedWorkoutUUIDs;
+
     logger.workout.info('saveGeneratedWorkout completed (atomic)', {
-      sessionId,
-      sectionsCount: sectionsForRpc.length,
-      exercisesCount: sectionsForRpc.reduce((sum, s) => sum + s.exercises.length, 0),
+      sessionId: uuids.session_id,
+      sectionsCount: uuids.sections.length,
+      exercisesCount: uuids.sections.reduce((sum: number, s: { exercises: Array<unknown> }) => sum + s.exercises.length, 0),
       durationMs,
     });
 
-    return { sessionId };
+    return { sessionId: uuids.session_id, uuids };
 
   } catch (err) {
     const durationMs = Math.round(performance.now() - startTime);
@@ -312,7 +321,41 @@ export async function saveGeneratedWorkout(
 }
 
 /**
- * Complete a workout session — marks it as finished with duration, mood, and notes.
+ * Fetch DB UUIDs for sections and exercises of a saved session.
+ * Used to inject real database IDs into the frontend GeneratedWorkout object
+ * so that loggedData keys become actual DB UUIDs for persistence.
+ */
+/**
+ * Inject database UUIDs into a GeneratedWorkout object.
+ * Replaces frontend-generated section/exercise IDs with real DB UUIDs
+ * so that all downstream logging uses the correct keys for persistence.
+ */
+export function injectDBUUIDs(
+  workout: GeneratedWorkout,
+  uuids: SavedWorkoutUUIDs
+): GeneratedWorkout {
+  return {
+    ...workout,
+    sections: workout.sections.map((section, sIndex) => {
+      const dbSection = uuids.sections[sIndex];
+      if (!dbSection) return section;
+
+      return {
+        ...section,
+        id: dbSection.id,
+        exercises: section.exercises.map((exercise, eIndex) => {
+          const dbExercise = dbSection.exercises[eIndex];
+          if (!dbExercise) return exercise;
+          return { ...exercise, id: dbExercise.id };
+        }),
+      };
+    }),
+  };
+}
+
+/**
+ * Complete a workout session — marks it as finished with duration, mood, notes,
+ * and persists exercise-level logged data, structure results, and section timestamps.
  */
 export async function completeWorkoutSession(
   sessionId: string,
@@ -320,8 +363,21 @@ export async function completeWorkoutSession(
     durationMins: number;
     mood: number | null;
     sessionNotes: string;
+    loggedData?: Record<string, { weight?: string; reps?: string; notes?: string }>;
+    structureResults?: Record<string, {
+      structure_type: string;
+      rounds_completed?: number;
+      completion_time_seconds?: number;
+      completed_under_cap?: boolean;
+      rep_scheme?: string;
+      highest_rung?: number | null;
+      notes?: string | null;
+    }>;
   }
-): Promise<{ error?: string }> {
+): Promise<{ error?: string; partialFailures?: number }> {
+  let partialFailureCount = 0;
+
+  // 1. Update session-level data (existing behavior)
   const { error } = await supabase
     .from('workout_sessions')
     .update({
@@ -339,5 +395,284 @@ export async function completeWorkoutSession(
   }
 
   logger.workout.info('completeWorkoutSession succeeded', { sessionId, durationMins: String(data.durationMins) });
-  return {};
+
+  // 2. Persist exercise-level data (weights, notes)
+  if (data.loggedData) {
+    const exerciseEntries = Object.entries(data.loggedData).filter(
+      ([, entry]) => entry.weight || entry.notes
+    );
+
+    if (exerciseEntries.length > 0) {
+      const exerciseResults = await Promise.all(
+        exerciseEntries.map(([exerciseId, entry]) =>
+          supabase
+            .from('exercises')
+            .update({
+              weight_logged: entry.weight || null,
+              exercise_notes: entry.notes || null,
+            })
+            .eq('id', exerciseId)
+            .then(({ error: updateError }) => ({ exerciseId, error: updateError }))
+        )
+      );
+
+      const failures = exerciseResults.filter(r => r.error);
+      if (failures.length > 0) {
+        partialFailureCount += failures.length;
+        logger.workout.warn(`${failures.length}/${exerciseEntries.length} exercise updates failed`, {
+          sessionId,
+          failedIds: failures.map(f => f.exerciseId).join(', '),
+          errors: failures.map(f => f.error?.message).join('; '),
+        });
+      } else {
+        logger.workout.info(`${exerciseEntries.length} exercise(s) logged`, { sessionId });
+      }
+    }
+  }
+
+  // 3. Persist structure results (timed section outcomes)
+  if (data.structureResults) {
+    const structureEntries = Object.entries(data.structureResults).filter(
+      ([, entry]) => entry.structure_type
+    );
+
+    if (structureEntries.length > 0) {
+      const structureResults = await Promise.all(
+        structureEntries.map(([sectionId, entry]) =>
+          supabase
+            .from('structure_results')
+            .insert({
+              section_id: sectionId,
+              structure_type: entry.structure_type,
+              completion_time_seconds: entry.completion_time_seconds ?? null,
+              completed_under_cap: entry.completed_under_cap ?? null,
+              rounds_completed: entry.rounds_completed ?? null,
+              rep_scheme: entry.rep_scheme ?? null,
+              highest_rung: entry.highest_rung ?? null,
+              notes: entry.notes ?? null,
+            })
+            .then(({ error: insertError }) => ({ sectionId, error: insertError }))
+        )
+      );
+
+      const failures = structureResults.filter(r => r.error);
+      if (failures.length > 0) {
+        partialFailureCount += failures.length;
+        logger.workout.warn(`${failures.length}/${structureEntries.length} structure_results inserts failed`, {
+          sessionId,
+          errors: failures.map(f => `${f.sectionId}: ${f.error?.message}`).join('; '),
+        });
+      } else {
+        logger.workout.info(`${structureEntries.length} structure result(s) saved`, { sessionId });
+      }
+    }
+  }
+
+  // 4. Mark all sections as completed
+  const { data: sections, error: sectionsError } = await supabase
+    .from('workout_sections')
+    .select('id')
+    .eq('session_id', sessionId);
+
+  if (!sectionsError && sections && sections.length > 0) {
+    const sectionResults = await Promise.all(
+      sections.map(section =>
+        supabase
+          .from('workout_sections')
+          .update({
+            status: 'completed' as const,
+            completed_at: new Date().toISOString(),
+          })
+          .eq('id', section.id)
+          .then(({ error: updateError }) => ({ sectionId: section.id, error: updateError }))
+      )
+    );
+
+    const failures = sectionResults.filter(r => r.error);
+    if (failures.length > 0) {
+      logger.workout.warn(`${failures.length}/${sections.length} section timestamp updates failed`, {
+        sessionId,
+        errors: failures.map(f => `${f.sectionId}: ${f.error?.message}`).join('; '),
+      });
+    }
+  }
+
+  return partialFailureCount > 0 ? { partialFailures: partialFailureCount } : {};
+}
+
+// ─── Repeat Workout Functions ───────────────────────────────────────────────
+
+/** Shape of raw section data for creating a repeat session */
+export interface RepeatSectionInput {
+  section_type: string;
+  order_index: number;
+  section_notes: string | null;
+  exercises: Array<{
+    exercise_id: string;
+    equipment_used: string;
+    sets: number | null;
+    reps: string;
+    effort_percent: number | null;
+    tempo: string | null;
+    rest_seconds: number | null;
+    coaching_cues: string | null;
+    order_index: number;
+    structure?: Record<string, unknown> | null;
+  }>;
+}
+
+/**
+ * Fetch raw section + exercise data from a completed session.
+ * Returns data in the format needed by the save_generated_workout RPC.
+ */
+export async function fetchSessionForRepeat(sessionId: string): Promise<{
+  sections: RepeatSectionInput[];
+  metadata: { anchor: string; intensity: number; durationMins: number; goalPreset?: string };
+} | null> {
+  const { data: session, error: sessionError } = await supabase
+    .from('workout_sessions')
+    .select('anchor, intensity, duration_mins, goal_preset')
+    .eq('id', sessionId)
+    .single();
+
+  if (sessionError || !session) {
+    logger.workout.error('fetchSessionForRepeat: session fetch failed', { error: sessionError?.message });
+    return null;
+  }
+
+  const { data: sections, error: sectionsError } = await supabase
+    .from('workout_sections')
+    .select('*, exercises(*)')
+    .eq('session_id', sessionId)
+    .order('order_index', { ascending: true });
+
+  if (sectionsError || !sections) {
+    logger.workout.error('fetchSessionForRepeat: sections fetch failed', { error: sectionsError?.message });
+    return null;
+  }
+
+  return {
+    sections: sections.map(section => ({
+      section_type: section.section_type,
+      order_index: section.order_index,
+      section_notes: section.section_notes,
+      exercises: (section.exercises || [])
+        .sort((a: { order_index?: number }, b: { order_index?: number }) =>
+          (a.order_index || 0) - (b.order_index || 0)
+        )
+        .map((ex: Database['public']['Tables']['exercises']['Row']) => ({
+          exercise_id: ex.exercise_id,
+          equipment_used: ex.equipment_used || 'bodyweight',
+          sets: ex.sets,
+          reps: ex.reps || '1',
+          effort_percent: ex.effort_percent,
+          tempo: ex.tempo,
+          rest_seconds: ex.rest_seconds,
+          coaching_cues: ex.coaching_cues,
+          order_index: ex.order_index || 0,
+          structure: ex.structure as Record<string, unknown> | null,
+        })),
+    })),
+    metadata: {
+      anchor: session.anchor,
+      intensity: session.intensity,
+      durationMins: session.duration_mins || 0,
+      goalPreset: session.goal_preset || undefined,
+    },
+  };
+}
+
+/**
+ * Create a new workout session for a repeat workout.
+ * Calls the same save_generated_workout RPC used for fresh generation.
+ */
+export async function createRepeatSession(
+  metadata: { anchor: string; intensity: number; durationMins?: number; goalPreset?: string },
+  sections: RepeatSectionInput[]
+): Promise<{ sessionId: string; uuids: SavedWorkoutUUIDs } | { error: string }> {
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) return { error: 'Not authenticated' };
+
+  // Look up user's default location
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('default_location_id')
+    .eq('id', user.id)
+    .single();
+
+  const locationId = profile?.default_location_id || null;
+
+  const { data: rpcResult, error: rpcError } = await supabase.rpc('save_generated_workout', {
+    p_user_id: user.id,
+    p_location_id: locationId,
+    p_date: new Date().toISOString().split('T')[0],
+    p_anchor: metadata.anchor as Database['public']['Enums']['anchor_type'],
+    p_intensity: metadata.intensity,
+    p_time_target_mins: metadata.durationMins || undefined,
+    p_goal_preset: (metadata.goalPreset || 'balanced') as Database['public']['Enums']['goal_preset'],
+    p_sections: sections,
+  });
+
+  if (rpcError) {
+    logger.workout.error('createRepeatSession RPC failed', { error: rpcError.message });
+    return { error: rpcError.message };
+  }
+
+  const uuids = rpcResult as SavedWorkoutUUIDs;
+  logger.workout.info('Repeat session created', { sessionId: uuids.session_id });
+  return { sessionId: uuids.session_id, uuids };
+}
+
+/** Section display name mapping */
+const SECTION_NAME_MAP: Record<string, string> = {
+  warmup: 'Warm-up',
+  mobility: 'Mobility',
+  primary_lift: 'Primary Lift',
+  accessory: 'Accessory',
+  skill_power: 'Skill / Power',
+  carries: 'Carries',
+  core: 'Core',
+  stability_balance: 'Stability',
+  conditioning: 'Conditioning',
+  cooldown: 'Cooldown',
+};
+
+/**
+ * Build a GeneratedWorkout from raw section data.
+ * Used when repeating a workout from history or favorites.
+ */
+export function buildWorkoutFromSections(
+  rawSections: RepeatSectionInput[],
+  metadata: { anchor: string; intensity: number; durationMins?: number; goal?: string }
+): GeneratedWorkout {
+  const sections: WorkoutSection[] = rawSections.map((section, sIndex) => ({
+    id: `${section.section_type}-${sIndex}`,
+    name: SECTION_NAME_MAP[section.section_type] || section.section_type,
+    type: (DB_TO_SECTION[section.section_type] || 'accessory') as SectionType,
+    status: 'not_started' as const,
+    exercises: section.exercises.map((ex, eIndex) => ({
+      id: `${section.section_type}-${sIndex}-ex-${eIndex}`,
+      name: ex.exercise_id?.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Unknown Exercise',
+      sets: ex.sets,
+      reps: ex.reps,
+      effort: ex.effort_percent ? `${ex.effort_percent}%` : undefined,
+      tempo: ex.tempo || undefined,
+      rest: ex.rest_seconds ? `${ex.rest_seconds}s` : undefined,
+      equipment: ex.equipment_used && ex.equipment_used !== 'bodyweight'
+        ? ex.equipment_used.replace(/_/g, ' ')
+        : undefined,
+      structure: ex.structure as Exercise['structure'],
+    })),
+  }));
+
+  return {
+    id: crypto.randomUUID(),
+    title: `${metadata.anchor.replace(/^\w/, c => c.toUpperCase())} Workout`,
+    description: '',
+    duration: metadata.durationMins ? `${metadata.durationMins}m` : '45m',
+    intensity: metadata.intensity,
+    anchor: metadata.anchor.toUpperCase(),
+    goal: metadata.goal,
+    sections,
+  };
 }

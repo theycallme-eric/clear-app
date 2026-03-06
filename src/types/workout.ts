@@ -12,6 +12,18 @@ export interface LoggedExercise {
   reps: number | string; // can be "10 each" or similar
   weight?: string; // logged weight like "185lbs"
   note?: string; // user note for this exercise
+  equipment?: string; // equipment used (e.g. "barbell", "dumbbells")
+}
+
+// Structure result from a timed section (AMRAP/For Time/EMOM)
+export interface LoggedStructureResult {
+  structureType: string;
+  roundsCompleted?: number | null;
+  completionTimeSeconds?: number | null;
+  completedUnderCap?: boolean | null;
+  highestRung?: number | null;
+  repScheme?: string | null;
+  notes?: string | null;
 }
 
 // Section with logged exercises for history
@@ -19,6 +31,7 @@ export interface LoggedSection {
   id: string;
   name: string;
   exercises: LoggedExercise[];
+  structureResult?: LoggedStructureResult;
 }
 
 // Completed workout history entry
@@ -157,6 +170,7 @@ export interface Exercise {
   tempo?: string;
   rest?: string;
   lastWeight?: string;
+  lastNotes?: string;
   coachingCues?: string[]; // Changed to array
   regression?: string;
   progression?: string;
@@ -174,6 +188,7 @@ export interface WorkoutSection {
   status: SectionStatus;
   started_at?: string;
   completed_at?: string;
+  previousBest?: { structureType: string; value: number };
 }
 
 export interface GeneratedWorkout {
@@ -185,6 +200,8 @@ export interface GeneratedWorkout {
   anchor: string;
   goal?: string;
   sections: WorkoutSection[];
+  /** Running log of session notes from all previous completions (favorites only) */
+  sessionNotesHistory?: Array<{ date: string; notes: string }>;
 }
 
 // Generation parameters (what user selects before generating)

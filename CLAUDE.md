@@ -63,6 +63,7 @@ These are enforced by hooks. Violations will be blocked with instructions.
 - **No hardcoded spacing** - Use the spacing scale
 - **Check existing components first** - Don't duplicate
 - **Read `docs/design-philosophy.md` before UI judgment calls** - Covers vibe, voice, color logic, motion principles
+- **No Lucide icons** - Use `src/components/icons.tsx` for all icons. If an icon doesn't exist yet, follow `icon-transform.md` to create it
 - **Museum is read-only history** - Components in the Museum section of `ComponentGallery.tsx` are legacy. NEVER use them as reference, inspiration, or basis for new UI. Use only the active gallery components.
 
 ### Code Quality

@@ -15,7 +15,9 @@ import {
     isGenerationError,
     transformAPIWorkoutToFrontend,
     saveGeneratedWorkout,
+    injectDBUUIDs,
 } from "@/lib/workout-api";
+import type { SavedWorkoutUUIDs } from "@/lib/workout-api";
 import { resolveAnchorToPattern } from "@/lib/anchor-mapping";
 
 export const useWorkoutGeneration = (
@@ -129,10 +131,13 @@ export const useWorkoutGeneration = (
                 logger.workout.debug('Saving workout', { locationId, locationName: defaultLocation?.name });
                 setCurrentLocationId(locationId);
 
+                let savedUUIDs: SavedWorkoutUUIDs | null = null;
+
                 if (locationId) {
                     logger.workout.debug('Calling saveGeneratedWorkout');
                     const saveResult = await saveGeneratedWorkout(result, locationId);
                     if ('sessionId' in saveResult) {
+                        savedUUIDs = saveResult.uuids;
                         setCurrentSessionId(saveResult.sessionId);
                         logger.workout.info('Workout saved', { sessionId: saveResult.sessionId });
                     } else {
@@ -148,12 +153,22 @@ export const useWorkoutGeneration = (
                 }
 
                 // Transform API response to frontend format
-                const workout = transformAPIWorkoutToFrontend(
+                let workout = transformAPIWorkoutToFrontend(
                     result.workout,
                     params.intensity,
                     movementPattern,
                     params.goal || 'balanced'
                 );
+
+                // Inject DB UUIDs from the save response (same atomic transaction)
+                if (savedUUIDs) {
+                    workout = injectDBUUIDs(workout, savedUUIDs);
+                    logger.workout.info('DB UUIDs injected into workout', {
+                        sections: savedUUIDs.sections.length,
+                        exercises: savedUUIDs.sections.reduce((sum, s) => sum + s.exercises.length, 0),
+                    });
+                }
+
                 setGeneratedWorkout(workout);
                 toast.success("Workout generated!", {
                     description: `${userAnchor} (${movementPattern}) at intensity ${params.intensity}`,

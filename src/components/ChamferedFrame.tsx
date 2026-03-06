@@ -104,11 +104,19 @@ export function ChamferedFrame({
       L 0 ${h}
     `; // Open loop (starts 0,0 ends 0,h - no line closing back to 0,0)
 
+    // CSS clip-path to trim backdrop-blur/background to the chamfered shape
+    const clipStyle = w > 0 && h > 0
+        ? { clipPath: `polygon(0 0, ${w}px 0, ${w}px ${h - s}px, ${w - s}px ${h}px, 0 ${h}px)` }
+        : undefined;
+
+    const { style: propStyle, ...restProps } = props;
+
     return (
         <div
             ref={containerRef}
             className={cn("relative", className)}
-            {...props}
+            style={{ ...propStyle, ...clipStyle }}
+            {...restProps}
         >
             {/* Background & Border SVG - Render only if we have dims */}
             {w > 0 && h > 0 && (
@@ -127,21 +135,19 @@ export function ChamferedFrame({
                     {/* Fill Layer */}
                     <path
                         d={shapePath}
-                        fill={surfaceColor}
                         stroke="none"
-                        style={{ transition: 'fill 1s ease' }}
+                        style={{ fill: surfaceColor, transition: 'fill 1s ease' }}
                     />
 
                     {/* Stroke Layer - Double Width + Clipped = Perfect Inner Border */}
                     <path
                         d={strokePath}
                         fill="none"
-                        stroke={borderColor}
                         strokeWidth={borderWidth * 2}
                         strokeLinecap="butt"
                         strokeLinejoin="miter"
                         clipPath={`url(#${clipId})`}
-                        style={{ transition: 'stroke 1s ease' }}
+                        style={{ stroke: borderColor, transition: 'stroke 1s ease' }}
                     />
                 </svg>
             )}

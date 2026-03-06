@@ -27,6 +27,8 @@ export const useWorkoutFlow = (
         workoutNotes: session.workoutNotes,
         totalTime: session.totalTime,
         isGenerating: generation.isGenerating,
+        isRepeat: session.isRepeat,
+        repeatSavedWorkoutId: session.repeatSavedWorkoutId,
         currentSessionId: generation.currentSessionId,
         currentLocationId: generation.currentLocationId,
         handleGenerate: generation.handleGenerate,
@@ -36,5 +38,7 @@ export const useWorkoutFlow = (
         handleFinishWorkout: session.handleFinishWorkout,
         handleFinishSession: session.handleFinishSession,
         handleResumeIncomplete: session.handleResumeIncomplete,
+        handleRepeatFromHistory: session.handleRepeatFromHistory,
+        handleRepeatFromFavorite: session.handleRepeatFromFavorite,
     };
 };

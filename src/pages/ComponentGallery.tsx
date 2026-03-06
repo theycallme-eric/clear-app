@@ -1,6 +1,45 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Dumbbell, Zap, AlertCircle, User, HelpCircle, Maximize2, Pencil } from "lucide-react";
+import {
+  ChevronRight as ClearChevronRight,
+  ChevronLeft as ClearChevronLeft,
+  ChevronDown as ClearChevronDown,
+  ChevronUp as ClearChevronUp,
+  ArrowRight as ClearArrowRight,
+  ArrowLeft as ClearArrowLeft,
+  Menu as ClearMenu,
+  X as ClearX,
+  Plus as ClearPlus,
+  Minus as ClearMinus,
+  Check as ClearCheck,
+  RefreshCw as ClearRefreshCw,
+  Loader2 as ClearLoader2,
+  Eye as ClearEye,
+  EyeOff as ClearEyeOff,
+  CircleCheck as ClearCircleCheck,
+  CircleX as ClearCircleX,
+  CircleAlert as ClearCircleAlert,
+  Zap as ClearZap,
+  Flame as ClearFlame,
+  Star as ClearStar,
+  Dumbbell as ClearDumbbell,
+  Clock as ClearClock,
+  Gauge as ClearGauge,
+  Target as ClearTarget,
+  Crosshair as ClearCrosshair,
+  FileText as ClearFileText,
+  Pencil as ClearPencil,
+  User as ClearUser,
+  Frown as ClearFrown,
+  Meh as ClearMeh,
+  Smile as ClearSmile,
+  SmilePlus as ClearSmilePlus,
+  ThumbsDown as ClearThumbsDown,
+  AlertCircle as ClearAlertCircle,
+  HelpCircle as ClearHelpCircle,
+  Maximize2 as ClearMaximize2,
+} from "@/components/icons";
 import { PageHeader } from "@/components/PageHeader";
 import { AppLayout } from "@/layouts";
 
@@ -508,6 +547,96 @@ export const ComponentGallery = () => {
             </ChamferedCard>
           </Section>
 
+          {/* ─── ICONOGRAPHY ─── */}
+          <Section title="Iconography — CLEAR Icon Set">
+            <div className="space-y-6">
+              <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
+                Solid, geometric, angular. Chamfered tips on directional icons. Drop-in replacements for Lucide.
+              </p>
+
+              <Subsection label="Directional">
+                <div className="flex flex-wrap gap-6 items-center">
+                  <IconDisplay icon={<ClearChevronRight size={24} />} name="ChevronRight" />
+                  <IconDisplay icon={<ClearChevronLeft size={24} />} name="ChevronLeft" />
+                  <IconDisplay icon={<ClearChevronDown size={24} />} name="ChevronDown" />
+                  <IconDisplay icon={<ClearChevronUp size={24} />} name="ChevronUp" />
+                  <IconDisplay icon={<ClearArrowRight size={24} />} name="ArrowRight" />
+                  <IconDisplay icon={<ClearArrowLeft size={24} />} name="ArrowLeft" />
+                </div>
+              </Subsection>
+
+              <Subsection label="Actions">
+                <div className="flex flex-wrap gap-6 items-center">
+                  <IconDisplay icon={<ClearMenu size={24} />} name="Menu" />
+                  <IconDisplay icon={<ClearX size={24} />} name="X" />
+                  <IconDisplay icon={<ClearPlus size={24} />} name="Plus" />
+                  <IconDisplay icon={<ClearMinus size={24} />} name="Minus" />
+                  <IconDisplay icon={<ClearCheck size={24} />} name="Check" />
+                  <IconDisplay icon={<ClearPencil size={24} />} name="Pencil" />
+                  <IconDisplay icon={<ClearMaximize2 size={24} />} name="Maximize2" />
+                </div>
+              </Subsection>
+
+              <Subsection label="Status / Feedback">
+                <div className="flex flex-wrap gap-6 items-center">
+                  <IconDisplay icon={<ClearRefreshCw size={24} />} name="RefreshCw" />
+                  <IconDisplay icon={<ClearLoader2 size={24} />} name="Loader2" />
+                  <IconDisplay icon={<ClearEye size={24} />} name="Eye" />
+                  <IconDisplay icon={<ClearEyeOff size={24} />} name="EyeOff" />
+                  <IconDisplay icon={<ClearCircleCheck size={24} />} name="CircleCheck" />
+                  <IconDisplay icon={<ClearCircleX size={24} />} name="CircleX" />
+                  <IconDisplay icon={<ClearCircleAlert size={24} />} name="CircleAlert" />
+                  <IconDisplay icon={<ClearAlertCircle size={24} />} name="AlertCircle" />
+                  <IconDisplay icon={<ClearHelpCircle size={24} />} name="HelpCircle" />
+                </div>
+              </Subsection>
+
+              <Subsection label="Semantic / Content">
+                <div className="flex flex-wrap gap-6 items-center">
+                  <IconDisplay icon={<ClearZap size={24} />} name="Zap" />
+                  <IconDisplay icon={<ClearFlame size={24} />} name="Flame" />
+                  <IconDisplay icon={<ClearStar size={24} />} name="Star" />
+                  <IconDisplay icon={<ClearDumbbell size={24} />} name="Dumbbell" />
+                  <IconDisplay icon={<ClearClock size={24} />} name="Clock" />
+                  <IconDisplay icon={<ClearGauge size={24} />} name="Gauge" />
+                  <IconDisplay icon={<ClearTarget size={24} />} name="Target" />
+                  <IconDisplay icon={<ClearCrosshair size={24} />} name="Crosshair" />
+                  <IconDisplay icon={<ClearFileText size={24} />} name="FileText" />
+                  <IconDisplay icon={<ClearUser size={24} />} name="User" />
+                </div>
+              </Subsection>
+
+              <Subsection label="Mood (session debrief)">
+                <div className="flex flex-wrap gap-6 items-center">
+                  <IconDisplay icon={<ClearThumbsDown size={24} />} name="ThumbsDown" />
+                  <IconDisplay icon={<ClearFrown size={24} />} name="Frown" />
+                  <IconDisplay icon={<ClearMeh size={24} />} name="Meh" />
+                  <IconDisplay icon={<ClearSmile size={24} />} name="Smile" />
+                  <IconDisplay icon={<ClearSmilePlus size={24} />} name="SmilePlus" />
+                </div>
+              </Subsection>
+
+              <Subsection label="With theme colors">
+                <div className="flex flex-wrap gap-6 items-center">
+                  <IconDisplay icon={<ClearArrowRight size={24} style={{ color: 'var(--icon-cta)' }} />} name="CTA" />
+                  <IconDisplay icon={<ClearFlame size={24} style={{ color: 'var(--icon-badge)' }} />} name="Badge" />
+                  <IconDisplay icon={<ClearMenu size={24} style={{ color: 'var(--text-header)' }} />} name="Header" />
+                  <IconDisplay icon={<ClearClock size={24} style={{ color: 'var(--text-paragraph)' }} />} name="Muted" />
+                  <IconDisplay icon={<ClearCheck size={24} style={{ color: 'var(--text-label-selected)' }} />} name="Selected" />
+                </div>
+              </Subsection>
+
+              <Subsection label="Size comparison — 12 / 16 / 20 / 24">
+                <div className="flex flex-wrap gap-6 items-end">
+                  <IconDisplay icon={<ClearZap size={12} />} name="12px" />
+                  <IconDisplay icon={<ClearZap size={16} />} name="16px" />
+                  <IconDisplay icon={<ClearZap size={20} />} name="20px" />
+                  <IconDisplay icon={<ClearZap size={24} />} name="24px" />
+                </div>
+              </Subsection>
+            </div>
+          </Section>
+
           {/* ════════════════════════════════════════════════════════════════════ */}
           {/* ═══ MUSEUM — Legacy components preserved for reference ═════════════ */}
           {/* ════════════════════════════════════════════════════════════════════ */}
@@ -683,6 +812,17 @@ function Subsection({ label, children }: { label: string; children: React.ReactN
         {label}
       </p>
       {children}
+    </div>
+  );
+}
+
+function IconDisplay({ icon, name }: { icon: React.ReactNode; name: string }) {
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <div className="flex items-center justify-center" style={{ color: 'var(--text-header)' }}>
+        {icon}
+      </div>
+      <p className="text-label-xs" style={{ fontSize: '9px', color: 'var(--text-disabled)' }}>{name}</p>
     </div>
   );
 }

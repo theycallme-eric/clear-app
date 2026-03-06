@@ -270,7 +270,7 @@
     --surface-select-switch: #FFFFFF;
     --surface-disabled: var(--color-neutral-alpha-300);
     /* Slider surfaces */
-    --surface-slider-thumb: var(--color-orange-alpha-900);
+    --surface-slider-thumb: var(--color-blue-alpha-900);
     --surface-slider-active: var(--color-orange-alpha-400);
     --surface-slider-inactive: var(--color-orange-alpha-050);
     /* Input field surfaces */
@@ -284,6 +284,10 @@
     --surface-chip: var(--color-orange-alpha-400);
     --surface-chip-selected: var(--color-green-alpha-100);
     --surface-chip-unselected: var(--color-orange-alpha-050);
+    /* Dropdown surfaces */
+    --surface-dropdown: var(--color-orange-alpha-100);
+    /* Modal overlay */
+    --surface-overlay: rgba(23, 23, 23, 0.8);
 
     /* Borders */
     --border-card: var(--color-orange-500);
@@ -306,7 +310,7 @@
     --border-disabled: var(--color-neutral-400);
     /* Slider borders */
     --border-slider: var(--color-orange-500);
-    --border-slider-thumb: var(--color-orange-500);
+    --border-slider-thumb: var(--color-blue-500);
     /* Input field borders */
     --border-input: var(--color-orange-alpha-500);
     --border-input-active: var(--color-orange-alpha-700);
@@ -321,6 +325,8 @@
     --border-chip: var(--color-orange-500);
     --border-chip-selected: var(--color-green-500);
     --border-chip-unselected: var(--color-orange-alpha-300);
+    /* Dropdown borders */
+    --border-dropdown: var(--color-orange-500);
 
     /* Text Colors */
     --text-header: var(--color-blue-100);
@@ -350,6 +356,9 @@
     --text-chip: var(--color-blue-500);
     --text-chip-selected: var(--color-green-500);
     --text-chip-unselected: var(--color-orange-300);
+    /* Dropdown text */
+    --text-dropdown: var(--color-blue-100);
+    --text-dropdown-selected: var(--color-blue-500);
     --text-color: #FFFFFF;
 
     /* Icons */
@@ -440,7 +449,7 @@
     --surface-cta-secondary-hover: var(--color-orange-alpha-200);
     --surface-cta-secondary-disabled: rgba(114, 114, 116, 0.05);
     /* Slider surfaces - blue theme */
-    --surface-slider-thumb: var(--color-blue-alpha-900);
+    --surface-slider-thumb: var(--color-orange-alpha-900);
     --surface-slider-active: var(--color-blue-alpha-400);
     --surface-slider-inactive: var(--color-blue-alpha-050);
     /* Input field surfaces - blue theme */
@@ -449,6 +458,10 @@
     /* Chip surfaces - blue theme */
     --surface-chip: var(--color-blue-alpha-400);
     --surface-chip-unselected: var(--color-blue-alpha-050);
+    /* Dropdown surfaces - blue theme */
+    --surface-dropdown: var(--color-blue-alpha-100);
+    /* Modal overlay */
+    --surface-overlay: rgba(23, 23, 23, 0.8);
 
     /* Borders */
     --border-card: var(--color-blue-500);
@@ -464,7 +477,7 @@
     --border-cta-secondary-hover: var(--color-orange-600);
     /* Slider borders - blue theme */
     --border-slider: var(--color-blue-500);
-    --border-slider-thumb: var(--color-blue-500);
+    --border-slider-thumb: var(--color-orange-500);
     /* Input field borders - blue theme */
     --border-input: var(--color-blue-alpha-500);
     --border-input-active: var(--color-blue-alpha-700);
@@ -474,6 +487,8 @@
     /* Chip borders - blue theme */
     --border-chip: var(--color-blue-500);
     --border-chip-unselected: var(--color-blue-alpha-300);
+    /* Dropdown borders - blue theme */
+    --border-dropdown: var(--color-blue-500);
 
     /* Icons - blue theme */
     --icon-badge: var(--color-blue-500);
@@ -495,6 +510,9 @@
     /* Chip text - blue theme */
     --text-chip: var(--color-orange-500);
     --text-chip-unselected: var(--color-blue-300);
+    /* Dropdown text - blue theme */
+    --text-dropdown: var(--color-orange-100);
+    --text-dropdown-selected: var(--color-orange-500);
 
     /* Icons */
     --icon-cta: var(--color-orange-500);
@@ -842,6 +860,23 @@
     pointer-events: none;
     opacity: 0.10;
     z-index: -1;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(255, 255, 255, 0.08) 2px,
+      rgba(255, 255, 255, 0.08) 4px
+    );
+  }
+
+  /* Scan line overlay — applied to any blurred surface */
+  .scanlines::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.12;
     background: repeating-linear-gradient(
       to bottom,
       transparent 0px,
