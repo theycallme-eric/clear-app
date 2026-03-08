@@ -5,12 +5,15 @@ import { PageHeader } from "@/components/PageHeader";
 import { AppLayout } from "@/layouts";
 import { CTAButton } from "@/components/CTAButton";
 import { Card } from "@/components/Card";
-import { ChamferedFrame } from "@/components/ChamferedFrame";
-import { Zap, Clock, Flame, Dumbbell, Star } from "@/components/icons";
+import { TabBar } from "@/components/TabBar";
+import { Zap, Flame, Dumbbell, Star } from "@/components/icons";
+import { WeekStreakDisplay } from "@/components/WeekStreakDisplay";
+import { WorkoutListItem } from "@/components/WorkoutListItem";
+import { FavoriteListItem } from "@/components/FavoriteListItem";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import { ErrorState } from "@/components/ErrorState";
 import { EmptyState } from "@/components/EmptyState";
-import { AbandonmentModal } from "@/components/AbandonmentModal";
+import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { useHomeDataContext } from "@/contexts/HomeDataContext";
 import { useWorkoutFlowContext } from "@/contexts/WorkoutFlowContext";
 import { useAuthContext } from "@/contexts/AuthContext";
@@ -44,17 +47,6 @@ function HomeFavoritesList() {
     );
   }
 
-  const formatLastCompleted = (dateStr: string | null): string => {
-    if (!dateStr) return 'Never completed';
-    const date = new Date(dateStr);
-    const now = new Date();
-    const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
-    if (diffDays === 0) return 'Today';
-    if (diffDays === 1) return 'Yesterday';
-    if (diffDays < 7) return `${diffDays} days ago`;
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
-
   const handleFavoriteClick = async (fav: SavedWorkoutSummary) => {
     if (!fav.originalSessionId) return;
     const sessionId = await getMostRecentSessionId(fav.id, fav.originalSessionId);
@@ -65,37 +57,11 @@ function HomeFavoritesList() {
     <>
       <div className="space-y-2">
         {favorites.map((fav) => (
-          <Card
+          <FavoriteListItem
             key={fav.id}
+            favorite={fav}
             onClick={() => handleFavoriteClick(fav)}
-            padding="md"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p
-                  className="text-label-sm font-bold uppercase tracking-wide"
-                  style={{ color: 'var(--text-card-header)' }}
-                >
-                  {fav.title}
-                </p>
-                <p
-                  className="text-paragraph-sm uppercase mt-1"
-                  style={{ color: 'var(--text-paragraph)' }}
-                >
-                  {fav.anchor && `${fav.anchor} \u2022 `}
-                  {fav.durationMins && `${fav.durationMins} min \u2022 `}
-                  Int. {fav.intensity}
-                </p>
-                <p
-                  className="text-paragraph-sm mt-1"
-                  style={{ color: 'var(--text-paragraph)' }}
-                >
-                  {fav.timesCompleted}× completed {'\u2022'} {formatLastCompleted(fav.lastCompletedAt)}
-                </p>
-              </div>
-              <Star size={16} style={{ color: 'var(--icon-badge)' }} />
-            </div>
-          </Card>
+          />
         ))}
       </div>
 
@@ -128,39 +94,6 @@ export const HomeScreen = () => {
   const hasHistory = workoutHistory.length > 0;
   const suggestedIntensity = getSuggestedIntensity(workoutHistory);
   const suggestedAnchor = getSuggestedAnchor(workoutHistory);
-
-  const formatDate = (date: Date): string => {
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    const yesterdayOnly = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
-
-    if (dateOnly.getTime() === todayOnly.getTime()) return "Today";
-    if (dateOnly.getTime() === yesterdayOnly.getTime()) return "Yesterday";
-
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  };
-
-  const getWeekDays = () => {
-    const days = ["M", "T", "W", "T", "F", "S", "S"];
-    const today = new Date();
-    const dayOfWeek = today.getDay();
-    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-    const monday = new Date(today);
-    monday.setDate(today.getDate() + mondayOffset);
-    monday.setHours(0, 0, 0, 0);
-
-    return days.map((label, index) => {
-      const date = new Date(monday);
-      date.setDate(monday.getDate() + index);
-      const dateKey = date.toISOString().split("T")[0];
-      const status = streakData.weekView[dateKey];
-      return { label, status, dateKey };
-    });
-  };
 
   const handleMarkRestDay = async () => {
     if (!user) return;
@@ -221,8 +154,6 @@ export const HomeScreen = () => {
       handleAbandonIncomplete();
     }
   };
-
-  const weekDays = getWeekDays();
 
   return (
     <AppLayout header={<PageHeader right="menu" onMenu={() => navigate("/settings")} />}>
@@ -291,31 +222,7 @@ export const HomeScreen = () => {
             <p className="text-label-sm mt-1" style={{ color: 'var(--text-paragraph)' }}>days</p>
           </div>
 
-          <div className="grid grid-cols-7 gap-2 mb-4">
-            {weekDays.map((day, index) => {
-              const isWorkout = day.status === "workout";
-              const isRest = day.status === "rest";
-              return (
-                <div key={index} className="flex flex-col items-center gap-1">
-                  <ChamferedFrame
-                    cornerSize="sm"
-                    surfaceColor={isWorkout ? 'var(--surface-radio-selected)' : isRest ? 'var(--surface-info)' : 'transparent'}
-                    borderColor={isWorkout ? 'var(--border-radio-select)' : isRest ? 'var(--border-info)' : 'var(--border-radio-unselected)'}
-                    hasLeftBorder={true}
-                    className="aspect-square w-full max-w-10"
-                  >
-                    <div
-                      className="w-full h-full flex items-center justify-center text-label-sm"
-                      style={{ color: isWorkout ? 'var(--text-label-selected)' : isRest ? 'var(--color-purple-500)' : 'var(--text-disabled)' }}
-                    >
-                      {isWorkout ? "\u25CF" : isRest ? "\u25D0" : "\u25CB"}
-                    </div>
-                  </ChamferedFrame>
-                  <span className="text-label-xs" style={{ color: 'var(--text-disabled)' }}>{day.label}</span>
-                </div>
-              );
-            })}
-          </div>
+          <WeekStreakDisplay weekView={streakData.weekView} className="mb-4" />
 
           {streakData.weekView[new Date().toISOString().split('T')[0]] !== 'workout' && <CTAButton onClick={handleMarkRestDay} variant="secondary" size="sm" fullWidth>
             Mark Rest Day
@@ -324,21 +231,15 @@ export const HomeScreen = () => {
 
         {/* History / Favorites tabs */}
         <div>
-          <div className="flex mb-4 border-b" style={{ borderColor: 'var(--border-spacer)' }}>
-            {(['favorites', 'history'] as const).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className="flex-1 py-2 text-label-xs font-bold uppercase tracking-widest text-center transition-colors"
-                style={{
-                  color: activeTab === tab ? 'var(--text-cta)' : 'var(--text-disabled)',
-                  borderBottom: activeTab === tab ? '2px solid var(--border-cta-primary)' : '2px solid transparent',
-                }}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
+          <TabBar
+            tabs={[
+              { value: 'favorites' as const, label: 'Favorites' },
+              { value: 'history' as const, label: 'History' },
+            ]}
+            activeTab={activeTab}
+            onChange={setActiveTab}
+            className="mb-4"
+          />
 
           {activeTab === 'history' && (
             <>
@@ -368,28 +269,11 @@ export const HomeScreen = () => {
                 <>
                   <div className="space-y-2">
                     {workoutHistory.slice(0, 3).map((workout) => (
-                      <Card key={workout.id} onClick={() => navigate(`/history/${workout.id}`)} padding="md">
-                        <p
-                          className="text-label-sm font-bold uppercase tracking-wide"
-                          style={{ color: 'var(--text-card-header)' }}
-                        >
-                          {formatDate(workout.date)}
-                        </p>
-                        <p
-                          className="text-paragraph-sm uppercase mt-1"
-                          style={{ color: 'var(--text-paragraph)' }}
-                        >
-                          {workout.anchor} {'\u2022'} Int. {workout.intensity}
-                          {workout.goal ? ` \u2022 ${workout.goal}` : ''}
-                        </p>
-                        <p
-                          className="text-paragraph-sm flex items-center gap-1 mt-1"
-                          style={{ color: 'var(--text-paragraph)' }}
-                        >
-                          <Clock className="w-3 h-3" />
-                          {workout.duration} min
-                        </p>
-                      </Card>
+                      <WorkoutListItem
+                        key={workout.id}
+                        workout={workout}
+                        onClick={() => navigate(`/history/${workout.id}`)}
+                      />
                     ))}
                   </div>
 
@@ -412,10 +296,13 @@ export const HomeScreen = () => {
       </div>
 
       {incompleteSession && (
-        <AbandonmentModal
-          workoutDate={incompleteSession.date}
-          onResume={handleResumeIncomplete}
-          onAbandon={handleAbandonIncomplete}
+        <ConfirmationModal
+          title="Incomplete Workout"
+          description={`You have an unfinished workout from ${incompleteSession.date}. Would you like to continue or start fresh?`}
+          confirmLabel="Resume Workout"
+          cancelLabel="Abandon & Start Fresh"
+          onConfirm={handleResumeIncomplete}
+          onCancel={handleAbandonIncomplete}
         />
       )}
     </AppLayout>

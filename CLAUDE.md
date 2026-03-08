@@ -18,8 +18,13 @@ This project uses a structured skill and agent system. **Read this file first**,
 ```
 START
   │
-  ├─► Creating/modifying UI?
-  │     └─► Read: component.md
+  ├─► ANY UI work? (creating, modifying, or adding UI elements)
+  │     └─► MANDATORY: Run component.md pre-flight FIRST
+  │           └─► Inventory existing components (gallery + src/components/)
+  │           └─► Check token coverage (src/index.css)
+  │           └─► Decide: reusable component or inline?
+  │           └─► Audit states (hover, selected, disabled)
+  │           └─► THEN build, using existing components as building blocks
   │           └─► Has chamfered corners? → chamfered-component.md
   │           └─► After creating → gallery-add.md → token-check.md
   │
@@ -59,9 +64,13 @@ START
 These are enforced by hooks. Violations will be blocked with instructions.
 
 ### Design System
-- **No hardcoded colors** - Use `var(--color-*)` from `src/index.css`
-- **No hardcoded spacing** - Use the spacing scale
-- **Check existing components first** - Don't duplicate
+- **Pre-flight is mandatory** - Run `component.md` pre-flight before ANY UI work. No exceptions.
+- **Build on what exists** - Check `ComponentGallery.tsx` and `src/components/` FIRST. Use existing components as building blocks. Extend with new props/variants before creating new components.
+- **No hardcoded colors** - Use semantic tokens `var(--surface-*)`, `var(--text-*)`, etc. Never primitive tokens (`var(--color-orange-500)`) in components.
+- **Create tokens when needed** - If a visual role doesn't have a semantic token, create one. Add to both themes in `src/index.css`. Name by role, not by component.
+- **No hardcoded spacing** - Use the spacing scale from `ui-rules.md`
+- **Reusable by default** - If a pattern is generic (tabs, modals, dropdowns, list items), make it a reusable component on first creation. Don't wait for duplication.
+- **Consistent states** - Every interactive element needs: default, hover, selected (if applicable), disabled. Match existing patterns.
 - **Read `docs/design-philosophy.md` before UI judgment calls** - Covers vibe, voice, color logic, motion principles
 - **No Lucide icons** - Use `src/components/icons.tsx` for all icons. If an icon doesn't exist yet, follow `icon-transform.md` to create it
 - **Museum is read-only history** - Components in the Museum section of `ComponentGallery.tsx` are legacy. NEVER use them as reference, inspiration, or basis for new UI. Use only the active gallery components.

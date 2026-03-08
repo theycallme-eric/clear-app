@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-03-05 (10th session)
+**Last Session:** 2026-03-06 (11th session)
 
 ---
 
@@ -13,14 +13,93 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Housekeeping — inbox processing, plan archival, workflow improvement
-**Current Task:** Complete — inbox cleared, plans archived, close-session skill updated
-**Last Completed:** Inbox processing, plan archival system, close-session plan archive step
-**Blocking Issues:** None — uncommitted housekeeping changes on main
+**Current Phase:** Favorites & Persistence — workout data persistence, favorites system, UI polish
+**Current Task:** Complete — PR #16 merged to main
+**Last Completed:** Workout persistence, favorites system, history rework, UI polish (scanlines, dropdowns, tokens)
+**Blocking Issues:** None
 
 ---
 
 ## Session Entries
+
+### Session: 2026-03-06 - Workout Persistence, Favorites & UI Polish
+
+**Duration:** ~3 hours (multi-session)
+**Mode:** Claude Code
+**Branch:** `feat/workout-persistence-and-favorites` → merged as PR #16
+
+#### What Got Done
+- **Workout persistence**: Atomic RPC (`save_generated_workout`) returns all section/exercise UUIDs in one transaction. Exercise logging (weights, notes, reps) persists to Supabase on workout completion
+- **Favorites system**: Save/list/unfavorite/repeat workouts. Previous bests tracking, last weights/notes pre-fill, favorite naming with inline edit
+- **History & Favorites tabs**: Added to both HomeScreen and HistoryScreen with shared filter UI
+- **ChamferedFrame filter dropdowns**: Filter by anchor and intensity using chamfered dropdown menus with blur + scanline texture
+- **Session detail rework**: Card-wrapped header, expandable sections (exercises visible by default, expand for logged data), star toggle, favorite name display
+- **Scanline texture system**: `.scanlines` CSS class applied to all structural backdrop-blur surfaces (header, dropdowns, toasts, timer, CTA buttons)
+- **Design tokens**: New dropdown (surface, border, text), overlay, and slider tokens. Slider thumb changed to interaction color
+- **Custom icon system**: `src/components/icons.tsx` replacing Lucide imports for consistency
+- **ChamferedFrame fixes**: SVG CSS variable resolution (attribute → style prop), clip-path for backdrop-blur containment
+- **LocationAccordion fix**: Replaced grid-rows animation (conflicted with stagger-reveal) with conditional render
+- **Code review fixes**: Removed corrupted DB types line, dead functions, hardcoded rgba → overlay token, safer Supabase join cast, remaining Lucide imports migrated
+- **Git hook fix**: Safety hook regex matched `-f` in branch names; fixed to require space-prefixed flags
+
+#### What Came Up (Unexpected)
+- SVG `fill`/`stroke` attributes don't resolve CSS custom properties (`var(--...)`) — must use `style` prop instead
+- `backdrop-blur` extends beyond CSS `clip-path` set via Tailwind — needed computed `polygon()` clip-path on the container div
+- Git safety hook regex `git push.*-f` false-positived on branch name `feat/workout-persistence-and-favorites`
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Atomic RPC returning UUIDs (not save-then-fetch) | Eliminates race condition window; single transaction guarantees consistency |
+| Scanlines on structural blur only, not modal overlays | Modal `backdrop-blur-sm` is for dimming, not a UI surface — scanlines would look wrong |
+| Dropdown surface = translucent alpha + blur (same as header) | User explicitly requested matching treatment, not opaque backgrounds |
+| Slider thumb = interaction color (blue in orange theme) | Thumb is an interactive control, not structural — follows color logic from design philosophy |
+| Replace grid-rows animation with conditional render | Animation conflicted with stagger-reveal; instant show/hide is acceptable for accordion |
+| `--surface-overlay` token for modal backdrops | Three modals shared same hardcoded `rgba(23,23,23,0.8)` — tokenized for consistency |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/lib/workout-api.ts` | Modified — atomic save RPC, UUID injection, exercise logging |
+| `src/lib/favorites-api.ts` | Created — favorites CRUD, repeat workout, previous bests |
+| `src/hooks/useWorkoutSession.ts` | Modified — session lifecycle with persistence |
+| `src/hooks/useWorkoutFlow.ts` | Modified — repeat workout flow |
+| `src/hooks/useWorkoutGeneration.ts` | Modified — repeat mode support |
+| `src/contexts/WorkoutFlowContext.tsx` | Modified — repeat workout context |
+| `src/pages/SessionDetailScreen.tsx` | Modified — card layout, expandable sections, favorite toggle/naming |
+| `src/pages/HistoryScreen.tsx` | Modified — tabs, ChamferedFrame filter dropdowns, favorites list |
+| `src/pages/HomeScreen.tsx` | Modified — History/Favorites tabs |
+| `src/pages/SummaryScreen.tsx` | Modified — post-workout favorite star |
+| `src/pages/ReviewScreen.tsx` | Modified — repeat mode guard |
+| `src/pages/WorkoutScreen.tsx` | Modified — session persistence |
+| `src/pages/ComponentGallery.tsx` | Modified — new component demos |
+| `src/components/ChamferedFrame.tsx` | Modified — CSS variable fix, clip-path |
+| `src/components/PageHeader.tsx` | Modified — blur toned down, scanlines |
+| `src/components/CTAButton.tsx` | Modified — scanlines |
+| `src/components/ChamferedToast.tsx` | Modified — scanlines |
+| `src/components/LocationAccordion.tsx` | Modified — replaced animation with conditional render |
+| `src/components/EmptyState.tsx` | Modified — icon prop type |
+| `src/components/workout/GlobalTimer.tsx` | Modified — scanlines |
+| `src/components/workout/SectionRenderer.tsx` | Modified — timed section support |
+| `src/components/workout/TimedRenderer.tsx` | Modified — expanded timed section UI |
+| `src/components/workout/ActiveExerciseCard.tsx` | Modified — pre-fill weights/notes, icon migration |
+| `src/components/AbandonmentModal.tsx` | Modified — overlay token |
+| `src/components/SignOutConfirmModal.tsx` | Modified — overlay token |
+| `src/components/icons.tsx` | Created — custom icon system |
+| `src/index.css` | Modified — dropdown, overlay, slider, scanline tokens |
+| `src/lib/home-data.ts` | Modified — expanded home data queries |
+| `src/lib/query-keys.ts` | Modified — favorites query key |
+| `src/types/database.ts` | Modified — regenerated types, removed corrupted line |
+| `src/types/workout.ts` | Modified — favorites and repeat types |
+| `supabase/migrations/00023-00025` | Created — persistence + favorites schema |
+| `.claude/hooks/git-safety-check.sh` | Modified — fixed regex false positive |
+
+#### Status
+- PR #16 merged to main, branch deleted
+- TypeScript compiles cleanly
+- All review issues addressed before merge
+
+---
 
 ### Session: 2026-03-05 - Housekeeping: Inbox, Plan Archival, Workflow Fix
 
