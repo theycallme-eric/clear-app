@@ -6,11 +6,12 @@ import type { WorkoutHistoryEntry } from "@/types/workout";
 interface WorkoutListItemProps {
   workout: WorkoutHistoryEntry;
   onClick: () => void;
+  showLeftColumn?: boolean;
 }
 
-export function WorkoutListItem({ workout, onClick }: WorkoutListItemProps) {
+export function WorkoutListItem({ workout, onClick, showLeftColumn }: WorkoutListItemProps) {
   return (
-    <Card onClick={onClick} padding="md">
+    <Card onClick={onClick} padding="md" showLeftColumn={showLeftColumn}>
       <p
         className="text-label-sm font-bold uppercase tracking-wide"
         style={{ color: 'var(--text-card-header)' }}

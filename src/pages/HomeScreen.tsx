@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { AppLayout } from "@/layouts";
 import { CTAButton } from "@/components/CTAButton";
 import { Card } from "@/components/Card";
-import { TabBar } from "@/components/TabBar";
+import { TabbedPanel } from "@/components/TabbedPanel";
 import { Zap, Flame, Dumbbell, Star } from "@/components/icons";
 import { WeekStreakDisplay } from "@/components/WeekStreakDisplay";
 import { WorkoutListItem } from "@/components/WorkoutListItem";
@@ -34,7 +34,7 @@ function HomeFavoritesList() {
   });
 
   if (isLoading) {
-    return <LoadingSkeleton count={3} />;
+    return <LoadingSkeleton count={3} showLeftColumn={false} />;
   }
 
   if (favorites.length === 0) {
@@ -43,6 +43,7 @@ function HomeFavoritesList() {
         icon={Star}
         title="No Favorites Yet"
         description="Star a workout from history or after completing one"
+        showLeftColumn={false}
       />
     );
   }
@@ -61,6 +62,7 @@ function HomeFavoritesList() {
             key={fav.id}
             favorite={fav}
             onClick={() => handleFavoriteClick(fav)}
+            showLeftColumn={false}
           />
         ))}
       </div>
@@ -230,25 +232,22 @@ export const HomeScreen = () => {
         </Card>
 
         {/* History / Favorites tabs */}
-        <div>
-          <TabBar
-            tabs={[
-              { value: 'favorites' as const, label: 'Favorites' },
-              { value: 'history' as const, label: 'History' },
-            ]}
-            activeTab={activeTab}
-            onChange={setActiveTab}
-            className="mb-4"
-          />
-
+        <TabbedPanel
+          tabs={[
+            { value: 'favorites' as const, label: 'Favorites' },
+            { value: 'history' as const, label: 'History' },
+          ]}
+          activeTab={activeTab}
+          onChange={setActiveTab}
+        >
           {activeTab === 'history' && (
             <>
               {isLoading ? (
-                <LoadingSkeleton count={3} />
+                <LoadingSkeleton count={3} showLeftColumn={false} />
               ) : hasError ? (
-                <ErrorState message="Couldn't load workouts" onRetry={loadHomeData} />
+                <ErrorState message="Couldn't load workouts" onRetry={loadHomeData} showLeftColumn={false} />
               ) : workoutHistory.length === 0 ? (
-                <Card padding="md">
+                <Card padding="md" showLeftColumn={false}>
                   <div className="text-center">
                     <Dumbbell className="w-10 h-10 mx-auto mb-4" style={{ color: 'var(--text-disabled)' }} />
                     <p
@@ -273,6 +272,7 @@ export const HomeScreen = () => {
                         key={workout.id}
                         workout={workout}
                         onClick={() => navigate(`/history/${workout.id}`)}
+                        showLeftColumn={false}
                       />
                     ))}
                   </div>
@@ -292,7 +292,7 @@ export const HomeScreen = () => {
           {activeTab === 'favorites' && (
             <HomeFavoritesList />
           )}
-        </div>
+        </TabbedPanel>
       </div>
 
       {incompleteSession && (

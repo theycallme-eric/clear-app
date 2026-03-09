@@ -70,6 +70,7 @@ import { RadioButton } from "@/components/RadioButton";
 import { Chip } from "@/components/Chip";
 import { toast } from "@/components/ui/sonner";
 import { TabBar } from "@/components/TabBar";
+import { TabbedPanel } from "@/components/TabbedPanel";
 import { FilterDropdown, FilterToggle, type FilterOption } from "@/components/FilterDropdown";
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { WeekStreakDisplay } from "@/components/WeekStreakDisplay";
@@ -101,6 +102,7 @@ export const ComponentGallery = () => {
   const [radioTextSelected, setRadioTextSelected] = useState<string | null>("Option A");
   const [radioIconSelected, setRadioIconSelected] = useState<number | null>(1);
   const [galleryTab, setGalleryTab] = useState<'alpha' | 'beta' | 'gamma'>('alpha');
+  const [panelTab, setPanelTab] = useState<'one' | 'two'>('one');
   const [filterAnchor, setFilterAnchor] = useState<'ALL' | 'squat' | 'hinge'>('ALL');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
@@ -603,8 +605,68 @@ export const ComponentGallery = () => {
             </ChamferedCard>
           </Section>
 
-          {/* ─── TABBAR ─── */}
-          <Section title="TabBar — Chamfered File-Folder Tabs">
+          {/* ─── TABBEDPANEL ─── */}
+          <Section title="TabbedPanel — Tabs + Content in One Frame">
+            <div className="space-y-4">
+              <Subsection label="With content">
+                <TabbedPanel
+                  tabs={[
+                    { value: 'one' as const, label: 'Tab One' },
+                    { value: 'two' as const, label: 'Tab Two' },
+                  ]}
+                  activeTab={panelTab}
+                  onChange={setPanelTab}
+                >
+                  {panelTab === 'one' && (
+                    <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
+                      Content for Tab One. Filters, lists, and other content go inside the panel.
+                    </p>
+                  )}
+                  {panelTab === 'two' && (
+                    <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
+                      Content for Tab Two. The active tab connects seamlessly to the panel below.
+                    </p>
+                  )}
+                </TabbedPanel>
+              </Subsection>
+              <Subsection label="With filters inside">
+                <TabbedPanel
+                  tabs={[
+                    { value: 'one' as const, label: 'History' },
+                    { value: 'two' as const, label: 'Favorites' },
+                  ]}
+                  activeTab={panelTab}
+                  onChange={setPanelTab}
+                >
+                  <div className="flex gap-2 flex-wrap mb-3">
+                    <FilterToggle active={filterAnchor === 'ALL'} onClick={() => setFilterAnchor('ALL')} />
+                    <FilterDropdown label="Anchor" options={sampleFilterOptions} value={filterAnchor} onChange={setFilterAnchor} />
+                  </div>
+                  <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
+                    Filters are inside the chamfered frame.
+                  </p>
+                </TabbedPanel>
+              </Subsection>
+              <Subsection label="Without left column">
+                <TabbedPanel
+                  tabs={[
+                    { value: 'one' as const, label: 'Alpha' },
+                    { value: 'two' as const, label: 'Beta' },
+                  ]}
+                  activeTab={panelTab}
+                  onChange={setPanelTab}
+                  showLeftColumn={false}
+                >
+                  <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
+                    No left accent column.
+                  </p>
+                </TabbedPanel>
+              </Subsection>
+            </div>
+          </Section>
+
+          {/* ─── TABBAR (standalone) ─── */}
+          <Section title="TabBar — Standalone Tabs">
             <div className="space-y-4">
               <Subsection label="Interactive (2 tabs)">
                 <TabBar

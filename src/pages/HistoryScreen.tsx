@@ -8,7 +8,7 @@ import {
 import { WorkoutListItem } from "@/components/WorkoutListItem";
 import { FavoriteListItem } from "@/components/FavoriteListItem";
 import { PageHeader } from "@/components/PageHeader";
-import { TabBar } from "@/components/TabBar";
+import { TabbedPanel } from "@/components/TabbedPanel";
 import { AppLayout } from "@/layouts";
 import { MovementPattern, GoalPreset, GOAL_PRESETS } from "@/types/workout";
 import { EmptyState } from "@/components/EmptyState";
@@ -68,7 +68,7 @@ function FavoritesList({ anchorFilter, intensityFilter, goalFilter }: { anchorFi
     return (
       <div className="space-y-2">
         {[1, 2, 3].map(i => (
-          <Card key={i} padding="md">
+          <Card key={i} padding="md" showLeftColumn={false}>
             <div className="h-4 rounded" style={{ backgroundColor: 'var(--surface-card-accent)', width: '60%' }} />
             <div className="h-3 rounded mt-2" style={{ backgroundColor: 'var(--surface-card-accent)', width: '40%' }} />
           </Card>
@@ -83,6 +83,7 @@ function FavoritesList({ anchorFilter, intensityFilter, goalFilter }: { anchorFi
         icon={Star}
         title="No Favorites Yet"
         description="Star a workout from history or after completing one"
+        showLeftColumn={false}
       />
     );
   }
@@ -93,6 +94,7 @@ function FavoritesList({ anchorFilter, intensityFilter, goalFilter }: { anchorFi
         icon={Star}
         title="No Matches"
         description="Try adjusting your filters"
+        showLeftColumn={false}
       />
     );
   }
@@ -111,6 +113,7 @@ function FavoritesList({ anchorFilter, intensityFilter, goalFilter }: { anchorFi
           key={fav.id}
           favorite={fav}
           onClick={() => handleFavoriteClick(fav)}
+          showLeftColumn={false}
         />
       ))}
     </div>
@@ -121,7 +124,7 @@ export const HistoryScreen = () => {
   const navigate = useNavigate();
   const { workoutHistory } = useHomeDataContext();
 
-  const [activeTab, setActiveTab] = useState<TabValue>('favorites');
+  const [activeTab, setActiveTab] = useState<TabValue>('history');
   const [anchorFilter, setAnchorFilter] = useState<AnchorFilter>('ALL');
   const [intensityFilter, setIntensityFilter] = useState<IntensityFilter>('ALL');
   const [goalFilter, setGoalFilter] = useState<GoalFilter>('ALL');
@@ -158,62 +161,67 @@ export const HistoryScreen = () => {
   return (
     <AppLayout header={<PageHeader left="back" onBack={() => navigate("/")} center="History" right="menu" onMenu={() => navigate("/settings")} />}>
       <div className="pt-6">
-        {/* Tabs */}
-        <TabBar
+        <TabbedPanel
           tabs={[
             { value: 'history' as const, label: 'History' },
             { value: 'favorites' as const, label: 'Favorites' },
           ]}
           activeTab={activeTab}
           onChange={setActiveTab}
-          className="mb-6"
-        />
-
-        {/* Filter Section */}
-        <div className="mb-6">
-          <div className="flex gap-2 flex-wrap">
+        >
+          {/* Filters */}
+          <h3
+            className="text-label-xs uppercase tracking-widest mb-2"
+            style={{ color: 'var(--text-card-label)' }}
+          >
+            Filters
+          </h3>
+          <div className="flex gap-2 flex-wrap mb-4">
             <FilterToggle active={!isActiveFilter} onClick={resetFilters} />
             <FilterDropdown label="Anchor" options={ANCHOR_OPTIONS} value={anchorFilter} onChange={setAnchorFilter} />
             <FilterDropdown label="Intensity" options={INTENSITY_OPTIONS} value={intensityFilter} onChange={setIntensityFilter} />
             <FilterDropdown label="Goal" options={GOAL_OPTIONS} value={goalFilter} onChange={setGoalFilter} />
           </div>
-        </div>
 
-        {activeTab === 'history' && (
-          <>
-            {Object.keys(groupedByMonth).length === 0 ? (
-              <EmptyState
-                icon={Dumbbell}
-                title={isActiveFilter ? "No Matches" : "No Workouts Yet"}
-                description={isActiveFilter ? "Try adjusting your filters" : "Complete a workout to see it here"}
-              />
-            ) : (
-              <div className="space-y-6 stagger-reveal">
-                {Object.entries(groupedByMonth).map(([month, workouts]) => (
-                  <div key={month}>
-                    <h2
-                      className="text-label-xs uppercase tracking-widest mb-3"
-                      style={{ color: 'var(--text-card-label)' }}
-                    >
-                      {month}
-                    </h2>
-                    <div className="space-y-2">
-                      {workouts.map((workout) => (
-                        <WorkoutListItem
-                          key={workout.id}
-                          workout={workout}
-                          onClick={() => navigate(`/history/${workout.id}`)}
-                        />
-                      ))}
+          {/* Tab content */}
+          {activeTab === 'history' && (
+            <>
+              {Object.keys(groupedByMonth).length === 0 ? (
+                <EmptyState
+                  icon={Dumbbell}
+                  title={isActiveFilter ? "No Matches" : "No Workouts Yet"}
+                  description={isActiveFilter ? "Try adjusting your filters" : "Complete a workout to see it here"}
+                  showLeftColumn={false}
+                />
+              ) : (
+                <div className="space-y-6 stagger-reveal">
+                  {Object.entries(groupedByMonth).map(([month, workouts]) => (
+                    <div key={month}>
+                      <h2
+                        className="text-label-xs uppercase tracking-widest mb-3"
+                        style={{ color: 'var(--text-card-label)' }}
+                      >
+                        {month}
+                      </h2>
+                      <div className="space-y-2">
+                        {workouts.map((workout) => (
+                          <WorkoutListItem
+                            key={workout.id}
+                            workout={workout}
+                            onClick={() => navigate(`/history/${workout.id}`)}
+                            showLeftColumn={false}
+                          />
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </>
-        )}
+                  ))}
+                </div>
+              )}
+            </>
+          )}
 
-        {activeTab === 'favorites' && <FavoritesList anchorFilter={anchorFilter} intensityFilter={intensityFilter} goalFilter={goalFilter} />}
+          {activeTab === 'favorites' && <FavoritesList anchorFilter={anchorFilter} intensityFilter={intensityFilter} goalFilter={goalFilter} />}
+        </TabbedPanel>
       </div>
     </AppLayout>
   );

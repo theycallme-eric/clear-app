@@ -6,11 +6,12 @@ import type { SavedWorkoutSummary } from "@/lib/favorites-api";
 interface FavoriteListItemProps {
   favorite: SavedWorkoutSummary;
   onClick: () => void;
+  showLeftColumn?: boolean;
 }
 
-export function FavoriteListItem({ favorite, onClick }: FavoriteListItemProps) {
+export function FavoriteListItem({ favorite, onClick, showLeftColumn }: FavoriteListItemProps) {
   return (
-    <Card onClick={onClick} padding="md">
+    <Card onClick={onClick} padding="md" showLeftColumn={showLeftColumn}>
       <div className="flex items-start justify-between">
         <div>
           <p

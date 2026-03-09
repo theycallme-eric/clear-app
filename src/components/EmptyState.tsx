@@ -9,6 +9,7 @@ interface EmptyStateProps {
   actionLabel?: string;
   onAction?: () => void;
   className?: string;
+  showLeftColumn?: boolean;
 }
 
 /**
@@ -22,9 +23,10 @@ export const EmptyState = ({
   actionLabel,
   onAction,
   className,
+  showLeftColumn,
 }: EmptyStateProps) => {
   return (
-    <Card padding="lg" className={cn("text-center", className)}>
+    <Card padding="lg" className={cn("text-center", className)} showLeftColumn={showLeftColumn}>
       {Icon && (
         <Icon className="w-10 h-10 mx-auto mb-4" style={{ color: 'var(--text-disabled)' }} />
       )}

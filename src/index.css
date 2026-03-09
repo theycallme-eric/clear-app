@@ -1178,10 +1178,21 @@
     }
   }
 
+  /* Tab content enter — stepped opacity, mechanical feel matching materialize */
+  .animate-tab-enter {
+    animation: tab-enter 150ms steps(3, end) both;
+  }
+
+  @keyframes tab-enter {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
   /* Respect user preference — disable all atmospheric animations */
   @media (prefers-reduced-motion: reduce) {
     .pulse-micro { animation: none; }
     .stagger-reveal > * { animation: none; }
+    .animate-tab-enter { animation: none; }
   }
 
   /* =========================================================================
