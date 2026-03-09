@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-03-06 (11th session)
+**Last Session:** 2026-03-09 (12th session)
 
 ---
 
@@ -13,14 +13,71 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Favorites & Persistence — workout data persistence, favorites system, UI polish
-**Current Task:** Complete — PR #16 merged to main
-**Last Completed:** Workout persistence, favorites system, history rework, UI polish (scanlines, dropdowns, tokens)
+**Current Phase:** Component Consolidation & TabbedPanel
+**Current Task:** PR #17 open — component consolidation + TabbedPanel
+**Last Completed:** TabbedPanel compound component, 7 reusable component extractions, design token cleanup
 **Blocking Issues:** None
 
 ---
 
 ## Session Entries
+
+### Session: 2026-03-09 - Component Consolidation & TabbedPanel
+
+**Duration:** ~2 hours
+**Mode:** Claude Code
+**Branch:** `feat/component-consolidation` → PR #17
+
+#### What Got Done
+- **TabbedPanel compound component**: Tabs + content in one chamfered SVG frame. Single SVG draws outer frame, tab fills, and internal borders. Active tab connects seamlessly to content panel. 24px diagonal between tabs, 12px corner chamfers on frame
+- **Shared tab geometry**: Extracted diagonal polygon math into `src/lib/tab-geometry.ts` — pure functions used by both TabBar (standalone) and TabbedPanel (embedded)
+- **TabBar embedded variant**: New `variant="embedded"` renders only interactive buttons, delegating all visuals to parent TabbedPanel
+- **7 reusable component extractions**: EmptyState, ErrorState, LoadingSkeleton, WorkoutListItem, FavoriteListItem, WeekStreakDisplay, ConfirmationModal (replaces AbandonmentModal)
+- **Screen refactors**: HistoryScreen and HomeScreen now use TabbedPanel with filters inside the frame. Default tab on History fixed to 'history'
+- **Nested card accent bar hiding**: Added `showLeftColumn` prop to WorkoutListItem, FavoriteListItem, EmptyState, ErrorState, LoadingSkeleton — cards inside TabbedPanel hide their accent bars
+- **Tab content animation**: Stepped opacity animation (`animate-tab-enter`) matching the materialize mechanical pattern
+- **Design tokens**: Tab-specific tokens, universal state baselines (selected/unselected), FilterDropdown tokens
+- **Date utilities**: `date-utils.ts` extracts shared date formatting from multiple screens
+
+#### What Came Up (Unexpected)
+- Tab diagonal direction was initially wrong (active tab wider at top instead of bottom) — needed to flip the chamfer assignment logic in geometry functions
+- Grey artifact at top-right corner caused by inactive tab border strokes extending past the outer chamfer clip — fixed by wrapping all borders in nested `<g clipPath>` for intersection clipping
+- TabbedPanel intentionally avoids CSS `clip-path` (unlike ChamferedFrame) so dropdown menus inside it aren't clipped
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| 24px tab diagonal, 12px frame corners | Reference design shows dramatic diagonal between tabs, but standard card-sized corners on the frame |
+| No CSS clip-path on TabbedPanel | FilterDropdown flyout menus must extend beyond panel bounds |
+| Separate DIAGONAL vs CORNER constants | Tab diagonal angle and frame corner cuts serve different visual purposes |
+| `key={activeTab}` for content remount | Triggers animation on tab switch without managing animation state manually |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/lib/tab-geometry.ts` | Created — shared constants + pure geometry functions |
+| `src/components/TabbedPanel.tsx` | Created — compound component with SVG frame |
+| `src/components/TabBar.tsx` | Modified — refactored to use shared geometry, added embedded variant |
+| `src/components/EmptyState.tsx` | Modified — added showLeftColumn prop |
+| `src/components/ErrorState.tsx` | Modified — added showLeftColumn prop |
+| `src/components/FavoriteListItem.tsx` | Created — extracted from HistoryScreen/HomeScreen |
+| `src/components/WorkoutListItem.tsx` | Created — extracted from HistoryScreen/HomeScreen |
+| `src/components/LoadingSkeleton.tsx` | Modified — added showLeftColumn prop |
+| `src/components/FilterDropdown.tsx` | Created — chamfered dropdown filter component |
+| `src/components/WeekStreakDisplay.tsx` | Created — extracted week streak view |
+| `src/components/ConfirmationModal.tsx` | Created — replaces AbandonmentModal |
+| `src/lib/date-utils.ts` | Created — shared date formatting |
+| `src/index.css` | Modified — tab tokens, state baselines, tab-enter animation |
+| `src/pages/HistoryScreen.tsx` | Modified — uses TabbedPanel, filters inside frame |
+| `src/pages/HomeScreen.tsx` | Modified — uses TabbedPanel |
+| `src/pages/ComponentGallery.tsx` | Modified — TabbedPanel demos + standalone TabBar demos |
+
+#### Status
+- Build passes, TypeScript clean
+- PR #17 open, pushed to remote
+- Code review: no critical issues, 2 minor pre-existing token notes
+
+---
 
 ### Session: 2026-03-06 - Workout Persistence, Favorites & UI Polish
 
