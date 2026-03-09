@@ -1,6 +1,6 @@
 # Backlog
 **Project:** Clear App (5-3-1 Workout Generator)
-**Last Updated:** 2026-03-05
+**Last Updated:** 2026-03-06
 
 ---
 
@@ -55,17 +55,19 @@ Items that should be addressed soon, possibly before V1.
 ### Medium Priority
 Important but not blocking. Address after core features complete.
 
-- [ ] **Data persistence for exercise logging** - Weight/reps/notes entered during workout not saved to DB
+- [x] **Data persistence for exercise logging** - Weight/reps/notes entered during workout not saved to DB
   - Priority: Medium
   - Type: Feature
   - Added: 2026-02-19
-  - Context: ActiveExerciseCard has inputs and onLog callbacks but data never persists to Supabase
+  - Completed: 2026-03-06
+  - Context: Atomic RPC saves workout structure, UUID injection enables exercise-level logging. Weights, notes, reps persist on workout completion via parallel upserts. PR #16.
 
-- [ ] **Timed intervals type gap** - `timed` structure (work_seconds/rest_seconds) missing from workout.ts ExerciseStructure
+- [x] **Timed intervals type gap** - `timed` structure (work_seconds/rest_seconds) missing from workout.ts ExerciseStructure
   - Priority: Medium
   - Type: Bug
   - Added: 2026-02-19
-  - Context: Type exists in generation.ts but not workout.ts. SectionRenderer doesn't handle it. Timed intervals won't render properly
+  - Completed: 2026-03-06
+  - Context: Added TimedRenderer with work/rest timer UI and section-level completion tracking. PR #16.
 
 - [ ] **Circuit auto-progress** - Circuits require manual checkbox tapping per exercise
   - Priority: Medium
@@ -90,6 +92,12 @@ Nice to have. Address when time permits or for future versions.
   - Type: Enhancement
   - Added: 2026-03-05
   - Context: Removed from `generate-workout/prompt.ts` and `generate-section/index.ts` output schemas to reduce output tokens and speed up generation. Regression was kept. To restore: add `"coaching_cues": ["array of coaching cue strings"],` back to each prompt's output schema. Frontend (`ExerciseCard.tsx`) already renders them conditionally — no UI changes needed. DB column still exists.
+
+- [ ] **Dropdown click-outside dismiss** - ChamferedFrame filter dropdowns stay open when clicking outside
+  - Priority: Low
+  - Type: Enhancement
+  - Added: 2026-03-06
+  - Context: HistoryScreen anchor/intensity dropdowns have no click-outside handler. Tapping elsewhere leaves dropdown open. Add `useEffect` + `document.addEventListener('mousedown', ...)` or `onBlur` guard.
 
 - [ ] **Superset connector spacing** - Horizontal gap between vertical connector line and exercise text needs fine-tuning
   - Priority: Low

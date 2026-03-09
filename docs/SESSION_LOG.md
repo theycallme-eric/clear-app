@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-03-05 (10th session)
+**Last Session:** 2026-03-09 (12th session)
 
 ---
 
@@ -13,14 +13,150 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Housekeeping — inbox processing, plan archival, workflow improvement
-**Current Task:** Complete — inbox cleared, plans archived, close-session skill updated
-**Last Completed:** Inbox processing, plan archival system, close-session plan archive step
-**Blocking Issues:** None — uncommitted housekeeping changes on main
+**Current Phase:** Component Consolidation & TabbedPanel
+**Current Task:** PR #17 open — component consolidation + TabbedPanel
+**Last Completed:** TabbedPanel compound component, 7 reusable component extractions, design token cleanup
+**Blocking Issues:** None
 
 ---
 
 ## Session Entries
+
+### Session: 2026-03-09 - Component Consolidation & TabbedPanel
+
+**Duration:** ~2 hours
+**Mode:** Claude Code
+**Branch:** `feat/component-consolidation` → PR #17
+
+#### What Got Done
+- **TabbedPanel compound component**: Tabs + content in one chamfered SVG frame. Single SVG draws outer frame, tab fills, and internal borders. Active tab connects seamlessly to content panel. 24px diagonal between tabs, 12px corner chamfers on frame
+- **Shared tab geometry**: Extracted diagonal polygon math into `src/lib/tab-geometry.ts` — pure functions used by both TabBar (standalone) and TabbedPanel (embedded)
+- **TabBar embedded variant**: New `variant="embedded"` renders only interactive buttons, delegating all visuals to parent TabbedPanel
+- **7 reusable component extractions**: EmptyState, ErrorState, LoadingSkeleton, WorkoutListItem, FavoriteListItem, WeekStreakDisplay, ConfirmationModal (replaces AbandonmentModal)
+- **Screen refactors**: HistoryScreen and HomeScreen now use TabbedPanel with filters inside the frame. Default tab on History fixed to 'history'
+- **Nested card accent bar hiding**: Added `showLeftColumn` prop to WorkoutListItem, FavoriteListItem, EmptyState, ErrorState, LoadingSkeleton — cards inside TabbedPanel hide their accent bars
+- **Tab content animation**: Stepped opacity animation (`animate-tab-enter`) matching the materialize mechanical pattern
+- **Design tokens**: Tab-specific tokens, universal state baselines (selected/unselected), FilterDropdown tokens
+- **Date utilities**: `date-utils.ts` extracts shared date formatting from multiple screens
+
+#### What Came Up (Unexpected)
+- Tab diagonal direction was initially wrong (active tab wider at top instead of bottom) — needed to flip the chamfer assignment logic in geometry functions
+- Grey artifact at top-right corner caused by inactive tab border strokes extending past the outer chamfer clip — fixed by wrapping all borders in nested `<g clipPath>` for intersection clipping
+- TabbedPanel intentionally avoids CSS `clip-path` (unlike ChamferedFrame) so dropdown menus inside it aren't clipped
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| 24px tab diagonal, 12px frame corners | Reference design shows dramatic diagonal between tabs, but standard card-sized corners on the frame |
+| No CSS clip-path on TabbedPanel | FilterDropdown flyout menus must extend beyond panel bounds |
+| Separate DIAGONAL vs CORNER constants | Tab diagonal angle and frame corner cuts serve different visual purposes |
+| `key={activeTab}` for content remount | Triggers animation on tab switch without managing animation state manually |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/lib/tab-geometry.ts` | Created — shared constants + pure geometry functions |
+| `src/components/TabbedPanel.tsx` | Created — compound component with SVG frame |
+| `src/components/TabBar.tsx` | Modified — refactored to use shared geometry, added embedded variant |
+| `src/components/EmptyState.tsx` | Modified — added showLeftColumn prop |
+| `src/components/ErrorState.tsx` | Modified — added showLeftColumn prop |
+| `src/components/FavoriteListItem.tsx` | Created — extracted from HistoryScreen/HomeScreen |
+| `src/components/WorkoutListItem.tsx` | Created — extracted from HistoryScreen/HomeScreen |
+| `src/components/LoadingSkeleton.tsx` | Modified — added showLeftColumn prop |
+| `src/components/FilterDropdown.tsx` | Created — chamfered dropdown filter component |
+| `src/components/WeekStreakDisplay.tsx` | Created — extracted week streak view |
+| `src/components/ConfirmationModal.tsx` | Created — replaces AbandonmentModal |
+| `src/lib/date-utils.ts` | Created — shared date formatting |
+| `src/index.css` | Modified — tab tokens, state baselines, tab-enter animation |
+| `src/pages/HistoryScreen.tsx` | Modified — uses TabbedPanel, filters inside frame |
+| `src/pages/HomeScreen.tsx` | Modified — uses TabbedPanel |
+| `src/pages/ComponentGallery.tsx` | Modified — TabbedPanel demos + standalone TabBar demos |
+
+#### Status
+- Build passes, TypeScript clean
+- PR #17 open, pushed to remote
+- Code review: no critical issues, 2 minor pre-existing token notes
+
+---
+
+### Session: 2026-03-06 - Workout Persistence, Favorites & UI Polish
+
+**Duration:** ~3 hours (multi-session)
+**Mode:** Claude Code
+**Branch:** `feat/workout-persistence-and-favorites` → merged as PR #16
+
+#### What Got Done
+- **Workout persistence**: Atomic RPC (`save_generated_workout`) returns all section/exercise UUIDs in one transaction. Exercise logging (weights, notes, reps) persists to Supabase on workout completion
+- **Favorites system**: Save/list/unfavorite/repeat workouts. Previous bests tracking, last weights/notes pre-fill, favorite naming with inline edit
+- **History & Favorites tabs**: Added to both HomeScreen and HistoryScreen with shared filter UI
+- **ChamferedFrame filter dropdowns**: Filter by anchor and intensity using chamfered dropdown menus with blur + scanline texture
+- **Session detail rework**: Card-wrapped header, expandable sections (exercises visible by default, expand for logged data), star toggle, favorite name display
+- **Scanline texture system**: `.scanlines` CSS class applied to all structural backdrop-blur surfaces (header, dropdowns, toasts, timer, CTA buttons)
+- **Design tokens**: New dropdown (surface, border, text), overlay, and slider tokens. Slider thumb changed to interaction color
+- **Custom icon system**: `src/components/icons.tsx` replacing Lucide imports for consistency
+- **ChamferedFrame fixes**: SVG CSS variable resolution (attribute → style prop), clip-path for backdrop-blur containment
+- **LocationAccordion fix**: Replaced grid-rows animation (conflicted with stagger-reveal) with conditional render
+- **Code review fixes**: Removed corrupted DB types line, dead functions, hardcoded rgba → overlay token, safer Supabase join cast, remaining Lucide imports migrated
+- **Git hook fix**: Safety hook regex matched `-f` in branch names; fixed to require space-prefixed flags
+
+#### What Came Up (Unexpected)
+- SVG `fill`/`stroke` attributes don't resolve CSS custom properties (`var(--...)`) — must use `style` prop instead
+- `backdrop-blur` extends beyond CSS `clip-path` set via Tailwind — needed computed `polygon()` clip-path on the container div
+- Git safety hook regex `git push.*-f` false-positived on branch name `feat/workout-persistence-and-favorites`
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Atomic RPC returning UUIDs (not save-then-fetch) | Eliminates race condition window; single transaction guarantees consistency |
+| Scanlines on structural blur only, not modal overlays | Modal `backdrop-blur-sm` is for dimming, not a UI surface — scanlines would look wrong |
+| Dropdown surface = translucent alpha + blur (same as header) | User explicitly requested matching treatment, not opaque backgrounds |
+| Slider thumb = interaction color (blue in orange theme) | Thumb is an interactive control, not structural — follows color logic from design philosophy |
+| Replace grid-rows animation with conditional render | Animation conflicted with stagger-reveal; instant show/hide is acceptable for accordion |
+| `--surface-overlay` token for modal backdrops | Three modals shared same hardcoded `rgba(23,23,23,0.8)` — tokenized for consistency |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/lib/workout-api.ts` | Modified — atomic save RPC, UUID injection, exercise logging |
+| `src/lib/favorites-api.ts` | Created — favorites CRUD, repeat workout, previous bests |
+| `src/hooks/useWorkoutSession.ts` | Modified — session lifecycle with persistence |
+| `src/hooks/useWorkoutFlow.ts` | Modified — repeat workout flow |
+| `src/hooks/useWorkoutGeneration.ts` | Modified — repeat mode support |
+| `src/contexts/WorkoutFlowContext.tsx` | Modified — repeat workout context |
+| `src/pages/SessionDetailScreen.tsx` | Modified — card layout, expandable sections, favorite toggle/naming |
+| `src/pages/HistoryScreen.tsx` | Modified — tabs, ChamferedFrame filter dropdowns, favorites list |
+| `src/pages/HomeScreen.tsx` | Modified — History/Favorites tabs |
+| `src/pages/SummaryScreen.tsx` | Modified — post-workout favorite star |
+| `src/pages/ReviewScreen.tsx` | Modified — repeat mode guard |
+| `src/pages/WorkoutScreen.tsx` | Modified — session persistence |
+| `src/pages/ComponentGallery.tsx` | Modified — new component demos |
+| `src/components/ChamferedFrame.tsx` | Modified — CSS variable fix, clip-path |
+| `src/components/PageHeader.tsx` | Modified — blur toned down, scanlines |
+| `src/components/CTAButton.tsx` | Modified — scanlines |
+| `src/components/ChamferedToast.tsx` | Modified — scanlines |
+| `src/components/LocationAccordion.tsx` | Modified — replaced animation with conditional render |
+| `src/components/EmptyState.tsx` | Modified — icon prop type |
+| `src/components/workout/GlobalTimer.tsx` | Modified — scanlines |
+| `src/components/workout/SectionRenderer.tsx` | Modified — timed section support |
+| `src/components/workout/TimedRenderer.tsx` | Modified — expanded timed section UI |
+| `src/components/workout/ActiveExerciseCard.tsx` | Modified — pre-fill weights/notes, icon migration |
+| `src/components/AbandonmentModal.tsx` | Modified — overlay token |
+| `src/components/SignOutConfirmModal.tsx` | Modified — overlay token |
+| `src/components/icons.tsx` | Created — custom icon system |
+| `src/index.css` | Modified — dropdown, overlay, slider, scanline tokens |
+| `src/lib/home-data.ts` | Modified — expanded home data queries |
+| `src/lib/query-keys.ts` | Modified — favorites query key |
+| `src/types/database.ts` | Modified — regenerated types, removed corrupted line |
+| `src/types/workout.ts` | Modified — favorites and repeat types |
+| `supabase/migrations/00023-00025` | Created — persistence + favorites schema |
+| `.claude/hooks/git-safety-check.sh` | Modified — fixed regex false positive |
+
+#### Status
+- PR #16 merged to main, branch deleted
+- TypeScript compiles cleanly
+- All review issues addressed before merge
+
+---
 
 ### Session: 2026-03-05 - Housekeeping: Inbox, Plan Archival, Workflow Fix
 

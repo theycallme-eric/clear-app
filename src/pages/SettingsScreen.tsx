@@ -13,7 +13,7 @@ import {
   SECTIONS_BY_GOAL,
 } from "@/types/workout";
 import { toast } from "@/components/ui/sonner";
-import { SignOutConfirmModal } from "@/components/SignOutConfirmModal";
+import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { SettingsHub } from "@/pages/settings/SettingsHub";
 import { LocationList, LocationEditor } from "@/pages/settings/LocationSettings";
 import { StructureSettings } from "@/pages/settings/StructureSettings";
@@ -365,7 +365,10 @@ export const SettingsScreen = () => {
       )}
 
       {showSignOutConfirm && (
-        <SignOutConfirmModal
+        <ConfirmationModal
+          title="Sign Out"
+          description="Are you sure you want to sign out?"
+          confirmLabel="Sign Out"
           onConfirm={() => {
             setShowSignOutConfirm(false);
             signOut();

@@ -1,12 +1,23 @@
 import { CTAButton } from "@/components/CTAButton";
 import { Card } from "./Card";
 
-interface SignOutConfirmModalProps {
+interface ConfirmationModalProps {
+  title: string;
+  description: string;
+  confirmLabel: string;
+  cancelLabel?: string;
   onConfirm: () => void;
   onCancel: () => void;
 }
 
-export const SignOutConfirmModal = ({ onConfirm, onCancel }: SignOutConfirmModalProps) => {
+export function ConfirmationModal({
+  title,
+  description,
+  confirmLabel,
+  cancelLabel = "Cancel",
+  onConfirm,
+  onCancel,
+}: ConfirmationModalProps) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm"
@@ -17,29 +28,20 @@ export const SignOutConfirmModal = ({ onConfirm, onCancel }: SignOutConfirmModal
           className="text-heading-h4 font-bold uppercase tracking-wider mb-2"
           style={{ color: 'var(--text-header)' }}
         >
-          Sign Out
+          {title}
         </h2>
         <p className="text-paragraph-sm mb-6" style={{ color: 'var(--text-paragraph)' }}>
-          Are you sure you want to sign out?
+          {description}
         </p>
         <div className="space-y-2">
-          <CTAButton
-            onClick={onConfirm}
-            size="md"
-            fullWidth
-          >
-            Sign Out
+          <CTAButton onClick={onConfirm} size="md" fullWidth>
+            {confirmLabel}
           </CTAButton>
-          <CTAButton
-            onClick={onCancel}
-            variant="secondary"
-            size="md"
-            fullWidth
-          >
-            Cancel
+          <CTAButton onClick={onCancel} variant="secondary" size="md" fullWidth>
+            {cancelLabel}
           </CTAButton>
         </div>
       </Card>
     </div>
   );
-};
+}

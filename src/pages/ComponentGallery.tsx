@@ -69,6 +69,15 @@ import { CTAButton } from "@/components/CTAButton";
 import { RadioButton } from "@/components/RadioButton";
 import { Chip } from "@/components/Chip";
 import { toast } from "@/components/ui/sonner";
+import { TabBar } from "@/components/TabBar";
+import { TabbedPanel } from "@/components/TabbedPanel";
+import { FilterDropdown, FilterToggle, type FilterOption } from "@/components/FilterDropdown";
+import { ConfirmationModal } from "@/components/ConfirmationModal";
+import { WeekStreakDisplay } from "@/components/WeekStreakDisplay";
+import { WorkoutListItem } from "@/components/WorkoutListItem";
+import { FavoriteListItem } from "@/components/FavoriteListItem";
+import type { WorkoutHistoryEntry } from "@/types/workout";
+import type { SavedWorkoutSummary } from "@/lib/favorites-api";
 
 /**
  * Component Gallery — Developer tool for auditing the design system.
@@ -92,6 +101,55 @@ export const ComponentGallery = () => {
   const [switchOn, setSwitchOn] = useState(true);
   const [radioTextSelected, setRadioTextSelected] = useState<string | null>("Option A");
   const [radioIconSelected, setRadioIconSelected] = useState<number | null>(1);
+  const [galleryTab, setGalleryTab] = useState<'alpha' | 'beta' | 'gamma'>('alpha');
+  const [panelTab, setPanelTab] = useState<'one' | 'two'>('one');
+  const [filterAnchor, setFilterAnchor] = useState<'ALL' | 'squat' | 'hinge'>('ALL');
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  const sampleFilterOptions: FilterOption<'ALL' | 'squat' | 'hinge'>[] = [
+    { value: 'ALL', label: 'All Anchors' },
+    { value: 'squat', label: 'Squat' },
+    { value: 'hinge', label: 'Hinge' },
+  ];
+
+  const sampleWorkout: WorkoutHistoryEntry = {
+    id: 'demo-1',
+    date: new Date(),
+    anchor: 'squat',
+    intensity: 7,
+    duration: 42,
+    goal: 'strength',
+  };
+
+  const sampleFavorite: SavedWorkoutSummary = {
+    id: 'demo-fav-1',
+    originalSessionId: 'demo-session-1',
+    title: 'Squat Day — Strength',
+    anchor: 'squat',
+    intensity: 7,
+    durationMins: 42,
+    timesCompleted: 3,
+    lastCompletedAt: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+  };
+
+  const sampleWeekView: Record<string, 'workout' | 'rest' | null> = (() => {
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const monday = new Date(today);
+    monday.setDate(today.getDate() + mondayOffset);
+    const view: Record<string, 'workout' | 'rest' | null> = {};
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      const key = d.toISOString().split('T')[0];
+      if (i < 3) view[key] = 'workout';
+      else if (i === 3) view[key] = 'rest';
+      else view[key] = null;
+    }
+    return view;
+  })();
 
   const sampleLocations = [
     { id: "1", name: "Home Gym", tier: "home" as const, equipment: ["Dumbbells", "Bench"] },
@@ -547,6 +605,140 @@ export const ComponentGallery = () => {
             </ChamferedCard>
           </Section>
 
+          {/* ─── TABBEDPANEL ─── */}
+          <Section title="TabbedPanel — Tabs + Content in One Frame">
+            <div className="space-y-4">
+              <Subsection label="With content">
+                <TabbedPanel
+                  tabs={[
+                    { value: 'one' as const, label: 'Tab One' },
+                    { value: 'two' as const, label: 'Tab Two' },
+                  ]}
+                  activeTab={panelTab}
+                  onChange={setPanelTab}
+                >
+                  {panelTab === 'one' && (
+                    <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
+                      Content for Tab One. Filters, lists, and other content go inside the panel.
+                    </p>
+                  )}
+                  {panelTab === 'two' && (
+                    <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
+                      Content for Tab Two. The active tab connects seamlessly to the panel below.
+                    </p>
+                  )}
+                </TabbedPanel>
+              </Subsection>
+              <Subsection label="With filters inside">
+                <TabbedPanel
+                  tabs={[
+                    { value: 'one' as const, label: 'History' },
+                    { value: 'two' as const, label: 'Favorites' },
+                  ]}
+                  activeTab={panelTab}
+                  onChange={setPanelTab}
+                >
+                  <div className="flex gap-2 flex-wrap mb-3">
+                    <FilterToggle active={filterAnchor === 'ALL'} onClick={() => setFilterAnchor('ALL')} />
+                    <FilterDropdown label="Anchor" options={sampleFilterOptions} value={filterAnchor} onChange={setFilterAnchor} />
+                  </div>
+                  <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
+                    Filters are inside the chamfered frame.
+                  </p>
+                </TabbedPanel>
+              </Subsection>
+              <Subsection label="Without left column">
+                <TabbedPanel
+                  tabs={[
+                    { value: 'one' as const, label: 'Alpha' },
+                    { value: 'two' as const, label: 'Beta' },
+                  ]}
+                  activeTab={panelTab}
+                  onChange={setPanelTab}
+                  showLeftColumn={false}
+                >
+                  <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
+                    No left accent column.
+                  </p>
+                </TabbedPanel>
+              </Subsection>
+            </div>
+          </Section>
+
+          {/* ─── TABBAR (standalone) ─── */}
+          <Section title="TabBar — Standalone Tabs">
+            <div className="space-y-4">
+              <Subsection label="Interactive (2 tabs)">
+                <TabBar
+                  tabs={[
+                    { value: 'alpha' as const, label: 'Alpha' },
+                    { value: 'beta' as const, label: 'Beta' },
+                  ]}
+                  activeTab={galleryTab === 'gamma' ? 'alpha' : galleryTab}
+                  onChange={(v) => setGalleryTab(v as 'alpha' | 'beta' | 'gamma')}
+                />
+              </Subsection>
+              <Subsection label="Interactive (3 tabs)">
+                <TabBar
+                  tabs={[
+                    { value: 'alpha' as const, label: 'Alpha' },
+                    { value: 'beta' as const, label: 'Beta' },
+                    { value: 'gamma' as const, label: 'Gamma' },
+                  ]}
+                  activeTab={galleryTab}
+                  onChange={setGalleryTab}
+                />
+              </Subsection>
+            </div>
+          </Section>
+
+          {/* ─── FILTER DROPDOWN ─── */}
+          <Section title="FilterDropdown + FilterToggle">
+            <div className="space-y-4">
+              <Subsection label="Filter bar (interactive)">
+                <div className="flex gap-2 flex-wrap">
+                  <FilterToggle active={filterAnchor === 'ALL'} onClick={() => setFilterAnchor('ALL')} />
+                  <FilterDropdown label="Anchor" options={sampleFilterOptions} value={filterAnchor} onChange={setFilterAnchor} />
+                </div>
+              </Subsection>
+            </div>
+          </Section>
+
+          {/* ─── CONFIRMATION MODAL ─── */}
+          <Section title="ConfirmationModal">
+            <div className="space-y-4">
+              <Subsection label="Trigger">
+                <CTAButton size="sm" variant="secondary" onClick={() => setShowConfirmModal(true)}>
+                  Open Modal
+                </CTAButton>
+              </Subsection>
+            </div>
+          </Section>
+
+          {/* ─── WEEK STREAK DISPLAY ─── */}
+          <Section title="WeekStreakDisplay">
+            <div className="space-y-4">
+              <Subsection label="Mon–Wed workout, Thu rest, Fri–Sun empty">
+                <WeekStreakDisplay weekView={sampleWeekView} />
+              </Subsection>
+              <Subsection label="With highlightToday">
+                <WeekStreakDisplay weekView={sampleWeekView} highlightToday />
+              </Subsection>
+            </div>
+          </Section>
+
+          {/* ─── LIST ITEMS ─── */}
+          <Section title="WorkoutListItem + FavoriteListItem">
+            <div className="space-y-4">
+              <Subsection label="WorkoutListItem">
+                <WorkoutListItem workout={sampleWorkout} onClick={() => toast.info("Workout clicked")} />
+              </Subsection>
+              <Subsection label="FavoriteListItem">
+                <FavoriteListItem favorite={sampleFavorite} onClick={() => toast.info("Favorite clicked")} />
+              </Subsection>
+            </div>
+          </Section>
+
           {/* ─── ICONOGRAPHY ─── */}
           <Section title="Iconography — CLEAR Icon Set">
             <div className="space-y-6">
@@ -788,6 +980,17 @@ export const ComponentGallery = () => {
           </Section>
 
       </div>
+
+      {showConfirmModal && (
+        <ConfirmationModal
+          title="Confirm Action"
+          description="This is a demo confirmation modal. No action will be taken."
+          confirmLabel="Confirm"
+          cancelLabel="Cancel"
+          onConfirm={() => { setShowConfirmModal(false); toast.success("Confirmed!"); }}
+          onCancel={() => setShowConfirmModal(false)}
+        />
+      )}
     </AppLayout>
   );
 };

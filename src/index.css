@@ -263,16 +263,16 @@
     --surface-error-accent: var(--color-red-alpha-800);
     --surface-info: var(--color-purple-alpha-600);
     --surface-info-accent: var(--color-purple-alpha-800);
-    --surface-radio-selected: var(--color-green-alpha-600);
-    --surface-radio-unselect: var(--color-orange-alpha-100);
-    --surface-radio-text-selected: var(--color-green-alpha-500);
-    --surface-radio-card-unselected: var(--color-orange-alpha-100);
+    --surface-radio-selected: var(--surface-selected);
+    --surface-radio-unselect: var(--surface-unselected);
+    --surface-radio-text-selected: var(--surface-selected);
+    --surface-radio-card-unselected: var(--surface-unselected);
     --surface-select-switch: #FFFFFF;
     --surface-disabled: var(--color-neutral-alpha-300);
     /* Slider surfaces */
     --surface-slider-thumb: var(--color-blue-alpha-900);
     --surface-slider-active: var(--color-orange-alpha-400);
-    --surface-slider-inactive: var(--color-orange-alpha-050);
+    --surface-slider-inactive: var(--surface-unselected);
     /* Input field surfaces */
     --surface-input: var(--color-orange-alpha-100);
     --surface-input-active: var(--color-orange-alpha-200);
@@ -282,12 +282,34 @@
     --surface-timer-low: var(--color-red-alpha-600);
     /* Chip surfaces */
     --surface-chip: var(--color-orange-alpha-400);
-    --surface-chip-selected: var(--color-green-alpha-100);
-    --surface-chip-unselected: var(--color-orange-alpha-050);
+    --surface-chip-selected: var(--surface-selected);
+    --surface-chip-unselected: var(--surface-unselected);
     /* Dropdown surfaces */
     --surface-dropdown: var(--color-orange-alpha-100);
+    /* Tab surfaces */
+    --surface-tab-active: var(--color-brown-800);
+    --surface-tab-inactive: transparent;
     /* Modal overlay */
     --surface-overlay: rgba(23, 23, 23, 0.8);
+
+    /* =========================================================================
+       ARCHIVED: Subtle selected variant (border-only, no fill)
+       Lighter green treatment — green border + green text, minimal bg.
+       Restore by changing universal tokens to these values.
+
+       --surface-selected (alt): var(--color-green-alpha-100);
+       --text-selected (alt): var(--color-green-500);
+       ========================================================================= */
+
+    /* =========================================================================
+       UNIVERSAL STATE BASELINES
+       All selectable components inherit from these. One change cascades everywhere.
+       Component-specific tokens reference these — override sparingly.
+       NOTE: Does NOT affect success/error/info status tokens.
+       ========================================================================= */
+    --surface-selected: var(--color-green-alpha-600);
+    --surface-unselected: var(--color-orange-alpha-100);
+    /* --surface-disabled: already defined above */
 
     /* Borders */
     --border-card: var(--color-orange-500);
@@ -303,11 +325,13 @@
     --border-success: var(--color-green-500);
     --border-error: var(--color-red-500);
     --border-info: var(--color-purple-500);
-    --border-radio-select: var(--color-green-500);
-    --border-radio-unselected: var(--color-orange-alpha-600);
-    --border-radio-text-selected: var(--color-green-500);
-    --border-radio-text-unselected: var(--color-orange-alpha-600);
-    --border-disabled: var(--color-neutral-400);
+    /* Universal state baselines */
+    --border-selected: var(--color-green-500);
+    --border-unselected: var(--color-orange-500);
+    --border-radio-select: var(--border-selected);
+    --border-radio-unselected: var(--border-unselected);
+    --border-radio-text-selected: var(--border-selected);
+    --border-radio-text-unselected: var(--border-unselected);
     /* Slider borders */
     --border-slider: var(--color-orange-500);
     --border-slider-thumb: var(--color-blue-500);
@@ -323,10 +347,13 @@
     --border-timer-low: var(--color-red-500);
     /* Chip borders */
     --border-chip: var(--color-orange-500);
-    --border-chip-selected: var(--color-green-500);
-    --border-chip-unselected: var(--color-orange-alpha-300);
+    --border-chip-selected: var(--border-selected);
+    --border-chip-unselected: var(--border-unselected);
     /* Dropdown borders */
     --border-dropdown: var(--color-orange-500);
+    /* Tab borders */
+    --border-tab-active: var(--color-orange-500);
+    --border-tab-inactive: var(--color-neutral-alpha-300);
 
     /* Text Colors */
     --text-header: var(--color-blue-100);
@@ -347,18 +374,24 @@
     --text-info: var(--color-purple-900);
     --text-disabled: var(--color-neutral-400);
     --text-cta-disabled: var(--color-neutral-400);
-    --text-radio-text-select: var(--color-green-900);
-    --text-radio-text-unselected: var(--color-orange-100);
+    /* Universal state baselines */
+    --text-selected: var(--color-green-900);
+    --text-unselected: var(--color-orange-100);
+    --text-radio-text-select: var(--text-selected);
+    --text-radio-text-unselected: var(--text-unselected);
     --text-input: var(--color-blue-100);
     --text-input-placeholder: var(--color-blue-alpha-400);
     --text-input-disabled: var(--color-neutral-400);
     /* Chip text */
     --text-chip: var(--color-blue-500);
-    --text-chip-selected: var(--color-green-500);
-    --text-chip-unselected: var(--color-orange-300);
+    --text-chip-selected: var(--text-selected);
+    --text-chip-unselected: var(--text-unselected);
     /* Dropdown text */
     --text-dropdown: var(--color-blue-100);
     --text-dropdown-selected: var(--color-blue-500);
+    /* Tab text */
+    --text-tab-active: var(--color-cream-100);
+    --text-tab-inactive: var(--color-brown-400);
     --text-color: #FFFFFF;
 
     /* Icons */
@@ -369,8 +402,11 @@
     --icon-success: var(--color-green-900);
     --icon-error: var(--color-red-900);
     --icon-info: var(--color-purple-900);
-    --icon-radio-selected: var(--color-green-500);
-    --icon-radio-unselected: var(--color-orange-100);
+    /* Universal state baselines */
+    --icon-selected: var(--color-green-900);
+    --icon-unselected: var(--color-orange-100);
+    --icon-radio-selected: var(--icon-selected);
+    --icon-radio-unselected: var(--icon-unselected);
     /* Input field icons */
     --icon-input: var(--color-blue-400);
     --icon-input-disabled: var(--color-neutral-400);
@@ -378,8 +414,8 @@
     --icon-badge: var(--color-orange-500);
     /* Chip icons */
     --icon-chip: var(--color-blue-500);
-    --icon-chip-selected: var(--color-green-500);
-    --icon-chip-unselected: var(--color-orange-300);
+    --icon-chip-selected: var(--icon-selected);
+    --icon-chip-unselected: var(--icon-unselected);
 
     /* Widths (semantic spacing) */
     --width-none: var(--spacing-0);
@@ -439,8 +475,10 @@
     --surface-cta: var(--color-orange-alpha-400);
     --surface-cta-hover: var(--color-orange-alpha-600);
     --surface-cta-accent: var(--color-orange-alpha-600);
-    --surface-radio-unselect: var(--color-blue-alpha-100);
-    --surface-radio-card-unselected: var(--color-blue-alpha-100);
+    /* Universal state baselines - blue theme */
+    --surface-selected: var(--color-green-alpha-600);
+    --surface-unselected: var(--color-blue-alpha-100);
+    /* Radio/chip surfaces cascade from universals — no overrides needed */
     /* CTA Button surfaces - blue theme — primary uses complement (orange) */
     --surface-cta-primary: var(--color-orange-alpha-400);
     --surface-cta-primary-hover: var(--color-orange-alpha-600);
@@ -451,15 +489,18 @@
     /* Slider surfaces - blue theme */
     --surface-slider-thumb: var(--color-orange-alpha-900);
     --surface-slider-active: var(--color-blue-alpha-400);
-    --surface-slider-inactive: var(--color-blue-alpha-050);
+    /* --surface-slider-inactive cascades from --surface-unselected */
     /* Input field surfaces - blue theme */
     --surface-input: var(--color-blue-alpha-100);
     --surface-input-active: var(--color-blue-alpha-200);
     /* Chip surfaces - blue theme */
     --surface-chip: var(--color-blue-alpha-400);
-    --surface-chip-unselected: var(--color-blue-alpha-050);
+    /* --surface-chip-unselected cascades from --surface-unselected */
     /* Dropdown surfaces - blue theme */
     --surface-dropdown: var(--color-blue-alpha-100);
+    /* Tab surfaces - blue theme */
+    --surface-tab-active: var(--color-blue-900);
+    /* --surface-tab-inactive: transparent (inherited) */
     /* Modal overlay */
     --surface-overlay: rgba(23, 23, 23, 0.8);
 
@@ -468,8 +509,10 @@
     --border-heading: var(--color-blue-500);
     --border-cta: var(--color-orange-500);
     --border-cta-hover: var(--color-orange-400);
-    --border-radio-unselected: var(--color-blue-alpha-600);
-    --border-radio-text-unselected: var(--color-blue-alpha-600);
+    /* Universal state baselines - blue theme */
+    --border-selected: var(--color-green-500);
+    --border-unselected: var(--color-blue-500);
+    /* Radio/chip borders cascade from universals — no overrides needed */
     /* CTA Button borders - blue theme — all CTAs use complement (orange) */
     --border-cta-primary: var(--color-orange-500);
     --border-cta-primary-hover: var(--color-orange-400);
@@ -486,9 +529,12 @@
 
     /* Chip borders - blue theme */
     --border-chip: var(--color-blue-500);
-    --border-chip-unselected: var(--color-blue-alpha-300);
+    /* --border-chip-unselected cascades from --border-unselected */
     /* Dropdown borders - blue theme */
     --border-dropdown: var(--color-blue-500);
+    /* Tab borders - blue theme */
+    --border-tab-active: var(--color-blue-500);
+    /* --border-tab-inactive: inherited from root */
 
     /* Icons - blue theme */
     --icon-badge: var(--color-blue-500);
@@ -503,27 +549,36 @@
     --text-on-cta: var(--color-blue-100);
     --text-label-info: var(--color-orange-100);
     --text-label-unselected: var(--color-orange-100);
-    --text-radio-text-unselected: var(--color-blue-100);
+    /* Universal state baselines - blue theme */
+    --text-selected: var(--color-green-900);
+    --text-unselected: var(--color-blue-100);
+    /* Radio/chip text cascades from universals — no overrides needed */
     /* Input field text - blue theme */
     --text-input: var(--color-orange-100);
     --text-input-placeholder: var(--color-orange-alpha-400);
     /* Chip text - blue theme */
     --text-chip: var(--color-orange-500);
-    --text-chip-unselected: var(--color-blue-300);
+    /* --text-chip-unselected cascades from --text-unselected */
     /* Dropdown text - blue theme */
     --text-dropdown: var(--color-orange-100);
     --text-dropdown-selected: var(--color-orange-500);
+    /* Tab text - blue theme */
+    --text-tab-active: var(--color-cream-100);
+    --text-tab-inactive: var(--color-blue-400);
 
     /* Icons */
     --icon-cta: var(--color-orange-500);
     --icon-cta-hover: var(--color-orange-500);
     --icon-on-cta: var(--color-blue-500);
-    --icon-radio-unselected: var(--color-blue-100);
+    /* Universal state baselines - blue theme */
+    --icon-selected: var(--color-green-900);
+    --icon-unselected: var(--color-blue-100);
+    /* Radio/chip icons cascade from universals — no overrides needed */
     /* Input field icons - blue theme */
     --icon-input: var(--color-orange-400);
     /* Chip icons - blue theme */
     --icon-chip: var(--color-orange-500);
-    --icon-chip-unselected: var(--color-blue-300);
+    /* --icon-chip-unselected cascades from --icon-unselected */
 
     /* Legacy mappings for blue theme */
     --primary: var(--color-blue-500);
@@ -1123,10 +1178,21 @@
     }
   }
 
+  /* Tab content enter — stepped opacity, mechanical feel matching materialize */
+  .animate-tab-enter {
+    animation: tab-enter 150ms steps(3, end) both;
+  }
+
+  @keyframes tab-enter {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
   /* Respect user preference — disable all atmospheric animations */
   @media (prefers-reduced-motion: reduce) {
     .pulse-micro { animation: none; }
     .stagger-reveal > * { animation: none; }
+    .animate-tab-enter { animation: none; }
   }
 
   /* =========================================================================

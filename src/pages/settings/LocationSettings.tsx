@@ -107,7 +107,7 @@ export const LocationEditor = ({
       <Card cornerSize="md" padding="md">
         {/* Location Name */}
         <div className="space-y-2 mb-6">
-          <label className="block text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
+          <label className="block text-label-xs uppercase tracking-widest" style={{ color: 'var(--text-card-label)' }}>
             Location Name
           </label>
           <Input

@@ -18,12 +18,14 @@ import { AppLayout } from "@/layouts";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import { Card } from "@/components/Card";
 import { CTAButton } from "@/components/CTAButton";
+import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { fetchWorkoutDetail } from "@/lib/home-data";
 import { Input } from "@/components/ui/input";
 import { isFavorited as checkIsFavorited, saveFavorite, removeFavorite, renameFavorite, getFavoriteDetail } from "@/lib/favorites-api";
 import { queryKeys } from "@/lib/query-keys";
 import { toast } from "@/components/ui/sonner";
 import { useWorkoutFlowContext } from "@/contexts/WorkoutFlowContext";
+import { formatDateTitle } from "@/lib/date-utils";
 import type { LoggedSection, LoggedStructureResult } from "@/types/workout";
 
 const MOOD_ICONS: Record<number, React.FC<IconProps>> = {
@@ -76,36 +78,6 @@ function StructureResultBadge({ result }: { result: LoggedStructureResult }) {
     <p className="text-paragraph-sm mt-1" style={{ color: 'var(--text-timer)' }}>
       {parts.join(' • ')}
     </p>
-  );
-}
-
-/** Unfavorite confirmation modal */
-function UnfavoriteModal({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm"
-      style={{ backgroundColor: 'var(--surface-overlay)' }}
-    >
-      <Card padding="lg" className="mx-4 max-w-sm w-full text-center">
-        <h2
-          className="text-heading-h4 font-bold uppercase tracking-wider mb-2"
-          style={{ color: 'var(--text-header)' }}
-        >
-          Remove from Favorites?
-        </h2>
-        <p className="text-paragraph-sm mb-6" style={{ color: 'var(--text-paragraph)' }}>
-          Tracked data including completion history and personal bests will be lost.
-        </p>
-        <div className="space-y-2">
-          <CTAButton onClick={onConfirm} size="md" fullWidth>
-            Remove
-          </CTAButton>
-          <CTAButton onClick={onCancel} variant="secondary" size="md" fullWidth>
-            Cancel
-          </CTAButton>
-        </div>
-      </Card>
-    </div>
   );
 }
 
@@ -277,14 +249,6 @@ export const SessionDetailScreen = () => {
       navigate("/history", { replace: true });
     }
   }, [isError, workout, isLoading, navigate]);
-
-  const formatDateTitle = (date: Date): string => {
-    return date.toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    }).toUpperCase();
-  };
 
   const handleToggleFavorite = async () => {
     if (!id) return;
@@ -508,9 +472,11 @@ export const SessionDetailScreen = () => {
         )}
       </div>
 
-      {/* Unfavorite confirmation modal */}
       {showUnfavoriteModal && (
-        <UnfavoriteModal
+        <ConfirmationModal
+          title="Remove from Favorites?"
+          description="Tracked data including completion history and personal bests will be lost."
+          confirmLabel="Remove"
           onConfirm={handleConfirmUnfavorite}
           onCancel={() => setShowUnfavoriteModal(false)}
         />

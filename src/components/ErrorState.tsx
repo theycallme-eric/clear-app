@@ -6,6 +6,7 @@ interface ErrorStateProps {
   message?: string;
   onRetry?: () => void;
   className?: string;
+  showLeftColumn?: boolean;
 }
 
 /**
@@ -16,9 +17,10 @@ export const ErrorState = ({
   message = "Something went wrong",
   onRetry,
   className,
+  showLeftColumn,
 }: ErrorStateProps) => {
   return (
-    <Card padding="md" className={cn("text-center", className)}>
+    <Card padding="md" className={cn("text-center", className)} showLeftColumn={showLeftColumn}>
       <p
         className="text-label-sm uppercase tracking-wide mb-2"
         style={{ color: 'var(--text-header)' }}
