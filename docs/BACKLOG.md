@@ -93,6 +93,12 @@ Nice to have. Address when time permits or for future versions.
   - Added: 2026-03-05
   - Context: Removed from `generate-workout/prompt.ts` and `generate-section/index.ts` output schemas to reduce output tokens and speed up generation. Regression was kept. To restore: add `"coaching_cues": ["array of coaching cue strings"],` back to each prompt's output schema. Frontend (`ExerciseCard.tsx`) already renders them conditionally — no UI changes needed. DB column still exists.
 
+- [ ] **Dev-only gate for devtools** - Hide ComponentGallery and other dev tools behind `import.meta.env.DEV` so they're excluded from production builds
+  - Priority: Low
+  - Type: Tech Debt
+  - Added: 2026-03-10
+  - Context: Gallery is useful during development but shouldn't ship to users. Gate the route registration so it's tree-shaken out of prod builds. Apply same pattern to any future dev tooling.
+
 - [ ] **Dropdown click-outside dismiss** - ChamferedFrame filter dropdowns stay open when clicking outside
   - Priority: Low
   - Type: Enhancement
