@@ -97,6 +97,11 @@ interface RecentWorkout {
 // HELPER FUNCTIONS
 // ============================================
 
+interface MuscleGroupEntry {
+  muscle: string;
+  role: 'primary' | 'synergist' | 'stabilizer';
+}
+
 interface ExerciseDefinition {
   id: string;
   name: string;
@@ -109,6 +114,107 @@ interface ExerciseDefinition {
   equipment_display_names: Record<string, string> | null;
   anchors: string[] | null; // All anchors this exercise belongs to
   primary_anchor: string | null; // The main anchor for this exercise
+  muscle_groups: MuscleGroupEntry[] | null; // Muscle group data
+}
+
+interface CoverageEntry {
+  muscle_group: string;
+  primary_count: number;
+  synergist_count: number;
+  last_date: string | null;
+}
+
+async function buildCoverageContext(
+  supabase: ReturnType<typeof createClient>,
+  userId: string
+): Promise<CoverageEntry[]> {
+  // Get completed sessions from the last 7 days
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const cutoff = sevenDaysAgo.toISOString().split('T')[0];
+
+  const { data: sessions } = await supabase
+    .from('workout_sessions')
+    .select(`
+      date,
+      workout_sections (
+        exercises (
+          exercise_id
+        )
+      )
+    `)
+    .eq('user_id', userId)
+    .eq('status', 'completed')
+    .gte('date', cutoff)
+    .order('date', { ascending: false });
+
+  if (!sessions?.length) return [];
+
+  // Collect all exercise IDs with their dates
+  const exerciseDates: { exercise_id: string; date: string }[] = [];
+  for (const session of sessions) {
+    for (const section of session.workout_sections || []) {
+      for (const exercise of (section as any).exercises || []) {
+        exerciseDates.push({ exercise_id: exercise.exercise_id, date: session.date });
+      }
+    }
+  }
+
+  if (!exerciseDates.length) return [];
+
+  // Get muscle groups for these exercises
+  const uniqueExIds = [...new Set(exerciseDates.map(e => e.exercise_id))];
+  const { data: muscleData } = await supabase
+    .from('exercise_muscle_groups')
+    .select('exercise_id, muscle_group, role')
+    .in('exercise_id', uniqueExIds);
+
+  if (!muscleData?.length) return [];
+
+  // Build a map: exercise_id -> muscle groups
+  const exMuscleMap = new Map<string, { muscle_group: string; role: string }[]>();
+  for (const row of muscleData) {
+    if (!exMuscleMap.has(row.exercise_id)) exMuscleMap.set(row.exercise_id, []);
+    exMuscleMap.get(row.exercise_id)!.push({ muscle_group: row.muscle_group, role: row.role });
+  }
+
+  // Aggregate coverage
+  const coverage = new Map<string, { primary: number; synergist: number; lastDate: string | null }>();
+
+  for (const { exercise_id, date } of exerciseDates) {
+    const muscles = exMuscleMap.get(exercise_id) || [];
+    for (const { muscle_group, role } of muscles) {
+      if (!coverage.has(muscle_group)) {
+        coverage.set(muscle_group, { primary: 0, synergist: 0, lastDate: null });
+      }
+      const entry = coverage.get(muscle_group)!;
+      if (role === 'primary') entry.primary++;
+      else if (role === 'synergist') entry.synergist++;
+      if (!entry.lastDate || date > entry.lastDate) entry.lastDate = date;
+    }
+  }
+
+  return Array.from(coverage.entries()).map(([muscle_group, data]) => ({
+    muscle_group,
+    primary_count: data.primary,
+    synergist_count: data.synergist,
+    last_date: data.lastDate,
+  })).sort((a, b) => b.primary_count - a.primary_count);
+}
+
+function formatCoverageForPrompt(coverage: CoverageEntry[]): string {
+  if (!coverage.length) return '';
+
+  const today = new Date();
+  const lines = coverage.map(c => {
+    const daysAgo = c.last_date
+      ? Math.round((today.getTime() - new Date(c.last_date).getTime()) / (1000 * 60 * 60 * 24))
+      : null;
+    const lastStr = daysAgo !== null ? `last: ${daysAgo}d ago` : 'not hit';
+    return `- ${c.muscle_group}: ${c.primary_count}x primary, ${c.synergist_count}x synergist (${lastStr})`;
+  }).join('\n');
+
+  return `\nWEEKLY COVERAGE (last 7 days):\n${lines}`;
 }
 
 function buildUserPrompt(
@@ -116,7 +222,8 @@ function buildUserPrompt(
   location: Location,
   request: GenerationRequest,
   recentWorkouts: RecentWorkout[],
-  availableExercises: ExerciseDefinition[]
+  availableExercises: ExerciseDefinition[],
+  coverageContext: string
 ): string {
   const recentAnchors = recentWorkouts.map((w) => w.anchor).join(', ') || 'None';
   const recentExercises = [...new Set(recentWorkouts.flatMap((w) => w.exercise_ids))]
@@ -127,14 +234,17 @@ function buildUserPrompt(
   const exerciseListStr = availableExercises.map((ex) => {
     const equipStr = ex.equipment_options.join(', ');
     const sectionsStr = ex.sections.join(', ');
-    const cuesStr = ex.coaching_cues?.join('; ') || '';
     // [PRIMARY] only applies to barbell variants of consolidated exercises
     const hasBarbellOption = ex.equipment_options.includes('barbell');
-    const primaryStr = ex.can_be_primary && hasBarbellOption ? ' [PRIMARY w/barbell]' : '';
-    const regressionStr = ex.regression ? ` regression:${ex.regression}` : '';
+    const primaryStr = ex.can_be_primary && hasBarbellOption ? '[PRIMARY w/barbell] ' : '';
+    const regressionStr = ex.regression ? ` | regression:${ex.regression}` : '';
     // Include anchors so Claude knows which exercises work for which focus
-    const anchorsStr = ex.anchors?.length ? ` anchors:[${ex.anchors.join(', ')}]` : '';
-    return `  ${ex.id} | ${ex.name} | equipment:[${equipStr}] | sections:[${sectionsStr}]${primaryStr}${anchorsStr}${regressionStr} | cues:[${cuesStr}]`;
+    const anchorsStr = ex.anchors?.length ? ` | anchors:[${ex.anchors.join(',')}]` : '';
+    // Include muscle groups for intelligent exercise selection
+    const musclesStr = ex.muscle_groups?.length
+      ? ` | muscles:[${ex.muscle_groups.map(m => `${m.muscle}:${m.role}`).join(',')}]`
+      : '';
+    return `  ${ex.id} | ${ex.name} | equipment:[${equipStr}] | sections:[${sectionsStr}] ${primaryStr}${anchorsStr}${musclesStr}${regressionStr}`;
   }).join('\n');
 
   const goal = request.goal || 'balanced';
@@ -156,7 +266,7 @@ WORKOUT REQUEST:
 RECENT HISTORY (avoid repeating):
 - Last 3 anchors: ${recentAnchors}
 - Recent exercises to vary from: ${recentExercises}
-
+${coverageContext}
 EXERCISE LIBRARY (you MUST only use exercise_id values from this list):
 ${exerciseListStr}
 
@@ -367,7 +477,7 @@ serve(async (req: Request) => {
     // Try to fetch profile from DB if available
     const { data: dbProfile } = await supabase
       .from('profiles')
-      .select('experience_level, limitations, enabled_sections')
+      .select('experience_level, limitations, enabled_sections, goal_preset')
       .eq('id', user.id)
       .single();
 
@@ -377,6 +487,10 @@ serve(async (req: Request) => {
         limitations: request.limitations || dbProfile.limitations || null,
         enabled_sections: request.enabled_sections || dbProfile.enabled_sections || profile.enabled_sections,
       };
+      // Read goal from profile if not provided in request
+      if (!request.goal && dbProfile.goal_preset) {
+        request.goal = dbProfile.goal_preset as GoalType;
+      }
     }
 
     // Get location/equipment - either from DB or direct from request
@@ -432,7 +546,7 @@ serve(async (req: Request) => {
     // Use the view that includes all anchors (primary and secondary)
     const { data: exerciseDefinitions } = await supabase
       .from('exercise_definitions_with_anchors')
-      .select('id, name, equipment_options, default_equipment, sections, coaching_cues, regression, can_be_primary, equipment_display_names, anchors, primary_anchor');
+      .select('id, name, equipment_options, default_equipment, sections, coaching_cues, regression, can_be_primary, equipment_display_names, anchors, primary_anchor, muscle_groups');
 
     // Build available equipment set (always include bodyweight)
     const availableEquipment = new Set([...location.equipment, 'bodyweight']);
@@ -458,13 +572,18 @@ serve(async (req: Request) => {
 
     const exerciseLibrary = new Set((exerciseDefinitions || []).map((e: any) => e.id));
 
+    // Build weekly muscle group coverage context
+    const coverage = await buildCoverageContext(supabase, user.id);
+    const coverageContext = formatCoverageForPrompt(coverage);
+
     // Build prompts
     const userPrompt = buildUserPrompt(
       profile as UserProfile,
       location as Location,
       request,
       recentWorkouts,
-      availableExercises as ExerciseDefinition[]
+      availableExercises as ExerciseDefinition[],
+      coverageContext
     );
 
     // Call Claude API
@@ -513,7 +632,7 @@ serve(async (req: Request) => {
       JSON.stringify({
         workout,
         metadata: {
-          prompt_version: 'v3.0.0',
+          prompt_version: 'v3.1.0',
           generated_at: new Date().toISOString(),
           request: {
             intensity: request.intensity,

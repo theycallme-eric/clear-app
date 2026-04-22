@@ -202,6 +202,7 @@ User-invocable shortcuts. Files in `.claude/commands/`.
 | `/process-plans` | | Move plans from ~/.claude/plans/ to project |
 | `/ticket` | `[create\|pull\|view\|close\|board\|sync]` | Manage GitHub Issue tickets |
 | `/close-session` | | Log session work, close tickets, process notes |
+| `/test-generation` | `[N\|sweep\|anchor/goal@intensity]` | Headless workout generation testing |
 
 ---
 
@@ -302,6 +303,7 @@ debug.md → [fix] → token-check.md (if UI) → pr-workflow.md
 │   ├── process-inbox.md
 │   ├── process-plans.md   ← /process-plans (import from ~/.claude/plans/)
 │   ├── close-session.md   ← /close-session (log work, process tickets)
+│   ├── test-generation.md ← /test-generation [N|sweep|anchor/goal]
 │   ├── ticket.md          ← /ticket [create|pull|view|close|board|sync]
 │   └── todo.md
 │

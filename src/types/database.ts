@@ -1,3 +1,38 @@
+Connecting to db 5432
+v0.96.4: Pulling from supabase/postgres-meta
+2705dbac373a: Pulling fs layer
+1dbbb2db815c: Pulling fs layer
+c8f3ed040281: Pulling fs layer
+1e2be9f8a111: Pulling fs layer
+78e1f2f65955: Pulling fs layer
+f6bc6564f93a: Pulling fs layer
+f4c396aa930d: Pulling fs layer
+9c6243177b72: Pulling fs layer
+53fdaf778fe7: Pulling fs layer
+49981ae38b77: Pulling fs layer
+dd0e679da763: Download complete
+49981ae38b77: Download complete
+9c6243177b72: Download complete
+c8f3ed040281: Download complete
+f6bc6564f93a: Download complete
+2705dbac373a: Download complete
+78e1f2f65955: Download complete
+f4c396aa930d: Download complete
+1e2be9f8a111: Download complete
+53fdaf778fe7: Download complete
+1dbbb2db815c: Download complete
+c8f3ed040281: Pull complete
+1dbbb2db815c: Pull complete
+9c6243177b72: Pull complete
+f6bc6564f93a: Pull complete
+78e1f2f65955: Pull complete
+f4c396aa930d: Pull complete
+1e2be9f8a111: Pull complete
+49981ae38b77: Pull complete
+53fdaf778fe7: Pull complete
+2705dbac373a: Pull complete
+Digest: sha256:4dd3e0ff3e9a0f9f62dd1a1a827f124645549b439ddb2a53598575744585e32d
+Status: Downloaded newer image for public.ecr.aws/supabase/postgres-meta:v0.96.4
 export type Json =
   | string
   | number
@@ -151,6 +186,39 @@ export type Database = {
           {
             foreignKeyName: "exercise_definitions_regression_fkey"
             columns: ["regression"]
+            isOneToOne: false
+            referencedRelation: "exercise_definitions_with_anchors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exercise_muscle_groups: {
+        Row: {
+          exercise_id: string
+          muscle_group: string
+          role: string
+        }
+        Insert: {
+          exercise_id: string
+          muscle_group: string
+          role: string
+        }
+        Update: {
+          exercise_id?: string
+          muscle_group?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_muscle_groups_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercise_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_muscle_groups_exercise_id_fkey"
+            columns: ["exercise_id"]
             isOneToOne: false
             referencedRelation: "exercise_definitions_with_anchors"
             referencedColumns: ["id"]
@@ -662,6 +730,7 @@ export type Database = {
           equipment_display_names: Json | null
           equipment_options: string[] | null
           id: string | null
+          muscle_groups: Json | null
           name: string | null
           pattern_id: string | null
           primary_anchor: Database["public"]["Enums"]["anchor_type"] | null

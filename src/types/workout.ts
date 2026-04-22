@@ -81,7 +81,7 @@ export const GOAL_PRESETS: { value: GoalPreset; label: string; description: stri
   { value: 'strength', label: 'Strength', description: 'Heavy lifts, long rest' },
   { value: 'hypertrophy', label: 'Hypertrophy', description: 'Volume & time under tension' },
   { value: 'conditioning', label: 'Conditioning', description: 'Circuits, AMRAPs, keep moving' },
-  { value: 'balanced', label: 'Balanced', description: 'A bit of everything' },
+  { value: 'balanced', label: 'Balanced', description: 'Strength + mobility + conditioning. Adapts to your week.' },
   { value: 'active_recovery', label: 'Recovery', description: 'Gentle movement & mobility' },
 ];
 
@@ -205,10 +205,10 @@ export interface GeneratedWorkout {
 }
 
 // Generation parameters (what user selects before generating)
+// Goal is read from user profile, not selected per-workout
 export interface WorkoutParams {
   intensity: number;
   anchor: AnchorType | null;
-  goal: GoalPreset | null;
   location: string;
   time: string;
   notes: string;
