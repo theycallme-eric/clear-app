@@ -185,6 +185,22 @@ Code quality, refactoring, cleanup.
 
 - [x] **Codebase streamline** - TypeScript strict mode, logger standardization, god file splits, dependency cleanup, error boundaries, React Query, test infra (PR #7)
 - [x] **Refactor Index.tsx** - Replaced by react-router-dom routes + auth guards. Index.tsx deleted. (Completed 2026-03-03)
+- [x] **Design token audit** - Eliminate all primitive refs from components, fix fabricated brown/cream tokens, add semantic tokens, sync figma-design-tokens.json
+  - Priority: High
+  - Type: Tech Debt
+  - Added: 2026-04-22
+  - Completed: 2026-04-22
+  - Context: Full audit found ~20 files using primitives directly. Added 13 new semantic tokens, deleted 17 unused, removed fabricated brown/cream tokens. Zero visual changes. Prevention rules added to CLAUDE.md.
+- [ ] **Remove Tailwind CSS** - Replace all Tailwind utility classes with CSS custom properties and vanilla CSS
+  - Priority: Medium
+  - Type: Tech Debt
+  - Added: 2026-04-22
+  - Context: ~67 files use Tailwind (mostly layout utilities). 12 shadcn/ui files use Tailwind color tokens. Session plan at `.claude/plans/SESSION_PLAN_tailwind_removal.md`. Estimate 2-3 sessions.
+- [ ] **Design system extraction** - Complete platform-agnostic design system in `design-system/` directory
+  - Priority: Medium
+  - Type: Tech Debt
+  - Added: 2026-04-22
+  - Context: Token files need re-verification, component specs and design guides not yet written. Session plan at `.claude/plans/SESSION_PLAN_design_system_extraction.md`. Should be done after Tailwind removal.
 
 ---
 

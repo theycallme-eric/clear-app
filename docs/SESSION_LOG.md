@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-03-09 (12th session)
+**Last Session:** 2026-04-22 (13th session)
 
 ---
 
@@ -13,14 +13,69 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Component Consolidation & TabbedPanel
-**Current Task:** PR #17 open — component consolidation + TabbedPanel
-**Last Completed:** TabbedPanel compound component, 7 reusable component extractions, design token cleanup
+**Current Phase:** Design System Hardening
+**Current Task:** Tailwind removal + design system re-extraction (session plans created)
+**Last Completed:** Full token audit — zero primitive refs in components, fabricated tokens removed, 13 new semantics added
 **Blocking Issues:** None
 
 ---
 
 ## Session Entries
+
+### Session: 2026-04-22 - Design Token Audit & System Hardening
+
+**Duration:** ~3 hours
+**Mode:** Claude Code
+**Branch:** `feature/tailwind-removal`
+
+#### What Got Done
+- **Token audit**: Systematically found and eliminated every primitive token reference in components (~20 files). All now use semantic tokens — zero visual changes.
+- **Fabricated token cleanup**: Removed `brown-800`, `brown-400`, `cream-100` — tokens invented by a prior Claude session from misinterpreting alpha-transparent orange in screenshots. Replaced with correct `orange-800`, `orange-400`, `orange-100` (and `blue-100` in blue theme).
+- **13 new semantic tokens**: `--border-subtle`, `--text-cta-destructive/hover`, `--text-info-light`, `--surface-skeleton`, `--text-error-light`, `--text-muted`, `--surface-muted`, `--brand-primary/glow-strong/glow-medium/glow-subtle/border`.
+- **17 unused tokens deleted**: Pre-refactor orphans (`--surface-cta`, `--surface-select-switch`), over-engineered variants (`--surface-radio-text-selected`), wrong-paradigm imports (`--icon-success/error/info`), unused scales (all `--width-*`).
+- **5 redundant blue overrides removed**: `--surface-selected`, `--border-selected`, `--text-selected`, `--icon-selected`, `--surface-cta-secondary-disabled` — all identical to root values (copy-paste artifacts).
+- **StructureSettings chip replacement**: Swapped hand-built chip buttons with the reusable `Chip` component.
+- **figma-design-tokens.json rewritten**: Full rewrite from clean CSS source of truth. Fixed swapped CTA mappings, wrong alpha values, stale tokens.
+- **Stale files removed**: Deleted `clear-design-tokens.json` (wrong palette, wrong fonts), deleted `DevTokenAudit.tsx` temporary page.
+- **Prevention rule added**: CLAUDE.md now has "never invent primitives" and "primitives only referenced by semantics" rules.
+- **Session plans created**: `SESSION_PLAN_tailwind_removal.md` and `SESSION_PLAN_design_system_extraction.md` for follow-up work.
+
+#### What Came Up (Unexpected)
+- The brown/cream tokens were completely fabricated by a prior Claude session — they interpreted alpha-transparent orange as brown/cream in a screenshot. Highlights the need for the "never invent primitives" rule.
+- AppErrorFallback and ClearLogo were initially considered exceptions to the "no primitives" rule, but the user explicitly wanted zero exceptions — "in an almost artistic way."
+- The figma-design-tokens.json had the CTA structure/interaction model backwards — it was using structure color for CTAs instead of the complement color.
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Zero exceptions to semantic-only rule | User wanted the standard to be absolute — even error fallbacks and brand logos use semantics |
+| Brand tokens (`--brand-*`) for ClearLogo | Logo is theme-independent (always orange) but still needs semantic indirection |
+| Use `--surface-disabled` for Checkbox dot | Matches the role (inactive indicator) better than raw neutral-400 |
+| Tailwind removal as separate effort | ~67 files, 2-3 sessions. Token audit was already large enough. |
+| Design system extraction after Tailwind removal | Cleaner extraction without Tailwind artifacts in the CSS |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/index.css` | Modified — fixed tab tokens, added 13 semantics, deleted 17 unused, removed 5 redundant blue overrides |
+| `src/components/*.tsx` (12 files) | Modified — swapped primitive refs to semantic tokens |
+| `src/pages/*.tsx` (7 files) | Modified — swapped `neutral-900` to `--background` in gradients |
+| `src/pages/settings/StructureSettings.tsx` | Modified — replaced hand-built chips with Chip component |
+| `src/pages/settings/SettingsHub.tsx` | Modified — red primitives to `--text-cta-destructive` |
+| `docs/frontend/figma-design-tokens.json` | Rewritten — full sync with code as source of truth |
+| `docs/frontend/clear-design-tokens.json` | Deleted — severely stale |
+| `src/pages/DevTokenAudit.tsx` | Deleted — temporary audit visualization page |
+| `CLAUDE.md` | Modified — added primitive invention prevention rules |
+| `design-system/tokens/themes/*.json` | Modified — fixed brown/cream refs, added new tokens |
+| `.claude/plans/SESSION_PLAN_tailwind_removal.md` | Created — full execution plan |
+| `.claude/plans/SESSION_PLAN_design_system_extraction.md` | Created — full execution plan |
+
+#### Status
+- Build passes, TypeScript clean
+- 2 commits on `feature/tailwind-removal` branch
+- Next: Tailwind removal (`/execute SESSION_PLAN_tailwind_removal`), then design system extraction
+
+---
 
 ### Session: 2026-03-09 - Component Consolidation & TabbedPanel
 
