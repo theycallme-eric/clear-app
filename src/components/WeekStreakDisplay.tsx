@@ -59,7 +59,7 @@ export function WeekStreakDisplay({
             >
               <div
                 className="w-full h-full flex items-center justify-center text-label-sm"
-                style={{ color: isWorkout ? 'var(--text-label-selected)' : isRest ? 'var(--color-purple-500)' : 'var(--text-disabled)' }}
+                style={{ color: isWorkout ? 'var(--text-label-selected)' : isRest ? 'var(--text-info-light)' : 'var(--text-disabled)' }}
               >
                 {isWorkout ? "\u25CF" : isRest ? "\u25D0" : "\u25CB"}
               </div>

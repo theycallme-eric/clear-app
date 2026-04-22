@@ -54,7 +54,7 @@ export function FilterDropdown<T extends string>({
         cornerSize="sm"
         hasLeftBorder
         surfaceColor={isActive || open ? 'var(--surface-card-accent)' : 'transparent'}
-        borderColor={isActive || open ? 'var(--border-card)' : 'var(--color-neutral-alpha-300)'}
+        borderColor={isActive || open ? 'var(--border-card)' : 'var(--border-subtle)'}
       >
         <button
           onClick={() => setOpen(!open)}
@@ -120,7 +120,7 @@ export function FilterToggle({
       cornerSize="sm"
       hasLeftBorder
       surfaceColor={active ? 'var(--surface-card-accent)' : 'transparent'}
-      borderColor={active ? 'var(--border-card)' : 'var(--color-neutral-alpha-300)'}
+      borderColor={active ? 'var(--border-card)' : 'var(--border-subtle)'}
       className={className}
     >
       <button

@@ -89,6 +89,7 @@ START
   ├─► Ready to merge code? → /pr
   ├─► Implementing a Figma design? → agent: figma-ui-implementer
   ├─► Reviewing code quality? → agent: code-reviewer
+  ├─► Testing workout generation? → /test-generation
   ├─► Given a session plan? → /execute [plan-name]
   └─► Finished all tasks? → /close-session
 ```
@@ -107,8 +108,9 @@ Enforced by hooks. Violations will be blocked.
 ### Design System
 - **Pre-flight is mandatory** — run `component.md` pre-flight before ANY UI work
 - **Build on what exists** — check `ComponentGallery.tsx` and `src/components/` FIRST. Extend with new props/variants before creating new components.
-- **No hardcoded colors** — use semantic tokens `var(--surface-*)`, `var(--text-*)`, etc. Never primitive tokens (`var(--color-orange-500)`) in components.
-- **Create tokens when needed** — add to both themes in `src/index.css`. Name by role, not by component.
+- **No hardcoded colors** — use semantic tokens `var(--surface-*)`, `var(--text-*)`, etc. Never primitive tokens (`var(--color-orange-500)`) in components. No exceptions — even error fallbacks and brand logos use semantics.
+- **Never invent primitives** — only reference color primitives that already exist in `src/index.css`. If a color doesn't exist in the palette, it's wrong. Check the file before adding new primitive tokens.
+- **Create tokens when needed** — add to both themes in `src/index.css`. Name by role, not by component. Primitives are only referenced by semantic tokens, never by components directly.
 - **No hardcoded spacing** — use the spacing scale from `ui-rules.md`
 - **Reusable by default** — if a pattern is generic (tabs, modals, dropdowns, list items), make it a reusable component on first creation
 - **Consistent states** — every interactive element needs: default, hover, selected (if applicable), disabled
@@ -160,6 +162,7 @@ Before considering work complete:
 | `/todo` | Check the todo board |
 | `/process-inbox` | Process files in `.claude/inbox/` |
 | `/process-plans` | Import plans from `~/.claude/plans/` to project |
+| `/test-generation` | Headless workout generation testing |
 | `/close-session` | Log session work and update backlog |
 
 ---

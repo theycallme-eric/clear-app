@@ -217,8 +217,8 @@ export const ComponentGallery = () => {
               <ColorSwatch name="accent" style={{ backgroundColor: 'var(--color-blue-500)' }} />
               <ColorSwatch name="fg" style={{ backgroundColor: 'var(--text-header)' }} />
               <ColorSwatch name="muted" style={{ backgroundColor: 'var(--text-paragraph)' }} />
-              <ColorSwatch name="bg" style={{ backgroundColor: 'var(--color-neutral-900)', border: '1px solid var(--color-neutral-alpha-300)' }} />
-              <ColorSwatch name="card" style={{ backgroundColor: 'var(--surface-card)', border: '1px solid var(--color-neutral-alpha-300)' }} />
+              <ColorSwatch name="bg" style={{ backgroundColor: 'var(--background)', border: '1px solid var(--border-subtle)' }} />
+              <ColorSwatch name="card" style={{ backgroundColor: 'var(--surface-card)', border: '1px solid var(--border-subtle)' }} />
             </div>
           </Section>
 

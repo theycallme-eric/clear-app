@@ -189,7 +189,7 @@ export const SettingsHub = ({
       {/* Sign Out */}
       <div
         className="pt-4"
-        style={{ '--text-cta': 'var(--color-red-400)', '--text-cta-hover': 'var(--color-red-300)' } as React.CSSProperties}
+        style={{ '--text-cta': 'var(--text-cta-destructive)', '--text-cta-hover': 'var(--text-cta-destructive-hover)' } as React.CSSProperties}
       >
         <CTAButton
           onClick={onSignOutRequest}

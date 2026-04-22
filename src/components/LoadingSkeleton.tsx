@@ -13,8 +13,8 @@ interface SkeletonCardProps {
 export const SkeletonCard = ({ className, showLeftColumn }: SkeletonCardProps) => {
   return (
     <Card className={cn("animate-pulse", className)} cornerSize="sm" padding="md" showLeftColumn={showLeftColumn}>
-      <div className="h-4 w-3/4 mb-2" style={{ backgroundColor: 'var(--color-neutral-alpha-100)' }} />
-      <div className="h-3 w-1/2" style={{ backgroundColor: 'var(--color-neutral-alpha-100)' }} />
+      <div className="h-4 w-3/4 mb-2" style={{ backgroundColor: 'var(--surface-skeleton)' }} />
+      <div className="h-3 w-1/2" style={{ backgroundColor: 'var(--surface-skeleton)' }} />
     </Card>
   );
 };

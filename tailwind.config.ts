@@ -70,22 +70,6 @@ export default {
           DEFAULT: "var(--card)",
           foreground: "var(--card-foreground)",
         },
-        // Clear brand colors - mapped to new token system
-        clear: {
-          // Primary accent
-          orange: "var(--color-orange-500)",
-          // Secondary (was purple, now blue)
-          purple: "var(--color-blue-500)",
-          // Success/low intensity (lime → green)
-          lime: "var(--color-green-500)",
-          // Error/high intensity
-          rose: "var(--color-red-500)",
-          // Info
-          indigo: "var(--color-purple-500)",
-          // Neutrals
-          offwhite: "var(--color-neutral-50)",
-          dark: "var(--color-neutral-900)",
-        },
       },
       fontFamily: {
         // Figma-aligned naming
@@ -112,7 +96,7 @@ export default {
           to: { height: "0" },
         },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 8px var(--color-orange-alpha-300)" },
+          "0%, 100%": { boxShadow: "0 0 8px var(--brand-glow-medium)" },
           "50%": { boxShadow: "0 0 16px var(--color-orange-alpha-500)" },
         },
       },

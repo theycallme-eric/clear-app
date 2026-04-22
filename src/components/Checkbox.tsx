@@ -60,7 +60,7 @@ export function Checkbox({
           ) : (
             <div
               className="w-1.5 h-1.5 rounded-full"
-              style={{ backgroundColor: "var(--color-neutral-400)" }}
+              style={{ backgroundColor: "var(--surface-disabled)" }}
             />
           )}
         </div>

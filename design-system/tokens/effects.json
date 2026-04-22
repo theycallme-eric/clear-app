@@ -1,0 +1,114 @@
+{
+  "$description": "CLEAR Design System — Effect tokens. Atmospheric elements that make the system feel alive. Applied as seasoning, not the main course.",
+
+  "scanlines": {
+    "$description": "Faint horizontal lines overlaid on surfaces. Creates 'this is a display, not a window' feeling. Reference: Alien CRTs, Cyberpunk 2077 panel overlays.",
+    "pattern": {
+      "$description": "Repeating gradient: 2px transparent, 2px white at 8% opacity",
+      "lineHeight": { "$value": "4px", "$type": "dimension" },
+      "lineWidth": { "$value": "2px", "$type": "dimension" },
+      "lineColor": { "$value": "rgba(255, 255, 255, 0.08)", "$type": "color" }
+    },
+    "globalOpacity": { "$value": 0.10, "$type": "number", "$description": "Full-screen scanline layer" },
+    "surfaceOpacity": { "$value": 0.12, "$type": "number", "$description": "Per-surface scanline overlay (buttons, cards)" }
+  },
+
+  "grain": {
+    "$description": "SVG fractal noise texture overlay. Subtle film grain that adds imperfection.",
+    "opacity": { "$value": 0.03, "$type": "number" },
+    "baseFrequency": { "$value": 0.9, "$type": "number" },
+    "octaves": { "$value": 4, "$type": "number" }
+  },
+
+  "darkOverlay": {
+    "$description": "Dark scrim between animated background and content. Ensures readability.",
+    "color": { "$value": "rgba(23, 23, 23, 0.35)", "$type": "color" }
+  },
+
+  "glow": {
+    "$description": "Subtle light emission on key elements. Makes elements feel emissive, not painted. Uses currentColor adaptation. Reference: Alien phosphor persistence, Eva active-status indicators.",
+    "emissive": {
+      "$description": "text-shadow glow for data readouts and emphasis",
+      "blur": { "$value": "6px", "$type": "dimension" },
+      "colorMix": { "$value": "25%", "$description": "currentColor mixed at 25% opacity" }
+    },
+    "strong": {
+      "$description": "Stronger glow for hero elements (logo, timer, streak numbers)",
+      "blur": { "$value": "10px", "$type": "dimension" }
+    }
+  },
+
+  "pulse": {
+    "$description": "Micro-pulse — barely perceptible brightness oscillation on structural elements. Stepped timing to match mechanical motion language. Reference: Star Wars indicator lights, Eva nominal-status pulses.",
+    "duration": { "$value": "4s", "$type": "duration" },
+    "minOpacity": { "$value": 0.85, "$type": "number" },
+    "maxOpacity": { "$value": 1.0, "$type": "number" },
+    "steps": { "$value": 2, "$type": "number", "$description": "Stepped, not smooth" }
+  },
+
+  "staggerReveal": {
+    "$description": "Children materialize in sequence on page load. Mechanical timing: stepped, not smooth. Reference: Alien character-by-character text, Blade Runner stepped zoom.",
+    "itemDuration": { "$value": "200ms", "$type": "duration" },
+    "itemDelay": { "$value": "60ms", "$type": "duration", "$description": "Delay between each child" },
+    "steps": { "$value": 3, "$type": "number" },
+    "translateY": { "$value": "6px", "$type": "dimension", "$description": "Starting offset before materializing" },
+    "maxItems": { "$value": 8, "$type": "number", "$description": "Max children that get stagger delay" }
+  },
+
+  "tabEnter": {
+    "$description": "Tab content enter animation. Stepped opacity, mechanical feel.",
+    "duration": { "$value": "150ms", "$type": "duration" },
+    "steps": { "$value": 3, "$type": "number" }
+  },
+
+  "ghostButton": {
+    "$description": "Transparent button with inset glow. Structure color border + subtle inner radiance.",
+    "borderOpacity": { "$value": 0.50, "$type": "number", "$description": "Border uses structure-alpha-500" },
+    "glowBlur": { "$value": "8px", "$type": "dimension" },
+    "glowBlurHover": { "$value": "12px", "$type": "dimension" },
+    "glowOpacity": { "$value": 0.10, "$type": "number" },
+    "glowOpacityHover": { "$value": 0.20, "$type": "number" }
+  },
+
+  "background": {
+    "$description": "Animated gradient blob system. Drifting, overlapping radial gradients create a living backdrop.",
+    "blobs": [
+      {
+        "name": "amber",
+        "color": "rgba(255, 191, 61, 0.40)",
+        "edgeColor": "rgba(255, 191, 61, 0.15)",
+        "animationDuration": "15s"
+      },
+      {
+        "name": "blue",
+        "color": "rgba(1, 71, 111, 0.65)",
+        "edgeColor": "rgba(1, 71, 111, 0.25)",
+        "animationDuration": "17.5s"
+      },
+      {
+        "name": "cyan",
+        "color": "rgba(43, 163, 231, 0.18)",
+        "edgeColor": "rgba(43, 163, 231, 0.06)",
+        "animationDuration": "12.5s"
+      },
+      {
+        "name": "dark",
+        "color": "rgba(10, 10, 10, 0.6)",
+        "edgeColor": "rgba(23, 23, 23, 0.3)",
+        "animationDuration": "20s"
+      }
+    ]
+  },
+
+  "motion": {
+    "$description": "Global motion principles. Mechanical, not organic. Stepped, not eased.",
+    "transitionFast": { "$value": "150ms", "$type": "duration", "$description": "Tab enters, quick state flips" },
+    "transitionDefault": { "$value": "200ms", "$type": "duration", "$description": "Most hover/state transitions" },
+    "transitionSlow": { "$value": "1000ms", "$type": "duration", "$description": "ChamferedFrame color breathe — the one atmospheric exception" },
+    "easing": {
+      "mechanical": { "$value": "linear", "$description": "Default — no easing curve" },
+      "breathe": { "$value": "ease", "$description": "Only for ChamferedFrame 1s color transitions" },
+      "stepped": { "$value": "steps(3, end)", "$description": "Materialize/reveal animations" }
+    }
+  }
+}

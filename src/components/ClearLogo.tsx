@@ -130,9 +130,9 @@ export const ClearLogo = ({
           top: phase === "idle" ? "0%" : phase === "done" ? SCAN_POSITION : undefined,
           opacity: phase === "idle" ? 0 : 1,
           zIndex: 3,
-          background: "var(--color-orange-500)",
+          background: "var(--brand-primary)",
           boxShadow:
-            "0 0 8px var(--color-orange-alpha-600), 0 0 20px var(--color-orange-alpha-300), 0 0 40px var(--color-orange-alpha-100)",
+            "0 0 8px var(--brand-glow-strong), 0 0 20px var(--brand-glow-medium), 0 0 40px var(--brand-glow-subtle)",
         }}
       />
     </div>
@@ -166,7 +166,7 @@ const IconVariant = ({
           position: "absolute",
           inset: 0,
           background: "var(--background)",
-          border: "1px solid var(--color-orange-alpha-150)",
+          border: "1px solid var(--brand-border)",
           borderRadius: 16,
         }}
       />
@@ -200,9 +200,9 @@ const IconVariant = ({
           height: scanlineHeight,
           top: ICON_SCAN_POSITION,
           zIndex: 2,
-          background: "var(--color-orange-500)",
+          background: "var(--brand-primary)",
           boxShadow:
-            "0 0 8px var(--color-orange-alpha-600), 0 0 20px var(--color-orange-alpha-300)",
+            "0 0 8px var(--brand-glow-strong), 0 0 20px var(--brand-glow-medium)",
         }}
       />
     </div>

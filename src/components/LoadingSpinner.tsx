@@ -25,7 +25,7 @@ export const LoadingSpinner = ({ size = "md", className, message }: LoadingSpinn
           sizeClasses[size]
         )}
         style={{
-          borderColor: 'var(--color-neutral-alpha-300)',
+          borderColor: 'var(--border-subtle)',
           borderTopColor: 'var(--border-card)',
         }}
       />

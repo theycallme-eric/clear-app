@@ -167,7 +167,7 @@ export const ExerciseCard = ({
 
           {/* Swap error */}
           {swapError && (
-            <p className="text-paragraph-sm" style={{ color: 'var(--status-error)' }}>
+            <p className="text-paragraph-sm" style={{ color: 'var(--text-error)' }}>
               {swapError}
             </p>
           )}

@@ -1,0 +1,161 @@
+{
+  "$description": "CLEAR Design System — Semantic token structure. Defines the ROLES that tokens play, independent of theme. Each theme file provides the actual primitive mappings. This file documents what each token means and when to use it.",
+
+  "surface": {
+    "$description": "Background fills. Almost always alpha-transparent for the emissive/translucent look.",
+
+    "card":              { "$description": "Default card/container background" },
+    "card-accent":       { "$description": "Left accent column on cards — slightly more opaque than card surface" },
+    "heading":           { "$description": "Section heading background band" },
+
+    "cta-primary":          { "$description": "Primary action button fill" },
+    "cta-primary-hover":    { "$description": "Primary button fill on hover" },
+    "cta-primary-accent":   { "$description": "Primary button left accent column" },
+    "cta-primary-disabled": { "$description": "Primary button fill when disabled" },
+    "cta-secondary":        { "$description": "Secondary/ghost button fill — very low opacity" },
+    "cta-secondary-hover":  { "$description": "Secondary button fill on hover" },
+    "cta-secondary-disabled": { "$description": "Secondary button fill when disabled" },
+
+    "selected":          { "$description": "Universal selected state — green. Used by radio, chip, checkbox." },
+    "unselected":        { "$description": "Universal unselected/default state — theme structure color at low alpha" },
+    "disabled":          { "$description": "Universal disabled state — neutral gray" },
+
+    "success":           { "$description": "Success feedback (toast, badge)" },
+    "success-accent":    { "$description": "Success accent — higher opacity variant" },
+    "error":             { "$description": "Error feedback" },
+    "error-accent":      { "$description": "Error accent" },
+    "info":              { "$description": "Informational feedback" },
+    "info-accent":       { "$description": "Info accent" },
+
+    "input":             { "$description": "Text input field background" },
+    "input-active":      { "$description": "Text input field when focused" },
+    "input-disabled":    { "$description": "Text input field when disabled" },
+
+    "slider-thumb":      { "$description": "Slider thumb/handle" },
+    "slider-active":     { "$description": "Slider filled track" },
+    "slider-inactive":   { "$description": "Slider empty track" },
+
+    "timer":             { "$description": "Timer display — normal state (green)" },
+    "timer-low":         { "$description": "Timer display — low/urgent state (red)" },
+
+    "chip":              { "$description": "Chip label variant" },
+    "chip-selected":     { "$description": "Chip selected state" },
+    "chip-unselected":   { "$description": "Chip unselected state" },
+
+    "dropdown":          { "$description": "Dropdown menu background" },
+
+    "tab-active":        { "$description": "Active tab fill" },
+    "tab-inactive":      { "$description": "Inactive tab fill (usually transparent)" },
+
+    "overlay":           { "$description": "Modal backdrop overlay — dark with high opacity" },
+    "select-switch":     { "$description": "Toggle switch knob" }
+  },
+
+  "border": {
+    "$description": "Stroke/outline colors. Always 2px default width. Chamfered shapes use SVG double-width-stroke + clip technique.",
+
+    "card":              { "$description": "Card/container border — structure color" },
+    "heading":           { "$description": "Section heading border" },
+
+    "cta-primary":       { "$description": "Primary button border — interaction color" },
+    "cta-primary-hover": { "$description": "Primary button border on hover" },
+    "cta-secondary":     { "$description": "Secondary button border" },
+    "cta-secondary-hover": { "$description": "Secondary button border on hover" },
+    "disabled":          { "$description": "Universal disabled border — neutral gray" },
+
+    "selected":          { "$description": "Universal selected border — green" },
+    "unselected":        { "$description": "Universal unselected border — structure color" },
+
+    "success":           { "$description": "Success state border" },
+    "error":             { "$description": "Error state border" },
+    "info":              { "$description": "Info state border" },
+
+    "input":             { "$description": "Input field border" },
+    "input-active":      { "$description": "Input field border when focused" },
+    "input-disabled":    { "$description": "Input field border when disabled" },
+
+    "slider":            { "$description": "Slider track border" },
+    "slider-thumb":      { "$description": "Slider thumb border" },
+
+    "timer":             { "$description": "Timer border — normal (green)" },
+    "timer-low":         { "$description": "Timer border — low/urgent (red)" },
+
+    "chip":              { "$description": "Chip label variant border" },
+    "chip-selected":     { "$description": "Chip selected border" },
+    "chip-unselected":   { "$description": "Chip unselected border" },
+
+    "dropdown":          { "$description": "Dropdown border" },
+    "spacer":            { "$description": "Horizontal/vertical rule divider" },
+
+    "tab-active":        { "$description": "Active tab + outer frame border" },
+    "tab-inactive":      { "$description": "Inactive tab border — subtle" }
+  },
+
+  "text": {
+    "$description": "Text/foreground colors.",
+
+    "header":            { "$description": "Page/section header text — interaction color tint" },
+    "card-header":       { "$description": "Card-level header text" },
+    "paragraph":         { "$description": "Body text — interaction color tint" },
+    "card-label":        { "$description": "Card metadata labels — structure color tint" },
+
+    "cta":               { "$description": "CTA link/text — interaction color tint" },
+    "cta-hover":         { "$description": "CTA text on hover — brighter interaction color" },
+    "on-cta":            { "$description": "Text ON a filled CTA button — structure color tint" },
+    "cta-disabled":      { "$description": "CTA text when disabled" },
+
+    "selected":          { "$description": "Universal selected text — dark green" },
+    "unselected":        { "$description": "Universal unselected text — interaction color tint" },
+    "disabled":          { "$description": "Universal disabled text — neutral gray" },
+
+    "success":           { "$description": "Success text" },
+    "error":             { "$description": "Error text" },
+    "info":              { "$description": "Info text" },
+
+    "input":             { "$description": "Input field text" },
+    "input-placeholder": { "$description": "Input placeholder text — low alpha" },
+    "input-disabled":    { "$description": "Input text when disabled" },
+
+    "timer":             { "$description": "Timer digits — green" },
+    "timer-low":         { "$description": "Timer digits — red/urgent" },
+    "label-info":        { "$description": "Informational label text" },
+    "label-selected":    { "$description": "Selected label text — green" },
+    "label-unselected":  { "$description": "Default label text" },
+    "label-timer":       { "$description": "Timer label text — green" },
+
+    "chip":              { "$description": "Chip label variant text" },
+    "chip-selected":     { "$description": "Chip selected text" },
+    "chip-unselected":   { "$description": "Chip unselected text" },
+
+    "dropdown":          { "$description": "Dropdown option text" },
+    "dropdown-selected": { "$description": "Dropdown selected option text" },
+
+    "tab-active":        { "$description": "Active tab text" },
+    "tab-inactive":      { "$description": "Inactive tab text" }
+  },
+
+  "icon": {
+    "$description": "Icon fill colors. Icons are always solid fill, no stroke.",
+
+    "cta":               { "$description": "Icon inside/next to CTA — interaction color" },
+    "cta-hover":         { "$description": "Icon on CTA hover" },
+    "on-cta":            { "$description": "Icon ON a filled CTA button — structure color" },
+    "disabled":          { "$description": "Icon when disabled" },
+
+    "selected":          { "$description": "Universal selected icon — dark green" },
+    "unselected":        { "$description": "Universal unselected icon" },
+
+    "success":           { "$description": "Success icon" },
+    "error":             { "$description": "Error icon" },
+    "info":              { "$description": "Info icon" },
+
+    "input":             { "$description": "Icon inside input fields" },
+    "input-disabled":    { "$description": "Input icon when disabled" },
+
+    "badge":             { "$description": "Decorative badge/status icon — structure color" },
+
+    "chip":              { "$description": "Chip icon" },
+    "chip-selected":     { "$description": "Chip icon when selected" },
+    "chip-unselected":   { "$description": "Chip icon when unselected" }
+  }
+}

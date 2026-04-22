@@ -1,6 +1,6 @@
-import { ChevronDown, ChevronUp, Check } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { Card } from "@/components/Card";
+import { Chip } from "@/components/Chip";
 import { RadioButton } from "@/components/RadioButton";
 import {
   GoalPreset,
@@ -79,29 +79,15 @@ export const StructureSettings = ({
                   const isDisabled = isAccessory && primaryOff;
 
                   return (
-                    <button
+                    <Chip
                       key={section.id}
-                      onClick={() => !isDisabled && onSectionToggle(section.id)}
+                      variant="selectable"
+                      selected={isSelected}
                       disabled={isDisabled}
-                      className={cn(
-                        "px-2 py-1 text-label-xs uppercase tracking-wide transition-all",
-                        isSelected
-                          ? "border text-[var(--text-label-selected)] border-[var(--border-chip-selected)] bg-[var(--color-green-alpha-200)]"
-                          : isDisabled
-                          ? "bg-transparent border border-[var(--text-disabled)] border-opacity-20 cursor-not-allowed"
-                          : "bg-transparent border border-[var(--text-disabled)] border-opacity-30 hover:border-[var(--border-chip)]"
-                      )}
-                      style={
-                        !isSelected
-                          ? isDisabled
-                            ? { color: 'var(--text-disabled)', opacity: 0.4 }
-                            : { color: 'var(--text-disabled)' }
-                          : undefined
-                      }
+                      onClick={() => onSectionToggle(section.id)}
                     >
-                      {isSelected && <Check className="w-3 h-3 inline mr-1" />}
                       {section.name}
-                    </button>
+                    </Chip>
                   );
                 })}
               </div>

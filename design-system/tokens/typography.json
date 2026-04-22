@@ -1,0 +1,95 @@
+{
+  "$description": "CLEAR Design System — Typography tokens. Three fonts, three jobs, no exceptions.",
+
+  "fontFamily": {
+    "$type": "fontFamily",
+    "headings": {
+      "$value": "Rajdhani, sans-serif",
+      "$description": "Headings, titles, screen names. Bold, uppercase, wide tracking. Feels like: HUD display, spec sheet header."
+    },
+    "label": {
+      "$value": "Oxanium, monospace",
+      "$description": "Labels, CTAs, timers, data readouts. Bold, uppercase, widest tracking. Feels like: circuit board, digital clock."
+    },
+    "body": {
+      "$value": "Space Grotesk, sans-serif",
+      "$description": "Body text, descriptions, form content. Medium weight, normal case. Feels like: clean instrument panel readout."
+    }
+  },
+
+  "fontWeight": {
+    "$type": "number",
+    "regular": { "$value": 400 },
+    "medium":  { "$value": 500 },
+    "bold":    { "$value": 700 }
+  },
+
+  "letterSpacing": {
+    "$type": "dimension",
+    "normal": { "$value": "0em", "$description": "Body text" },
+    "wide":   { "$value": "0.025em", "$description": "Buttons" },
+    "wider":  { "$value": "0.05em", "$description": "CTAs, display text" },
+    "widest": { "$value": "0.1em", "$description": "Labels, tabs" }
+  },
+
+  "heading": {
+    "$description": "Headings use fontFamily.headings (Rajdhani). Always bold, uppercase.",
+
+    "h1": {
+      "mobile":  { "fontSize": { "$value": "32px", "$type": "dimension" }, "lineHeight": { "$value": "40px", "$type": "dimension" } },
+      "tablet":  { "fontSize": { "$value": "48px", "$type": "dimension" }, "lineHeight": { "$value": "56px", "$type": "dimension" } },
+      "desktop": { "fontSize": { "$value": "60px", "$type": "dimension" }, "lineHeight": { "$value": "72px", "$type": "dimension" } }
+    },
+    "h2": {
+      "mobile":  { "fontSize": { "$value": "28px", "$type": "dimension" }, "lineHeight": { "$value": "32px", "$type": "dimension" } },
+      "tablet":  { "fontSize": { "$value": "42px", "$type": "dimension" }, "lineHeight": { "$value": "48px", "$type": "dimension" } },
+      "desktop": { "fontSize": { "$value": "48px", "$type": "dimension" }, "lineHeight": { "$value": "56px", "$type": "dimension" } }
+    },
+    "h3": {
+      "mobile":  { "fontSize": { "$value": "24px", "$type": "dimension" }, "lineHeight": { "$value": "28px", "$type": "dimension" } },
+      "tablet":  { "fontSize": { "$value": "32px", "$type": "dimension" }, "lineHeight": { "$value": "40px", "$type": "dimension" } },
+      "desktop": { "fontSize": { "$value": "40px", "$type": "dimension" }, "lineHeight": { "$value": "48px", "$type": "dimension" } }
+    },
+    "h4": {
+      "mobile":  { "fontSize": { "$value": "22px", "$type": "dimension" }, "lineHeight": { "$value": "28px", "$type": "dimension" } },
+      "tablet":  { "fontSize": { "$value": "28px", "$type": "dimension" }, "lineHeight": { "$value": "32px", "$type": "dimension" } },
+      "desktop": { "fontSize": { "$value": "32px", "$type": "dimension" }, "lineHeight": { "$value": "40px", "$type": "dimension" } }
+    },
+    "h5": {
+      "mobile":  { "fontSize": { "$value": "20px", "$type": "dimension" }, "lineHeight": { "$value": "24px", "$type": "dimension" } },
+      "tablet":  { "fontSize": { "$value": "24px", "$type": "dimension" }, "lineHeight": { "$value": "28px", "$type": "dimension" } },
+      "desktop": { "fontSize": { "$value": "24px", "$type": "dimension" }, "lineHeight": { "$value": "28px", "$type": "dimension" } }
+    },
+    "h6": {
+      "mobile":  { "fontSize": { "$value": "20px", "$type": "dimension" }, "lineHeight": { "$value": "24px", "$type": "dimension" } },
+      "tablet":  { "fontSize": { "$value": "20px", "$type": "dimension" }, "lineHeight": { "$value": "24px", "$type": "dimension" } },
+      "desktop": { "fontSize": { "$value": "20px", "$type": "dimension" }, "lineHeight": { "$value": "24px", "$type": "dimension" } }
+    }
+  },
+
+  "label": {
+    "$description": "Labels use fontFamily.label (Oxanium). Always bold, uppercase, widest tracking.",
+    "xs": { "fontSize": { "$value": "12px", "$type": "dimension" }, "lineHeight": { "$value": "14px", "$type": "dimension" } },
+    "sm": { "fontSize": { "$value": "14px", "$type": "dimension" }, "lineHeight": { "$value": "16px", "$type": "dimension" } },
+    "md": { "fontSize": { "$value": "16px", "$type": "dimension" }, "lineHeight": { "$value": "20px", "$type": "dimension" } },
+    "lg": { "fontSize": { "$value": "20px", "$type": "dimension" }, "lineHeight": { "$value": "24px", "$type": "dimension" } },
+    "xl": { "fontSize": { "$value": "24px", "$type": "dimension" }, "lineHeight": { "$value": "28px", "$type": "dimension" } }
+  },
+
+  "paragraph": {
+    "$description": "Body text uses fontFamily.body (Space Grotesk). Medium weight, normal case.",
+    "xs": { "fontSize": { "$value": "12px", "$type": "dimension" }, "lineHeight": { "$value": "14px", "$type": "dimension" } },
+    "sm": { "fontSize": { "$value": "14px", "$type": "dimension" }, "lineHeight": { "$value": "16px", "$type": "dimension" } },
+    "md": { "fontSize": { "$value": "16px", "$type": "dimension" }, "lineHeight": { "$value": "20px", "$type": "dimension" } },
+    "lg": { "fontSize": { "$value": "20px", "$type": "dimension" }, "lineHeight": { "$value": "24px", "$type": "dimension" } },
+    "xl": { "fontSize": { "$value": "24px", "$type": "dimension" }, "lineHeight": { "$value": "28px", "$type": "dimension" } }
+  },
+
+  "breakpoints": {
+    "$type": "dimension",
+    "$description": "Responsive breakpoints. Typography scales up at each threshold.",
+    "mobile":  { "$value": "0px" },
+    "tablet":  { "$value": "834px" },
+    "desktop": { "$value": "1440px" }
+  }
+}

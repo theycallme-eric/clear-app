@@ -109,7 +109,7 @@ export const BootScreen = ({ ready, onComplete }: BootScreenProps) => {
             fontFamily: "'Oxanium', monospace",
             fontSize: 'clamp(52px, 12vw, 80px)',
             letterSpacing: '0.18em',
-            color: 'var(--color-neutral-50)',
+            color: 'var(--foreground)',
             lineHeight: 1,
           }}
         >
