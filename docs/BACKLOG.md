@@ -1,6 +1,14 @@
-# Backlog
+# Backlog (DEPRECATED)
+
+> **This file is no longer the source of truth.**
+> All tickets are now tracked as GitHub Issues on the CLEAR project board.
+> See: https://github.com/theycallme-eric/clear-app/issues
+> Run `/ticket board` to view the kanban.
+> Run `/ticket` to list ready tickets.
+
 **Project:** Clear App (5-3-1 Workout Generator)
 **Last Updated:** 2026-03-06
+**Migrated to GitHub Issues:** 2026-04-21
 
 ---
 

@@ -79,6 +79,11 @@ START
   │           └─► Has chamfered corners? → chamfered-component.md
   │           └─► After creating → gallery-add.md → token-check.md
   │
+  ├─► Managing tickets or planning work? → /ticket
+  │     └─► Creating a ticket? → /ticket create
+  │     └─► Starting work from board? → /ticket pull
+  │     └─► Processing todos into tickets? → /ticket sync
+  │
   ├─► Touching database, auth, or API? → supabase-workflow.md
   ├─► Build failing or runtime error? → debug.md
   ├─► Ready to merge code? → /pr
@@ -143,6 +148,11 @@ Before considering work complete:
 
 | Command | What It Does |
 |---------|--------------|
+| `/ticket` | List ready tickets from the board |
+| `/ticket create` | Create a GitHub Issue with full PRD |
+| `/ticket pull [N]` | Pull ticket, create branch, load context |
+| `/ticket board` | Kanban board summary |
+| `/ticket sync` | Process todos into tickets |
 | `/execute [plan]` | Execute a session plan from `.claude/plans/` |
 | `/pr` | Review code + create PR (full workflow) |
 | `/pr create` | Create PR immediately (skip review) |

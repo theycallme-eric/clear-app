@@ -85,7 +85,7 @@ Any items to discuss, promote to BACKLOG, or update?
 For each item, Claude Code can:
 
 - **Expand:** Ask clarifying questions to flesh out a vague note
-- **Promote:** Move a well-defined item to `docs/BACKLOG.md` with proper formatting
+- **Promote:** Create a GitHub Issue via `create-ticket.md` skill
 - **Update status:** Change frontmatter when work starts/finishes
 - **Archive:** Move done items to `docs/todo/archive/` (or delete if the user prefers)
 - **Create session plan:** If an item is scoped enough, offer to draft a session plan
@@ -118,20 +118,13 @@ The user can create files directly in `docs/todo/` from their editor. No special
 
 ---
 
-## Promoting to BACKLOG
+## Promoting to GitHub Issues
 
 When a todo item has enough detail to be a real task:
 
-1. Add it to `docs/BACKLOG.md` in the appropriate section with standard formatting:
-   ```markdown
-   - [ ] **[Task name]** — [Description]
-     - Priority: [High/Medium/Low]
-     - Type: [Bug/Enhancement/Tech Debt/Feature]
-     - Added: [Date]
-     - Context: [Brief context]
-   ```
+1. Run the [create-ticket](/.claude/skills/create-ticket.md) skill to create a GitHub Issue with a full PRD
 2. Either delete the todo file or update its status to `done`
-3. Confirm: `Promoted to BACKLOG and removed from todo board.`
+3. Confirm: `Promoted to GitHub Issue #N and removed from todo board.`
 
 ---
 
@@ -140,13 +133,13 @@ When a todo item has enough detail to be a real task:
 | Doc | Role | Formality |
 |-----|------|-----------|
 | `docs/todo/` | Sticky notes. Quick capture. | Very low |
-| `docs/BACKLOG.md` | Prioritized task list. Official queue. | Medium |
+| GitHub Issues | Prioritized tickets with PRDs. Official queue. | High |
 | `docs/SESSION_LOG.md` | What got done, when. History. | Medium |
 | `.claude/plans/` | Detailed execution plans for sessions. | High |
 
-Flow: **Todo → BACKLOG → Session Plan → SESSION_LOG**
+Flow: **Todo → GitHub Issue → Branch + PR → SESSION_LOG**
 
-Not everything follows this path. Some todos get resolved immediately. Some go straight to a session plan. Some just get deleted when they stop mattering.
+Not everything follows this path. Some todos get resolved immediately. Some go straight to a ticket. Some just get deleted when they stop mattering.
 
 ---
 
