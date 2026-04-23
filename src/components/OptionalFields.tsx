@@ -104,7 +104,7 @@ function NotesField({ value, onChange }: NotesFieldProps) {
       <Textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="Any notes or modifications..."
+        placeholder="Override focus area, request modifications, flag injuries..."
         style={{ minHeight: '85px' }}
       />
     </Card>
