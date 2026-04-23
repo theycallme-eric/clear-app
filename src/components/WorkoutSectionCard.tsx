@@ -117,19 +117,19 @@ export const WorkoutSectionCard = ({
   }, []);
 
   return (
-    <Card padding="none" className="overflow-hidden">
+    <Card padding="none" style={{ overflow: 'hidden' }}>
       {/* Section label */}
-      <div className="px-4 pt-3 pb-2">
+      <div style={{ padding: 'var(--spacing-300) var(--spacing-400) var(--spacing-200)' }}>
         <span
-          className="text-label-xs font-bold uppercase tracking-widest"
-          style={{ color: 'var(--text-card-label)' }}
+          className="text-label-xs"
+          style={{ color: 'var(--text-card-label)', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em' }}
         >
           {section.name}
         </span>
       </div>
 
       {/* Exercises — grouped by structure */}
-      <div className="pb-3">
+      <div style={{ paddingBottom: 'var(--spacing-300)' }}>
         {groups.map((group, groupIdx) => {
           if (group.type === 'standalone') {
             // Single exercise — standard or circuit with individual swap
@@ -139,7 +139,7 @@ export const WorkoutSectionCard = ({
             return (
               <div key={`exercise-${originalIndex}`}>
                 {groupIdx > 0 && (
-                  <div className="mx-4" style={{ borderTop: '2px solid var(--border-spacer)' }} />
+                  <div style={{ margin: '0 var(--spacing-400)', borderTop: '2px solid var(--border-spacer)' }} />
                 )}
                 <ExerciseCard
                   exercise={exercise}
@@ -166,14 +166,14 @@ export const WorkoutSectionCard = ({
                 {/* Card loader overlay for unit swap */}
                 {groupControls && <CardLoader running={isLoading} />}
                 {groupIdx > 0 && (
-                  <div className="mx-4" style={{ borderTop: '2px solid var(--border-spacer)' }} />
+                  <div style={{ margin: '0 var(--spacing-400)', borderTop: '2px solid var(--border-spacer)' }} />
                 )}
 
                 {/* Group label */}
-                <div className="px-4 pt-2 pb-1">
+                <div style={{ padding: 'var(--spacing-200) var(--spacing-400) var(--spacing-100)' }}>
                   <span
-                    className="text-label-xs font-bold uppercase tracking-widest"
-                    style={{ color: 'var(--text-card-label)' }}
+                    className="text-label-xs"
+                    style={{ color: 'var(--text-card-label)', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em' }}
                   >
                     {getGroupLabel(group.structureType)}
                   </span>
@@ -183,7 +183,7 @@ export const WorkoutSectionCard = ({
                 {group.exercises.map(({ exercise, originalIndex }, exIdx) => (
                   <div key={`exercise-${originalIndex}`}>
                     {exIdx > 0 && (
-                      <div className="mx-4" style={{ borderTop: '1px solid var(--border-spacer)' }} />
+                      <div style={{ margin: '0 var(--spacing-400)', borderTop: '1px solid var(--border-spacer)' }} />
                     )}
                     <ExerciseCard
                       exercise={exercise}
@@ -194,27 +194,35 @@ export const WorkoutSectionCard = ({
 
                 {/* Unit swap controls — only when any group member is expanded */}
                 {groupControls && group.exercises.some(({ originalIndex }) => expandedExercises.has(originalIndex)) && (
-                  <div className="flex items-center gap-2 px-4 pb-2">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-200)', padding: '0 var(--spacing-400) var(--spacing-200)' }}>
                     {groupControls.hasPrevious && (
                       <button
                         onClick={groupControls.onPrevious}
-                        className="flex items-center gap-1 pr-3 transition-colors"
+                        className="transition-colors"
                         style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 'var(--spacing-100)',
+                          paddingRight: 'var(--spacing-300)',
                           color: 'var(--icon-cta)',
                           minHeight: '44px',
                           minWidth: '44px',
                         }}
                       >
                         <ChevronLeft size={16} />
-                        <span className="text-label-xs uppercase tracking-wider">Previous</span>
+                        <span className="text-label-xs" style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>Previous</span>
                       </button>
                     )}
 
                     <button
                       onClick={groupControls.onSwap}
                       disabled={groupControls.isSwapDisabled || isLoading}
-                      className="flex items-center gap-1 pr-3 transition-colors"
+                      className="transition-colors"
                       style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 'var(--spacing-100)',
+                        paddingRight: 'var(--spacing-300)',
                         color: groupControls.isSwapDisabled ? 'var(--text-disabled)' : 'var(--icon-cta)',
                         minHeight: '44px',
                         minWidth: '44px',
@@ -226,7 +234,7 @@ export const WorkoutSectionCard = ({
                       ) : (
                         <RefreshCw size={16} />
                       )}
-                      <span className="text-label-xs uppercase tracking-wider">{groupControls.label}</span>
+                      <span className="text-label-xs" style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>{groupControls.label}</span>
                     </button>
                   </div>
                 )}

@@ -75,7 +75,7 @@ function StructureResultBadge({ result }: { result: LoggedStructureResult }) {
   if (parts.length === 0) return null;
 
   return (
-    <p className="text-paragraph-sm mt-1" style={{ color: 'var(--text-timer)' }}>
+    <p className="text-paragraph-sm" style={{ marginTop: 'var(--spacing-100)', color: 'var(--text-timer)' }}>
       {parts.join(' • ')}
     </p>
   );
@@ -94,12 +94,12 @@ function SectionBlock({ section }: { section: LoggedSection }) {
   return (
     <Card cornerSize="md" padding="none">
       {/* Section header */}
-      <div className="px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+      <div style={{ paddingLeft: 'var(--spacing-400)', paddingRight: 'var(--spacing-400)', paddingTop: 'var(--spacing-300)', paddingBottom: 'var(--spacing-300)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-200)' }}>
             <span
-              className="text-label-xs font-bold uppercase tracking-widest"
-              style={{ color: 'var(--text-card-label)' }}
+              className="text-label-xs"
+              style={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-card-label)' }}
             >
               {section.name}
             </span>
@@ -120,10 +120,10 @@ function SectionBlock({ section }: { section: LoggedSection }) {
 
       {/* Structure result summary */}
       {section.structureResult && (
-        <div className="px-4 -mt-1 pb-2">
+        <div style={{ paddingLeft: 'var(--spacing-400)', paddingRight: 'var(--spacing-400)', marginTop: 'calc(var(--spacing-100) * -1)', paddingBottom: 'var(--spacing-200)' }}>
           <span
-            className="text-label-xs font-bold uppercase tracking-widest"
-            style={{ color: 'var(--text-timer)' }}
+            className="text-label-xs"
+            style={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-timer)' }}
           >
             {section.structureResult.structureType.replace('_', ' ')}
           </span>
@@ -132,26 +132,25 @@ function SectionBlock({ section }: { section: LoggedSection }) {
       )}
 
       {/* Exercise list — always visible */}
-      <div className="px-4 pb-3 space-y-3">
+      <div style={{ paddingLeft: 'var(--spacing-400)', paddingRight: 'var(--spacing-400)', paddingBottom: 'var(--spacing-300)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-300)' }}>
         <div
-          className="h-px"
-          style={{ backgroundColor: 'var(--border-spacer)' }}
+          style={{ height: 1, backgroundColor: 'var(--border-spacer)' }}
         />
 
         {section.exercises.map((exercise) => (
           <div key={exercise.id}>
             {/* Exercise name */}
             <p
-              className="text-label-sm font-bold uppercase leading-tight"
-              style={{ color: 'var(--text-card-header)' }}
+              className="text-label-sm"
+              style={{ fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.25, color: 'var(--text-card-header)' }}
             >
               {exercise.name}
             </p>
 
             {/* Prescription: sets×reps + equipment */}
             <p
-              className="text-paragraph-sm mt-0.5"
-              style={{ color: 'var(--text-paragraph)' }}
+              className="text-paragraph-sm"
+              style={{ marginTop: 2, color: 'var(--text-paragraph)' }}
             >
               {exercise.sets}×{exercise.reps}
               {exercise.equipment && ` • ${exercise.equipment}`}
@@ -162,8 +161,8 @@ function SectionBlock({ section }: { section: LoggedSection }) {
               <>
                 {exercise.weight && (
                   <p
-                    className="text-label-xs mt-1 font-bold"
-                    style={{ color: 'var(--text-timer)' }}
+                    className="text-label-xs"
+                    style={{ marginTop: 'var(--spacing-100)', fontWeight: 700, color: 'var(--text-timer)' }}
                   >
                     {exercise.weight}
                   </p>
@@ -171,10 +170,10 @@ function SectionBlock({ section }: { section: LoggedSection }) {
 
                 {exercise.note && (
                   <p
-                    className="text-paragraph-sm mt-1 flex items-start gap-1"
-                    style={{ color: 'var(--text-timer)' }}
+                    className="text-paragraph-sm"
+                    style={{ marginTop: 'var(--spacing-100)', display: 'flex', alignItems: 'flex-start', gap: 'var(--spacing-100)', color: 'var(--text-timer)' }}
                   >
-                    <FileText size={12} className="mt-0.5 flex-shrink-0" />
+                    <FileText size={12} style={{ marginTop: 2, flexShrink: 0 }} />
                     {exercise.note}
                   </p>
                 )}
@@ -330,24 +329,24 @@ export const SessionDetailScreen = () => {
 
   return (
     <AppLayout header={<PageHeader left="back" onBack={() => navigate("/history")} center="Session" right="menu" onMenu={() => navigate("/settings")} />}>
-      <div className="pt-6 stagger-reveal">
+      <div className="stagger-reveal" style={{ paddingTop: 'var(--spacing-600)' }}>
         {isLoading || !workout ? (
           <LoadingSkeleton count={4} />
         ) : (
           <>
-            <Card padding="md" className="mb-6">
+            <Card padding="md" style={{ marginBottom: 'var(--spacing-600)' }}>
               {/* Date + star toggle */}
-              <div className="flex items-start justify-between mb-2">
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 'var(--spacing-200)' }}>
                 <h1
-                  className="text-heading-h4 font-bold tracking-wider"
-                  style={{ color: 'var(--text-header)' }}
+                  className="text-heading-h4"
+                  style={{ fontWeight: 700, letterSpacing: '0.05em', color: 'var(--text-header)' }}
                 >
                   {formatDateTitle(workout.date)}
                 </h1>
                 <button
                   onClick={handleToggleFavorite}
                   disabled={favoriteState.loading}
-                  className="min-w-[44px] min-h-[44px] flex items-center justify-center -mr-2 -mt-1"
+                  style={{ minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 'calc(var(--spacing-200) * -1)', marginTop: 'calc(var(--spacing-100) * -1)' }}
                 >
                   <Star
                     size={24}
@@ -361,9 +360,9 @@ export const SessionDetailScreen = () => {
 
               {/* Favorite name + edit link */}
               {favoriteState.isFav && (
-                <div className="mb-2 -mt-1">
+                <div style={{ marginBottom: 'var(--spacing-200)', marginTop: 'calc(var(--spacing-100) * -1)' }}>
                   {isEditingName ? (
-                    <div className="flex items-center gap-2">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-200)' }}>
                       <Input
                         value={editNameValue}
                         onChange={(e) => setEditNameValue(e.target.value)}
@@ -372,30 +371,30 @@ export const SessionDetailScreen = () => {
                           if (e.key === 'Escape') setIsEditingName(false);
                         }}
                         autoFocus
-                        className="flex-1"
+                        style={{ flex: 1 }}
                       />
                       <button
                         onClick={handleSaveName}
-                        className="text-label-xs uppercase tracking-wider"
-                        style={{ color: 'var(--text-cta)' }}
+                        className="text-label-xs"
+                        style={{ textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-cta)' }}
                       >
                         Save
                       </button>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-2">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-200)' }}>
                       {favoriteName && (
                         <p
-                          className="text-paragraph-sm font-medium"
-                          style={{ color: 'var(--text-paragraph)' }}
+                          className="text-paragraph-sm"
+                          style={{ fontWeight: 500, color: 'var(--text-paragraph)' }}
                         >
                           {favoriteName}
                         </p>
                       )}
                       <button
                         onClick={handleStartEditName}
-                        className="text-label-xs uppercase tracking-wider font-bold"
-                        style={{ color: 'var(--text-cta)' }}
+                        className="text-label-xs"
+                        style={{ textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700, color: 'var(--text-cta)' }}
                       >
                         {favoriteName ? 'Edit Name' : 'Add Name'}
                       </button>
@@ -405,15 +404,15 @@ export const SessionDetailScreen = () => {
               )}
 
               {/* Anchor, intensity + mood on right */}
-              <div className="flex items-center justify-between">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
                   <p
-                    className="text-heading-h5 font-medium uppercase tracking-wide"
-                    style={{ color: 'var(--text-header)' }}
+                    className="text-heading-h5"
+                    style={{ fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.025em', color: 'var(--text-header)' }}
                   >
                     {workout.anchor} &bull; Intensity {workout.intensity}
                   </p>
-                  <p className="text-paragraph-sm uppercase" style={{ color: 'var(--text-paragraph)' }}>
+                  <p className="text-paragraph-sm" style={{ textTransform: 'uppercase', color: 'var(--text-paragraph)' }}>
                     {workout.duration} min {workout.goal && `\u2022 ${workout.goal}`}
                   </p>
                 </div>
@@ -429,13 +428,13 @@ export const SessionDetailScreen = () => {
             </Card>
 
             {workout.sections && workout.sections.length > 0 ? (
-              <div className="space-y-3">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-300)' }}>
                 {workout.sections.map((section) => (
                   <SectionBlock key={section.id} section={section} />
                 ))}
               </div>
             ) : (
-              <Card padding="md" className="text-center">
+              <Card padding="md" style={{ textAlign: 'center' }}>
                 <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
                   No detailed workout data available
                 </p>
@@ -443,10 +442,10 @@ export const SessionDetailScreen = () => {
             )}
 
             {workout.sessionNotes && (
-              <Card padding="md" className="mt-3">
+              <Card padding="md" style={{ marginTop: 'var(--spacing-300)' }}>
                 <h2
-                  className="text-label-xs uppercase tracking-widest mb-2"
-                  style={{ color: 'var(--text-card-label)' }}
+                  className="text-label-xs"
+                  style={{ textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--spacing-200)', color: 'var(--text-card-label)' }}
                 >
                   Session Notes
                 </h2>
@@ -457,7 +456,7 @@ export const SessionDetailScreen = () => {
             )}
 
             {/* Repeat button */}
-            <div className="mt-6 mb-4">
+            <div style={{ marginTop: 'var(--spacing-600)', marginBottom: 'var(--spacing-400)' }}>
               <CTAButton
                 onClick={handleRepeat}
                 disabled={isRepeating}

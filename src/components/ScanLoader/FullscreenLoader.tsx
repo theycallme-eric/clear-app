@@ -54,18 +54,30 @@ export const FullscreenLoader = ({ message, visible, onCancel }: FullscreenLoade
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center backdrop-blur-sm"
-      style={{ backgroundColor: 'rgba(23, 23, 23, 0.15)' }}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 50,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backdropFilter: 'blur(4px)',
+        WebkitBackdropFilter: 'blur(4px)',
+        backgroundColor: 'rgba(23, 23, 23, 0.15)',
+      }}
     >
       {/* Canvas — fills entire screen */}
-      <div className="absolute inset-0">
+      <div style={{ position: 'absolute', inset: 0 }}>
         <ScanLoader direction="bounce" running={visible} />
       </div>
 
       {/* Message — centered */}
       <div
-        className="relative z-10 min-h-[18px]"
         style={{
+          position: 'relative',
+          zIndex: 10,
+          minHeight: '18px',
           fontFamily: "'Oxanium', monospace",
           fontWeight: 600,
           fontSize: '11px',
@@ -79,8 +91,8 @@ export const FullscreenLoader = ({ message, visible, onCancel }: FullscreenLoade
 
       {/* Cancel button — same position/size as the Generate CTA underneath */}
       {onCancel && (
-        <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
-          <div className="max-w-md mx-auto">
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: 'var(--spacing-400)', zIndex: 10 }}>
+          <div style={{ maxWidth: '28rem', marginLeft: 'auto', marginRight: 'auto' }}>
             <CTAButton variant="secondary" size="lg" fullWidth onClick={onCancel}>
               Cancel
             </CTAButton>

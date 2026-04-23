@@ -147,10 +147,10 @@ export const ReviewScreen = () => {
       header={<PageHeader left="back" onBack={() => navigate(backRoute)} right="menu" onMenu={() => navigate("/settings")} />}
       footer={<StartWorkoutButton onClick={() => handleStartWorkout(() => navigate("/workout"))} />}
     >
-      <div className="pt-6 space-y-6 stagger-reveal">
+      <div className="stagger-reveal" style={{ paddingTop: 'var(--spacing-600)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-600)' }}>
         <WorkoutOverview workout={generatedWorkout} />
 
-        <div className="space-y-4">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
           {generatedWorkout.sections.map((section) => (
             <WorkoutSectionCard
               key={section.id}

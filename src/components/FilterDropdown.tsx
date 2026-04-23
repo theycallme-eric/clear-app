@@ -49,17 +49,28 @@ export function FilterDropdown<T extends string>({
   }, [open]);
 
   return (
-    <div className={cn("relative", className)} ref={ref}>
+    <div className={className} style={{ position: 'relative' }} ref={ref}>
       <ChamferedFrame
         cornerSize="sm"
         hasLeftBorder
         surfaceColor={isActive || open ? 'var(--surface-card-accent)' : 'transparent'}
-        borderColor={isActive || open ? 'var(--border-card)' : 'var(--color-neutral-alpha-300)'}
+        borderColor={isActive || open ? 'var(--border-card)' : 'var(--border-subtle)'}
       >
         <button
           onClick={() => setOpen(!open)}
-          className="px-3 py-2 text-label-xs uppercase tracking-wide flex items-center gap-1"
-          style={{ color: isActive || open ? 'var(--text-cta)' : 'var(--text-disabled)' }}
+          className="text-label-xs"
+          style={{
+            paddingLeft: 'var(--spacing-300)',
+            paddingRight: 'var(--spacing-300)',
+            paddingTop: 'var(--spacing-200)',
+            paddingBottom: 'var(--spacing-200)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--spacing-100)',
+            color: isActive || open ? 'var(--text-cta)' : 'var(--text-disabled)',
+          }}
         >
           {displayLabel}
           <ChevronDown size={12} />
@@ -72,9 +83,18 @@ export function FilterDropdown<T extends string>({
           hasLeftBorder
           surfaceColor="var(--surface-dropdown)"
           borderColor="var(--border-dropdown)"
-          className="absolute top-full left-0 mt-1 z-10 min-w-[140px] backdrop-blur-md scanlines"
+          className="scanlines"
+          style={{
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            marginTop: 'var(--spacing-100)',
+            zIndex: 10,
+            minWidth: '140px',
+            backdropFilter: 'blur(12px)',
+          }}
         >
-          <div className="py-1">
+          <div style={{ paddingTop: 'var(--spacing-100)', paddingBottom: 'var(--spacing-100)' }}>
             {options.map((option) => (
               <button
                 key={option.value}
@@ -82,8 +102,16 @@ export function FilterDropdown<T extends string>({
                   onChange(option.value);
                   setOpen(false);
                 }}
-                className="w-full text-left px-3 py-2 text-label-xs uppercase tracking-wide transition-colors"
+                className="text-label-xs transition-colors"
                 style={{
+                  width: '100%',
+                  textAlign: 'left',
+                  paddingLeft: 'var(--spacing-300)',
+                  paddingRight: 'var(--spacing-300)',
+                  paddingTop: 'var(--spacing-200)',
+                  paddingBottom: 'var(--spacing-200)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
                   color: value === option.value ? 'var(--text-dropdown-selected)' : 'var(--text-dropdown)',
                 }}
               >
@@ -120,13 +148,21 @@ export function FilterToggle({
       cornerSize="sm"
       hasLeftBorder
       surfaceColor={active ? 'var(--surface-card-accent)' : 'transparent'}
-      borderColor={active ? 'var(--border-card)' : 'var(--color-neutral-alpha-300)'}
+      borderColor={active ? 'var(--border-card)' : 'var(--border-subtle)'}
       className={className}
     >
       <button
         onClick={onClick}
-        className="px-3 py-2 text-label-xs uppercase tracking-wide"
-        style={{ color: active ? 'var(--text-cta)' : 'var(--text-disabled)' }}
+        className="text-label-xs"
+        style={{
+          paddingLeft: 'var(--spacing-300)',
+          paddingRight: 'var(--spacing-300)',
+          paddingTop: 'var(--spacing-200)',
+          paddingBottom: 'var(--spacing-200)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+          color: active ? 'var(--text-cta)' : 'var(--text-disabled)',
+        }}
       >
         {label}
       </button>

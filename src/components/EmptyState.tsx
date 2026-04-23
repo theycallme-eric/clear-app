@@ -1,9 +1,8 @@
-import { cn } from "@/lib/utils";
 import { Card } from "./Card";
 import { CTAButton } from "./CTAButton";
 
 interface EmptyStateProps {
-  icon?: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
+  icon?: React.ComponentType<{ style?: React.CSSProperties }>;
   title: string;
   description?: string;
   actionLabel?: string;
@@ -26,26 +25,28 @@ export const EmptyState = ({
   showLeftColumn,
 }: EmptyStateProps) => {
   return (
-    <Card padding="lg" className={cn("text-center", className)} showLeftColumn={showLeftColumn}>
-      {Icon && (
-        <Icon className="w-10 h-10 mx-auto mb-4" style={{ color: 'var(--text-disabled)' }} />
-      )}
-      <p
-        className="text-heading-h5 font-medium uppercase tracking-wide mb-1"
-        style={{ color: 'var(--text-header)' }}
-      >
-        {title}
-      </p>
-      {description && (
-        <p className="text-paragraph-sm mb-4" style={{ color: 'var(--text-paragraph)' }}>
-          {description}
+    <Card padding="lg" className={className} showLeftColumn={showLeftColumn}>
+      <div style={{ textAlign: 'center' }}>
+        {Icon && (
+          <Icon style={{ width: 'var(--spacing-800)', height: 'var(--spacing-800)', marginLeft: 'auto', marginRight: 'auto', marginBottom: 'var(--spacing-400)', color: 'var(--text-disabled)' }} />
+        )}
+        <p
+          className="text-heading-h5"
+          style={{ fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--spacing-100)', color: 'var(--text-header)' }}
+        >
+          {title}
         </p>
-      )}
-      {actionLabel && onAction && (
-        <CTAButton onClick={onAction} size="sm">
-          {actionLabel}
-        </CTAButton>
-      )}
+        {description && (
+          <p className="text-paragraph-sm" style={{ marginBottom: 'var(--spacing-400)', color: 'var(--text-paragraph)' }}>
+            {description}
+          </p>
+        )}
+        {actionLabel && onAction && (
+          <CTAButton onClick={onAction} size="sm">
+            {actionLabel}
+          </CTAButton>
+        )}
+      </div>
     </Card>
   );
 };

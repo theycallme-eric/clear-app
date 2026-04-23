@@ -74,24 +74,24 @@ export const CreateAccountScreen = () => {
 
   return (
     <AuthLayout header={<PageHeader left="back" onBack={() => navigate("/welcome")} />}>
-      <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full stagger-reveal">
+      <div className="stagger-reveal" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', maxWidth: '24rem', margin: '0 auto', width: '100%' }}>
         {/* Title */}
         <h1
-          className="text-heading-h1 font-bold tracking-wider mb-2"
-          style={{ color: 'var(--text-header)' }}
+          className="text-heading-h1"
+          style={{ fontWeight: 700, letterSpacing: '0.05em', marginBottom: 'var(--spacing-200)', color: 'var(--text-header)' }}
         >
           Create Account
         </h1>
-        <p className="text-paragraph-sm mb-8" style={{ color: 'var(--text-paragraph)' }}>
+        <p className="text-paragraph-sm" style={{ marginBottom: 'var(--spacing-700)', color: 'var(--text-paragraph)' }}>
           Start your training journey
         </p>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-600)' }}>
           <Card cornerSize="md" padding="md">
             {/* Email */}
-            <div className="space-y-2 mb-4">
-              <label className="block text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)', marginBottom: 'var(--spacing-400)' }}>
+              <label className="text-paragraph-sm" style={{ display: 'block', color: 'var(--text-paragraph)' }}>
                 Email
               </label>
               <Input
@@ -104,8 +104,8 @@ export const CreateAccountScreen = () => {
             </div>
 
             {/* Password */}
-            <div className="space-y-2 mb-4">
-              <label className="block text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)', marginBottom: 'var(--spacing-400)' }}>
+              <label className="text-paragraph-sm" style={{ display: 'block', color: 'var(--text-paragraph)' }}>
                 Password
               </label>
               <Input
@@ -118,7 +118,9 @@ export const CreateAccountScreen = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="hover:opacity-80"
+                    style={{ opacity: 1 }}
+                    onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
+                    onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
@@ -127,8 +129,8 @@ export const CreateAccountScreen = () => {
             </div>
 
             {/* Confirm Password */}
-            <div className="space-y-2">
-              <label className="block text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
+              <label className="text-paragraph-sm" style={{ display: 'block', color: 'var(--text-paragraph)' }}>
                 Confirm Password
               </label>
               <Input
@@ -141,7 +143,9 @@ export const CreateAccountScreen = () => {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="hover:opacity-80"
+                    style={{ opacity: 1 }}
+                    onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
+                    onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
                   >
                     {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
@@ -156,7 +160,7 @@ export const CreateAccountScreen = () => {
             disabled={isLoading}
             size="lg"
             fullWidth
-            className="mt-8"
+            style={{ marginTop: 'var(--spacing-700)' }}
             iconRight={
               isLoading ? (
                 <Loader2 size={20} className="animate-spin" />
@@ -171,8 +175,8 @@ export const CreateAccountScreen = () => {
 
         {/* Terms */}
         <p
-          className="text-label-xs text-center mt-6"
-          style={{ color: 'var(--text-disabled)' }}
+          className="text-label-xs"
+          style={{ textAlign: 'center', marginTop: 'var(--spacing-600)', color: 'var(--text-disabled)' }}
         >
           By creating an account, you agree to our Terms of Service and Privacy Policy.
         </p>

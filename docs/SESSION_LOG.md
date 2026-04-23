@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-03-09 (12th session)
+**Last Session:** 2026-04-23 (17th session)
 
 ---
 
@@ -13,14 +13,258 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Component Consolidation & TabbedPanel
-**Current Task:** PR #17 open — component consolidation + TabbedPanel
-**Last Completed:** TabbedPanel compound component, 7 reusable component extractions, design token cleanup
-**Blocking Issues:** None
+**Current Phase:** Design System Documentation (complete)
+**Current Task:** All design system self-training infrastructure in place
+**Last Completed:** LLM-reproducible design system docs, passive drift detection, aesthetic calibration system
+**Blocking Issues:** Production Supabase dashboard needs reset-password redirect URL added
 
 ---
 
 ## Session Entries
+
+### Session: 2026-04-23 - LLM-Reproducible Design System & Self-Training Infrastructure
+
+**Duration:** ~2 hours
+**Mode:** Claude Code
+**Branch:** `feature/tailwind-removal`
+
+#### What Got Done
+- **ui-rules.md** (new): 400-line concrete implementation reference — spacing scale, typography classes, visual hierarchy, card anatomy with container decision tree, interactive states, atmosphere utilities, page layout patterns
+- **token-decision-tree.md** (new): Systematic lookup table for all 100+ semantic tokens — surfaces, borders, text, icons, brand, with theme swap rule and state baselines
+- **anti-patterns.md** (new): 11 categories of don't/do pairs covering every observed LLM mistake
+- **chamfered-component.md** (enriched): Added 4 sections — CSS variable hover technique, SVG double-width stroke + clip, ResizeObserver pattern, creating new angular shapes
+- **component.md** (enriched): Added Phase 0 (load design system references before pre-flight), updated token creation rules
+- **Integration pass**: Updated code-reviewer, figma-ui-implementer, gallery-add, token-check, token-audit to reference new docs
+- **Component JSDoc**: Added @tokens blocks to Card, CTAButton, Chip, ExerciseCard, TabbedPanel
+- **token-lint.ts** (new script): Scans for hex colors, primitive tokens, border-radius, lucide imports — `npm run token-lint`
+- **registry-check.ts** (new script): Compares component.md registry vs actual src/components/ — `npm run registry-check`
+- **Session-start hook**: Added automatic drift detection (registry + token-lint) to session-start-check.sh
+- **Close-session step 5**: Design System Drift Check — registry sync, token lint, doc drift, taste feedback with graduation process
+- **Aesthetic calibration system**: feedback_aesthetic.md with 30-entry cap, 3+ repetition graduation bar to ui-rules.md/anti-patterns.md
+- **GitHub Issue #31**: Monthly check-in for May 23 to evaluate self-training effectiveness
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Single aesthetic feedback file, not one per correction | Prevents memory bloat, enables consolidation and graduation |
+| 3+ repetition graduation bar | Prevents one-off preferences from becoming rules |
+| Registry-check matches filename to export name | Filters out icons, sub-components, helpers — focuses on reusable components |
+| Drift checks at session start AND close | Catches missed close-sessions; no action required from user |
+| Taste feedback refines existing rules, doesn't append new ones | Prevents ui-rules.md from growing unbounded |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `.claude/skills/ui-rules.md` | Created — spacing, typography, hierarchy, cards, states, atmosphere, layout |
+| `.claude/skills/token-decision-tree.md` | Created — systematic token lookup |
+| `.claude/skills/anti-patterns.md` | Created — don't/do pairs for common LLM mistakes |
+| `.claude/skills/chamfered-component.md` | Modified — 4 new sections (hover, SVG, resize, shapes) |
+| `.claude/skills/component.md` | Modified — Phase 0, token rules update |
+| `.claude/skills/close-session.md` | Modified — step 5 drift check + taste feedback |
+| `.claude/skills/gallery-add.md` | Modified — semantic token template |
+| `.claude/skills/token-check.md` | Rewritten — delegates to decision tree + lint |
+| `.claude/skills/token-audit.md` | Modified — removes duplicated table, adds pointers |
+| `.claude/agents/code-reviewer.md` | Modified — 11-item design system checklist + doc drift |
+| `.claude/agents/figma-ui-implementer.md` | Modified — CLEAR-specific context + skill references |
+| `.claude/README.md` | Modified — new skills in tables |
+| `.claude/hooks/session-start-check.sh` | Modified — drift detection at session start |
+| `CLAUDE.md` | Modified — typography, atmosphere, decision tree links |
+| `package.json` | Modified — token-lint + registry-check scripts |
+| `scripts/token-lint.ts` | Created — automated design system violation scanner |
+| `scripts/registry-check.ts` | Created — component registry sync checker |
+| `src/components/Card.tsx` | Modified — @tokens JSDoc |
+| `src/components/CTAButton.tsx` | Modified — @tokens JSDoc |
+| `src/components/Chip.tsx` | Modified — @tokens JSDoc |
+| `src/components/ExerciseCard.tsx` | Modified — @tokens JSDoc |
+| `src/components/TabbedPanel.tsx` | Modified — @tokens JSDoc |
+
+#### Status
+- Build passes, typecheck clean
+- 30 uncommitted files on `feature/tailwind-removal` (includes some anchor-suggestion work from another session)
+- PR #30 still open from previous session
+- GitHub Issue #31 created for monthly check-in
+
+---
+
+### Session: 2026-04-22 - Fabricated Token Fixes & Tailwind Remnant Cleanup
+
+**Duration:** ~30 min
+**Mode:** Claude Code
+**Branch:** `feature/tailwind-removal`
+
+#### What Got Done
+- **Fabricated token audit:** Scanned all components for CSS variables used but not defined in `src/index.css`. Found `--surface-cta-accent` (5 files), `--color-green` (1 file), and `--btn-*` Tailwind arbitrary properties (CTAButton).
+- **Token fixes:** Replaced `--surface-cta-accent` → `--surface-cta-primary-accent` in HomeScreen, CTAButton, LeftColumn, ActionButton, ActionCard. Replaced `--color-green` → `--text-success` in ForgotPasswordScreen.
+- **@layer/@apply removal:** Removed `@layer base`, `@layer components`, `@layer utilities` wrappers from `index.css`. Converted `@apply border-border` and `@apply bg-background text-foreground font-body antialiased` to plain CSS.
+- **CTAButton Tailwind conversion:** Replaced Tailwind arbitrary property syntax (`[--btn-surface:var(...)]`) with inline style CSS custom properties + `.cta-btn-primary:hover` / `.cta-btn-secondary:hover` CSS classes.
+- **Fixed `--font-body` reference:** Changed to `--font-paragraph` (the actual defined token).
+- **PR created:** #30
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Left ActionButton Tailwind syntax unfixed | Only used in ComponentGallery (museum) — frozen as snapshot |
+| Used CSS classes for CTAButton hover instead of JS state | Cleaner, no re-renders, matches existing transition-colors pattern |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/index.css` | Modified — removed @layer wrappers, @apply directives, added CTA hover classes, fixed --font-body |
+| `src/components/CTAButton.tsx` | Modified — inline style CSS vars replacing Tailwind arbitrary properties |
+| `src/components/LeftColumn.tsx` | Modified — default prop token fix |
+| `src/components/ActionButton.tsx` | Modified — token fix |
+| `src/components/ActionCard.tsx` | Modified — token fix |
+| `src/pages/HomeScreen.tsx` | Modified — token fix |
+| `src/pages/ForgotPasswordScreen.tsx` | Modified — --color-green → --text-success |
+
+#### Status
+- Build passes, typecheck clean
+- PR #30 open: https://github.com/theycallme-eric/clear-app/pull/30
+- ActionButton still has Tailwind syntax but only used in museum (intentional)
+
+---
+
+### Session: 2026-04-22 - Tailwind Removal & Forgot Password Flow
+
+**Duration:** ~1 hour
+**Mode:** Claude Code
+**Branch:** `feature/tailwind-removal`
+
+#### What Got Done
+- **Tailwind removal (92 files):** Converted all Tailwind utility classes to inline styles using CSS custom properties across every component, layout, and page. Deleted 11 unused shadcn/ui primitives (badge, button, card, progress, slider, switch, toast, toaster, tooltip, use-toast, useToast hook).
+- **Forgot password screen:** New `ForgotPasswordScreen.tsx` at `/forgot-password` — email input, calls `supabase.auth.resetPasswordForEmail()`, shows confirmation state. Vague confirmation message prevents email enumeration.
+- **Reset password screen:** New `ResetPasswordScreen.tsx` at `/reset-password` — unguarded route (user arrives authenticated via recovery link). Listens for `PASSWORD_RECOVERY` event, shows new password + confirm fields, calls `updateUser()`.
+- **SignInScreen wiring:** "Forgot password?" link now navigates to `/forgot-password` instead of showing a placeholder toast.
+- **Linter pass on SignInScreen:** Tailwind classes converted to inline styles by linter/user.
+- **Final Tailwind cleanup:** Deleted `tailwind.config.ts`, removed `tailwindcss` from PostCSS config, removed `@tailwind` directives from `index.css`, removed `cn()` utility from `utils.ts`.
+- **Supabase config fix:** Updated `site_url` from port 3000 to 5173, added reset-password redirect URLs to allowlist.
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Reset password route is unguarded (not PublicOnly or Protected) | User arrives authenticated via Supabase recovery link — PublicOnlyRoute would redirect them away |
+| Single commit for tailwind removal + forgot password | Both on same feature branch, keeps history clean |
+| Vague "if an account exists" confirmation | Prevents email enumeration attacks |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/pages/ForgotPasswordScreen.tsx` | Created — email entry for password reset |
+| `src/pages/ResetPasswordScreen.tsx` | Created — new password entry after recovery link |
+| `src/App.tsx` | Modified — added forgot-password and reset-password routes |
+| `src/pages/SignInScreen.tsx` | Modified — forgot password link navigates instead of toasting |
+| 80+ component/page/layout files | Modified — Tailwind utilities → inline styles |
+| 11 shadcn/ui files | Deleted — unused primitives removed |
+
+#### Status
+- Build passes, typecheck clean
+- 1 commit on branch: `7307d1f`
+- Supabase redirect URL config still needed for reset emails to work in production
+
+---
+
+### Session: 2026-04-22 - Workout Generation Overhaul
+
+**Duration:** ~3 hours
+**Mode:** Claude Code
+**Branch:** `feature/tailwind-removal`
+
+#### What Got Done
+- **Phase 1 — Exercise muscle groups**: Created `exercise_muscle_groups` junction table (488 rows) mapping all ~140 exercises to 18 standardized muscle groups with primary/synergist/stabilizer roles. Updated `exercise_definitions_with_anchors` view to include muscle data as JSONB. Migration applied locally.
+- **Phase 2 — Goal to settings**: Removed per-workout `GoalSelector` from GenerationScreen. Goal now reads from user profile (set in Settings). Added read-only goal badge to generation screen. Removed `goal` from `WorkoutParams` interface. Edge function reads `goal_preset` from profile if not in request.
+- **Phase 3 — Prompt v3.1**: Full rewrite of system prompt. Added THE ARC (workout as intensity curve), THEMATIC COHERENCE (exercises serve one idea), MUSCLE GROUP INTELLIGENCE (use muscle tags for selection). Rewrote warmup as flow-based pattern prep, accessory as "what makes you better at today's primary," cooldown to target worked muscles. Updated exercise listing format: added `muscles:[...]`, removed `cues:[...]`.
+- **Phase 4 — Weekly coverage**: Built `buildCoverageContext()` in edge function — queries last 7 days of completed sessions, aggregates muscle group hits by role and recency. Injected as formatted block in user prompt. Added WEEKLY COVERAGE section to prompt with rules for using coverage data.
+- **Phase 5 — Balanced upgrade**: Rewrote balanced goal from "a bit of everything" to intentional programming with time allocation breakdown, weekly coverage adaptation, and active use of interesting structures (ladders, pyramids, EMOM, circuits).
+- **Headless test harness**: Built `scripts/test-generation.ts` — standalone script that queries local DB for exercise library, builds the same prompt as the edge function, calls Claude directly, validates responses (exercise IDs, equipment, duration, warmup/cooldown relevance, structure rules). Ran 4 test generations — all pass.
+- **`/test-generation` command**: Created `.claude/commands/test-generation.md` skill with argument parsing, pre-checks, and result interpretation guide. Registered in CLAUDE.md and README.md.
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Goal from profile, not per-workout | Eliminates inconsistency (hypertrophy one day, conditioning the next = no progress). Simplifies generation screen. |
+| Drop coaching cues from exercise listing | Cues bloat the prompt. LLM generates its own anyway. Muscle data in, cues out = net neutral tokens. |
+| Accessories can be synergists/antagonists | Earlier draft was too restrictive ("only exercises that directly serve primary"). Tricep extensions on press day are valid. |
+| Headless testing via direct Claude call | More useful than calling through edge function — portable, no auth needed, tests prompt quality directly. |
+| Coverage data flows silently to LLM | No visible coverage indicator on generation screen yet. Could add later as a separate feature. |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `supabase/migrations/00026_exercise_muscle_groups.sql` | Created — junction table + 488 rows of muscle data + view update |
+| `src/types/database.ts` | Regenerated — includes new table types |
+| `src/pages/GenerationScreen.tsx` | Modified — removed GoalSelector, added goal badge |
+| `src/hooks/useWorkoutGeneration.ts` | Modified — reads goal from userPreferences |
+| `src/types/workout.ts` | Modified — removed goal from WorkoutParams, updated balanced description |
+| `src/index.css` | Modified — added goal-badge styles |
+| `supabase/functions/generate-workout/index.ts` | Modified — muscle data in listing, coverage context, profile goal |
+| `supabase/functions/generate-workout/prompt.ts` | Modified — full v3.1 rewrite |
+| `scripts/test-generation.ts` | Created — headless generation test harness |
+| `.claude/commands/test-generation.md` | Created — /test-generation skill |
+| `.claude/README.md` | Modified — registered new command |
+| `CLAUDE.md` | Modified — added to decision tree + command table |
+
+#### Status
+- Build passes, TypeScript clean
+- Migration applied to local Supabase
+- 4 test generations run and validated
+- All committed on `feature/tailwind-removal` branch
+
+---
+
+### Session: 2026-04-22 - Design Token Audit & System Hardening
+
+**Duration:** ~3 hours
+**Mode:** Claude Code
+**Branch:** `feature/tailwind-removal`
+
+#### What Got Done
+- **Token audit**: Systematically found and eliminated every primitive token reference in components (~20 files). All now use semantic tokens — zero visual changes.
+- **Fabricated token cleanup**: Removed `brown-800`, `brown-400`, `cream-100` — tokens invented by a prior Claude session from misinterpreting alpha-transparent orange in screenshots. Replaced with correct `orange-800`, `orange-400`, `orange-100` (and `blue-100` in blue theme).
+- **13 new semantic tokens**: `--border-subtle`, `--text-cta-destructive/hover`, `--text-info-light`, `--surface-skeleton`, `--text-error-light`, `--text-muted`, `--surface-muted`, `--brand-primary/glow-strong/glow-medium/glow-subtle/border`.
+- **17 unused tokens deleted**: Pre-refactor orphans (`--surface-cta`, `--surface-select-switch`), over-engineered variants (`--surface-radio-text-selected`), wrong-paradigm imports (`--icon-success/error/info`), unused scales (all `--width-*`).
+- **5 redundant blue overrides removed**: `--surface-selected`, `--border-selected`, `--text-selected`, `--icon-selected`, `--surface-cta-secondary-disabled` — all identical to root values (copy-paste artifacts).
+- **StructureSettings chip replacement**: Swapped hand-built chip buttons with the reusable `Chip` component.
+- **figma-design-tokens.json rewritten**: Full rewrite from clean CSS source of truth. Fixed swapped CTA mappings, wrong alpha values, stale tokens.
+- **Stale files removed**: Deleted `clear-design-tokens.json` (wrong palette, wrong fonts), deleted `DevTokenAudit.tsx` temporary page.
+- **Prevention rule added**: CLAUDE.md now has "never invent primitives" and "primitives only referenced by semantics" rules.
+- **Session plans created**: `SESSION_PLAN_tailwind_removal.md` and `SESSION_PLAN_design_system_extraction.md` for follow-up work.
+
+#### What Came Up (Unexpected)
+- The brown/cream tokens were completely fabricated by a prior Claude session — they interpreted alpha-transparent orange as brown/cream in a screenshot. Highlights the need for the "never invent primitives" rule.
+- AppErrorFallback and ClearLogo were initially considered exceptions to the "no primitives" rule, but the user explicitly wanted zero exceptions — "in an almost artistic way."
+- The figma-design-tokens.json had the CTA structure/interaction model backwards — it was using structure color for CTAs instead of the complement color.
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Zero exceptions to semantic-only rule | User wanted the standard to be absolute — even error fallbacks and brand logos use semantics |
+| Brand tokens (`--brand-*`) for ClearLogo | Logo is theme-independent (always orange) but still needs semantic indirection |
+| Use `--surface-disabled` for Checkbox dot | Matches the role (inactive indicator) better than raw neutral-400 |
+| Tailwind removal as separate effort | ~67 files, 2-3 sessions. Token audit was already large enough. |
+| Design system extraction after Tailwind removal | Cleaner extraction without Tailwind artifacts in the CSS |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/index.css` | Modified — fixed tab tokens, added 13 semantics, deleted 17 unused, removed 5 redundant blue overrides |
+| `src/components/*.tsx` (12 files) | Modified — swapped primitive refs to semantic tokens |
+| `src/pages/*.tsx` (7 files) | Modified — swapped `neutral-900` to `--background` in gradients |
+| `src/pages/settings/StructureSettings.tsx` | Modified — replaced hand-built chips with Chip component |
+| `src/pages/settings/SettingsHub.tsx` | Modified — red primitives to `--text-cta-destructive` |
+| `docs/frontend/figma-design-tokens.json` | Rewritten — full sync with code as source of truth |
+| `docs/frontend/clear-design-tokens.json` | Deleted — severely stale |
+| `src/pages/DevTokenAudit.tsx` | Deleted — temporary audit visualization page |
+| `CLAUDE.md` | Modified — added primitive invention prevention rules |
+| `design-system/tokens/themes/*.json` | Modified — fixed brown/cream refs, added new tokens |
+| `.claude/plans/SESSION_PLAN_tailwind_removal.md` | Created — full execution plan |
+| `.claude/plans/SESSION_PLAN_design_system_extraction.md` | Created — full execution plan |
+
+#### Status
+- Build passes, TypeScript clean
+- 2 commits on `feature/tailwind-removal` branch
+- Next: Tailwind removal (`/execute SESSION_PLAN_tailwind_removal`), then design system extraction
+
+---
 
 ### Session: 2026-03-09 - Component Consolidation & TabbedPanel
 

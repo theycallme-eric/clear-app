@@ -16,7 +16,7 @@ export function AppErrorFallback({ error }: FallbackProps) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "var(--color-neutral-900)",
+        background: "var(--background)",
         padding: "24px",
       }}
     >
@@ -26,7 +26,7 @@ export function AppErrorFallback({ error }: FallbackProps) {
             fontFamily: "Rajdhani, sans-serif",
             fontWeight: 700,
             fontSize: "1.5rem",
-            color: "var(--color-red-300)",
+            color: "var(--text-error-light)",
             marginBottom: 8,
           }}
         >
@@ -36,7 +36,7 @@ export function AppErrorFallback({ error }: FallbackProps) {
           style={{
             fontFamily: "Space Grotesk, sans-serif",
             fontSize: "0.875rem",
-            color: "var(--color-neutral-300)",
+            color: "var(--text-muted)",
             marginBottom: 24,
           }}
         >
@@ -52,10 +52,10 @@ export function AppErrorFallback({ error }: FallbackProps) {
             textTransform: "uppercase",
             letterSpacing: "0.05em",
             padding: "10px 24px",
-            border: "1px solid var(--color-orange-500)",
+            border: "1px solid var(--brand-primary)",
             borderRadius: 8,
-            background: "var(--color-orange-alpha-400)",
-            color: "var(--color-blue-100)",
+            background: "var(--surface-cta-primary)",
+            color: "var(--text-on-cta)",
             cursor: "pointer",
           }}
         >
@@ -69,7 +69,7 @@ export function AppErrorFallback({ error }: FallbackProps) {
               style={{
                 fontFamily: "Space Grotesk, sans-serif",
                 fontSize: "0.75rem",
-                color: "var(--color-neutral-400)",
+                color: "var(--text-disabled)",
                 background: "none",
                 border: "none",
                 cursor: "pointer",
@@ -84,8 +84,8 @@ export function AppErrorFallback({ error }: FallbackProps) {
                   marginTop: 8,
                   padding: 12,
                   borderRadius: 6,
-                  background: "var(--color-neutral-alpha-200)",
-                  color: "var(--color-red-300)",
+                  background: "var(--surface-muted)",
+                  color: "var(--text-error-light)",
                   fontSize: "0.7rem",
                   fontFamily: "monospace",
                   whiteSpace: "pre-wrap",

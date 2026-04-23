@@ -19,8 +19,14 @@ export const TimerDisplay = ({ elapsedSeconds }: TimerDisplayProps) => {
       hasLeftBorder={true}
     >
       <span
-        className="block px-5 py-1 text-time-lg font-bold text-center glow-emissive"
-        style={{ color: 'var(--text-timer)' }}
+        className="text-time-lg glow-emissive"
+        style={{
+          display: 'block',
+          padding: 'var(--spacing-100) var(--spacing-500)',
+          fontWeight: 'bold',
+          textAlign: 'center',
+          color: 'var(--text-timer)',
+        }}
       >
         {formatTime(elapsedSeconds)}
       </span>

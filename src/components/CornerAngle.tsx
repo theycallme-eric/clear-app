@@ -42,13 +42,14 @@ export function CornerAngle({
 
   return (
     <div
-      className={cn("relative overflow-hidden", className)}
-      style={{ width: px, height: px }}
+      className={cn(className)}
+      style={{ position: "relative", overflow: "hidden", width: px, height: px }}
     >
       {/* Background layer - triangle fill */}
       <div
-        className="absolute inset-0"
         style={{
+          position: "absolute",
+          inset: 0,
           backgroundColor: surfaceColor,
           clipPath: "polygon(0 0, 100% 0, 0 100%)",
         }}
@@ -56,7 +57,7 @@ export function CornerAngle({
 
       {/* Border layer - diagonal stroke */}
       <svg
-        className="absolute inset-0 w-full h-full"
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
         viewBox={`0 0 ${px} ${px}`}
         fill="none"
         aria-hidden="true"

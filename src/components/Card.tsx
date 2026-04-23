@@ -9,6 +9,7 @@ type PaddingSize = "none" | "sm" | "md" | "lg";
 interface CardProps {
   children: ReactNode;
   className?: string;
+  style?: React.CSSProperties;
   /** Size of the chamfered corner: sm (8px), md (12px), lg (24px) */
   cornerSize?: CornerSize;
   /** Content padding preset */
@@ -34,10 +35,17 @@ interface CardProps {
  *
  * Uses the same pattern as ActionCard but without hardcoded content structure,
  * allowing flexible content via children.
+ *
+ * @tokens
+ * - Surface: --surface-card (main bg), --surface-card-accent (left column)
+ * - Border: --border-card (frame + left column border)
+ * - Padding presets: none | sm (spacing-200/300) | md (spacing-300/400) | lg (spacing-400/600)
+ * - Overlap: marginLeft: -2 on ChamferedFrame, hasLeftBorder={false}
  */
 export function Card({
   children,
   className,
+  style,
   cornerSize = "md",
   padding = "md",
   onClick,
@@ -50,25 +58,30 @@ export function Card({
   // sm -> sm (8px), md -> md (12px), lg -> md (12px per Figma spec)
   const leftColSize = cornerSize === "sm" ? "sm" : "md";
 
-  // Padding classes
-  const paddingClasses = {
-    none: "",
-    sm: "px-3 py-2",
-    md: "px-4 py-3",
-    lg: "px-6 py-4",
+  // Padding styles
+  const paddingStyles: Record<PaddingSize, React.CSSProperties> = {
+    none: {},
+    sm: { padding: `var(--spacing-200) var(--spacing-300)` },
+    md: { padding: `var(--spacing-300) var(--spacing-400)` },
+    lg: { padding: `var(--spacing-400) var(--spacing-600)` },
   };
 
   const Wrapper = onClick ? "button" : "div";
 
   return (
     <Wrapper
-      className={cn(
-        "relative flex items-stretch w-full text-left",
-        onClick && "cursor-pointer",
-        className
-      )}
+      className={className}
       onClick={onClick}
       type={onClick ? "button" : undefined}
+      style={{
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'stretch',
+        width: '100%',
+        textAlign: 'left',
+        ...(onClick ? { cursor: 'pointer' } : {}),
+        ...style,
+      }}
     >
       {/* Left column - accent surface, border all sides */}
       {showLeftColumn && (
@@ -76,19 +89,22 @@ export function Card({
           size={leftColSize}
           surfaceColor={accentColor}
           borderColor={borderColor}
-          className="relative z-10"
+          style={{ position: 'relative', zIndex: 10 }}
         />
       )}
 
       {/* Main Body - ChamferedFrame */}
       <ChamferedFrame
-        className={cn("flex-1", showLeftColumn && "-ml-[2px]")}
+        style={{
+          flex: 1,
+          ...(showLeftColumn ? { marginLeft: -2 } : {}),
+        }}
         cornerSize={cornerSize}
         surfaceColor={surfaceColor}
         borderColor={borderColor}
         hasLeftBorder={!showLeftColumn}
       >
-        <div className={cn("h-full", paddingClasses[padding])}>
+        <div style={{ height: '100%', ...paddingStyles[padding] }}>
           {children}
         </div>
       </ChamferedFrame>

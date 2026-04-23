@@ -66,11 +66,11 @@ function FavoritesList({ anchorFilter, intensityFilter, goalFilter }: { anchorFi
 
   if (isLoading) {
     return (
-      <div className="space-y-2">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
         {[1, 2, 3].map(i => (
           <Card key={i} padding="md" showLeftColumn={false}>
-            <div className="h-4 rounded" style={{ backgroundColor: 'var(--surface-card-accent)', width: '60%' }} />
-            <div className="h-3 rounded mt-2" style={{ backgroundColor: 'var(--surface-card-accent)', width: '40%' }} />
+            <div style={{ height: 16, borderRadius: 4, backgroundColor: 'var(--surface-card-accent)', width: '60%' }} />
+            <div style={{ height: 12, borderRadius: 4, marginTop: 'var(--spacing-200)', backgroundColor: 'var(--surface-card-accent)', width: '40%' }} />
           </Card>
         ))}
       </div>
@@ -107,7 +107,7 @@ function FavoritesList({ anchorFilter, intensityFilter, goalFilter }: { anchorFi
   };
 
   return (
-    <div className="space-y-2">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
       {filteredFavorites.map((fav: SavedWorkoutSummary) => (
         <FavoriteListItem
           key={fav.id}
@@ -160,7 +160,7 @@ export const HistoryScreen = () => {
 
   return (
     <AppLayout header={<PageHeader left="back" onBack={() => navigate("/")} center="History" right="menu" onMenu={() => navigate("/settings")} />}>
-      <div className="pt-6">
+      <div style={{ paddingTop: 'var(--spacing-600)' }}>
         <TabbedPanel
           tabs={[
             { value: 'history' as const, label: 'History' },
@@ -171,12 +171,12 @@ export const HistoryScreen = () => {
         >
           {/* Filters */}
           <h3
-            className="text-label-xs uppercase tracking-widest mb-2"
-            style={{ color: 'var(--text-card-label)' }}
+            className="text-label-xs"
+            style={{ textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--spacing-200)', color: 'var(--text-card-label)' }}
           >
             Filters
           </h3>
-          <div className="flex gap-2 flex-wrap mb-4">
+          <div style={{ display: 'flex', gap: 'var(--spacing-200)', flexWrap: 'wrap', marginBottom: 'var(--spacing-400)' }}>
             <FilterToggle active={!isActiveFilter} onClick={resetFilters} />
             <FilterDropdown label="Anchor" options={ANCHOR_OPTIONS} value={anchorFilter} onChange={setAnchorFilter} />
             <FilterDropdown label="Intensity" options={INTENSITY_OPTIONS} value={intensityFilter} onChange={setIntensityFilter} />
@@ -194,16 +194,16 @@ export const HistoryScreen = () => {
                   showLeftColumn={false}
                 />
               ) : (
-                <div className="space-y-6 stagger-reveal">
+                <div className="stagger-reveal" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-600)' }}>
                   {Object.entries(groupedByMonth).map(([month, workouts]) => (
                     <div key={month}>
                       <h2
-                        className="text-label-xs uppercase tracking-widest mb-3"
-                        style={{ color: 'var(--text-card-label)' }}
+                        className="text-label-xs"
+                        style={{ textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--spacing-300)', color: 'var(--text-card-label)' }}
                       >
                         {month}
                       </h2>
-                      <div className="space-y-2">
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
                         {workouts.map((workout) => (
                           <WorkoutListItem
                             key={workout.id}

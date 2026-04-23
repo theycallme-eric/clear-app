@@ -25,13 +25,17 @@ interface CTAButtonProps {
  * Hover states are handled via CSS custom properties that change on :hover,
  * allowing the child components to respond to hover without prop changes.
  *
- * Figma variables mapped:
- * - Primary default: surface/cta-primary, border/color/cta-primary
- * - Primary hover: surface/cta-primary-hover, border/color/cta-primary-hover
- * - Secondary default: surface/cta-secondary, border/color/cta-secondary
- * - Secondary hover: surface/cta-secondary-hover, border/color/cta-hover-secondary
- * - Accent (left bar): surface/cta-accent
- * - Text: text-color/cta → text-color/cta-hover
+ * @tokens
+ * - CSS vars: --btn-surface, --btn-border, --btn-accent (set on wrapper, read by children)
+ * - Primary surface: --surface-cta-primary → --surface-cta-primary-hover (via .cta-btn-primary:hover)
+ * - Primary border: --border-cta-primary → --border-cta-primary-hover
+ * - Secondary surface: --surface-cta-secondary → --surface-cta-secondary-hover
+ * - Secondary border: --border-cta-secondary → --border-cta-secondary-hover
+ * - Accent (left bar): --surface-cta-primary-accent
+ * - Disabled: --surface-cta-primary-disabled / --surface-cta-secondary-disabled, --border-disabled
+ * - Text: --text-on-cta (on CTA surface), --text-cta (transparent variant), --text-disabled
+ * - Icons: --icon-on-cta (on CTA surface), --icon-cta (transparent variant)
+ * - Typography: text-cta-sm / text-cta-md / text-cta-lg
  */
 export function CTAButton({
   children,
@@ -51,24 +55,27 @@ export function CTAButton({
   // Size configurations - using Figma CTA typography tokens
   const sizeConfig = {
     sm: {
-      height: "h-10",
+      height: 40,
       text: "text-cta-sm",
-      icon: "size-5",
-      padding: "px-3 py-2",
+      iconSize: 20,
+      paddingX: 'var(--spacing-300)',
+      paddingY: 'var(--spacing-200)',
       leftColSize: "md" as const,
     },
     md: {
-      height: "h-10",
+      height: 40,
       text: "text-cta-md",
-      icon: "size-6",
-      padding: "px-3 py-2",
+      iconSize: 24,
+      paddingX: 'var(--spacing-300)',
+      paddingY: 'var(--spacing-200)',
       leftColSize: "md" as const,
     },
     lg: {
-      height: "h-14",
+      height: 56,
       text: "text-cta-lg",
-      icon: "size-6",
-      padding: "px-4 py-3",
+      iconSize: 24,
+      paddingX: 'var(--spacing-400)',
+      paddingY: 'var(--spacing-300)',
       leftColSize: "md" as const,
     },
   };
@@ -83,42 +90,50 @@ export function CTAButton({
         disabled={disabled}
         onClick={onClick}
         className={cn(
-          "group inline-flex items-center justify-center gap-2",
-          currentSize.height,
-          currentSize.padding,
           currentSize.text,
-          "font-bold",
           "transition-colors",
-          disabled
-            ? "text-[var(--text-disabled)] cursor-not-allowed"
-            : "text-[var(--text-cta)] hover:text-[var(--text-cta-hover)]",
-          fullWidth && "w-full",
+          disabled && "cursor-not-allowed",
           className
         )}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 'var(--spacing-200)',
+          height: currentSize.height,
+          padding: `${currentSize.paddingY} ${currentSize.paddingX}`,
+          fontWeight: 700,
+          color: disabled ? 'var(--text-disabled)' : 'var(--text-cta)',
+          ...(fullWidth ? { width: '100%' } : {}),
+        }}
       >
         {iconLeft && (
           <span
-            className={cn(
-              currentSize.icon,
-              "flex items-center justify-center shrink-0",
-              disabled
-                ? "text-[var(--text-disabled)]"
-                : "text-[var(--icon-cta)] group-hover:text-[var(--text-cta-hover)]"
-            )}
+            style={{
+              width: currentSize.iconSize,
+              height: currentSize.iconSize,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              color: disabled ? 'var(--text-disabled)' : 'var(--icon-cta)',
+            }}
           >
             {iconLeft}
           </span>
         )}
-        <span className="uppercase">{children}</span>
+        <span style={{ textTransform: 'uppercase' }}>{children}</span>
         {iconRight && (
           <span
-            className={cn(
-              currentSize.icon,
-              "flex items-center justify-center shrink-0",
-              disabled
-                ? "text-[var(--text-disabled)]"
-                : "text-[var(--icon-cta)] group-hover:text-[var(--text-cta-hover)]"
-            )}
+            style={{
+              width: currentSize.iconSize,
+              height: currentSize.iconSize,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              color: disabled ? 'var(--text-disabled)' : 'var(--icon-cta)',
+            }}
           >
             {iconRight}
           </span>
@@ -128,53 +143,47 @@ export function CTAButton({
   }
 
   // Primary/Secondary variants - LeftColumn + ChamferedFrame
-  // Using CSS custom properties for hover state changes
+  // CSS custom properties for colors, with hover overrides via CSS classes
+  const btnVars = disabled
+    ? {
+        '--btn-surface': isPrimary ? 'var(--surface-cta-primary-disabled)' : 'var(--surface-cta-secondary-disabled)',
+        '--btn-border': 'var(--border-disabled)',
+        '--btn-accent': isPrimary ? 'var(--surface-cta-primary-disabled)' : 'var(--surface-cta-secondary-disabled)',
+      }
+    : {
+        '--btn-surface': isPrimary ? 'var(--surface-cta-primary)' : 'var(--surface-cta-secondary)',
+        '--btn-border': isPrimary ? 'var(--border-cta-primary)' : 'var(--border-cta-secondary)',
+        '--btn-accent': 'var(--surface-cta-primary-accent)',
+      };
+
   return (
     <button
       type={type}
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        "group relative inline-flex items-stretch backdrop-blur-md scanlines",
-        currentSize.height,
+        "group scanlines",
         disabled ? "cursor-not-allowed" : "cursor-pointer",
-        fullWidth && "w-full",
-        // CSS custom properties for colors - these change on hover
-        // Default state
-        isPrimary ? [
-          "[--btn-surface:var(--surface-cta-primary)]",
-          "[--btn-border:var(--border-cta-primary)]",
-          "[--btn-accent:var(--surface-cta-primary-accent)]",
-          // Hover state (when not disabled)
-          !disabled && "hover:[--btn-surface:var(--surface-cta-primary-hover)]",
-          !disabled && "hover:[--btn-border:var(--border-cta-primary-hover)]",
-        ] : [
-          "[--btn-surface:var(--surface-cta-secondary)]",
-          "[--btn-border:var(--border-cta-secondary)]",
-          "[--btn-accent:var(--surface-cta-accent)]",
-          // Hover state (when not disabled)
-          !disabled && "hover:[--btn-surface:var(--surface-cta-secondary-hover)]",
-          !disabled && "hover:[--btn-border:var(--border-cta-secondary-hover)]",
-        ],
-        // Disabled overrides
-        disabled && [
-          isPrimary
-            ? "[--btn-surface:var(--surface-cta-primary-disabled)]"
-            : "[--btn-surface:var(--surface-cta-secondary-disabled)]",
-          "[--btn-border:var(--border-disabled)]",
-          isPrimary
-            ? "[--btn-accent:var(--surface-cta-primary-disabled)]"
-            : "[--btn-accent:var(--surface-cta-secondary-disabled)]",
-        ],
+        !disabled && (isPrimary ? "cta-btn-primary" : "cta-btn-secondary"),
         className
       )}
+      style={{
+        position: 'relative',
+        display: 'inline-flex',
+        alignItems: 'stretch',
+        backdropFilter: 'blur(12px)',
+        height: currentSize.height,
+        ...(fullWidth ? { width: '100%' } : {}),
+        ...btnVars,
+      } as React.CSSProperties}
     >
       {/* Left accent column */}
       <LeftColumn
         size={currentSize.leftColSize}
         surfaceColor="var(--btn-accent)"
         borderColor="var(--btn-border)"
-        className="relative z-10 transition-colors"
+        className="transition-colors"
+        style={{ position: 'relative', zIndex: 10 }}
       />
 
       {/* Main body with chamfered corner */}
@@ -183,45 +192,56 @@ export function CTAButton({
         surfaceColor="var(--btn-surface)"
         borderColor="var(--btn-border)"
         hasLeftBorder={false}
-        className="flex-1 -ml-[2px] transition-colors"
+        className="transition-colors"
+        style={{ flex: 1, marginLeft: -2 }}
       >
-        <div className={cn(
-          "flex items-center justify-center gap-2 h-full",
-          currentSize.padding
-        )}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 'var(--spacing-200)',
+          height: '100%',
+          padding: `${currentSize.paddingY} ${currentSize.paddingX}`,
+        }}>
           {iconLeft && (
             <span
-              className={cn(
-                currentSize.icon,
-                "flex items-center justify-center shrink-0 transition-colors",
-                disabled
-                  ? "text-[var(--text-disabled)]"
-                  : "text-[var(--icon-on-cta)] group-hover:text-[var(--text-cta-hover)]"
-              )}
+              className="transition-colors"
+              style={{
+                width: currentSize.iconSize,
+                height: currentSize.iconSize,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                color: disabled ? 'var(--text-disabled)' : 'var(--icon-on-cta)',
+              }}
             >
               {iconLeft}
             </span>
           )}
           <span
-            className={cn(
-              currentSize.text,
-              "font-bold whitespace-nowrap uppercase transition-colors",
-              disabled
-                ? "text-[var(--text-disabled)]"
-                : "text-[var(--text-on-cta)] group-hover:text-[var(--text-cta-hover)]"
-            )}
+            className={cn(currentSize.text, "transition-colors")}
+            style={{
+              fontWeight: 700,
+              whiteSpace: 'nowrap',
+              textTransform: 'uppercase',
+              color: disabled ? 'var(--text-disabled)' : 'var(--text-on-cta)',
+            }}
           >
             {children}
           </span>
           {iconRight && (
             <span
-              className={cn(
-                currentSize.icon,
-                "flex items-center justify-center shrink-0 transition-colors",
-                disabled
-                  ? "text-[var(--text-disabled)]"
-                  : "text-[var(--icon-on-cta)] group-hover:text-[var(--text-cta-hover)]"
-              )}
+              className="transition-colors"
+              style={{
+                width: currentSize.iconSize,
+                height: currentSize.iconSize,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                color: disabled ? 'var(--text-disabled)' : 'var(--icon-on-cta)',
+              }}
             >
               {iconRight}
             </span>

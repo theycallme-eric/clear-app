@@ -37,21 +37,21 @@ function ChamferedToast({
       accent: "var(--surface-success-accent)",
       border: "var(--border-success)",
       text: "var(--text-success)",
-      defaultIcon: <CircleCheck className="size-6" />,
+      defaultIcon: <CircleCheck style={{ width: 24, height: 24 }} />,
     },
     error: {
       surface: "var(--surface-error)",
       accent: "var(--surface-error-accent)",
       border: "var(--border-error)",
       text: "var(--text-error)",
-      defaultIcon: <CircleX className="size-6" />,
+      defaultIcon: <CircleX style={{ width: 24, height: 24 }} />,
     },
     info: {
       surface: "var(--surface-info)",
       accent: "var(--surface-info-accent)",
       border: "var(--border-info)",
       text: "var(--text-info)",
-      defaultIcon: <CircleAlert className="size-6" />,
+      defaultIcon: <CircleAlert style={{ width: 24, height: 24 }} />,
     },
   };
 
@@ -59,8 +59,17 @@ function ChamferedToast({
 
   return (
     <div
-      className={`relative grid w-[calc(100vw-32px)] sm:w-[349px] cursor-pointer backdrop-blur-md scanlines ${description ? 'min-h-[68px]' : 'h-[68px]'}`}
-      style={{ gridTemplateColumns: '10px 1fr' }}
+      className="scanlines"
+      style={{
+        position: 'relative',
+        display: 'grid',
+        width: 'calc(100vw - 32px)',
+        maxWidth: 349,
+        cursor: 'pointer',
+        backdropFilter: 'blur(12px)',
+        gridTemplateColumns: '10px 1fr',
+        ...(description ? { minHeight: 68 } : { height: 68 }),
+      }}
       onClick={() => toast.dismiss(id)}
     >
       {/* Left accent column - 12px wide, overlaps 2px into next column */}
@@ -68,7 +77,7 @@ function ChamferedToast({
         size="sm"
         surfaceColor={config.accent}
         borderColor={config.border}
-        className="relative z-10 h-full !w-[12px]"
+        style={{ position: 'relative', zIndex: 10, height: '100%', width: 12 }}
       />
 
       {/* Main body with chamfered corner */}
@@ -77,24 +86,30 @@ function ChamferedToast({
         surfaceColor={config.surface}
         borderColor={config.border}
         hasLeftBorder={false}
-        className="h-full"
+        style={{ height: '100%' }}
       >
         <div
-          className="flex items-center gap-2 h-full px-3"
-          style={{ color: config.text }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--spacing-200)',
+            height: '100%',
+            padding: `0 var(--spacing-300)`,
+            color: config.text,
+          }}
         >
           {/* Icon */}
-          <span className="shrink-0">
+          <span style={{ flexShrink: 0 }}>
             {icon || config.defaultIcon}
           </span>
 
           {/* Title + Description */}
-          <div className="flex flex-col justify-center">
-            <p className="text-label-md font-medium">
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <p className="text-label-md" style={{ fontWeight: 500 }}>
               {title}
             </p>
             {description && (
-              <p className="text-label-sm opacity-80">
+              <p className="text-label-sm" style={{ opacity: 0.8 }}>
                 {description}
               </p>
             )}

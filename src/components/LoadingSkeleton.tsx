@@ -13,8 +13,8 @@ interface SkeletonCardProps {
 export const SkeletonCard = ({ className, showLeftColumn }: SkeletonCardProps) => {
   return (
     <Card className={cn("animate-pulse", className)} cornerSize="sm" padding="md" showLeftColumn={showLeftColumn}>
-      <div className="h-4 w-3/4 mb-2" style={{ backgroundColor: 'var(--color-neutral-alpha-100)' }} />
-      <div className="h-3 w-1/2" style={{ backgroundColor: 'var(--color-neutral-alpha-100)' }} />
+      <div style={{ height: 'var(--spacing-400)', width: '75%', marginBottom: 'var(--spacing-200)', backgroundColor: 'var(--surface-skeleton)' }} />
+      <div style={{ height: 'var(--spacing-300)', width: '50%', backgroundColor: 'var(--surface-skeleton)' }} />
     </Card>
   );
 };
@@ -31,7 +31,7 @@ interface LoadingSkeletonProps {
  */
 export const LoadingSkeleton = ({ count = 3, className, showLeftColumn }: LoadingSkeletonProps) => {
   return (
-    <div className={cn("space-y-2", className)}>
+    <div className={className} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
       {Array.from({ length: count }).map((_, i) => (
         <SkeletonCard key={i} showLeftColumn={showLeftColumn} />
       ))}

@@ -33,15 +33,22 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         surfaceColor={surfaceColor}
         borderColor={borderColor}
         hasLeftBorder={true}
-        className={cn("w-full h-10 transition-colors", className)}
+        className={cn("transition-colors", className)}
+        style={{ width: "100%", height: "var(--spacing-800)" }}
       >
-        <div className="flex items-center h-full">
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
           {iconLeft && (
             <span
-              className={cn(
-                "flex items-center justify-center w-6 h-6 ml-3 shrink-0",
-                disabled ? "text-[var(--icon-input-disabled)]" : "text-[var(--icon-input)]"
-              )}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "var(--spacing-600)",
+                height: "var(--spacing-600)",
+                marginLeft: "var(--spacing-300)",
+                flexShrink: 0,
+                color: disabled ? "var(--icon-input-disabled)" : "var(--icon-input)",
+              }}
             >
               {iconLeft}
             </span>
@@ -58,24 +65,36 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               props.onBlur?.(e);
             }}
             className={cn(
-              "flex-1 h-full bg-transparent px-3 py-2",
               "text-label-md",
-              "text-[var(--text-input)]",
-              "placeholder:text-[var(--text-input-placeholder)]",
-              "focus:outline-none",
-              disabled && "text-[var(--text-input-disabled)] cursor-not-allowed",
-              iconLeft && "pl-2",
-              iconRight && "pr-2"
+              disabled && "cursor-not-allowed"
             )}
+            style={{
+              flex: 1,
+              height: "100%",
+              background: "transparent",
+              padding: "var(--spacing-200) var(--spacing-300)",
+              color: disabled ? "var(--text-input-disabled)" : "var(--text-input)",
+              outline: "none",
+              border: "none",
+              ...(iconLeft ? { paddingLeft: "var(--spacing-200)" } : {}),
+              ...(iconRight ? { paddingRight: "var(--spacing-200)" } : {}),
+            }}
+            placeholder={props.placeholder}
             ref={ref}
             {...props}
           />
           {iconRight && (
             <span
-              className={cn(
-                "flex items-center justify-center w-6 h-6 mr-3 shrink-0",
-                disabled ? "text-[var(--icon-input-disabled)]" : "text-[var(--icon-input)]"
-              )}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "var(--spacing-600)",
+                height: "var(--spacing-600)",
+                marginRight: "var(--spacing-300)",
+                flexShrink: 0,
+                color: disabled ? "var(--icon-input-disabled)" : "var(--icon-input)",
+              }}
             >
               {iconRight}
             </span>

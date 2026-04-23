@@ -98,11 +98,14 @@ export const useWorkoutGeneration = (
             const movementPattern = resolveAnchorToPattern(userAnchor, workoutHistory);
             logger.workout.debug(`Anchor mapping: ${userAnchor} -> ${movementPattern}`);
 
+            // Goal comes from user profile, not per-workout selection
+            const goal = userPreferences.goal || 'balanced';
+
             // Call the Edge Function
             const result = await generateWorkout({
                 intensity: params.intensity,
                 anchor: movementPattern,
-                goal: params.goal || 'balanced',
+                goal,
                 duration_mins: durationMins,
                 location_name: locationName,
                 equipment,
@@ -157,7 +160,7 @@ export const useWorkoutGeneration = (
                     result.workout,
                     params.intensity,
                     movementPattern,
-                    params.goal || 'balanced'
+                    goal
                 );
 
                 // Inject DB UUIDs from the save response (same atomic transaction)
@@ -201,7 +204,6 @@ export const useWorkoutGeneration = (
         const params: WorkoutParams = {
             intensity,
             anchor,
-            goal: 'balanced',
             location: defaultLocation?.name || "Gym",
             time: "45 min",
             notes: "",

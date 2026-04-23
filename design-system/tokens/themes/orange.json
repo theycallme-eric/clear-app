@@ -1,0 +1,166 @@
+{
+  "$description": "CLEAR Design System — Orange Theme (Default). Structure = orange, Interaction = blue. References use {category.scale} notation pointing to primitives.json.",
+
+  "surface": {
+    "card":                   { "$value": "{color.orange-alpha.100}" },
+    "card-accent":            { "$value": "{color.orange-alpha.400}" },
+    "heading":                { "$value": "{color.orange-alpha.100}" },
+
+    "cta-primary":            { "$value": "{color.blue-alpha.400}" },
+    "cta-primary-hover":      { "$value": "{color.blue-alpha.600}" },
+    "cta-primary-accent":     { "$value": "{color.blue-alpha.600}" },
+    "cta-primary-disabled":   { "$value": "{color.neutral-alpha.300}" },
+    "cta-secondary":          { "$value": "rgba(0, 169, 244, 0.05)" },
+    "cta-secondary-hover":    { "$value": "{color.blue-alpha.200}" },
+    "cta-secondary-disabled": { "$value": "rgba(114, 114, 116, 0.05)" },
+
+    "selected":               { "$value": "{color.green-alpha.600}" },
+    "unselected":             { "$value": "{color.orange-alpha.100}" },
+    "disabled":               { "$value": "{color.neutral-alpha.300}" },
+
+    "success":                { "$value": "{color.green-alpha.600}" },
+    "success-accent":         { "$value": "{color.green-alpha.800}" },
+    "error":                  { "$value": "{color.red-alpha.600}" },
+    "error-accent":           { "$value": "{color.red-alpha.800}" },
+    "info":                   { "$value": "{color.purple-alpha.600}" },
+    "info-accent":            { "$value": "{color.purple-alpha.800}" },
+
+    "input":                  { "$value": "{color.orange-alpha.100}" },
+    "input-active":           { "$value": "{color.orange-alpha.200}" },
+    "input-disabled":         { "$value": "{color.neutral-alpha.100}" },
+
+    "slider-thumb":           { "$value": "{color.blue-alpha.900}" },
+    "slider-active":          { "$value": "{color.orange-alpha.400}" },
+    "slider-inactive":        { "$value": "{color.orange-alpha.100}" },
+
+    "timer":                  { "$value": "{color.green-alpha.600}" },
+    "timer-low":              { "$value": "{color.red-alpha.600}" },
+
+    "chip":                   { "$value": "{color.orange-alpha.400}" },
+    "chip-selected":          { "$value": "{color.green-alpha.600}" },
+    "chip-unselected":        { "$value": "{color.orange-alpha.100}" },
+
+    "dropdown":               { "$value": "{color.orange-alpha.100}" },
+
+    "tab-active":             { "$value": "{color.orange.800}" },
+    "tab-inactive":           { "$value": "transparent" },
+
+    "skeleton":               { "$value": "{color.neutral-alpha.100}" },
+    "muted":                  { "$value": "{color.neutral-alpha.200}" },
+
+    "overlay":                { "$value": "rgba(23, 23, 23, 0.8)" }
+  },
+
+  "border": {
+    "card":                   { "$value": "{color.orange.500}" },
+    "heading":                { "$value": "{color.orange.500}" },
+
+    "cta-primary":            { "$value": "{color.blue.500}" },
+    "cta-primary-hover":      { "$value": "{color.blue.400}" },
+    "cta-secondary":          { "$value": "{color.blue.500}" },
+    "cta-secondary-hover":    { "$value": "{color.blue.600}" },
+    "disabled":               { "$value": "{color.neutral.400}" },
+
+    "selected":               { "$value": "{color.green.500}" },
+    "unselected":             { "$value": "{color.orange.500}" },
+
+    "success":                { "$value": "{color.green.500}" },
+    "error":                  { "$value": "{color.red.500}" },
+    "info":                   { "$value": "{color.purple.500}" },
+
+    "input":                  { "$value": "{color.orange-alpha.500}" },
+    "input-active":           { "$value": "{color.orange-alpha.700}" },
+    "input-disabled":         { "$value": "{color.neutral-alpha.300}" },
+
+    "slider":                 { "$value": "{color.orange.500}" },
+    "slider-thumb":           { "$value": "{color.blue.500}" },
+
+    "timer":                  { "$value": "{color.green.500}" },
+    "timer-low":              { "$value": "{color.red.500}" },
+
+    "chip":                   { "$value": "{color.orange.500}" },
+    "chip-selected":          { "$value": "{color.green.500}" },
+    "chip-unselected":        { "$value": "{color.orange.500}" },
+
+    "dropdown":               { "$value": "{color.orange.500}" },
+    "spacer":                 { "$value": "{color.orange-alpha.500}" },
+
+    "tab-active":             { "$value": "{color.orange.500}" },
+    "tab-inactive":           { "$value": "{color.neutral-alpha.300}" },
+
+    "subtle":                 { "$value": "{color.neutral-alpha.300}" }
+  },
+
+  "text": {
+    "header":                 { "$value": "{color.blue.100}" },
+    "card-header":            { "$value": "{color.blue.300}" },
+    "paragraph":              { "$value": "{color.blue.100}" },
+    "card-label":             { "$value": "{color.orange.100}" },
+
+    "cta":                    { "$value": "{color.blue.100}" },
+    "cta-hover":              { "$value": "{color.blue.500}" },
+    "on-cta":                 { "$value": "{color.orange.100}" },
+    "cta-destructive":        { "$value": "{color.red.400}" },
+    "cta-destructive-hover":  { "$value": "{color.red.300}" },
+
+    "selected":               { "$value": "{color.green.900}" },
+    "unselected":             { "$value": "{color.orange.100}" },
+    "disabled":               { "$value": "{color.neutral.400}" },
+
+    "success":                { "$value": "{color.green.900}" },
+    "error":                  { "$value": "{color.red.900}" },
+    "info":                   { "$value": "{color.purple.900}" },
+
+    "input":                  { "$value": "{color.blue.100}" },
+    "input-placeholder":      { "$value": "{color.blue-alpha.400}" },
+    "input-disabled":         { "$value": "{color.neutral.400}" },
+
+    "timer":                  { "$value": "{color.green.400}" },
+    "timer-low":              { "$value": "{color.red.900}" },
+    "label-info":             { "$value": "{color.blue.100}" },
+    "label-selected":         { "$value": "{color.green.500}" },
+    "label-unselected":       { "$value": "{color.blue.100}" },
+    "label-timer":            { "$value": "{color.green.500}" },
+
+    "chip":                   { "$value": "{color.blue.500}" },
+    "chip-selected":          { "$value": "{color.green.900}" },
+    "chip-unselected":        { "$value": "{color.orange.100}" },
+
+    "dropdown":               { "$value": "{color.blue.100}" },
+    "dropdown-selected":      { "$value": "{color.blue.500}" },
+
+    "tab-active":             { "$value": "{color.orange.100}" },
+    "tab-inactive":           { "$value": "{color.orange.400}" },
+
+    "error-light":            { "$value": "{color.red.300}" },
+    "muted":                  { "$value": "{color.neutral.300}" },
+    "info-light":             { "$value": "{color.purple.500}" }
+  },
+
+  "icon": {
+    "cta":                    { "$value": "{color.blue.500}" },
+    "cta-hover":              { "$value": "{color.blue.500}" },
+    "on-cta":                 { "$value": "{color.orange.500}" },
+    "disabled":               { "$value": "{color.neutral.400}" },
+
+    "selected":               { "$value": "{color.green.900}" },
+    "unselected":             { "$value": "{color.orange.100}" },
+
+    "input":                  { "$value": "{color.blue.400}" },
+    "input-disabled":         { "$value": "{color.neutral.400}" },
+
+    "badge":                  { "$value": "{color.orange.500}" },
+
+    "chip":                   { "$value": "{color.blue.500}" },
+    "chip-selected":          { "$value": "{color.green.900}" },
+    "chip-unselected":        { "$value": "{color.orange.100}" }
+  },
+
+  "brand": {
+    "primary":                { "$value": "{color.orange.500}" },
+    "glow-strong":            { "$value": "{color.orange-alpha.600}" },
+    "glow-medium":            { "$value": "{color.orange-alpha.300}" },
+    "glow-subtle":            { "$value": "{color.orange-alpha.100}" },
+    "border":                 { "$value": "{color.orange-alpha.150}" }
+  }
+}

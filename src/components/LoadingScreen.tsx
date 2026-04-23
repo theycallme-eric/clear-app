@@ -12,12 +12,21 @@ interface LoadingScreenProps {
  */
 export const LoadingScreen = ({ subtitle, className }: LoadingScreenProps) => {
   return (
-    <div className={cn("min-h-screen grain-overlay flex flex-col items-center justify-center", className)}>
+    <div
+      className={cn("grain-overlay", className)}
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       <ClearLogo size="lg" boot />
       {subtitle && (
         <p
-          className="mt-3 text-label-sm animate-pulse"
-          style={{ color: 'var(--text-paragraph)' }}
+          className="text-label-sm animate-pulse"
+          style={{ marginTop: 'var(--spacing-300)', color: 'var(--text-paragraph)' }}
         >
           {subtitle}
         </p>

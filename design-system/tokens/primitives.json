@@ -1,0 +1,217 @@
+{
+  "$description": "CLEAR Design System — Primitive tokens. Raw values with no semantic meaning. Never reference these directly in UI code; use semantic tokens instead.",
+
+  "color": {
+    "$type": "color",
+
+    "orange": {
+      "50":  { "$value": "#FEF1E9" },
+      "100": { "$value": "#FEE4D3" },
+      "200": { "$value": "#FCC9A7" },
+      "300": { "$value": "#FBAE7B" },
+      "400": { "$value": "#F9934F" },
+      "500": { "$value": "#F87823", "$description": "Base orange" },
+      "600": { "$value": "#C6601C" },
+      "700": { "$value": "#954815" },
+      "800": { "$value": "#63300E" },
+      "900": { "$value": "#321807" }
+    },
+
+    "orange-alpha": {
+      "$description": "Orange at varying opacities — for emissive, translucent surfaces",
+      "050": { "$value": "rgba(248, 120, 35, 0.05)" },
+      "100": { "$value": "rgba(248, 120, 35, 0.10)" },
+      "150": { "$value": "rgba(248, 120, 35, 0.15)" },
+      "200": { "$value": "rgba(248, 120, 35, 0.20)" },
+      "300": { "$value": "rgba(248, 120, 35, 0.30)" },
+      "400": { "$value": "rgba(248, 120, 35, 0.40)" },
+      "500": { "$value": "rgba(248, 120, 35, 0.50)" },
+      "600": { "$value": "rgba(248, 120, 35, 0.60)" },
+      "700": { "$value": "rgba(248, 120, 35, 0.70)" },
+      "800": { "$value": "rgba(248, 120, 35, 0.80)" },
+      "900": { "$value": "rgba(248, 120, 35, 0.90)" }
+    },
+
+    "blue": {
+      "50":  { "$value": "#E5F6FE" },
+      "100": { "$value": "#CCEEFD" },
+      "200": { "$value": "#99DDFB" },
+      "300": { "$value": "#66CBF8" },
+      "400": { "$value": "#33BAF6" },
+      "500": { "$value": "#00A9F4", "$description": "Base blue" },
+      "600": { "$value": "#0087C3" },
+      "700": { "$value": "#006592" },
+      "800": { "$value": "#004462" },
+      "900": { "$value": "#002231" }
+    },
+
+    "blue-alpha": {
+      "$description": "Blue at varying opacities — for emissive, translucent surfaces",
+      "050": { "$value": "rgba(0, 169, 244, 0.05)" },
+      "100": { "$value": "rgba(0, 169, 244, 0.10)" },
+      "150": { "$value": "rgba(0, 169, 244, 0.15)" },
+      "200": { "$value": "rgba(0, 169, 244, 0.20)" },
+      "300": { "$value": "rgba(0, 169, 244, 0.30)" },
+      "400": { "$value": "rgba(0, 169, 244, 0.40)" },
+      "500": { "$value": "rgba(0, 169, 244, 0.50)" },
+      "600": { "$value": "rgba(0, 169, 244, 0.60)" },
+      "700": { "$value": "rgba(0, 169, 244, 0.70)" },
+      "800": { "$value": "rgba(0, 169, 244, 0.80)" },
+      "900": { "$value": "rgba(0, 169, 244, 0.90)" }
+    },
+
+    "green": {
+      "50":  { "$value": "#F5FCEB" },
+      "100": { "$value": "#EBF8D7" },
+      "200": { "$value": "#D6F1B0" },
+      "300": { "$value": "#C2EB88" },
+      "400": { "$value": "#ADE461" },
+      "500": { "$value": "#99DD39", "$description": "Base green — selection/confirmation" },
+      "600": { "$value": "#7AB12E" },
+      "700": { "$value": "#5C8522" },
+      "800": { "$value": "#3D5817" },
+      "900": { "$value": "#1F2C0B" }
+    },
+
+    "green-alpha": {
+      "100": { "$value": "rgba(153, 221, 57, 0.10)" },
+      "150": { "$value": "rgba(153, 221, 57, 0.15)" },
+      "200": { "$value": "rgba(153, 221, 57, 0.20)" },
+      "300": { "$value": "rgba(153, 221, 57, 0.30)" },
+      "400": { "$value": "rgba(153, 221, 57, 0.40)" },
+      "500": { "$value": "rgba(153, 221, 57, 0.50)" },
+      "600": { "$value": "rgba(153, 221, 57, 0.60)" },
+      "700": { "$value": "rgba(153, 221, 57, 0.70)" },
+      "800": { "$value": "rgba(153, 221, 57, 0.80)" },
+      "900": { "$value": "rgba(153, 221, 57, 0.90)" }
+    },
+
+    "red": {
+      "50":  { "$value": "#FAE8EE" },
+      "100": { "$value": "#F5D1DE" },
+      "200": { "$value": "#EBA3BC" },
+      "300": { "$value": "#E1759B" },
+      "400": { "$value": "#D74779" },
+      "500": { "$value": "#CD1958", "$description": "Base red — urgency, not danger" },
+      "600": { "$value": "#A41446" },
+      "700": { "$value": "#7B0F35" },
+      "800": { "$value": "#520A23" },
+      "900": { "$value": "#290512" }
+    },
+
+    "red-alpha": {
+      "100": { "$value": "rgba(205, 25, 88, 0.10)" },
+      "150": { "$value": "rgba(205, 25, 88, 0.15)" },
+      "200": { "$value": "rgba(205, 25, 88, 0.20)" },
+      "300": { "$value": "rgba(205, 25, 88, 0.30)" },
+      "400": { "$value": "rgba(205, 25, 88, 0.40)" },
+      "500": { "$value": "rgba(205, 25, 88, 0.50)" },
+      "600": { "$value": "rgba(205, 25, 88, 0.60)" },
+      "700": { "$value": "rgba(205, 25, 88, 0.70)" },
+      "800": { "$value": "rgba(205, 25, 88, 0.80)" },
+      "900": { "$value": "rgba(205, 25, 88, 0.90)" }
+    },
+
+    "purple": {
+      "50":  { "$value": "#F6F0FF" },
+      "100": { "$value": "#EDE1FF" },
+      "200": { "$value": "#DAC3FF" },
+      "300": { "$value": "#C8A4FF" },
+      "400": { "$value": "#B586FF" },
+      "500": { "$value": "#A368FF", "$description": "Base purple — informational" },
+      "600": { "$value": "#8253CC" },
+      "700": { "$value": "#623E99" },
+      "800": { "$value": "#412A66" },
+      "900": { "$value": "#211533" }
+    },
+
+    "purple-alpha": {
+      "100": { "$value": "rgba(163, 104, 255, 0.10)" },
+      "150": { "$value": "rgba(163, 104, 255, 0.15)" },
+      "200": { "$value": "rgba(163, 104, 255, 0.20)" },
+      "300": { "$value": "rgba(163, 104, 255, 0.30)" },
+      "400": { "$value": "rgba(163, 104, 255, 0.40)" },
+      "500": { "$value": "rgba(163, 104, 255, 0.50)" },
+      "600": { "$value": "rgba(163, 104, 255, 0.60)" },
+      "700": { "$value": "rgba(163, 104, 255, 0.70)" },
+      "800": { "$value": "rgba(163, 104, 255, 0.80)" },
+      "900": { "$value": "rgba(163, 104, 255, 0.90)" }
+    },
+
+    "neutral": {
+      "50":  { "$value": "#F1F1F1" },
+      "100": { "$value": "#E3E3E3" },
+      "200": { "$value": "#C7C7C7" },
+      "300": { "$value": "#AAAAAC" },
+      "400": { "$value": "#8E8E90" },
+      "500": { "$value": "#727274" },
+      "600": { "$value": "#5B5B5D" },
+      "700": { "$value": "#444446" },
+      "800": { "$value": "#2E2E2E" },
+      "900": { "$value": "#171717", "$description": "Near-black — app background" }
+    },
+
+    "neutral-alpha": {
+      "100": { "$value": "rgba(114, 114, 116, 0.10)" },
+      "200": { "$value": "rgba(114, 114, 116, 0.20)" },
+      "300": { "$value": "rgba(114, 114, 116, 0.30)" },
+      "400": { "$value": "rgba(114, 114, 116, 0.40)" },
+      "500": { "$value": "rgba(114, 114, 116, 0.50)" },
+      "600": { "$value": "rgba(114, 114, 116, 0.60)" },
+      "700": { "$value": "rgba(114, 114, 116, 0.70)" },
+      "800": { "$value": "rgba(114, 114, 116, 0.80)" },
+      "900": { "$value": "rgba(114, 114, 116, 0.90)" }
+    },
+
+    "white": { "$value": "#FFFFFF" },
+    "black": { "$value": "#000000" }
+  },
+
+  "spacing": {
+    "$type": "dimension",
+    "$description": "4px-based spacing scale",
+    "0":    { "$value": "0px" },
+    "25":   { "$value": "1px" },
+    "50":   { "$value": "2px" },
+    "100":  { "$value": "4px" },
+    "200":  { "$value": "8px" },
+    "300":  { "$value": "12px" },
+    "400":  { "$value": "16px" },
+    "500":  { "$value": "20px" },
+    "600":  { "$value": "24px" },
+    "700":  { "$value": "32px" },
+    "800":  { "$value": "40px" },
+    "1000": { "$value": "48px" },
+    "1100": { "$value": "56px" },
+    "1200": { "$value": "64px" },
+    "1300": { "$value": "96px" },
+    "1400": { "$value": "128px" },
+    "1500": { "$value": "256px" }
+  },
+
+  "borderWidth": {
+    "$type": "dimension",
+    "none": { "$value": "0px" },
+    "xs":   { "$value": "1px" },
+    "sm":   { "$value": "2px", "$description": "Default border width" },
+    "md":   { "$value": "4px" },
+    "lg":   { "$value": "8px" },
+    "xl":   { "$value": "12px" },
+    "2xl":  { "$value": "16px" },
+    "3xl":  { "$value": "20px" }
+  },
+
+  "cornerCut": {
+    "$type": "dimension",
+    "$description": "Chamfer sizes for the signature angled corner cut. NOT border-radius — these define the diagonal cut on the bottom-right corner of frames.",
+    "sm":  { "$value": "8px" },
+    "md":  { "$value": "12px" },
+    "lg":  { "$value": "24px" }
+  },
+
+  "radius": {
+    "$type": "dimension",
+    "$description": "Border radius. CLEAR uses 0px everywhere — chamfered cuts, not rounded corners.",
+    "none": { "$value": "0px" }
+  }
+}

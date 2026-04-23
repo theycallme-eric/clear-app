@@ -1,6 +1,5 @@
-import { ReactNode } from "react";
+import { ReactNode, CSSProperties } from "react";
 import { Pencil } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { ChamferedFrame } from "./ChamferedFrame";
 
 interface RadioButtonProps {
@@ -16,6 +15,8 @@ interface RadioButtonProps {
   icon?: ReactNode;
   /** Additional className for the container */
   className?: string;
+  /** Additional inline styles for the container */
+  style?: CSSProperties;
   /** Optional edit handler - shows pencil icon when provided */
   onEdit?: () => void;
 }
@@ -42,6 +43,7 @@ export function RadioButton({
   description,
   icon,
   className,
+  style,
   onEdit,
 }: RadioButtonProps) {
   const isIconVariant = !!icon && !label;
@@ -65,36 +67,38 @@ export function RadioButton({
     <button
       type="button"
       onClick={onClick}
-      className={cn(
-        "flex",
-        hasDescription ? "min-h-[64px]" : "h-[40px]",
-        isIconVariant ? "w-[40px]" : "min-w-[49px]",
-        className
-      )}
+      className={className}
+      style={{
+        display: 'flex',
+        minHeight: hasDescription ? '64px' : undefined,
+        height: hasDescription ? undefined : '40px',
+        width: isIconVariant ? '40px' : undefined,
+        minWidth: isIconVariant ? undefined : '49px',
+        ...style,
+      }}
     >
       <ChamferedFrame
         cornerSize="sm"
         surfaceColor={surfaceColor}
         borderColor={borderColor}
         hasLeftBorder={true}
-        className="flex-1"
+        style={{ flex: 1 }}
       >
         <div
-          className={cn(
-            "h-full flex px-3",
-            hasDescription
-              ? "flex-row justify-between items-center py-2"
-              : "items-center justify-center"
-          )}
+          style={{
+            height: '100%',
+            display: 'flex',
+            padding: '0 var(--spacing-300)',
+            ...(hasDescription
+              ? { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 'var(--spacing-200)', paddingBottom: 'var(--spacing-200)' }
+              : { alignItems: 'center', justifyContent: 'center' }),
+          }}
         >
-          <div className={cn(hasDescription && "flex flex-col items-start")}>
+          <div style={hasDescription ? { display: 'flex', flexDirection: 'column', alignItems: 'flex-start' } : undefined}>
             {label && (
               <span
-                className={cn(
-                  "text-label-sm uppercase",
-                  !hasDescription && "whitespace-nowrap"
-                )}
-                style={{ color: textColor }}
+                className="text-label-sm"
+                style={{ color: textColor, textTransform: 'uppercase', ...(!hasDescription ? { whiteSpace: 'nowrap' } : {}) }}
               >
                 {label}
               </span>
@@ -110,8 +114,7 @@ export function RadioButton({
           </div>
           {icon && (
             <div
-              className="w-6 h-6 flex items-center justify-center"
-              style={{ color: iconColor }}
+              style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: iconColor }}
             >
               {icon}
             </div>
@@ -123,10 +126,9 @@ export function RadioButton({
                 e.stopPropagation();
                 onEdit();
               }}
-              className="p-1 hover:opacity-80 transition-opacity"
-              style={{ color: textColor }}
+              style={{ padding: 'var(--spacing-100)', color: textColor, transition: 'opacity 0.15s' }}
             >
-              <Pencil className="w-4 h-4" />
+              <Pencil style={{ width: '16px', height: '16px' }} />
             </button>
           )}
         </div>

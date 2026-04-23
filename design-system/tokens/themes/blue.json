@@ -1,0 +1,105 @@
+{
+  "$description": "CLEAR Design System — Blue Theme. Structure = blue, Interaction = orange. The theme swap flips structure and interaction roles entirely — it's not a 'dark mode' toggle, it's a personality shift.",
+
+  "surface": {
+    "card":                   { "$value": "{color.blue-alpha.100}" },
+    "card-accent":            { "$value": "{color.blue-alpha.400}" },
+    "heading":                { "$value": "{color.blue-alpha.100}" },
+
+    "cta-primary":            { "$value": "{color.orange-alpha.400}" },
+    "cta-primary-hover":      { "$value": "{color.orange-alpha.600}" },
+    "cta-primary-accent":     { "$value": "{color.orange-alpha.600}" },
+    "cta-primary-disabled":   { "$value": "{color.neutral-alpha.300}" },
+    "cta-secondary":          { "$value": "rgba(248, 120, 35, 0.05)" },
+    "cta-secondary-hover":    { "$value": "{color.orange-alpha.200}" },
+    "selected":               { "$value": "{color.green-alpha.600}" },
+    "unselected":             { "$value": "{color.blue-alpha.100}" },
+    "disabled":               { "$value": "{color.neutral-alpha.300}" },
+
+    "input":                  { "$value": "{color.blue-alpha.100}" },
+    "input-active":           { "$value": "{color.blue-alpha.200}" },
+
+    "slider-thumb":           { "$value": "{color.orange-alpha.900}" },
+    "slider-active":          { "$value": "{color.blue-alpha.400}" },
+
+    "chip":                   { "$value": "{color.blue-alpha.400}" },
+
+    "dropdown":               { "$value": "{color.blue-alpha.100}" },
+
+    "tab-active":             { "$value": "{color.blue.900}" },
+    "tab-inactive":           { "$value": "transparent" },
+
+    "overlay":                { "$value": "rgba(23, 23, 23, 0.8)" }
+  },
+
+  "border": {
+    "card":                   { "$value": "{color.blue.500}" },
+    "heading":                { "$value": "{color.blue.500}" },
+
+    "cta-primary":            { "$value": "{color.orange.500}" },
+    "cta-primary-hover":      { "$value": "{color.orange.400}" },
+    "cta-secondary":          { "$value": "{color.orange.500}" },
+    "cta-secondary-hover":    { "$value": "{color.orange.600}" },
+
+    "selected":               { "$value": "{color.green.500}" },
+    "unselected":             { "$value": "{color.blue.500}" },
+
+    "slider":                 { "$value": "{color.blue.500}" },
+    "slider-thumb":           { "$value": "{color.orange.500}" },
+
+    "input":                  { "$value": "{color.blue-alpha.500}" },
+    "input-active":           { "$value": "{color.blue-alpha.700}" },
+
+    "spacer":                 { "$value": "{color.blue-alpha.500}" },
+
+    "chip":                   { "$value": "{color.blue.500}" },
+
+    "dropdown":               { "$value": "{color.blue.500}" },
+
+    "tab-active":             { "$value": "{color.blue.500}" },
+    "tab-inactive":           { "$value": "{color.neutral-alpha.300}" }
+  },
+
+  "text": {
+    "header":                 { "$value": "{color.orange.100}" },
+    "card-header":            { "$value": "{color.orange.300}" },
+    "paragraph":              { "$value": "{color.orange.100}" },
+    "card-label":             { "$value": "{color.blue.100}" },
+
+    "cta":                    { "$value": "{color.orange.100}" },
+    "cta-hover":              { "$value": "{color.orange.500}" },
+    "on-cta":                 { "$value": "{color.blue.100}" },
+
+    "selected":               { "$value": "{color.green.900}" },
+    "unselected":             { "$value": "{color.blue.100}" },
+
+    "input":                  { "$value": "{color.orange.100}" },
+    "input-placeholder":      { "$value": "{color.orange-alpha.400}" },
+
+    "label-info":             { "$value": "{color.orange.100}" },
+    "label-unselected":       { "$value": "{color.orange.100}" },
+
+    "chip":                   { "$value": "{color.orange.500}" },
+
+    "dropdown":               { "$value": "{color.orange.100}" },
+    "dropdown-selected":      { "$value": "{color.orange.500}" },
+
+    "tab-active":             { "$value": "{color.blue.100}" },
+    "tab-inactive":           { "$value": "{color.blue.400}" }
+  },
+
+  "icon": {
+    "cta":                    { "$value": "{color.orange.500}" },
+    "cta-hover":              { "$value": "{color.orange.500}" },
+    "on-cta":                 { "$value": "{color.blue.500}" },
+
+    "selected":               { "$value": "{color.green.900}" },
+    "unselected":             { "$value": "{color.blue.100}" },
+
+    "input":                  { "$value": "{color.orange.400}" },
+
+    "badge":                  { "$value": "{color.blue.500}" },
+
+    "chip":                   { "$value": "{color.orange.500}" }
+  }
+}

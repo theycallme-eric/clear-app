@@ -26,26 +26,36 @@ export const AnchorGrid = ({ selected, onSelect, disablePower = false }: AnchorG
   return (
     <Card cornerSize="md" padding="md">
       <label
-        className="text-label-xs uppercase tracking-widest mb-4 block"
-        style={{ color: "var(--text-card-label)" }}
+        className="text-label-xs"
+        style={{
+          textTransform: 'uppercase',
+          letterSpacing: '0.1em',
+          marginBottom: 'var(--spacing-400)',
+          display: 'block',
+          color: "var(--text-card-label)",
+        }}
       >
         Focus Area
       </label>
 
       {/* Stacked single column layout */}
-      <div className="flex flex-col gap-2">
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--spacing-200)',
+      }}>
         {ANCHORS.map((anchor) => {
           const isPower = anchor === "POWER";
           const isDisabled = isPower && disablePower;
 
           if (isDisabled) {
             return (
-              <div key={anchor} className="opacity-30 pointer-events-none">
+              <div key={anchor} style={{ opacity: 0.3, pointerEvents: 'none' }}>
                 <RadioButton
                   selected={false}
                   onClick={() => {}}
                   label={anchor}
-                  className="w-full"
+                  style={{ width: '100%' }}
                 />
               </div>
             );
@@ -57,7 +67,7 @@ export const AnchorGrid = ({ selected, onSelect, disablePower = false }: AnchorG
               selected={selected === anchor}
               onClick={() => onSelect(anchor)}
               label={anchor}
-              className="w-full"
+              style={{ width: '100%' }}
             />
           );
         })}

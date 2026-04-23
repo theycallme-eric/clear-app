@@ -14,13 +14,13 @@ export const LimitationsSettings = ({
   onClear,
 }: LimitationsSettingsProps) => {
   return (
-    <div className="space-y-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-600)' }}>
       <Card cornerSize="md" padding="md">
-        <div className="mb-4">
-          <h2 className="text-heading-h4 font-bold uppercase tracking-wider" style={{ color: 'var(--text-header)' }}>
+        <div style={{ marginBottom: 'var(--spacing-400)' }}>
+          <h2 className="text-heading-h4" style={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-header)' }}>
             Anything We Should<br />Work Around?
           </h2>
-          <p className="text-paragraph-sm mt-2" style={{ color: 'var(--text-paragraph)' }}>
+          <p className="text-paragraph-sm" style={{ marginTop: 'var(--spacing-200)', color: 'var(--text-paragraph)' }}>
             Old injuries, problem areas, or movements you want to avoid.
           </p>
         </div>
@@ -29,7 +29,7 @@ export const LimitationsSettings = ({
           value={limitations}
           onChange={(e) => onLimitationsChange(e.target.value)}
           placeholder="Bad left shoulder from years ago. Overhead press feels sketchy sometimes."
-          className="min-h-[120px]"
+          style={{ minHeight: 120 }}
         />
       </Card>
 

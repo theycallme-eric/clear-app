@@ -7,9 +7,9 @@ interface AuthLayoutProps {
 
 export const AuthLayout = ({ header, children }: AuthLayoutProps) => {
   return (
-    <div className="min-h-screen grain-overlay flex flex-col">
+    <div className="grain-overlay" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {header}
-      <div className="flex-1 flex flex-col px-6 pt-12">
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '0 var(--spacing-600)', paddingTop: 'var(--spacing-1000)' }}>
         {children}
       </div>
     </div>

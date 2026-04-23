@@ -1,6 +1,14 @@
-# Backlog
+# Backlog (DEPRECATED)
+
+> **This file is no longer the source of truth.**
+> All tickets are now tracked as GitHub Issues on the CLEAR project board.
+> See: https://github.com/theycallme-eric/clear-app/issues
+> Run `/ticket board` to view the kanban.
+> Run `/ticket` to list ready tickets.
+
 **Project:** Clear App (5-3-1 Workout Generator)
 **Last Updated:** 2026-03-06
+**Migrated to GitHub Issues:** 2026-04-21
 
 ---
 
@@ -177,6 +185,23 @@ Code quality, refactoring, cleanup.
 
 - [x] **Codebase streamline** - TypeScript strict mode, logger standardization, god file splits, dependency cleanup, error boundaries, React Query, test infra (PR #7)
 - [x] **Refactor Index.tsx** - Replaced by react-router-dom routes + auth guards. Index.tsx deleted. (Completed 2026-03-03)
+- [x] **Design token audit** - Eliminate all primitive refs from components, fix fabricated brown/cream tokens, add semantic tokens, sync figma-design-tokens.json
+  - Priority: High
+  - Type: Tech Debt
+  - Added: 2026-04-22
+  - Completed: 2026-04-22
+  - Context: Full audit found ~20 files using primitives directly. Added 13 new semantic tokens, deleted 17 unused, removed fabricated brown/cream tokens. Zero visual changes. Prevention rules added to CLAUDE.md.
+- [x] **Remove Tailwind CSS** - Replace all Tailwind utility classes with CSS custom properties and vanilla CSS
+  - Priority: Medium
+  - Type: Tech Debt
+  - Added: 2026-04-22
+  - Completed: 2026-04-22
+  - Context: 92 files changed. All Tailwind utilities converted to inline styles with CSS custom properties. 11 unused shadcn/ui primitives deleted. Branch `feature/tailwind-removal`.
+- [ ] **Design system extraction** - Complete platform-agnostic design system in `design-system/` directory
+  - Priority: Medium
+  - Type: Tech Debt
+  - Added: 2026-04-22
+  - Context: Token files need re-verification, component specs and design guides not yet written. Session plan at `.claude/plans/SESSION_PLAN_design_system_extraction.md`. Should be done after Tailwind removal.
 
 ---
 

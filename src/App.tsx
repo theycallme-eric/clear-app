@@ -1,6 +1,4 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/sonner";
 import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -28,6 +26,8 @@ import { WelcomeScreen } from "@/pages/WelcomeScreen";
 import { SignInScreen } from "@/pages/SignInScreen";
 import { CreateAccountScreen } from "@/pages/CreateAccountScreen";
 import { OnboardingScreen } from "@/pages/OnboardingScreen";
+import { ForgotPasswordScreen } from "@/pages/ForgotPasswordScreen";
+import { ResetPasswordScreen } from "@/pages/ResetPasswordScreen";
 import { ComponentGallery } from "@/pages/ComponentGallery";
 import { TestWorkoutScreen } from "@/pages/TestWorkoutScreen";
 import NotFound from "./pages/NotFound";
@@ -45,9 +45,8 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+    <>
       <Toaster />
-      <Sonner />
       <AnimatedBackground />
       <BrowserRouter>
         <HomeDataProvider>
@@ -58,7 +57,11 @@ const App = () => (
                 <Route path="/welcome" element={<WelcomeScreen />} />
                 <Route path="/sign-in" element={<SignInScreen />} />
                 <Route path="/create-account" element={<CreateAccountScreen />} />
+                <Route path="/forgot-password" element={<ForgotPasswordScreen />} />
               </Route>
+
+              {/* Reset password — unguarded (user arrives authenticated via recovery link) */}
+              <Route path="/reset-password" element={<ResetPasswordScreen />} />
 
               {/* Onboarding route (must be auth'd but NOT onboarded) */}
               <Route element={<OnboardingRoute />}>
@@ -87,7 +90,7 @@ const App = () => (
           </WorkoutFlowProvider>
         </HomeDataProvider>
       </BrowserRouter>
-    </TooltipProvider>
+    </>
     {import.meta.env.DEV && (
       <Suspense fallback={null}>
         <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />

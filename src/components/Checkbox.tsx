@@ -38,19 +38,30 @@ export function Checkbox({
       disabled={disabled}
       onClick={() => !disabled && onChange(!checked)}
       className={cn(
-        "w-8 h-8 flex-shrink-0 transition-opacity",
-        disabled && "opacity-50 cursor-not-allowed",
+        disabled && "cursor-not-allowed",
         className,
       )}
+      style={{
+        width: 32,
+        height: 32,
+        flexShrink: 0,
+        transition: 'opacity 150ms',
+        ...(disabled ? { opacity: 0.5 } : {}),
+      }}
     >
       <ChamferedFrame
         cornerSize="sm"
         surfaceColor={surfaceColor}
         borderColor={borderColor}
         hasLeftBorder={true}
-        className="w-full h-full"
+        style={{ width: '100%', height: '100%' }}
       >
-        <div className="h-full flex items-center justify-center">
+        <div style={{
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
           {checked ? (
             <Check
               size={18}
@@ -59,8 +70,12 @@ export function Checkbox({
             />
           ) : (
             <div
-              className="w-1.5 h-1.5 rounded-full"
-              style={{ backgroundColor: "var(--color-neutral-400)" }}
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: '9999px',
+                backgroundColor: "var(--surface-disabled)",
+              }}
             />
           )}
         </div>

@@ -42,20 +42,20 @@ function DurationSelector({ value, onChange }: DurationSelectorProps) {
   return (
     <Card cornerSize="md" padding="md">
       <label
-        className="text-label-xs uppercase tracking-widest mb-3 block"
-        style={{ color: "var(--text-card-label)" }}
+        className="text-label-xs"
+        style={{ color: "var(--text-card-label)", textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--spacing-300)', display: 'block' }}
       >
         Duration
       </label>
 
-      <div className="flex gap-2">
+      <div style={{ display: 'flex', gap: 'var(--spacing-200)' }}>
         {DURATION_PRESETS.map((preset) => (
           <RadioButton
             key={preset}
             selected={selectedOption === preset}
             onClick={() => handlePresetClick(preset)}
             label={preset}
-            className="flex-1"
+            style={{ flex: 1 }}
           />
         ))}
       </div>
@@ -63,11 +63,11 @@ function DurationSelector({ value, onChange }: DurationSelectorProps) {
         selected={selectedOption === "custom"}
         onClick={handleCustomClick}
         label="Custom"
-        className="w-full mt-2"
+        style={{ width: '100%', marginTop: 'var(--spacing-200)' }}
       />
 
       {selectedOption === "custom" && (
-        <div className="mt-3">
+        <div style={{ marginTop: 'var(--spacing-300)' }}>
           <Input
             type="text"
             inputMode="numeric"
@@ -96,8 +96,8 @@ function NotesField({ value, onChange }: NotesFieldProps) {
   return (
     <Card cornerSize="md" padding="md">
       <label
-        className="text-label-xs uppercase tracking-widest mb-3 block"
-        style={{ color: "var(--text-card-label)" }}
+        className="text-label-xs"
+        style={{ color: "var(--text-card-label)", textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--spacing-300)', display: 'block' }}
       >
         Notes
       </label>
@@ -105,7 +105,7 @@ function NotesField({ value, onChange }: NotesFieldProps) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Any notes or modifications..."
-        className="min-h-[85px]"
+        style={{ minHeight: '85px' }}
       />
     </Card>
   );
@@ -125,7 +125,7 @@ export const OptionalFields = ({
   onNotesChange,
 }: OptionalFieldsProps) => {
   return (
-    <div className="space-y-4">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
       <DurationSelector value={time} onChange={onTimeChange} />
       <NotesField value={notes} onChange={onNotesChange} />
     </div>

@@ -17,27 +17,49 @@ Track completed work for project history and continuity between agents. This ens
    - Open `docs/SESSION_LOG.md`
    - Append entry using format below
 
-2. **Update Backlog**
-   - Open `docs/BACKLOG.md`
-   - Mark completed items as `[x]`
-   - Add any new items discovered during work
+2. **Update Tickets**
+   - For any work completed this session, close the relevant GitHub Issues:
+     `gh issue close [N] --comment "Completed in session [date]. PR: #[PR]"`
+   - If no issues were tracked this session, skip
 
-3. **Architecture Check** (if applicable)
+3. **Process Session Notes** (if `docs/todo/` has inbox items)
+   - Run [process-session-notes](./process-session-notes.md) skill
+   - This handles: todo promotion, duplicate detection, issue creation/update
+   - If no inbox items, skip silently
+
+4. **Architecture Check** (if applicable)
    - If you added a new Page, Service, or major component
    - Run [project-map](.claude/skills/project-map.md) skill
 
-4. **Archive Plan** (if session was driven by a plan)
+5. **Design System Drift Check** (if session touched UI)
+   - If any files in `src/components/`, `src/index.css`, or `src/pages/` were modified:
+     a. **Component registry**: Run `npm run registry-check` — verify `component.md` registry matches actual components in `src/components/`
+     b. **Token lint**: Run `npm run token-lint` — catch any new violations introduced this session
+     c. **Doc drift**: If new components were added, check they're listed in `component.md` registry. If new tokens were added, check `token-decision-tree.md` covers them.
+     d. **Taste feedback**: If the user gave aesthetic corrections during this session (spacing adjustments, atmosphere changes, visual weight feedback), append entries to `memory/feedback_aesthetic.md`. Then review the file:
+        - **Graduate**: Any pattern with 3+ entries → refine the matching rule in `ui-rules.md` or `anti-patterns.md`, then remove from the feedback file
+        - **Consolidate**: Merge similar entries
+        - **Prune**: Remove one-offs older than ~5 sessions that haven't repeated
+        - **Cap**: Keep the file under ~30 entries
+   - If no UI files were touched, skip silently
+
+6. **Archive Plan** (if session was driven by a plan)
    - Move the executed plan to the done folder: `mv .claude/plans/SESSION_PLAN_*.md .claude/plans/done/`
    - Only archive if all tasks in the plan were completed or explicitly skipped
 
-5. **Branch Cleanup**
+7. **Create PR** (if on a feature branch with commits)
+   - Ask user: "Ready to create a PR for this branch? (y/n)"
+   - If yes: run `/pr` (full review + create workflow)
+   - If no: skip — user may want to continue work next session
+
+8. **Branch Cleanup**
    - Switch to main and pull latest: `git checkout main && git pull origin main`
    - Delete local branches already merged to main: `git branch --merged main | grep -v 'main' | xargs -r git branch -d`
    - Delete their remote counterparts via GitHub API: `gh api repos/{owner}/{repo}/git/refs/heads/{branch} -X DELETE`
    - Prune stale remote tracking refs: `git remote prune origin`
    - Verify only `main` remains: `git branch -a`
 
-6. **Final Message**
+9. **Final Message**
    - Tell user: "Session complete. Log and backlog updated. Branches cleaned up. Ready for next plan."
 
 ## Session Log Entry Format
@@ -74,15 +96,17 @@ Track completed work for project history and continuity between agents. This ens
 ## Related Skills
 
 - [handoff](.claude/skills/handoff.md) — Start of session workflow
-- [backlog](.claude/skills/backlog.md) — Task management
+- [process-session-notes](./process-session-notes.md) — Synthesize notes into tickets
 - [project-map](.claude/skills/project-map.md) — Architecture documentation
 
 ## Checklist
 
 - [ ] Session entry added to SESSION_LOG.md
-- [ ] Completed items marked in BACKLOG.md
-- [ ] New items added to BACKLOG.md (if any)
+- [ ] Relevant GitHub Issues closed (if work was ticket-driven)
+- [ ] Session notes processed into tickets (if inbox items exist)
 - [ ] PROJECT_MAP.md updated (if major changes)
+- [ ] Design system drift check (if UI work): registry, token-lint, doc drift, taste feedback saved
 - [ ] Executed plan archived to `.claude/plans/done/` (if applicable)
+- [ ] PR created via `/pr` (if on feature branch with commits)
 - [ ] Merged branches deleted (local + remote)
 - [ ] User notified session is complete

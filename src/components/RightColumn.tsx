@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import { CornerAngle } from "./CornerAngle";
 
 type ColumnSize = "sm" | "md" | "lg";
@@ -40,13 +39,15 @@ export function RightColumn({
 
   return (
     <div
-      className={cn("relative flex flex-col items-start", className)}
-      style={{ width }}
+      className={className}
+      style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width }}
     >
       {/* Background shape */}
       <div
-        className="absolute inset-0 z-0"
         style={{
+          position: 'absolute',
+          inset: 0,
+          zIndex: 0,
           backgroundColor: surfaceColor,
           // Clip path matches the column shape: straight down, then angled at bottom
           clipPath: `polygon(0 0, 100% 0, 100% calc(100% - ${width}px), 0 100%)`,
@@ -55,19 +56,24 @@ export function RightColumn({
 
       {/* right-top: fills remaining height */}
       <div
-        className="relative z-10 flex-1 w-full border-t-2 border-r-2"
         style={{
-          borderColor: borderColor,
+          position: 'relative',
+          zIndex: 10,
+          flex: 1,
+          width: '100%',
+          borderTop: `2px solid ${borderColor}`,
+          borderRight: `2px solid ${borderColor}`,
         }}
       />
 
       {/* corner-angle: fixed size at bottom */}
-      <CornerAngle
-        size={size}
-        surfaceColor="transparent"
-        borderColor={borderColor}
-        className="relative z-10"
-      />
+      <div style={{ position: 'relative', zIndex: 10 }}>
+        <CornerAngle
+          size={size}
+          surfaceColor="transparent"
+          borderColor={borderColor}
+        />
+      </div>
     </div>
   );
 }

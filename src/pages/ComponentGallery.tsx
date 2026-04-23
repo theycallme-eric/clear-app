@@ -43,15 +43,9 @@ import {
 import { PageHeader } from "@/components/PageHeader";
 import { AppLayout } from "@/layouts";
 
-// shadcn/ui components
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+// Form components
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
-import { Progress } from "@/components/ui/progress";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
 // Custom app components
 import { IntensitySlider } from "@/components/IntensitySlider";
@@ -97,8 +91,6 @@ export const ComponentGallery = () => {
   // Local state for interactive demos (no app side effects)
   const [intensityValue, setIntensityValue] = useState(7);
   const [anchorValue, setAnchorValue] = useState<AnchorType | null>("LOWER BODY");
-  const [sliderValue, setSliderValue] = useState([50]);
-  const [switchOn, setSwitchOn] = useState(true);
   const [radioTextSelected, setRadioTextSelected] = useState<string | null>("Option A");
   const [radioIconSelected, setRadioIconSelected] = useState<number | null>(1);
   const [galleryTab, setGalleryTab] = useState<'alpha' | 'beta' | 'gamma'>('alpha');
@@ -158,76 +150,76 @@ export const ComponentGallery = () => {
 
   return (
     <AppLayout header={<PageHeader left="back" onBack={() => navigate("/settings")} center="Gallery" />}>
-      <div className="pt-6 space-y-8">
+      <div style={{ paddingTop: 'var(--spacing-600)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-700)' }}>
 
           {/* ─── TYPOGRAPHY ─── */}
           <Section title="Typography — Headings (Rajdhani)">
-            <div className="space-y-3">
-              <p className="text-heading-h1 font-bold">Heading H1</p>
-              <p className="text-heading-h2 font-bold">Heading H2</p>
-              <p className="text-heading-h3 font-bold">Heading H3</p>
-              <p className="text-heading-h4 font-bold">Heading H4</p>
-              <p className="text-heading-h5 font-medium">Heading H5</p>
-              <p className="text-heading-h6 font-medium">Heading H6</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-300)' }}>
+              <p className="text-heading-h1" style={{ fontWeight: 700 }}>Heading H1</p>
+              <p className="text-heading-h2" style={{ fontWeight: 700 }}>Heading H2</p>
+              <p className="text-heading-h3" style={{ fontWeight: 700 }}>Heading H3</p>
+              <p className="text-heading-h4" style={{ fontWeight: 700 }}>Heading H4</p>
+              <p className="text-heading-h5" style={{ fontWeight: 500 }}>Heading H5</p>
+              <p className="text-heading-h6" style={{ fontWeight: 500 }}>Heading H6</p>
             </div>
           </Section>
 
           <Section title="Typography — Paragraph (Space Grotesk)">
-            <div className="space-y-3">
-              <p className="text-paragraph-xl ">Paragraph XL — for large body text</p>
-              <p className="text-paragraph-lg ">Paragraph LG — for emphasized text</p>
-              <p className="text-paragraph-md ">Paragraph MD — default body text</p>
-              <p className="text-paragraph-sm " style={{ color: 'var(--text-paragraph)' }}>Paragraph SM — secondary text</p>
-              <p className="text-paragraph-xs " style={{ color: 'var(--text-paragraph)' }}>Paragraph XS — smallest body text</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-300)' }}>
+              <p className="text-paragraph-xl">Paragraph XL — for large body text</p>
+              <p className="text-paragraph-lg">Paragraph LG — for emphasized text</p>
+              <p className="text-paragraph-md">Paragraph MD — default body text</p>
+              <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>Paragraph SM — secondary text</p>
+              <p className="text-paragraph-xs" style={{ color: 'var(--text-paragraph)' }}>Paragraph XS — smallest body text</p>
             </div>
           </Section>
 
           <Section title="Typography — Label (Oxanium)">
-            <div className="space-y-3">
-              <p className="text-label-xl uppercase tracking-wider" style={{ color: 'var(--text-header)' }}>Label XL — large labels</p>
-              <p className="text-label-lg uppercase tracking-wider" style={{ color: 'var(--text-header)' }}>Label LG — section labels</p>
-              <p className="text-label-md uppercase tracking-wider" style={{ color: 'var(--text-header)' }}>Label MD — standard labels</p>
-              <p className="text-label-sm uppercase tracking-wider" style={{ color: 'var(--text-paragraph)' }}>Label SM — small labels</p>
-              <p className="text-label-xs uppercase tracking-widest" style={{ color: 'var(--text-paragraph)' }}>Label XS — tiny labels</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-300)' }}>
+              <p className="text-label-xl" style={{ textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-header)' }}>Label XL — large labels</p>
+              <p className="text-label-lg" style={{ textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-header)' }}>Label LG — section labels</p>
+              <p className="text-label-md" style={{ textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-header)' }}>Label MD — standard labels</p>
+              <p className="text-label-sm" style={{ textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-paragraph)' }}>Label SM — small labels</p>
+              <p className="text-label-xs" style={{ textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-paragraph)' }}>Label XS — tiny labels</p>
             </div>
           </Section>
 
           <Section title="Typography — CTA (Oxanium uppercase)">
-            <div className="space-y-3">
-              <p className="text-cta-lg font-bold">CTA LG — large buttons</p>
-              <p className="text-cta-md font-bold">CTA MD — standard buttons</p>
-              <p className="text-cta-sm font-bold">CTA SM — small buttons</p>
-              <p className="text-cta-xs font-bold">CTA XS — tiny buttons</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-300)' }}>
+              <p className="text-cta-lg" style={{ fontWeight: 700 }}>CTA LG — large buttons</p>
+              <p className="text-cta-md" style={{ fontWeight: 700 }}>CTA MD — standard buttons</p>
+              <p className="text-cta-sm" style={{ fontWeight: 700 }}>CTA SM — small buttons</p>
+              <p className="text-cta-xs" style={{ fontWeight: 700 }}>CTA XS — tiny buttons</p>
             </div>
           </Section>
 
           <Section title="Typography — Time (Oxanium)">
-            <div className="space-y-3">
-              <p className="text-time-xl font-bold">12:34 — Time XL</p>
-              <p className="text-time-lg font-bold">12:34 — Time LG</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-300)' }}>
+              <p className="text-time-xl" style={{ fontWeight: 700 }}>12:34 — Time XL</p>
+              <p className="text-time-lg" style={{ fontWeight: 700 }}>12:34 — Time LG</p>
             </div>
           </Section>
 
           {/* ─── COLORS ─── */}
           <Section title="Colors">
-            <div className="grid grid-cols-4 gap-2">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--spacing-200)' }}>
               <ColorSwatch name="orange" style={{ backgroundColor: 'var(--color-orange-500)' }} />
               <ColorSwatch name="lime" style={{ backgroundColor: 'var(--color-green-500)' }} />
               <ColorSwatch name="purple" style={{ backgroundColor: 'var(--color-purple-500)' }} />
               <ColorSwatch name="accent" style={{ backgroundColor: 'var(--color-blue-500)' }} />
               <ColorSwatch name="fg" style={{ backgroundColor: 'var(--text-header)' }} />
               <ColorSwatch name="muted" style={{ backgroundColor: 'var(--text-paragraph)' }} />
-              <ColorSwatch name="bg" style={{ backgroundColor: 'var(--color-neutral-900)', border: '1px solid var(--color-neutral-alpha-300)' }} />
-              <ColorSwatch name="card" style={{ backgroundColor: 'var(--surface-card)', border: '1px solid var(--color-neutral-alpha-300)' }} />
+              <ColorSwatch name="bg" style={{ backgroundColor: 'var(--background)', border: '1px solid var(--border-subtle)' }} />
+              <ColorSwatch name="card" style={{ backgroundColor: 'var(--surface-card)', border: '1px solid var(--border-subtle)' }} />
             </div>
           </Section>
 
           {/* ─── BUTTONS ─── */}
 
           <Section title="CTAButton — Using ChamferedFrame">
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
               <Subsection label="Sizes">
-                <div className="flex flex-wrap gap-3 items-center">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-300)', alignItems: 'center' }}>
                   <CTAButton size="sm">Small</CTAButton>
                   <CTAButton size="md">Medium</CTAButton>
                   <CTAButton size="lg">Large</CTAButton>
@@ -235,25 +227,25 @@ export const ComponentGallery = () => {
               </Subsection>
 
               <Subsection label="Primary variant">
-                <div className="flex flex-wrap gap-3 items-center">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-300)', alignItems: 'center' }}>
                   <CTAButton variant="primary">Primary</CTAButton>
-                  <CTAButton variant="primary" iconLeft={<Zap className="w-4 h-4" />}>With Icon</CTAButton>
+                  <CTAButton variant="primary" iconLeft={<Zap style={{ width: 16, height: 16 }} />}>With Icon</CTAButton>
                   <CTAButton variant="primary" disabled>Disabled</CTAButton>
                 </div>
               </Subsection>
 
               <Subsection label="Secondary variant">
-                <div className="flex flex-wrap gap-3 items-center">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-300)', alignItems: 'center' }}>
                   <CTAButton variant="secondary">Secondary</CTAButton>
-                  <CTAButton variant="secondary" iconRight={<Dumbbell className="w-4 h-4" />}>With Icon</CTAButton>
+                  <CTAButton variant="secondary" iconRight={<Dumbbell style={{ width: 16, height: 16 }} />}>With Icon</CTAButton>
                   <CTAButton variant="secondary" disabled>Disabled</CTAButton>
                 </div>
               </Subsection>
 
               <Subsection label="Transparent variant">
-                <div className="flex flex-wrap gap-3 items-center">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-300)', alignItems: 'center' }}>
                   <CTAButton variant="transparent">Transparent</CTAButton>
-                  <CTAButton variant="transparent" iconLeft={<Zap className="w-4 h-4" />}>With Icon</CTAButton>
+                  <CTAButton variant="transparent" iconLeft={<Zap style={{ width: 16, height: 16 }} />}>With Icon</CTAButton>
                   <CTAButton variant="transparent" disabled>Disabled</CTAButton>
                 </div>
               </Subsection>
@@ -266,9 +258,9 @@ export const ComponentGallery = () => {
 
           {/* ─── RADIO BUTTON ─── */}
           <Section title="RadioButton — Selection Component">
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
               <Subsection label="Text variant (selected vs unselected)">
-                <div className="flex flex-wrap gap-3">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-300)' }}>
                   <RadioButton
                     selected={radioTextSelected === "Option A"}
                     onClick={() => setRadioTextSelected("Option A")}
@@ -288,7 +280,7 @@ export const ComponentGallery = () => {
               </Subsection>
 
               <Subsection label="Icon variant (selected vs unselected)">
-                <div className="flex gap-3">
+                <div style={{ display: 'flex', gap: 'var(--spacing-300)' }}>
                   <RadioButton
                     selected={radioIconSelected === 1}
                     onClick={() => setRadioIconSelected(1)}
@@ -308,18 +300,18 @@ export const ComponentGallery = () => {
               </Subsection>
 
               <Subsection label="Full width (for grids)">
-                <div className="grid grid-cols-2 gap-3">
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--spacing-300)' }}>
                   <RadioButton
                     selected={true}
                     onClick={() => {}}
                     label="SELECTED"
-                    className="w-full"
+                    style={{ width: '100%' }}
                   />
                   <RadioButton
                     selected={false}
                     onClick={() => {}}
                     label="UNSELECTED"
-                    className="w-full"
+                    style={{ width: '100%' }}
                   />
                 </div>
               </Subsection>
@@ -328,9 +320,9 @@ export const ComponentGallery = () => {
 
           {/* ─── CHIP ─── */}
           <Section title="Chip — Chamfered Selection Chips">
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
               <Subsection label="Label variant (display-only)">
-                <div className="flex flex-wrap gap-2">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-200)' }}>
                   <Chip variant="label">Equipment</Chip>
                   <Chip variant="label">Strength</Chip>
                   <Chip variant="label">Cardio</Chip>
@@ -338,7 +330,7 @@ export const ComponentGallery = () => {
               </Subsection>
 
               <Subsection label="Selectable variant (selected vs unselected)">
-                <div className="flex flex-wrap gap-2">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-200)' }}>
                   <Chip variant="selectable" selected={true} onClick={() => {}}>
                     Dumbbells
                   </Chip>
@@ -355,7 +347,7 @@ export const ComponentGallery = () => {
               </Subsection>
 
               <Subsection label="Disabled state">
-                <div className="flex flex-wrap gap-2">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-200)' }}>
                   <Chip variant="selectable" selected={true} disabled>
                     Bodyweight
                   </Chip>
@@ -369,21 +361,21 @@ export const ComponentGallery = () => {
 
           {/* ─── UNIVERSAL CARD ─── */}
           <Section title="Card — Universal Container">
-            <div className="space-y-6">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-600)' }}>
 
               <Subsection label="Default (with left accent column)">
                 <ChamferedCard>
-                  <p className="text-cta-sm font-medium">
+                  <p className="text-cta-sm" style={{ fontWeight: 500 }}>
                     Universal Card
                   </p>
-                  <p className="text-paragraph-sm mt-1">
+                  <p className="text-paragraph-sm" style={{ marginTop: 'var(--spacing-100)' }}>
                     Uses ChamferedFrame + LeftColumn pattern
                   </p>
                 </ChamferedCard>
               </Subsection>
 
               <Subsection label="Corner sizes">
-                <div className="space-y-3">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-300)' }}>
                   <ChamferedCard cornerSize="sm">
                     <span className="text-paragraph-sm">Small (8px chamfer)</span>
                   </ChamferedCard>
@@ -397,7 +389,7 @@ export const ComponentGallery = () => {
               </Subsection>
 
               <Subsection label="Padding sizes">
-                <div className="space-y-3">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-300)' }}>
                   <ChamferedCard padding="sm">
                     <span className="text-paragraph-sm">Small padding</span>
                   </ChamferedCard>
@@ -427,9 +419,9 @@ export const ComponentGallery = () => {
 
           {/* ─── INPUTS ─── */}
           <Section title="Inputs — Design System">
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
               <Subsection label="Input states">
-                <div className="space-y-2">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
                   <Input placeholder="Placeholder text" />
                   <Input defaultValue="With value (active on focus)" />
                   <Input disabled placeholder="Disabled" />
@@ -437,7 +429,7 @@ export const ComponentGallery = () => {
               </Subsection>
 
               <Subsection label="Input with icons">
-                <div className="space-y-2">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
                   <Input
                     placeholder="Username"
                     iconLeft={<User size={20} />}
@@ -457,7 +449,7 @@ export const ComponentGallery = () => {
               </Subsection>
 
               <Subsection label="Textarea states">
-                <div className="space-y-2">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
                   <Textarea placeholder="Enter your message here..." />
                   <Textarea defaultValue="Some existing content that can be edited" />
                   <Textarea disabled placeholder="Disabled textarea" />
@@ -465,7 +457,7 @@ export const ComponentGallery = () => {
               </Subsection>
 
               <Subsection label="Textarea with icon (for expand/edit)">
-                <div className="space-y-2">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
                   <Textarea
                     placeholder="Notes..."
                     iconRight={<Maximize2 size={20} />}
@@ -481,7 +473,7 @@ export const ComponentGallery = () => {
 
           {/* ─── FEEDBACK ─── */}
           <Section title="Feedback">
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
               <Subsection label="LoadingSkeleton (count=2)">
                 <LoadingSkeleton count={2} />
               </Subsection>
@@ -490,9 +482,9 @@ export const ComponentGallery = () => {
 
           {/* ─── TOASTS ─── */}
           <Section title="Toasts — Chamfered">
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
               <Subsection label="Trigger toasts">
-                <div className="flex flex-wrap gap-3">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-300)' }}>
                   <CTAButton
                     size="sm"
                     onClick={() => toast.success("Action completed")}
@@ -520,13 +512,13 @@ export const ComponentGallery = () => {
 
           {/* ─── CARDS & CONTAINERS ─── */}
           <Section title="Cards & Containers">
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
               <Subsection label="ChamferedCard">
                 <ChamferedCard padding="md">
-                  <p className="text-cta-sm font-medium">
+                  <p className="text-cta-sm" style={{ fontWeight: 500 }}>
                     Chamfered Card
                   </p>
-                  <p className="text-paragraph-sm mt-1">
+                  <p className="text-paragraph-sm" style={{ marginTop: 'var(--spacing-100)' }}>
                     Used throughout the app for content sections
                   </p>
                 </ChamferedCard>
@@ -536,7 +528,7 @@ export const ComponentGallery = () => {
 
           {/* ─── STATES ─── */}
           <Section title="States">
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
               <Subsection label="ErrorState (with retry)">
                 <ErrorState message="Couldn't load data" onRetry={() => { }} />
               </Subsection>
@@ -567,7 +559,7 @@ export const ComponentGallery = () => {
           </Section>
 
           <Section title="App — AnchorGrid">
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
               <Subsection label="Primary Lift mode">
                 <AnchorGrid selected={anchorValue} onSelect={setAnchorValue} />
               </Subsection>
@@ -586,10 +578,10 @@ export const ComponentGallery = () => {
           </Section>
 
           <Section title="App — GenerateButton">
-            <div className="space-y-3">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-300)' }}>
               <Subsection label="Normal (relative positioned for gallery)">
-                <div className="relative h-20">
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                <div style={{ position: 'relative', height: 80 }}>
+                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: 'var(--spacing-400)' }}>
                     <CTAButton size="lg" fullWidth>
                       Initiate Workout
                     </CTAButton>
@@ -600,14 +592,14 @@ export const ComponentGallery = () => {
           </Section>
 
           <Section title="App — LoadingScreen">
-            <ChamferedCard padding="none" className="overflow-hidden h-48 relative">
-              <LoadingScreen subtitle="Loading your data..." className="min-h-0 h-full" />
+            <ChamferedCard padding="none" style={{ overflow: 'hidden', height: 192, position: 'relative' }}>
+              <LoadingScreen subtitle="Loading your data..." style={{ minHeight: 0, height: '100%' }} />
             </ChamferedCard>
           </Section>
 
           {/* ─── TABBEDPANEL ─── */}
           <Section title="TabbedPanel — Tabs + Content in One Frame">
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
               <Subsection label="With content">
                 <TabbedPanel
                   tabs={[
@@ -638,7 +630,7 @@ export const ComponentGallery = () => {
                   activeTab={panelTab}
                   onChange={setPanelTab}
                 >
-                  <div className="flex gap-2 flex-wrap mb-3">
+                  <div style={{ display: 'flex', gap: 'var(--spacing-200)', flexWrap: 'wrap', marginBottom: 'var(--spacing-300)' }}>
                     <FilterToggle active={filterAnchor === 'ALL'} onClick={() => setFilterAnchor('ALL')} />
                     <FilterDropdown label="Anchor" options={sampleFilterOptions} value={filterAnchor} onChange={setFilterAnchor} />
                   </div>
@@ -667,7 +659,7 @@ export const ComponentGallery = () => {
 
           {/* ─── TABBAR (standalone) ─── */}
           <Section title="TabBar — Standalone Tabs">
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
               <Subsection label="Interactive (2 tabs)">
                 <TabBar
                   tabs={[
@@ -694,9 +686,9 @@ export const ComponentGallery = () => {
 
           {/* ─── FILTER DROPDOWN ─── */}
           <Section title="FilterDropdown + FilterToggle">
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
               <Subsection label="Filter bar (interactive)">
-                <div className="flex gap-2 flex-wrap">
+                <div style={{ display: 'flex', gap: 'var(--spacing-200)', flexWrap: 'wrap' }}>
                   <FilterToggle active={filterAnchor === 'ALL'} onClick={() => setFilterAnchor('ALL')} />
                   <FilterDropdown label="Anchor" options={sampleFilterOptions} value={filterAnchor} onChange={setFilterAnchor} />
                 </div>
@@ -706,7 +698,7 @@ export const ComponentGallery = () => {
 
           {/* ─── CONFIRMATION MODAL ─── */}
           <Section title="ConfirmationModal">
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
               <Subsection label="Trigger">
                 <CTAButton size="sm" variant="secondary" onClick={() => setShowConfirmModal(true)}>
                   Open Modal
@@ -717,7 +709,7 @@ export const ComponentGallery = () => {
 
           {/* ─── WEEK STREAK DISPLAY ─── */}
           <Section title="WeekStreakDisplay">
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
               <Subsection label="Mon–Wed workout, Thu rest, Fri–Sun empty">
                 <WeekStreakDisplay weekView={sampleWeekView} />
               </Subsection>
@@ -729,7 +721,7 @@ export const ComponentGallery = () => {
 
           {/* ─── LIST ITEMS ─── */}
           <Section title="WorkoutListItem + FavoriteListItem">
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
               <Subsection label="WorkoutListItem">
                 <WorkoutListItem workout={sampleWorkout} onClick={() => toast.info("Workout clicked")} />
               </Subsection>
@@ -741,13 +733,13 @@ export const ComponentGallery = () => {
 
           {/* ─── ICONOGRAPHY ─── */}
           <Section title="Iconography — CLEAR Icon Set">
-            <div className="space-y-6">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-600)' }}>
               <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
                 Solid, geometric, angular. Chamfered tips on directional icons. Drop-in replacements for Lucide.
               </p>
 
               <Subsection label="Directional">
-                <div className="flex flex-wrap gap-6 items-center">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-600)', alignItems: 'center' }}>
                   <IconDisplay icon={<ClearChevronRight size={24} />} name="ChevronRight" />
                   <IconDisplay icon={<ClearChevronLeft size={24} />} name="ChevronLeft" />
                   <IconDisplay icon={<ClearChevronDown size={24} />} name="ChevronDown" />
@@ -758,7 +750,7 @@ export const ComponentGallery = () => {
               </Subsection>
 
               <Subsection label="Actions">
-                <div className="flex flex-wrap gap-6 items-center">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-600)', alignItems: 'center' }}>
                   <IconDisplay icon={<ClearMenu size={24} />} name="Menu" />
                   <IconDisplay icon={<ClearX size={24} />} name="X" />
                   <IconDisplay icon={<ClearPlus size={24} />} name="Plus" />
@@ -770,7 +762,7 @@ export const ComponentGallery = () => {
               </Subsection>
 
               <Subsection label="Status / Feedback">
-                <div className="flex flex-wrap gap-6 items-center">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-600)', alignItems: 'center' }}>
                   <IconDisplay icon={<ClearRefreshCw size={24} />} name="RefreshCw" />
                   <IconDisplay icon={<ClearLoader2 size={24} />} name="Loader2" />
                   <IconDisplay icon={<ClearEye size={24} />} name="Eye" />
@@ -784,7 +776,7 @@ export const ComponentGallery = () => {
               </Subsection>
 
               <Subsection label="Semantic / Content">
-                <div className="flex flex-wrap gap-6 items-center">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-600)', alignItems: 'center' }}>
                   <IconDisplay icon={<ClearZap size={24} />} name="Zap" />
                   <IconDisplay icon={<ClearFlame size={24} />} name="Flame" />
                   <IconDisplay icon={<ClearStar size={24} />} name="Star" />
@@ -799,7 +791,7 @@ export const ComponentGallery = () => {
               </Subsection>
 
               <Subsection label="Mood (session debrief)">
-                <div className="flex flex-wrap gap-6 items-center">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-600)', alignItems: 'center' }}>
                   <IconDisplay icon={<ClearThumbsDown size={24} />} name="ThumbsDown" />
                   <IconDisplay icon={<ClearFrown size={24} />} name="Frown" />
                   <IconDisplay icon={<ClearMeh size={24} />} name="Meh" />
@@ -809,7 +801,7 @@ export const ComponentGallery = () => {
               </Subsection>
 
               <Subsection label="With theme colors">
-                <div className="flex flex-wrap gap-6 items-center">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-600)', alignItems: 'center' }}>
                   <IconDisplay icon={<ClearArrowRight size={24} style={{ color: 'var(--icon-cta)' }} />} name="CTA" />
                   <IconDisplay icon={<ClearFlame size={24} style={{ color: 'var(--icon-badge)' }} />} name="Badge" />
                   <IconDisplay icon={<ClearMenu size={24} style={{ color: 'var(--text-header)' }} />} name="Header" />
@@ -819,7 +811,7 @@ export const ComponentGallery = () => {
               </Subsection>
 
               <Subsection label="Size comparison — 12 / 16 / 20 / 24">
-                <div className="flex flex-wrap gap-6 items-end">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-600)', alignItems: 'flex-end' }}>
                   <IconDisplay icon={<ClearZap size={12} />} name="12px" />
                   <IconDisplay icon={<ClearZap size={16} />} name="16px" />
                   <IconDisplay icon={<ClearZap size={20} />} name="20px" />
@@ -833,37 +825,37 @@ export const ComponentGallery = () => {
           {/* ═══ MUSEUM — Legacy components preserved for reference ═════════════ */}
           {/* ════════════════════════════════════════════════════════════════════ */}
 
-          <div className="mt-16 pt-8" style={{ borderTop: '2px solid var(--border-spacer)' }}>
-            <p className="text-label-lg uppercase tracking-widest mb-2" style={{ color: 'var(--text-disabled)' }}>
+          <div style={{ marginTop: 'calc(var(--spacing-400) * 4)', paddingTop: 'var(--spacing-700)', borderTop: '2px solid var(--border-spacer)' }}>
+            <p className="text-label-lg" style={{ textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--spacing-200)', color: 'var(--text-disabled)' }}>
               Museum
             </p>
-            <p className="text-paragraph-sm mb-8" style={{ color: 'var(--text-paragraph)' }}>
+            <p className="text-paragraph-sm" style={{ marginBottom: 'var(--spacing-700)', color: 'var(--text-paragraph)' }}>
               Legacy components preserved to see where we came from. NOT used in the app. Do NOT reference these for any new UI work.
             </p>
           </div>
 
           <Section title="Museum — ActionButton (pre-ChamferedFrame)">
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
               <Subsection label="Primary variant">
-                <div className="flex flex-wrap gap-3 items-center">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-300)', alignItems: 'center' }}>
                   <ActionButton variant="primary">Primary</ActionButton>
-                  <ActionButton variant="primary" iconLeft={<Zap className="w-4 h-4" />}>With Icon</ActionButton>
+                  <ActionButton variant="primary" iconLeft={<Zap style={{ width: 16, height: 16 }} />}>With Icon</ActionButton>
                   <ActionButton variant="primary" disabled>Disabled</ActionButton>
                 </div>
               </Subsection>
 
               <Subsection label="Secondary variant">
-                <div className="flex flex-wrap gap-3 items-center">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-300)', alignItems: 'center' }}>
                   <ActionButton variant="secondary">Secondary</ActionButton>
-                  <ActionButton variant="secondary" iconRight={<Dumbbell className="w-4 h-4" />}>With Icon</ActionButton>
+                  <ActionButton variant="secondary" iconRight={<Dumbbell style={{ width: 16, height: 16 }} />}>With Icon</ActionButton>
                   <ActionButton variant="secondary" disabled>Disabled</ActionButton>
                 </div>
               </Subsection>
 
               <Subsection label="Transparent variant">
-                <div className="flex flex-wrap gap-3 items-center">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-300)', alignItems: 'center' }}>
                   <ActionButton variant="transparent">Transparent</ActionButton>
-                  <ActionButton variant="transparent" iconLeft={<Zap className="w-4 h-4" />}>With Icon</ActionButton>
+                  <ActionButton variant="transparent" iconLeft={<Zap style={{ width: 16, height: 16 }} />}>With Icon</ActionButton>
                   <ActionButton variant="transparent" disabled>Disabled</ActionButton>
                 </div>
               </Subsection>
@@ -871,7 +863,7 @@ export const ComponentGallery = () => {
           </Section>
 
           <Section title="Museum — ActionCard (pre-Card)">
-            <div className="space-y-6">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-600)' }}>
               <Subsection label="Small (8px Chamfer / 8px Left Col)">
                 <ActionCard cornerSize="sm">
                   Small Chamfer
@@ -892,92 +884,6 @@ export const ComponentGallery = () => {
             </div>
           </Section>
 
-          <Section title="Museum — shadcn/ui Buttons">
-            <div className="space-y-4">
-              <Subsection label="Variants">
-                <div className="flex flex-wrap gap-2">
-                  <Button variant="default">Default</Button>
-                  <Button variant="secondary">Secondary</Button>
-                  <Button variant="destructive">Destructive</Button>
-                  <Button variant="outline">Outline</Button>
-                  <Button variant="ghost">Ghost</Button>
-                  <Button variant="link">Link</Button>
-                </div>
-              </Subsection>
-
-              <Subsection label="Sizes">
-                <div className="flex items-center gap-2">
-                  <Button size="sm">Small</Button>
-                  <Button size="default">Default</Button>
-                  <Button size="lg">Large</Button>
-                  <Button size="icon"><Zap className="w-4 h-4" /></Button>
-                </div>
-              </Subsection>
-            </div>
-          </Section>
-
-          <Section title="Museum — shadcn/ui Inputs">
-            <div className="space-y-4">
-              <Subsection label="Slider">
-                <Slider value={sliderValue} onValueChange={setSliderValue} max={100} step={1} />
-                <p className="text-label-xs mt-1">Value: {sliderValue[0]}</p>
-              </Subsection>
-
-              <Subsection label="Switch">
-                <div className="flex items-center gap-4">
-                  <Switch checked={switchOn} onCheckedChange={setSwitchOn} />
-                  <span className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>{switchOn ? "On" : "Off"}</span>
-                  <Switch disabled />
-                  <span className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>Disabled</span>
-                </div>
-              </Subsection>
-            </div>
-          </Section>
-
-          <Section title="Museum — shadcn/ui Feedback">
-            <div className="space-y-4">
-              <Subsection label="Badge variants">
-                <div className="flex flex-wrap gap-2">
-                  <Badge variant="default">Default</Badge>
-                  <Badge variant="secondary">Secondary</Badge>
-                  <Badge variant="destructive">Destructive</Badge>
-                  <Badge variant="outline">Outline</Badge>
-                </div>
-              </Subsection>
-
-              <Subsection label="Progress">
-                <div className="space-y-2">
-                  <Progress value={25} />
-                  <Progress value={66} />
-                  <Progress value={100} />
-                </div>
-              </Subsection>
-
-              <Subsection label="LoadingSpinner (sizes)">
-                <div className="flex items-center gap-6">
-                  <LoadingSpinner size="sm" />
-                  <LoadingSpinner size="md" message="Loading" />
-                  <LoadingSpinner size="lg" />
-                </div>
-              </Subsection>
-
-              <Subsection label="SkeletonCard">
-                <SkeletonCard />
-              </Subsection>
-            </div>
-          </Section>
-
-          <Section title="Museum — shadcn/ui Card">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-heading-h5">Card Title</CardTitle>
-                <CardDescription>Card description text</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-paragraph-sm">Card content goes here.</p>
-              </CardContent>
-            </Card>
-          </Section>
 
       </div>
 
@@ -1000,7 +906,7 @@ export const ComponentGallery = () => {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h2 className="text-label-xs uppercase tracking-widest mb-3 pb-2" style={{ color: 'var(--text-card-label)', borderBottom: '2px solid var(--border-spacer)' }}>
+      <h2 className="text-label-xs" style={{ textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--spacing-300)', paddingBottom: 'var(--spacing-200)', color: 'var(--text-card-label)', borderBottom: '2px solid var(--border-spacer)' }}>
         {title}
       </h2>
       {children}
@@ -1011,7 +917,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Subsection({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="text-label-xs uppercase tracking-widest mb-2" style={{ fontSize: '10px', color: 'var(--text-disabled)' }}>
+      <p className="text-label-xs" style={{ textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--spacing-200)', fontSize: 10, color: 'var(--text-disabled)' }}>
         {label}
       </p>
       {children}
@@ -1021,20 +927,20 @@ function Subsection({ label, children }: { label: string; children: React.ReactN
 
 function IconDisplay({ icon, name }: { icon: React.ReactNode; name: string }) {
   return (
-    <div className="flex flex-col items-center gap-1">
-      <div className="flex items-center justify-center" style={{ color: 'var(--text-header)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--spacing-100)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-header)' }}>
         {icon}
       </div>
-      <p className="text-label-xs" style={{ fontSize: '9px', color: 'var(--text-disabled)' }}>{name}</p>
+      <p className="text-label-xs" style={{ fontSize: 9, color: 'var(--text-disabled)' }}>{name}</p>
     </div>
   );
 }
 
 function ColorSwatch({ name, style }: { name: string; style: React.CSSProperties }) {
   return (
-    <div className="text-center">
-      <div className="w-full aspect-square" style={style} />
-      <p className="text-label-xs mt-1" style={{ fontSize: '9px', color: 'var(--text-disabled)' }}>{name}</p>
+    <div style={{ textAlign: 'center' }}>
+      <div style={{ width: '100%', aspectRatio: '1', ...style }} />
+      <p className="text-label-xs" style={{ marginTop: 'var(--spacing-100)', fontSize: 9, color: 'var(--text-disabled)' }}>{name}</p>
     </div>
   );
 }

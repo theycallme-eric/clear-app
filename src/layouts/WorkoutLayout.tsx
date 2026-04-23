@@ -11,12 +11,25 @@ interface WorkoutLayoutProps {
 export const WorkoutLayout = ({ header, footer, children, onTouchStart, onTouchEnd }: WorkoutLayoutProps) => {
   return (
     <div
-      className="min-h-screen grain-overlay flex flex-col pb-28 relative"
+      className="grain-overlay"
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        paddingBottom: '7rem',
+        position: 'relative',
+      }}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
       {header}
-      <div className="max-w-md mx-auto w-full px-4 pt-14">
+      <div style={{
+        maxWidth: '28rem',
+        margin: '0 auto',
+        width: '100%',
+        padding: '0 var(--spacing-400)',
+        paddingTop: 'var(--spacing-1100)',
+      }}>
         {children}
       </div>
       {footer}

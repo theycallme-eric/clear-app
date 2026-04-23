@@ -97,76 +97,25 @@ If you add a token to `:root`, you MUST add the equivalent to `[data-theme="blue
 
 ---
 
-### 5. Tailwind Class Compliance
+### 5. Additional Checks
 
-When using Tailwind utilities for colors, use only these patterns:
+Also verify (see `anti-patterns.md` for full list):
 
-| ✅ Allowed | ❌ Avoid |
-|-----------|----------|
-| `bg-background` | `bg-neutral-900` |
-| `text-foreground` | `text-white` |
-| `border-border` | `border-gray-700` |
-| `bg-[var(--surface-card)]` | `bg-orange-500/20` |
-| `text-[var(--text-cta)]` | `text-blue-300` |
-
-**Pattern:** If Tailwind doesn't have a semantic class, use arbitrary value syntax: `bg-[var(--token-name)]`
+- [ ] No `border-radius` — use `ChamferedFrame` or `corner-cut` class
+- [ ] No `lucide-react` imports — use `src/components/icons.tsx`
+- [ ] Typography uses classes (`text-heading-*`, `text-label-*`, `text-paragraph-*`, `text-cta-*`), not inline styles
+- [ ] Spacing uses `--spacing-*` tokens, not raw pixel values
+- [ ] Hover states on ChamferedFrame components use CSS variable technique (see `chamfered-component.md`)
 
 ---
 
 ## Semantic Token Reference
 
-### Surfaces (backgrounds)
+For the complete token lookup table (100+ tokens across surfaces, borders, text, and icons), see **`token-decision-tree.md`**.
 
-| Token | Purpose |
-|-------|---------|
-| `--surface-card` | Card/container backgrounds |
-| `--surface-card-accent` | Emphasized card areas |
-| `--surface-cta-primary` | Primary button background |
-| `--surface-cta-primary-hover` | Primary button hover |
-| `--surface-cta-primary-disabled` | Disabled button |
-| `--surface-cta-secondary` | Secondary/ghost button background |
-| `--surface-cta-secondary-hover` | Secondary button hover |
-| `--surface-cta-accent` | Left accent bar on buttons |
-| `--surface-success` | Success state background |
-| `--surface-error` | Error state background |
-| `--surface-info` | Info state background |
-| `--surface-disabled` | Generic disabled background |
+For common token mistakes and how to fix them, see **`anti-patterns.md`**.
 
-### Borders
-
-| Token | Purpose |
-|-------|---------|
-| `--border-card` | Card/container borders |
-| `--border-cta-primary` | Primary button border |
-| `--border-cta-primary-hover` | Primary button hover border |
-| `--border-cta-secondary` | Secondary button border |
-| `--border-disabled` | Disabled state border |
-| `--border-success` | Success state border |
-| `--border-error` | Error state border |
-| `--border-info` | Info state border |
-
-### Text
-
-| Token | Purpose |
-|-------|---------|
-| `--text-header` | Headings (H1-H6) |
-| `--text-paragraph` | Body text |
-| `--text-cta` | Button/link text |
-| `--text-cta-hover` | Button/link hover text |
-| `--text-disabled` | Disabled text |
-| `--text-success` | Success message text |
-| `--text-error` | Error message text |
-| `--text-info` | Info message text |
-
-### Icons
-
-| Token | Purpose |
-|-------|---------|
-| `--icon-cta` | Interactive icons |
-| `--icon-cta-hover` | Icon hover state |
-| `--icon-disabled` | Disabled icons |
-| `--icon-success` | Success icons |
-| `--icon-error` | Error icons |
+For spacing, typography classes, and visual hierarchy rules, see **`ui-rules.md`**.
 
 ---
 
@@ -215,6 +164,18 @@ When the `figma-ui-implementer` agent creates or modifies components:
 ## Files
 
 - **Token definitions:** `src/index.css`
-- **Token JSON reference:** `design-tokens.json`
-- **Related skills:** `.claude/skills/chamfered-component.md`
-- **Related agents:** `.claude/agents/figma-ui-implementer.md`
+- **Token lookup:** `token-decision-tree.md`
+- **Anti-patterns:** `anti-patterns.md`
+- **UI rules:** `ui-rules.md`
+
+## Related Skills
+
+- [token-decision-tree](token-decision-tree.md) — Which token to use for any role
+- [anti-patterns](anti-patterns.md) — Common mistakes to avoid
+- [ui-rules](ui-rules.md) — Spacing, typography, visual hierarchy
+- [chamfered-component](chamfered-component.md) — ChamferedFrame + LeftColumn patterns
+- [token-check](token-check.md) — Quick verification
+
+## Related Agents
+
+- [figma-ui-implementer](../agents/figma-ui-implementer.md) — Figma-to-code implementation

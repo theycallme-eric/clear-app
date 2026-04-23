@@ -64,24 +64,24 @@ export const SignInScreen = () => {
 
   return (
     <AuthLayout header={<PageHeader left="back" onBack={() => navigate("/welcome")} />}>
-      <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full stagger-reveal">
+      <div className="stagger-reveal" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', maxWidth: '24rem', margin: '0 auto', width: '100%' }}>
         {/* Title */}
         <h1
-          className="text-heading-h1 font-bold tracking-wider mb-2"
-          style={{ color: 'var(--text-header)' }}
+          className="text-heading-h1"
+          style={{ fontWeight: 700, letterSpacing: '0.05em', marginBottom: 'var(--spacing-200)', color: 'var(--text-header)' }}
         >
           Sign In
         </h1>
-        <p className="text-paragraph-sm mb-8" style={{ color: 'var(--text-paragraph)' }}>
+        <p className="text-paragraph-sm" style={{ marginBottom: 'var(--spacing-700)', color: 'var(--text-paragraph)' }}>
           Welcome back to CLEAR
         </p>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-600)' }}>
           <Card cornerSize="md" padding="md">
             {/* Email */}
-            <div className="space-y-2 mb-4">
-              <label className="block text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)', marginBottom: 'var(--spacing-400)' }}>
+              <label className="text-paragraph-sm" style={{ display: 'block', color: 'var(--text-paragraph)' }}>
                 Email
               </label>
               <Input
@@ -94,8 +94,8 @@ export const SignInScreen = () => {
             </div>
 
             {/* Password */}
-            <div className="space-y-2">
-              <label className="block text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
+              <label className="text-paragraph-sm" style={{ display: 'block', color: 'var(--text-paragraph)' }}>
                 Password
               </label>
               <Input
@@ -108,7 +108,9 @@ export const SignInScreen = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="hover:opacity-80"
+                    style={{ opacity: 1 }}
+                    onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.8')}
+                    onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
@@ -118,8 +120,8 @@ export const SignInScreen = () => {
           </Card>
 
           {/* Stay logged in + Forgot Password */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-200)' }}>
               <Checkbox
                 checked={stayLoggedIn}
                 onChange={(val) => {
@@ -135,7 +137,7 @@ export const SignInScreen = () => {
 
             <button
               type="button"
-              onClick={() => toast.info("Password reset", { description: "Enter your email on the sign in screen to reset." })}
+              onClick={() => navigate("/forgot-password")}
               className="text-cta-sm transition-colors"
               style={{ color: 'var(--text-cta)' }}
             >

@@ -99,11 +99,11 @@ export const WorkoutScreen = () => {
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="mb-6 space-y-2">
+      <div style={{ marginBottom: 'var(--spacing-600)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
         <ProgressTracker progress={progress} />
         <span
-          className="text-label-xs uppercase tracking-widest"
-          style={{ color: 'var(--text-paragraph)' }}
+          className="text-label-xs"
+          style={{ textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-paragraph)' }}
         >
           {generatedWorkout.goal ? `${generatedWorkout.goal.replace('_', ' ')} · ` : ''}{generatedWorkout.anchor} &bull; Intensity {generatedWorkout.intensity}
         </span>

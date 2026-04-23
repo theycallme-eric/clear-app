@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LeftColumn } from "./LeftColumn";
-// import { RightColumn } from "./RightColumn"; // Removed as we use proper frame
 import { ChamferedFrame } from "./ChamferedFrame";
 
 interface ActionCardProps {
@@ -33,44 +32,49 @@ export function ActionCard({
   cornerSize = "md",
   showChevron = true,
 }: ActionCardProps) {
-  // Size in pixels map, matching RightColumn/CornerAngle logic
   // Map corner size to left column size
-  // sm -> sm (8px)
-  // md -> md (12px)
-  // lg -> md (12px) - explicitly requested to stay md for large corners
   const leftColSize = cornerSize === "sm" ? "sm" : "md";
 
   return (
     <div
-      className={cn(
-        "relative flex items-stretch w-full",
-        onClick && "cursor-pointer",
-        className
-      )}
+      className={className}
       onClick={onClick}
+      style={{
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'stretch',
+        width: '100%',
+        ...(onClick ? { cursor: 'pointer' } : {}),
+      }}
     >
       {/* Left column - accent surface, border all sides */}
       <LeftColumn
         size={leftColSize}
-        surfaceColor="var(--surface-cta-accent)"
+        surfaceColor="var(--surface-cta-primary-accent)"
         borderColor="var(--border-cta-primary)"
-        className="relative z-10"
+        style={{ position: 'relative', zIndex: 10 }}
       />
 
       {/* Main Body - uses ChamferedFrame for seamless center+right */}
       <ChamferedFrame
-        className="flex-1 -ml-[2px]" // -ml-2px to overlap the left column border
+        style={{ flex: 1, marginLeft: -2 }}
         cornerSize={cornerSize}
         surfaceColor="var(--surface-cta-primary)"
         borderColor="var(--border-cta-primary)"
-        hasLeftBorder={false} // Open to the left to merge with LeftColumn
+        hasLeftBorder={false}
       >
-        <div className="flex items-center justify-between h-full px-4 py-3">
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          height: '100%',
+          padding: `var(--spacing-300) var(--spacing-400)`,
+        }}>
           {/* Content */}
-          <div className="flex-1">
+          <div style={{ flex: 1 }}>
             <p
-              className="text-heading-h4 font-bold"
-              style={{ color: "var(--text-cta)" }}
+              className="text-heading-h4"
+              style={{ fontWeight: 700, color: "var(--text-cta)" }}
             >
               {children}
             </p>
@@ -79,8 +83,12 @@ export function ActionCard({
           {/* Chevron icon */}
           {showChevron && (
             <ChevronRight
-              className="w-6 h-6 shrink-0"
-              style={{ color: "var(--icon-cta)" }}
+              style={{
+                width: 24,
+                height: 24,
+                flexShrink: 0,
+                color: "var(--icon-cta)",
+              }}
             />
           )}
         </div>

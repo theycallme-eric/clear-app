@@ -1,87 +1,90 @@
 ---
 name: token-check
-description: Verify components use design tokens instead of hardcoded values
-trigger: When reviewing component styles
+description: Quick verification that components use design tokens instead of hardcoded values
+trigger: After modifying component styles, before PR
 category: ui
 ---
 
 # Skill: Token Check
 
-## Context
+Quick post-build verification. For detailed token selection guidance, see **`token-decision-tree.md`**.
 
-All components must use design tokens from the Figma design system. Hardcoded values break consistency and make theming impossible.
+---
 
 ## Steps
 
-1. **Open Component File**
-   - Identify all style-related code
+### 1. Scan for Violations
 
-2. **Search for Violations**
-   - Hex colors (`#`)
-   - RGB/RGBA values
-   - Hardcoded pixel values for colors
+Check the modified component files for:
 
-3. **Cross-Reference Tokens**
-   - Check `src/index.css` for CSS variables
-   - Check `docs/frontend/figma-design-tokens.json`
+- **Hex colors** (`#xxx`, `#xxxxxx`) in style props or CSS
+- **Primitive tokens** (`var(--color-orange-*)`, `var(--color-blue-*)`) — these belong in `index.css` only, not in components
+- **`border-radius`** — CLEAR uses chamfered corners (`ChamferedFrame` or `corner-cut` class)
+- **`lucide-react` imports** — use `src/components/icons.tsx` instead
+- **Inline font styles** — use typography classes (`text-heading-*`, `text-label-*`, `text-paragraph-*`, `text-cta-*`)
+- **Raw pixel spacing** — use `--spacing-*` tokens
 
-4. **Replace Violations**
-   - Use appropriate CSS variables
-   - Use Tailwind classes that map to tokens
+You can run the automated scanner: `npx tsx scripts/token-lint.ts`
 
-## Token Categories
-
-| Category | Prefix | Example |
-|----------|--------|---------|
-| Surfaces | `--surface-` | `--surface-cta-primary` |
-| Borders | `--border-` | `--border-cta-primary` |
-| Text | `--text-` | `--text-cta` |
-| Icons | `--icon-` | `--icon-cta` |
-
-## Common Violations & Fixes
+### 2. Replace Violations
 
 ```tsx
-// BAD: Hardcoded hex
-style={{ backgroundColor: "#1a1a1a" }}
-className="bg-gray-900"
+// BAD → GOOD
 
-// GOOD: CSS variable
-style={{ backgroundColor: "var(--surface-cta-primary)" }}
-className="bg-surface-primary"
+// Hardcoded color
+style={{ color: "#00A9F4" }}
+style={{ color: "var(--text-cta)" }}
 
-// BAD: Arbitrary spacing for colors
-style={{ padding: "13px", color: "#ff0000" }}
+// Primitive token in component
+style={{ background: "var(--color-orange-alpha-100)" }}
+style={{ background: "var(--surface-card)" }}
 
-// GOOD: Tailwind spacing, CSS variable color
-className="p-3"
-style={{ color: "var(--text-error)" }}
+// Rounded corners
+style={{ borderRadius: 8 }}
+// Use ChamferedFrame or corner-cut class instead
+
+// Inline typography
+style={{ fontFamily: 'Oxanium', fontSize: 14, fontWeight: 700 }}
+className="text-label-sm"
 ```
 
-## Figma MCP Integration
+### 3. Verify Theme Parity
 
-If connected to Figma via MCP:
-- Use `get_variable_defs` to fetch variable definitions
-- Compare against component implementation
+If you added new tokens to `src/index.css`:
+- Check `:root` section — token exists
+- Check `[data-theme="blue"]` section — matching token exists
+- Both map to the correct primitive for their theme
 
-## Reference Files
+### 4. Run Build
 
-- `src/index.css` — CSS variables
-- `docs/frontend/figma-design-tokens.json` — Figma export
-- `tailwind.config.js` — Tailwind theme
+```bash
+npm run build
+```
+
+---
+
+## Reference
+
+- **Which token to use:** `token-decision-tree.md`
+- **Common mistakes:** `anti-patterns.md`
+- **Full audit:** `token-audit.md`
+- **Token source of truth:** `src/index.css`
 
 ## Related Skills
 
-- [component](.claude/skills/component.md) — Component creation guidelines
-- [chamfered-component](.claude/skills/chamfered-component.md) — Chamfered frame tokens
-
-## Related Agents
-
-- [figma-ui-implementer](.claude/agents/figma-ui-implementer.md) — Figma token extraction
+- [token-decision-tree](token-decision-tree.md) — Systematic token lookup
+- [anti-patterns](anti-patterns.md) — Common violations with fixes
+- [token-audit](token-audit.md) — Comprehensive audit for major changes
+- [component](component.md) — Component creation guidelines
+- [chamfered-component](chamfered-component.md) — Chamfered frame tokens
 
 ## Checklist
 
-- [ ] No hex colors found
-- [ ] No RGB/RGBA values found
-- [ ] All colors use CSS variables
-- [ ] Spacing uses Tailwind classes
-- [ ] Typography uses defined classes
+- [ ] No hex colors in component files
+- [ ] No primitive tokens (`--color-*`) in component files
+- [ ] No `border-radius` usage
+- [ ] No `lucide-react` imports
+- [ ] Typography uses classes, not inline styles
+- [ ] Spacing uses `--spacing-*` tokens
+- [ ] New tokens exist in both themes
+- [ ] Build passes

@@ -53,6 +53,15 @@ What are you doing?
 │   ├─► Using a new icon?
 │   │   └─► icon-transform.md (add to src/components/icons.tsx)
 │   │
+│   ├─► Need implementation rules (spacing, typography, states)?
+│   │   └─► ui-rules.md
+│   │
+│   ├─► Unsure which token to use?
+│   │   └─► token-decision-tree.md
+│   │
+│   ├─► Avoiding common mistakes?
+│   │   └─► anti-patterns.md
+│   │
 │   └─► Checking design tokens?
 │       └─► token-check.md
 │
@@ -72,21 +81,35 @@ What are you doing?
 │   └─► Creating a PR?
 │       └─► /pr (runs code-reviewer agent)
 │
+├─► TICKET / PLANNING
+│   │
+│   ├─► Creating a ticket?
+│   │   └─► /ticket create → create-ticket.md
+│   │
+│   ├─► Starting work from board?
+│   │   └─► /ticket pull → pull-ticket.md
+│   │
+│   ├─► Processing todos into tickets?
+│   │   └─► /ticket sync → process-session-notes.md
+│   │
+│   └─► Checking board status?
+│       └─► /ticket board
+│
 ├─► SESSION MANAGEMENT
 │   │
 │   ├─► Given a session plan?
 │   │   └─► /execute [plan-name] OR handoff.md
 │   │
 │   ├─► All tasks complete?
-│   │   └─► close-session.md → backlog.md
+│   │   └─► close-session.md (processes notes → tickets)
 │   │
 │   └─► Major architecture change?
 │       └─► project-map.md
 │
 └─► DOCUMENTATION
     │
-    ├─► Updating task list?
-    │   └─► backlog.md
+    ├─► Quick capture (ideas, notes)?
+    │   └─► todo-board.md (promotes to GitHub Issues)
     │
     └─► Processing informal notes?
         └─► todo-board.md
@@ -104,7 +127,9 @@ What are you doing?
 | Fixing errors | `debug.md` | |
 | Merging code | `pr-workflow.md` | Run `/pr` command |
 | Starting session | `execute-plan.md` or `handoff.md` | |
-| Ending session | `close-session.md` | → `backlog.md` |
+| Ending session | `close-session.md` | Processes notes → tickets |
+| Creating a ticket | `create-ticket.md` | Via `/ticket create` |
+| Pulling a ticket | `pull-ticket.md` | Via `/ticket pull` |
 
 ---
 
@@ -132,8 +157,11 @@ Agents are specialized AI personas. Invoke via Task tool with matching `subagent
 |-------|---------|--------------|
 | [`execute-plan`](skills/execute-plan.md) | `/execute` or plan approval | **AUTOMATED.** Parse plan, execute tasks, track progress, validate acceptance |
 | [`handoff`](skills/handoff.md) | Receiving a session plan | **MANUAL.** Parse tasks, load context, check for relevant skills |
-| [`close-session`](skills/close-session.md) | All tasks complete | **END HERE.** Log work, update backlog, notify user |
+| [`close-session`](skills/close-session.md) | All tasks complete | **END HERE.** Log work, close tickets, process notes, notify user |
 | [`pr-workflow`](skills/pr-workflow.md) | Merging code or creating PR | **ENFORCED.** PR-based workflow, blocks direct merges to main |
+| [`create-ticket`](skills/create-ticket.md) | Planning work or promoting todo | Create GitHub Issue with full PRD |
+| [`pull-ticket`](skills/pull-ticket.md) | Starting work from board | Pull ticket, create branch, load context |
+| [`process-session-notes`](skills/process-session-notes.md) | Session close or `/ticket sync` | Synthesize todos into tickets, cross-ref existing issues |
 
 ### UI Skills
 
@@ -143,6 +171,9 @@ Agents are specialized AI personas. Invoke via Task tool with matching `subagent
 | [`chamfered-component`](skills/chamfered-component.md) | Building chamfered frame components | ChamferedFrame + LeftColumn pattern |
 | [`gallery-add`](skills/gallery-add.md) | After creating a component | Add visual test case to gallery |
 | [`token-check`](skills/token-check.md) | Reviewing component styles | Verify design tokens, no hardcoded values |
+| [`ui-rules`](skills/ui-rules.md) | Any UI work | Spacing, typography, hierarchy, cards, states, atmosphere |
+| [`token-decision-tree`](skills/token-decision-tree.md) | Choosing tokens | Systematic lookup: which token for what |
+| [`anti-patterns`](skills/anti-patterns.md) | Building components | Common mistakes and how to avoid them |
 | [`token-audit`](skills/token-audit.md) | Comprehensive token review | Full audit of design token usage |
 | [`icon-transform`](skills/icon-transform.md) | New Lucide icon introduced | Convert to CLEAR-style solid geometric icon |
 
@@ -181,7 +212,9 @@ User-invocable shortcuts. Files in `.claude/commands/`.
 | `/todo` | | Check the todo board |
 | `/process-inbox` | | Process files in inbox folder |
 | `/process-plans` | | Move plans from ~/.claude/plans/ to project |
-| `/close-session` | | Log session work and update backlog |
+| `/ticket` | `[create\|pull\|view\|close\|board\|sync]` | Manage GitHub Issue tickets |
+| `/close-session` | | Log session work, close tickets, process notes |
+| `/test-generation` | `[N\|sweep\|anchor/goal@intensity]` | Headless workout generation testing |
 
 ---
 
@@ -214,9 +247,19 @@ git checkout main && merge    ← BLOCKED (use PR)
 component.md → chamfered-component.md (if needed) → gallery-add.md → token-check.md
 ```
 
-### Session Execution
+### Session Execution (from plan)
 ```
-execute-plan.md → [task skills] → close-session.md → backlog.md
+execute-plan.md → [task skills] → close-session.md → tickets updated
+```
+
+### Ticket-Driven Work
+```
+/ticket pull → branch + context → [task skills] → /pr (Closes #N) → close-session.md
+```
+
+### Quick Capture → Tickets
+```
+todo-board.md (capture) → /ticket sync OR close-session.md → create-ticket.md → GitHub Issues
 ```
 
 ### Code Merging
@@ -271,7 +314,9 @@ debug.md → [fix] → token-check.md (if UI) → pr-workflow.md
 │   ├── pr.md              ← /pr [create|review]
 │   ├── process-inbox.md
 │   ├── process-plans.md   ← /process-plans (import from ~/.claude/plans/)
-│   ├── close-session.md   ← /close-session (log work, update backlog)
+│   ├── close-session.md   ← /close-session (log work, process tickets)
+│   ├── test-generation.md ← /test-generation [N|sweep|anchor/goal]
+│   ├── ticket.md          ← /ticket [create|pull|view|close|board|sync]
 │   └── todo.md
 │
 ├── hooks/
@@ -289,6 +334,9 @@ debug.md → [fix] → token-check.md (if UI) → pr-workflow.md
 │   ├── component.md       ← UI components
 │   ├── chamfered-component.md
 │   ├── gallery-add.md
+│   ├── ui-rules.md            ← Spacing, typography, visual hierarchy, cards, states
+│   ├── token-decision-tree.md ← Which token to use for what
+│   ├── anti-patterns.md       ← Common LLM mistakes to avoid
 │   ├── token-check.md
 │   ├── token-audit.md
 │   ├── icon-transform.md
@@ -298,7 +346,10 @@ debug.md → [fix] → token-check.md (if UI) → pr-workflow.md
 │   ├── todo-board.md
 │   ├── project-map.md
 │   ├── inbox-workflow.md
-│   └── screenshot-workflow.md
+│   ├── screenshot-workflow.md
+│   ├── create-ticket.md     ← GitHub Issue with PRD
+│   ├── pull-ticket.md       ← Pull ticket, branch, execute
+│   └── process-session-notes.md  ← Synthesize notes → tickets
 │
 ├── inbox/                 ← Drop files here for processing
 └── screenshots/           ← Screenshot storage
@@ -345,4 +396,4 @@ color: purple | blue | green
 
 ---
 
-*Last updated: February 2026*
+*Last updated: April 2026*

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { UserLocation } from "@/types/workout";
+import type { UserLocation } from "@/types/workout";
 import { Card } from "./Card";
 import { RadioButton } from "./RadioButton";
 
@@ -21,34 +20,41 @@ export const LocationAccordion = ({ selected, onSelect, locations }: LocationAcc
     <Card cornerSize="md" padding="none">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 text-left"
+        style={{
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: 'var(--spacing-400)',
+          textAlign: 'left',
+        }}
       >
         <div>
           <span
-            className="text-label-xs uppercase tracking-widest block mb-1"
-            style={{ color: "var(--text-card-label)" }}
+            className="text-label-xs"
+            style={{ textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 'var(--spacing-100)', color: "var(--text-card-label)" }}
           >
             Location
           </span>
           <span
-            className="text-heading-h5 font-bold"
-            style={{ color: "var(--icon-cta)" }}
+            className="text-heading-h5"
+            style={{ fontWeight: 'bold', color: "var(--icon-cta)" }}
           >
             {displayName}
           </span>
         </div>
         <ChevronDown
           size={20}
-          className={cn(
-            "transition-transform duration-200",
-            isOpen && "rotate-180"
-          )}
-          style={{ color: "var(--icon-cta)" }}
+          style={{
+            color: "var(--icon-cta)",
+            transition: 'transform 200ms',
+            transform: isOpen ? 'rotate(180deg)' : undefined,
+          }}
         />
       </button>
 
       {isOpen && (
-        <div className="px-4 pb-4 flex flex-col gap-2">
+        <div style={{ paddingLeft: 'var(--spacing-400)', paddingRight: 'var(--spacing-400)', paddingBottom: 'var(--spacing-400)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
           {locations.map((location) => (
             <RadioButton
               key={location.id}
@@ -58,7 +64,7 @@ export const LocationAccordion = ({ selected, onSelect, locations }: LocationAcc
                 setIsOpen(false);
               }}
               label={location.name}
-              className="w-full"
+              style={{ width: '100%' }}
             />
           ))}
         </div>

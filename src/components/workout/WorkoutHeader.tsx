@@ -24,35 +24,38 @@ export const WorkoutHeader = ({
 }: WorkoutHeaderProps) => {
   return (
     <Card cornerSize="md" padding="md">
-      <div className="flex items-center justify-between">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         {/* A: Section info - left side, stacked vertically, centered */}
-        <div className="flex flex-col items-center">
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <span
-            className="text-label-xs uppercase tracking-wider px-2 py-0.5"
+            className="text-label-xs"
             style={{
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              padding: 'var(--spacing-50) var(--spacing-200)',
               color: "var(--text-paragraph)",
               border: "1px solid var(--border-card)",
             }}
           >
             {sectionName}
           </span>
-          <span className="text-paragraph-xs mt-1" style={{ color: "var(--text-paragraph)" }}>
+          <span className="text-paragraph-xs" style={{ marginTop: 'var(--spacing-100)', color: "var(--text-paragraph)" }}>
             ({currentSection + 1}/{totalSections})
           </span>
         </div>
 
         {/* C: Timer - centered */}
         <span
-          className="text-time-lg font-bold tracking-wider"
-          style={{ color: "var(--text-timer)" }}
+          className="text-time-lg"
+          style={{ fontWeight: 'bold', letterSpacing: '0.05em', color: "var(--text-timer)" }}
         >
           {formatTime(sectionTime)}
         </span>
 
         {/* B: Menu - right side */}
         <button
-          className="p-2 transition-colors hover:opacity-80"
-          style={{ color: "var(--text-paragraph)" }}
+          className="transition-colors"
+          style={{ padding: 'var(--spacing-200)', color: "var(--text-paragraph)" }}
           aria-label="Menu"
         >
           <Menu size={24} />

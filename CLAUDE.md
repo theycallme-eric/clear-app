@@ -79,11 +79,20 @@ START
   │           └─► Has chamfered corners? → chamfered-component.md
   │           └─► After creating → gallery-add.md → token-check.md
   │
+  ├─► Managing tickets or planning work? → /ticket
+  │     └─► Creating a ticket? → /ticket create
+  │     └─► Starting work from board? → /ticket pull
+  │     └─► Processing todos into tickets? → /ticket sync
+  │
+  ├─► Unsure which token to use? → token-decision-tree.md
+  ├─► Avoiding common mistakes? → anti-patterns.md
+  │
   ├─► Touching database, auth, or API? → supabase-workflow.md
   ├─► Build failing or runtime error? → debug.md
   ├─► Ready to merge code? → /pr
   ├─► Implementing a Figma design? → agent: figma-ui-implementer
   ├─► Reviewing code quality? → agent: code-reviewer
+  ├─► Testing workout generation? → /test-generation
   ├─► Given a session plan? → /execute [plan-name]
   └─► Finished all tasks? → /close-session
 ```
@@ -102,13 +111,16 @@ Enforced by hooks. Violations will be blocked.
 ### Design System
 - **Pre-flight is mandatory** — run `component.md` pre-flight before ANY UI work
 - **Build on what exists** — check `ComponentGallery.tsx` and `src/components/` FIRST. Extend with new props/variants before creating new components.
-- **No hardcoded colors** — use semantic tokens `var(--surface-*)`, `var(--text-*)`, etc. Never primitive tokens (`var(--color-orange-500)`) in components.
-- **Create tokens when needed** — add to both themes in `src/index.css`. Name by role, not by component.
+- **No hardcoded colors** — use semantic tokens `var(--surface-*)`, `var(--text-*)`, etc. Never primitive tokens (`var(--color-orange-500)`) in components. No exceptions — even error fallbacks and brand logos use semantics. See `token-decision-tree.md` for which token to use.
+- **Never invent primitives** — only reference color primitives that already exist in `src/index.css`. If a color doesn't exist in the palette, it's wrong. Check the file before adding new primitive tokens.
+- **Create tokens when needed** — add to both themes in `src/index.css`. Name by role, not by component. Primitives are only referenced by semantic tokens, never by components directly.
 - **No hardcoded spacing** — use the spacing scale from `ui-rules.md`
 - **Reusable by default** — if a pattern is generic (tabs, modals, dropdowns, list items), make it a reusable component on first creation
-- **Consistent states** — every interactive element needs: default, hover, selected (if applicable), disabled
+- **Consistent states** — every interactive element needs: default, hover, selected (if applicable), disabled. See `ui-rules.md` Section 5.
 - **No Lucide icons** — use `src/components/icons.tsx`. If an icon doesn't exist, follow `icon-transform.md`
 - **Museum is read-only** — components in the Museum section of `ComponentGallery.tsx` are legacy. NEVER use them as reference or basis for new UI.
+- **No rounded corners** — use `ChamferedFrame` or `corner-cut` class. See `anti-patterns.md`.
+- **No bounce/spring animations** — motion is `linear` or `steps()`, ≤200ms. See `anti-patterns.md`.
 
 ### Safe-change Rules
 - Do not modify auth flows (`AuthContext.tsx`) unless explicitly requested
@@ -127,6 +139,31 @@ Before considering work complete:
 - `npx tsc --noEmit` must pass
 - Run code review before PR — `/pr review` or `/pr` (includes review)
 
+### Typography Classes
+
+Always use these CSS classes — never set font-family/size/weight inline.
+
+- `text-heading-h1`–`h6`: Page/section titles. Rajdhani bold. Add `uppercase` + `font-weight: bold`.
+- `text-label-xs`–`xl`: Data readouts, form labels, chip text. Oxanium bold.
+- `text-paragraph-xs`–`xl`: Body text, descriptions. Space Grotesk medium.
+- `text-cta-xs`–`lg`: Button labels. Oxanium uppercase, letter-spaced.
+- `text-time-lg`/`xl`: Timer displays. Oxanium.
+- `text-tab-xs`–`xl`: Tab labels. Oxanium.
+
+Full reference: `ui-rules.md` Section 2.
+
+### Atmosphere Classes
+
+Applied as seasoning — subtle enough you'd only notice if removed.
+
+- `scanlines`: Faint horizontal lines. Use on blurred/frosted surfaces, CTA buttons, modals.
+- `grain-overlay`: Grain texture + global scan lines. Page-level wrapper only.
+- `pulse-micro`: Brightness oscillation. Structural elements only (accent bars, LeftColumn).
+- `glow-emissive`: Subtle text glow. Key data only (timers, streak numbers, logo).
+- `stagger-reveal`: Children materialize in sequence. Lists, card groups (up to 8 children).
+
+Full reference: `ui-rules.md` Section 6.
+
 ---
 
 ## Engineering Philosophy: No Bandaids
@@ -143,6 +180,11 @@ Before considering work complete:
 
 | Command | What It Does |
 |---------|--------------|
+| `/ticket` | List ready tickets from the board |
+| `/ticket create` | Create a GitHub Issue with full PRD |
+| `/ticket pull [N]` | Pull ticket, create branch, load context |
+| `/ticket board` | Kanban board summary |
+| `/ticket sync` | Process todos into tickets |
 | `/execute [plan]` | Execute a session plan from `.claude/plans/` |
 | `/pr` | Review code + create PR (full workflow) |
 | `/pr create` | Create PR immediately (skip review) |
@@ -150,6 +192,7 @@ Before considering work complete:
 | `/todo` | Check the todo board |
 | `/process-inbox` | Process files in `.claude/inbox/` |
 | `/process-plans` | Import plans from `~/.claude/plans/` to project |
+| `/test-generation` | Headless workout generation testing |
 | `/close-session` | Log session work and update backlog |
 
 ---

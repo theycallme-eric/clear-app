@@ -40,10 +40,10 @@ export function ExerciseNotes({ note, onSave, className }: ExerciseNotesProps) {
     return (
         <div className={className}>
             {/* Header row */}
-            <div className="flex items-center justify-between">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span
-                    className="text-label-sm font-bold uppercase tracking-wider"
-                    style={{ color: 'var(--text-paragraph)' }}
+                    className="text-label-sm"
+                    style={{ fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-paragraph)' }}
                 >
                     Notes:
                 </span>
@@ -59,8 +59,8 @@ export function ExerciseNotes({ note, onSave, className }: ExerciseNotesProps) {
                 {!isEditing && hasNote && (
                     <button
                         onClick={handleOpen}
-                        className="text-label-sm font-bold uppercase tracking-wider"
-                        style={{ color: 'var(--icon-cta)' }}
+                        className="text-label-sm"
+                        style={{ fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--icon-cta)' }}
                     >
                         Edit
                     </button>
@@ -69,25 +69,25 @@ export function ExerciseNotes({ note, onSave, className }: ExerciseNotesProps) {
 
             {/* Editing state */}
             {isEditing && (
-                <div className="mt-2 space-y-2">
+                <div style={{ marginTop: 'var(--spacing-200)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
                     <Textarea
                         value={draft}
                         onChange={(e) => setDraft(e.target.value)}
                         placeholder="Add a note..."
                         autoFocus
                     />
-                    <div className="flex gap-4">
+                    <div style={{ display: 'flex', gap: 'var(--spacing-400)' }}>
                         <button
                             onClick={handleSave}
-                            className="text-label-sm font-bold uppercase tracking-wider"
-                            style={{ color: 'var(--icon-cta)' }}
+                            className="text-label-sm"
+                            style={{ fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--icon-cta)' }}
                         >
                             Save
                         </button>
                         <button
                             onClick={handleCancel}
-                            className="text-label-sm font-bold uppercase tracking-wider"
-                            style={{ color: 'var(--icon-cta)' }}
+                            className="text-label-sm"
+                            style={{ fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--icon-cta)' }}
                         >
                             Cancel
                         </button>
@@ -98,8 +98,8 @@ export function ExerciseNotes({ note, onSave, className }: ExerciseNotesProps) {
             {/* Note preview (closed with note) */}
             {!isEditing && hasNote && (
                 <p
-                    className="mt-1 text-paragraph-sm"
-                    style={{ color: 'var(--text-paragraph)' }}
+                    className="text-paragraph-sm"
+                    style={{ marginTop: 'var(--spacing-100)', color: 'var(--text-paragraph)' }}
                 >
                     {note}
                 </p>

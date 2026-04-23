@@ -17,6 +17,21 @@ interface ExerciseCardProps {
   showSwapControls?: boolean;
 }
 
+/**
+ * ExerciseCard - Expandable exercise display with optional swap controls.
+ *
+ * @tokens
+ * - Header: --text-card-header (exercise name), --text-paragraph (sets/reps/equipment)
+ * - Chevron icon: --icon-cta
+ * - Body text: --text-paragraph (tempo, rest, coaching cues, regression/progression)
+ * - Last weight: --text-timer
+ * - Dimmed labels: --text-disabled ("Easier:", "Harder:")
+ * - Error text: --text-error
+ * - Swap controls: --icon-cta (active), --text-disabled (disabled swap)
+ * - Typography: text-label-md (name), text-paragraph-sm (details), text-label-xs (button labels)
+ * - Spacing: --spacing-100 to --spacing-400
+ */
+
 /** Check if a rest value is meaningful (non-zero, non-empty) */
 const hasRest = (rest?: string): boolean => {
   if (!rest) return false;
@@ -46,18 +61,28 @@ export const ExerciseCard = ({
       {/* Header - always visible */}
       <button
         onClick={() => { const next = !isExpanded; setIsExpanded(next); onExpandChange?.(next); }}
-        className="w-full flex items-start gap-3 text-left py-2 px-4"
+        style={{
+          width: '100%',
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: 'var(--spacing-300)',
+          textAlign: 'left',
+          paddingTop: 'var(--spacing-200)',
+          paddingBottom: 'var(--spacing-200)',
+          paddingLeft: 'var(--spacing-400)',
+          paddingRight: 'var(--spacing-400)',
+        }}
       >
-        <div className="flex-1 min-w-0 space-y-1">
+        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 'var(--spacing-100)' }}>
           <h4
-            className="text-label-md font-bold leading-tight uppercase"
-            style={{ fontFamily: 'var(--font-headings)', color: 'var(--text-card-header)' }}
+            className="text-label-md"
+            style={{ fontWeight: 'bold', lineHeight: 1.25, textTransform: 'uppercase', fontFamily: 'var(--font-headings)', color: 'var(--text-card-header)' }}
           >
             {exercise.name}
           </h4>
           <div
-            className="text-paragraph-sm flex flex-wrap gap-x-3 gap-y-1"
-            style={{ color: 'var(--text-paragraph)' }}
+            className="text-paragraph-sm"
+            style={{ display: 'flex', flexWrap: 'wrap', columnGap: 'var(--spacing-300)', rowGap: 'var(--spacing-100)', color: 'var(--text-paragraph)' }}
           >
             <span>
               {exercise.sets ? `${exercise.sets}×` : ''}{exercise.reps}
@@ -71,19 +96,19 @@ export const ExerciseCard = ({
             )}
           </div>
         </div>
-        <span className="p-1 shrink-0" style={{ color: 'var(--icon-cta)' }}>
+        <span style={{ padding: 'var(--spacing-100)', flexShrink: 0, color: 'var(--icon-cta)' }}>
           {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
         </span>
       </button>
 
       {/* Expanded detail */}
       {isExpanded && (
-        <div className="px-4 space-y-3 pb-2">
+        <div style={{ paddingLeft: 'var(--spacing-400)', paddingRight: 'var(--spacing-400)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-300)', paddingBottom: 'var(--spacing-200)' }}>
           {/* Tempo & Rest */}
           {(exercise.tempo || hasRest(exercise.rest)) && (
             <div
-              className="text-paragraph-sm flex flex-wrap gap-x-3 gap-y-1"
-              style={{ color: 'var(--text-paragraph)' }}
+              className="text-paragraph-sm"
+              style={{ display: 'flex', flexWrap: 'wrap', columnGap: 'var(--spacing-300)', rowGap: 'var(--spacing-100)', color: 'var(--text-paragraph)' }}
             >
               {exercise.tempo && <span>Tempo: {exercise.tempo}</span>}
               {hasRest(exercise.rest) && <span>Rest: {exercise.rest}</span>}
@@ -93,8 +118,8 @@ export const ExerciseCard = ({
           {/* Coaching Cues */}
           {exercise.coachingCues && (
             <p
-              className="text-paragraph-sm italic"
-              style={{ color: 'var(--text-paragraph)' }}
+              className="text-paragraph-sm"
+              style={{ fontStyle: 'italic', color: 'var(--text-paragraph)' }}
             >
               {Array.isArray(exercise.coachingCues)
                 ? exercise.coachingCues.join('. ')
@@ -112,8 +137,8 @@ export const ExerciseCard = ({
           {/* Regression / Progression */}
           {(exercise.regression || exercise.progression) && (
             <div
-              className="text-paragraph-sm space-y-1 pt-2"
-              style={{ color: 'var(--text-paragraph)' }}
+              className="text-paragraph-sm"
+              style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-100)', paddingTop: 'var(--spacing-200)', color: 'var(--text-paragraph)' }}
             >
               {exercise.regression && (
                 <p><span style={{ color: 'var(--text-disabled)' }}>Easier:</span> {exercise.regression}</p>
@@ -126,20 +151,24 @@ export const ExerciseCard = ({
 
           {/* Swap controls — only in expanded state, only for standard/circuit exercises */}
           {showSwapControls && (
-            <div className="flex items-center gap-2 pt-1">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-200)', paddingTop: 'var(--spacing-100)' }}>
               {/* Previous button — only after first swap */}
               {hasPrevious && (
                 <button
                   onClick={(e) => { e.stopPropagation(); onPrevious?.(); }}
-                  className="flex items-center gap-1 pr-3 transition-colors"
+                  className="transition-colors"
                   style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'var(--spacing-100)',
+                    paddingRight: 'var(--spacing-300)',
                     color: 'var(--icon-cta)',
                     minHeight: '44px',
                     minWidth: '44px',
                   }}
                 >
                   <ChevronLeft size={16} />
-                  <span className="text-label-xs uppercase tracking-wider">Previous</span>
+                  <span className="text-label-xs" style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>Previous</span>
                 </button>
               )}
 
@@ -147,8 +176,12 @@ export const ExerciseCard = ({
               <button
                 onClick={(e) => { e.stopPropagation(); onSwap?.(); }}
                 disabled={isSwapDisabled || isSwapLoading}
-                className="flex items-center gap-1 pr-3 transition-colors"
+                className="transition-colors"
                 style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 'var(--spacing-100)',
+                  paddingRight: 'var(--spacing-300)',
                   color: isSwapDisabled ? 'var(--text-disabled)' : 'var(--icon-cta)',
                   minHeight: '44px',
                   minWidth: '44px',
@@ -160,14 +193,14 @@ export const ExerciseCard = ({
                 ) : (
                   <RefreshCw size={16} />
                 )}
-                <span className="text-label-xs uppercase tracking-wider">Swap</span>
+                <span className="text-label-xs" style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>Swap</span>
               </button>
             </div>
           )}
 
           {/* Swap error */}
           {swapError && (
-            <p className="text-paragraph-sm" style={{ color: 'var(--status-error)' }}>
+            <p className="text-paragraph-sm" style={{ color: 'var(--text-error)' }}>
               {swapError}
             </p>
           )}

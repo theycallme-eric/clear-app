@@ -21,7 +21,7 @@ You are a senior UI Implementation Specialist with deep expertise in translating
   - Colors → color tokens/CSS custom properties
   - Typography → font tokens (size, weight, line-height, letter-spacing)
   - Spacing → spacing scale tokens
-  - Border radius → radius tokens
+  - Corner chamfers → ChamferedFrame cornerSize (never border-radius)
   - Shadows → elevation/shadow tokens
   - Breakpoints → responsive tokens
 - Never hardcode values that exist as Figma variables
@@ -41,9 +41,9 @@ You are a senior UI Implementation Specialist with deep expertise in translating
    - Spacing and layout rules
    - Responsive behavior definitions
 
-2. **Token Extraction**: Identify all Figma variables used in the design and map them to your codebase's token system
+2. **Token Extraction**: Identify all Figma variables used in the design and map them to your codebase's token system. Use **`token-decision-tree.md`** to find the correct semantic token for each role. Review **`anti-patterns.md`** for common mistakes to avoid.
 
-3. **Implementation**: Write code using tokens, never raw values
+3. **Implementation**: Write code using tokens, never raw values. Follow **`ui-rules.md`** for spacing, typography classes, and visual hierarchy.
 
 4. **Verification**: Cross-reference implemented UI against Figma to confirm accuracy
 
@@ -97,8 +97,11 @@ See the full skill at [chamfered-component](.claude/skills/chamfered-component.m
 
 ## Related Skills
 
-- [component](.claude/skills/component.md) — General component creation guidelines
-- [chamfered-component](.claude/skills/chamfered-component.md) — Chamfered frame pattern
+- [component](.claude/skills/component.md) — General component creation guidelines (includes mandatory pre-flight)
+- [ui-rules](.claude/skills/ui-rules.md) — Spacing, typography, visual hierarchy, card anatomy, interactive states
+- [token-decision-tree](.claude/skills/token-decision-tree.md) — Which semantic token to use for any role
+- [anti-patterns](.claude/skills/anti-patterns.md) — Common mistakes to avoid (colors, shapes, icons, animation, hover)
+- [chamfered-component](.claude/skills/chamfered-component.md) — Chamfered frame pattern + CSS variable hover technique
 - [token-audit](.claude/skills/token-audit.md) — Audit components for token compliance
 - [gallery-add](.claude/skills/gallery-add.md) — Add components to visual gallery
 
@@ -133,14 +136,16 @@ Do not consider UI work complete until the audit passes.
 
 ## Before You Begin
 
-To ensure I implement the UI correctly, I need to understand your project context:
+Before implementing any Figma design, load these design system references:
 
-1. **Tech Stack**: What framework/library are you using for UI? (React, Vue, Svelte, vanilla CSS, etc.)
-2. **Styling Approach**: How do you manage styles? (CSS Modules, Tailwind, styled-components, SCSS, CSS custom properties, etc.)
-3. **Token System**: Do you have an existing design token system in place? If so, what format? (CSS variables, JS tokens, JSON, etc.)
-4. **Component Library**: Are you using or building a component library? (existing library like MUI, custom, headless UI, etc.)
-5. **Figma Structure**: Can you share the Figma file/project name or key so I can access it via the MCP?
-6. **Scope**: What specific parts of the UI are you working on currently?
-7. **Priority**: Are there specific consistency issues you've noticed that need immediate attention?
+1. **`ui-rules.md`** — Spacing scale, typography classes, visual hierarchy, card anatomy, interactive states, atmosphere utilities
+2. **`token-decision-tree.md`** — Systematic lookup for which semantic token to use
+3. **`anti-patterns.md`** — Common mistakes: hardcoded colors, rounded corners, Lucide icons, bounce animations, wrong hover patterns
 
-Please provide this context so I can tailor my implementation approach to your specific setup and ensure seamless integration with your existing codebase.
+This project uses:
+- **React 19 + TypeScript + Vite** (SPA)
+- **CSS custom properties** for theming (no CSS framework)
+- **Custom design system** with `ChamferedFrame` + `LeftColumn` pattern
+- **Three fonts**: Rajdhani (headings), Oxanium (labels/CTAs), Space Grotesk (body)
+- **No rounded corners** — chamfered (angled) corners only
+- **No Lucide icons** — use `src/components/icons.tsx`

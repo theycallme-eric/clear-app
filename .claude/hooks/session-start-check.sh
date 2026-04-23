@@ -43,6 +43,17 @@ if [ "$STASH_COUNT" -gt 0 ]; then
   OUTPUT+=$'\n'"Stashed changes: $STASH_COUNT stash(es)"$'\n'
 fi
 
+# --- Design system drift check (lightweight) ---
+REGISTRY_DRIFT=$(npx tsx scripts/registry-check.ts 2>/dev/null | head -1) || true
+if [ -n "$REGISTRY_DRIFT" ] && [[ "$REGISTRY_DRIFT" != "Component registry is in sync"* ]]; then
+  OUTPUT+=$'\n'"Component registry out of sync — run \`npm run registry-check\` for details."$'\n'
+fi
+
+TOKEN_VIOLATIONS=$(npx tsx scripts/token-lint.ts 2>/dev/null | head -1) || true
+if [ -n "$TOKEN_VIOLATIONS" ] && [[ "$TOKEN_VIOLATIONS" == "Found"* ]]; then
+  OUTPUT+=$'\n'"$TOKEN_VIOLATIONS Run \`npm run token-lint\` for details."$'\n'
+fi
+
 # --- Output if anything was found ---
 if [ -n "$OUTPUT" ]; then
   echo "IN-PROGRESS WORK DETECTED:"
