@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 
 type CornerSize = "sm" | "md" | "lg";
@@ -114,14 +113,21 @@ export function ChamferedFrame({
     return (
         <div
             ref={containerRef}
-            className={cn("relative", className)}
-            style={{ ...propStyle, ...clipStyle }}
+            className={className}
+            style={{ position: 'relative', ...propStyle, ...clipStyle }}
             {...restProps}
         >
             {/* Background & Border SVG - Render only if we have dims */}
             {w > 0 && h > 0 && (
                 <svg
-                    className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden"
+                    style={{
+                        position: 'absolute',
+                        inset: 0,
+                        width: '100%',
+                        height: '100%',
+                        pointerEvents: 'none',
+                        overflow: 'hidden',
+                    }}
                     width={w}
                     height={h}
                     viewBox={`0 0 ${w} ${h}`}
@@ -153,7 +159,7 @@ export function ChamferedFrame({
             )}
 
             {/* Content Container */}
-            <div className="relative z-10 h-full">
+            <div style={{ position: 'relative', zIndex: 10, height: '100%' }}>
                 {children}
             </div>
         </div>

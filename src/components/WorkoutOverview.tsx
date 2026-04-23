@@ -12,11 +12,11 @@ const formatGoalLabel = (goal: string): string => {
 
 export const WorkoutOverview = ({ workout }: WorkoutOverviewProps) => {
   return (
-    <div className="space-y-4">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
       {/* Title */}
       <h2
-        className="text-heading-h2 font-bold"
-        style={{ color: "var(--text-header)" }}
+        className="text-heading-h2"
+        style={{ color: "var(--text-header)", fontWeight: 'bold' }}
       >
         {workout.title}
       </h2>
@@ -27,34 +27,34 @@ export const WorkoutOverview = ({ workout }: WorkoutOverviewProps) => {
       </p>
 
       {/* Metadata Badges */}
-      <div className="flex flex-wrap gap-3">
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-300)' }}>
         {workout.goal && (
-          <Card cornerSize="sm" padding="sm" showLeftColumn={false} className="w-auto">
-            <div className="flex items-center gap-2">
+          <Card cornerSize="sm" padding="sm" showLeftColumn={false} style={{ width: 'auto' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-200)' }}>
               <Crosshair size={16} style={{ color: "var(--icon-badge)" }} />
-              <span className="text-label-sm uppercase" style={{ color: "var(--text-header)" }}>{formatGoalLabel(workout.goal)}</span>
+              <span className="text-label-sm" style={{ color: "var(--text-header)", textTransform: 'uppercase' }}>{formatGoalLabel(workout.goal)}</span>
             </div>
           </Card>
         )}
 
-        <Card cornerSize="sm" padding="sm" showLeftColumn={false} className="w-auto">
-          <div className="flex items-center gap-2">
+        <Card cornerSize="sm" padding="sm" showLeftColumn={false} style={{ width: 'auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-200)' }}>
             <Clock size={16} style={{ color: "var(--icon-badge)" }} />
             <span className="text-label-sm" style={{ color: "var(--text-header)" }}>{workout.duration}</span>
           </div>
         </Card>
 
-        <Card cornerSize="sm" padding="sm" showLeftColumn={false} className="w-auto">
-          <div className="flex items-center gap-2">
+        <Card cornerSize="sm" padding="sm" showLeftColumn={false} style={{ width: 'auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-200)' }}>
             <Gauge size={16} style={{ color: "var(--icon-badge)" }} />
             <span className="text-label-sm" style={{ color: "var(--text-header)" }}>{workout.intensity}</span>
           </div>
         </Card>
 
-        <Card cornerSize="sm" padding="sm" showLeftColumn={false} className="w-auto">
-          <div className="flex items-center gap-2">
+        <Card cornerSize="sm" padding="sm" showLeftColumn={false} style={{ width: 'auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-200)' }}>
             <Target size={16} style={{ color: "var(--icon-badge)" }} />
-            <span className="text-label-sm uppercase" style={{ color: "var(--text-header)" }}>{workout.anchor}</span>
+            <span className="text-label-sm" style={{ color: "var(--text-header)", textTransform: 'uppercase' }}>{workout.anchor}</span>
           </div>
         </Card>
       </div>

@@ -46,30 +46,43 @@ export function ActionButton({
         disabled={disabled}
         onClick={onClick}
         className={cn(
-          "group inline-flex items-center justify-between gap-2",
-          "px-2 py-2",
-          "text-cta-md font-medium",
+          "text-cta-md",
           "transition-colors",
-          disabled
-            ? "text-[var(--text-disabled)] cursor-not-allowed"
-            : "text-[var(--text-cta)] hover:text-[var(--text-cta-hover)]",
+          disabled && "cursor-not-allowed",
           className
         )}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 'var(--spacing-200)',
+          padding: `var(--spacing-200) var(--spacing-200)`,
+          fontWeight: 500,
+          color: disabled ? 'var(--text-disabled)' : 'var(--text-cta)',
+        }}
       >
         {iconLeft && (
-          <span className={cn(
-            "size-6 flex items-center justify-center",
-            disabled ? "text-[var(--text-disabled)]" : "text-[var(--icon-cta)] group-hover:text-[var(--text-cta-hover)]"
-          )}>
+          <span style={{
+            width: 24,
+            height: 24,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: disabled ? 'var(--text-disabled)' : 'var(--icon-cta)',
+          }}>
             {iconLeft}
           </span>
         )}
         <span>{children}</span>
         {iconRight && (
-          <span className={cn(
-            "size-6 flex items-center justify-center",
-            disabled ? "text-[var(--text-disabled)]" : "text-[var(--icon-cta)] group-hover:text-[var(--text-cta-hover)]"
-          )}>
+          <span style={{
+            width: 24,
+            height: 24,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: disabled ? 'var(--text-disabled)' : 'var(--icon-cta)',
+          }}>
             {iconRight}
           </span>
         )}
@@ -94,30 +107,39 @@ export function ActionButton({
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        "group inline-flex h-10 items-stretch",
-        "transition-all",
+        "group transition-all",
         disabled ? "cursor-not-allowed" : "cursor-pointer",
         className
       )}
+      style={{
+        display: 'inline-flex',
+        height: 40,
+        alignItems: 'stretch',
+      }}
     >
       {/* cta-left: Left border column */}
       <div
         className={cn(
-          "w-2 shrink-0 border-2 transition-colors",
+          "transition-colors",
           disabled
             ? "border-[var(--border-disabled)]"
             : isPrimary
             ? "border-[var(--border-cta-primary)] group-hover:border-[var(--border-cta-primary-hover)]"
             : "border-[var(--border-cta-secondary)]"
         )}
-        style={{ backgroundColor: getAccentBg() }}
+        style={{
+          width: 8,
+          flexShrink: 0,
+          borderWidth: 2,
+          borderStyle: 'solid',
+          backgroundColor: getAccentBg(),
+        }}
       />
 
       {/* cta-center: Main content area */}
       <div
         className={cn(
-          "flex-1 flex flex-col items-center justify-between",
-          "border-t-2 border-b-2 transition-colors",
+          "transition-colors",
           disabled
             ? "border-[var(--border-disabled)]"
             : isPrimary
@@ -132,39 +154,80 @@ export function ActionButton({
             ? "bg-[var(--surface-cta-primary)] group-hover:bg-[var(--surface-cta-primary-hover)]"
             : "bg-[var(--surface-cta-secondary)] group-hover:bg-[var(--surface-cta-secondary-hover)]"
         )}
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          borderTopWidth: 2,
+          borderBottomWidth: 2,
+          borderTopStyle: 'solid',
+          borderBottomStyle: 'solid',
+        }}
       >
         {/* cta-center-container: Content wrapper */}
-        <div className="flex-1 flex items-center justify-between w-full pl-2 pr-0 py-2">
+        <div style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          width: '100%',
+          paddingLeft: 'var(--spacing-200)',
+          paddingRight: 0,
+          paddingTop: 'var(--spacing-200)',
+          paddingBottom: 'var(--spacing-200)',
+        }}>
           {iconLeft && (
             <span
               className={cn(
-                "size-6 flex items-center justify-center shrink-0",
                 disabled
                   ? "text-[var(--text-disabled)]"
                   : "text-[var(--icon-cta)] group-hover:text-[var(--text-cta-hover)]"
               )}
+              style={{
+                width: 24,
+                height: 24,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
             >
               {iconLeft}
             </span>
           )}
           <span
             className={cn(
-              "text-cta-md font-medium whitespace-nowrap flex-1 text-center",
+              "text-cta-md",
               disabled
                 ? "text-[var(--text-disabled)]"
                 : "text-[var(--text-cta)] group-hover:text-[var(--text-cta-hover)]"
             )}
+            style={{
+              fontWeight: 500,
+              whiteSpace: 'nowrap',
+              flex: 1,
+              textAlign: 'center',
+            }}
           >
             {children}
           </span>
           {iconRight && (
             <span
               className={cn(
-                "size-6 flex items-center justify-center shrink-0",
                 disabled
                   ? "text-[var(--text-disabled)]"
                   : "text-[var(--icon-cta)] group-hover:text-[var(--text-cta-hover)]"
               )}
+              style={{
+                width: 24,
+                height: 24,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
             >
               {iconRight}
             </span>
@@ -173,11 +236,17 @@ export function ActionButton({
       </div>
 
       {/* cta-right: Right border + corner */}
-      <div className="w-2 shrink-0 flex flex-col items-start">
+      <div style={{
+        width: 8,
+        flexShrink: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+      }}>
         {/* cta-right-top: Upper right section */}
         <div
           className={cn(
-            "flex-1 w-2 border-t-2 border-r-2 transition-colors",
+            "transition-colors",
             disabled
               ? "border-[var(--border-disabled)]"
               : isPrimary
@@ -192,15 +261,29 @@ export function ActionButton({
               ? "bg-[var(--surface-cta-primary)] group-hover:bg-[var(--surface-cta-primary-hover)]"
               : "bg-[var(--surface-cta-secondary)] group-hover:bg-[var(--surface-cta-secondary-hover)]"
           )}
+          style={{
+            flex: 1,
+            width: 8,
+            borderTopWidth: 2,
+            borderRightWidth: 2,
+            borderTopStyle: 'solid',
+            borderRightStyle: 'solid',
+          }}
         />
 
         {/* cta-right-bottom: Corner angle (8×8 fixed) */}
         {/* -mt-px closes subpixel rendering gap */}
-        <div className="w-2 h-2 shrink-0 relative -mt-px">
+        <div style={{
+          width: 8,
+          height: 8,
+          flexShrink: 0,
+          position: 'relative',
+          marginTop: -1,
+        }}>
           {/* Background layer - surface fill triangle */}
           <div
             className={cn(
-              "absolute inset-0 transition-colors",
+              "transition-colors",
               // Triangle: top-left, top-right, bottom-left (cuts off bottom-right)
               "[clip-path:polygon(0_0,100%_0,0_100%)]",
               disabled
@@ -211,10 +294,16 @@ export function ActionButton({
                 ? "bg-[var(--surface-cta-primary)] group-hover:bg-[var(--surface-cta-primary-hover)]"
                 : "bg-[var(--surface-cta-secondary)] group-hover:bg-[var(--surface-cta-secondary-hover)]"
             )}
+            style={{ position: 'absolute', inset: 0 }}
           />
           {/* Border layer - diagonal stroke */}
           <svg
-            className="absolute inset-0 w-full h-full"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+            }}
             viewBox="0 0 8 8"
             aria-hidden="true"
           >

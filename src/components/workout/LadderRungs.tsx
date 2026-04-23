@@ -17,12 +17,12 @@ export const LadderRungs = ({
     // Mode A: plain text numbers — no containers
     if (mode === 'text') {
         return (
-            <div className="flex gap-3 flex-wrap">
+            <div style={{ display: 'flex', gap: 'var(--spacing-300)', flexWrap: 'wrap' }}>
                 {rungs.map((reps, i) => (
                     <span
                         key={i}
-                        className="text-paragraph-md font-mono font-bold"
-                        style={{ color: 'var(--text-paragraph)' }}
+                        className="text-paragraph-md"
+                        style={{ fontFamily: 'monospace', fontWeight: 'bold', color: 'var(--text-paragraph)' }}
                     >
                         {reps}
                     </span>
@@ -58,8 +58,8 @@ export const LadderRungs = ({
     };
 
     return (
-        <div className="overflow-x-auto -mx-4 px-4">
-            <div className="flex gap-1" style={{ minWidth: 'min-content' }}>
+        <div style={{ overflowX: 'auto', marginLeft: 'calc(-1 * var(--spacing-400))', marginRight: 'calc(-1 * var(--spacing-400))', paddingLeft: 'var(--spacing-400)', paddingRight: 'var(--spacing-400)' }}>
+            <div style={{ display: 'flex', gap: 'var(--spacing-100)', minWidth: 'min-content' }}>
                 {rungs.map((reps, i) => {
                     const state = getState(i);
                     const tokens = tokenMap[state];
@@ -68,8 +68,7 @@ export const LadderRungs = ({
                         <button
                             key={i}
                             onClick={() => onSelect?.(i)}
-                            className="min-w-[32px] min-h-[44px] flex items-center justify-center"
-                            style={{ WebkitTapHighlightColor: 'transparent' }}
+                            style={{ minWidth: '32px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', WebkitTapHighlightColor: 'transparent' }}
                         >
                             <ChamferedFrame
                                 cornerSize="sm"
@@ -77,10 +76,10 @@ export const LadderRungs = ({
                                 borderColor={tokens.border}
                                 hasLeftBorder={true}
                             >
-                                <div className="px-2 py-2 flex items-center justify-center min-w-[32px] h-[36px]">
+                                <div style={{ padding: 'var(--spacing-200)', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '32px', height: '36px' }}>
                                     <span
-                                        className="text-paragraph-sm font-mono font-bold"
-                                        style={{ color: tokens.text }}
+                                        className="text-paragraph-sm"
+                                        style={{ fontFamily: 'monospace', fontWeight: 'bold', color: tokens.text }}
                                     >
                                         {reps}
                                     </span>

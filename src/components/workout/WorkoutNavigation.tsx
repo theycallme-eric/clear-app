@@ -15,10 +15,20 @@ export const WorkoutNavigation = ({
 }: WorkoutNavigationProps) => {
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 pt-6 pb-4 px-4 z-40"
-      style={{ background: 'linear-gradient(to top, var(--background), var(--background) 60%, transparent)' }}
+      style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        paddingTop: 'var(--spacing-600)',
+        paddingBottom: 'var(--spacing-400)',
+        paddingLeft: 'var(--spacing-400)',
+        paddingRight: 'var(--spacing-400)',
+        zIndex: 40,
+        background: 'linear-gradient(to top, var(--background), var(--background) 60%, transparent)',
+      }}
     >
-      <div className="max-w-md mx-auto flex items-center gap-4">
+      <div style={{ maxWidth: '28rem', marginLeft: 'auto', marginRight: 'auto', display: 'flex', alignItems: 'center', gap: 'var(--spacing-400)' }}>
         <CTAButton
           onClick={onBack}
           disabled={currentSection === 0}

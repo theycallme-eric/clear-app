@@ -88,11 +88,21 @@ export const BootScreen = ({ ready, onComplete }: BootScreenProps) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center backdrop-blur-sm"
-      style={{ backgroundColor: 'rgba(23, 23, 23, 0.15)' }}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 50,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backdropFilter: 'blur(4px)',
+        WebkitBackdropFilter: 'blur(4px)',
+        backgroundColor: 'rgba(23, 23, 23, 0.15)',
+      }}
     >
       {/* Canvas — fills entire screen, key forces remount per sweep */}
-      <div className="absolute inset-0">
+      <div style={{ position: 'absolute', inset: 0 }}>
         <ScanLoader
           key={sweepCount}
           direction="down-once"
@@ -102,10 +112,12 @@ export const BootScreen = ({ ready, onComplete }: BootScreenProps) => {
       </div>
 
       {/* Logo */}
-      <div className="relative z-10 select-none">
+      <div style={{ position: 'relative', zIndex: 10, userSelect: 'none' }}>
         <h1
-          className="font-bold uppercase relative"
           style={{
+            fontWeight: 'bold',
+            textTransform: 'uppercase',
+            position: 'relative',
             fontFamily: "'Oxanium', monospace",
             fontSize: 'clamp(52px, 12vw, 80px)',
             letterSpacing: '0.18em',
@@ -116,8 +128,9 @@ export const BootScreen = ({ ready, onComplete }: BootScreenProps) => {
           CLEAR
           {/* Rule across logo at 57% */}
           <span
-            className="absolute pointer-events-none"
             style={{
+              position: 'absolute',
+              pointerEvents: 'none',
               left: '-12%',
               right: '-12%',
               height: '2px',
@@ -131,8 +144,11 @@ export const BootScreen = ({ ready, onComplete }: BootScreenProps) => {
 
       {/* Status message */}
       <div
-        className="relative z-10 mt-7 min-h-[18px]"
         style={{
+          position: 'relative',
+          zIndex: 10,
+          marginTop: 'calc(var(--spacing-600) + var(--spacing-100))',
+          minHeight: '18px',
           fontFamily: "'Oxanium', monospace",
           fontWeight: 500,
           fontSize: '11px',
@@ -146,8 +162,9 @@ export const BootScreen = ({ ready, onComplete }: BootScreenProps) => {
 
       {/* Progress bar — bottom center */}
       <div
-        className="absolute z-10"
         style={{
+          position: 'absolute',
+          zIndex: 10,
           bottom: '52px',
           left: '50%',
           transform: 'translateX(-50%)',
@@ -155,8 +172,9 @@ export const BootScreen = ({ ready, onComplete }: BootScreenProps) => {
         }}
       >
         <div
-          className="text-right mb-1.5"
           style={{
+            textAlign: 'right',
+            marginBottom: '6px',
             fontSize: '9px',
             letterSpacing: '0.3em',
             color: 'color-mix(in srgb, var(--primary) 40%, transparent)',

@@ -85,10 +85,9 @@ export const SummaryScreen = () => {
 
   const finishFooter = (
     <div
-      className="fixed bottom-0 left-0 right-0 pt-8 pb-4 px-4 z-40"
-      style={{ background: 'linear-gradient(to top, var(--background), var(--background) 60%, transparent)' }}
+      style={{ position: 'fixed', bottom: 0, left: 0, right: 0, paddingTop: 'var(--spacing-700)', paddingBottom: 'var(--spacing-400)', paddingLeft: 'var(--spacing-400)', paddingRight: 'var(--spacing-400)', zIndex: 40, background: 'linear-gradient(to top, var(--background), var(--background) 60%, transparent)' }}
     >
-      <div className="max-w-md mx-auto">
+      <div style={{ maxWidth: '28rem', margin: '0 auto' }}>
         <CTAButton onClick={handleFinish} size="lg" fullWidth>
           Finish
         </CTAButton>
@@ -98,26 +97,26 @@ export const SummaryScreen = () => {
 
   return (
     <AppLayout header={<PageHeader center="Workout Complete" />} footer={finishFooter}>
-      <div className="pt-6 pb-24 stagger-reveal">
-        <div className="text-center mb-6">
+      <div className="stagger-reveal" style={{ paddingTop: 'var(--spacing-600)', paddingBottom: 'calc(var(--spacing-600) * 4)' }}>
+        <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-600)' }}>
           <h2
-            className="text-heading-h2 font-bold uppercase tracking-wide glow-emissive"
-            style={{ color: 'var(--text-header)' }}
+            className="text-heading-h2 glow-emissive"
+            style={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.025em', color: 'var(--text-header)' }}
           >
             Nice Work!
           </h2>
         </div>
 
-        <Card padding="md" className="mb-6">
-          <div className="flex items-start justify-between">
-            <div className="text-center flex-1">
+        <Card padding="md" style={{ marginBottom: 'var(--spacing-600)' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+            <div style={{ textAlign: 'center', flex: 1 }}>
               <p
-                className="text-heading-h5 font-semibold uppercase tracking-wide"
-                style={{ color: 'var(--text-header)' }}
+                className="text-heading-h5"
+                style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.025em', color: 'var(--text-header)' }}
               >
                 {generatedWorkout.goal ? `${generatedWorkout.goal.replace('_', ' ')} · ` : ''}{generatedWorkout.anchor} &bull; Intensity {generatedWorkout.intensity}
               </p>
-              <p className="text-paragraph-sm mt-1" style={{ color: 'var(--text-paragraph)' }}>
+              <p className="text-paragraph-sm" style={{ marginTop: 'var(--spacing-100)', color: 'var(--text-paragraph)' }}>
                 {formatDuration(totalTime)} &bull; {generatedWorkout.sections.length} sections
               </p>
             </div>
@@ -125,7 +124,7 @@ export const SummaryScreen = () => {
               <button
                 onClick={handleToggleFavorite}
                 disabled={favoriteSaving}
-                className="min-w-[44px] min-h-[44px] flex items-center justify-center -mr-2 -mt-1"
+                style={{ minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 'calc(var(--spacing-200) * -1)', marginTop: 'calc(var(--spacing-100) * -1)' }}
               >
                 <Star
                   size={24}
@@ -139,22 +138,21 @@ export const SummaryScreen = () => {
           </div>
         </Card>
 
-        <Card padding="md" className="mb-6">
+        <Card padding="md" style={{ marginBottom: 'var(--spacing-600)' }}>
           <h3
-            className="text-label-xs uppercase tracking-widest mb-4"
-            style={{ color: 'var(--text-card-label)' }}
+            className="text-label-xs"
+            style={{ textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--spacing-400)', color: 'var(--text-card-label)' }}
           >
             How Do You Feel?
           </h3>
-          <div className="flex justify-between gap-2">
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 'var(--spacing-200)' }}>
             {MOOD_OPTIONS.map((mood) => {
               const isSelected = selectedMood === mood.value;
               return (
                 <button
                   key={mood.value}
                   onClick={() => setSelectedMood(mood.value)}
-                  className="flex-1 py-3 flex flex-col items-center justify-center gap-2 transition-all"
-                  style={{ color: isSelected ? 'var(--text-label-selected)' : 'var(--text-paragraph)', opacity: isSelected ? 1 : 0.5 }}
+                  style={{ flex: 1, paddingTop: 'var(--spacing-300)', paddingBottom: 'var(--spacing-300)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--spacing-200)', transition: 'all 150ms', color: isSelected ? 'var(--text-label-selected)' : 'var(--text-paragraph)', opacity: isSelected ? 1 : 0.5 }}
                   aria-label={mood.label}
                 >
                   <MoodIcon mood={mood.value} size={32} selected={isSelected} />
@@ -165,22 +163,22 @@ export const SummaryScreen = () => {
           </div>
         </Card>
 
-        <Card padding="md" className="mb-6">
+        <Card padding="md" style={{ marginBottom: 'var(--spacing-600)' }}>
           <h3
-            className="text-label-xs uppercase tracking-widest mb-4"
-            style={{ color: 'var(--text-card-label)' }}
+            className="text-label-xs"
+            style={{ textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--spacing-400)', color: 'var(--text-card-label)' }}
           >
             Session Notes
           </h3>
 
           {/* Previous session notes (favorite repeats only) */}
           {notesHistory.length > 0 && (
-            <div className="space-y-3 mb-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-300)', marginBottom: 'var(--spacing-400)' }}>
               {notesHistory.map((entry, i) => (
                 <div key={i}>
                   <p
-                    className="text-label-xs uppercase tracking-wider mb-0.5"
-                    style={{ color: 'var(--text-disabled)' }}
+                    className="text-label-xs"
+                    style={{ textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2, color: 'var(--text-disabled)' }}
                   >
                     {new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', {
                       month: 'short',
@@ -196,8 +194,7 @@ export const SummaryScreen = () => {
                 </div>
               ))}
               <div
-                className="h-px"
-                style={{ backgroundColor: 'var(--border-spacer)' }}
+                style={{ height: 1, backgroundColor: 'var(--border-spacer)' }}
               />
             </div>
           )}
@@ -206,32 +203,32 @@ export const SummaryScreen = () => {
             value={sessionNotes}
             onChange={(e) => setSessionNotes(e.target.value)}
             placeholder={notesHistory.length > 0 ? "Add notes for this session..." : "Add any notes about this workout..."}
-            className="min-h-[96px]"
+            style={{ minHeight: 96 }}
           />
         </Card>
 
         <Card padding="md">
           <h3
-            className="text-label-xs uppercase tracking-widest mb-4"
-            style={{ color: 'var(--text-card-label)' }}
+            className="text-label-xs"
+            style={{ textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--spacing-400)', color: 'var(--text-card-label)' }}
           >
             Streak
           </h3>
 
-          <div className="text-center mb-4">
-            <span className="text-heading-h2 font-bold" style={{ color: 'var(--text-disabled)' }}>
+          <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-400)' }}>
+            <span className="text-heading-h2" style={{ fontWeight: 700, color: 'var(--text-disabled)' }}>
               {streakData.currentStreak}
             </span>
-            <span className="text-heading-h2 font-bold mx-2" style={{ color: 'var(--icon-badge)' }}>
+            <span className="text-heading-h2" style={{ fontWeight: 700, margin: '0 var(--spacing-200)', color: 'var(--icon-badge)' }}>
               &rarr;
             </span>
-            <span className="text-heading-h1 font-bold glow-emissive" style={{ color: 'var(--text-header)' }}>
+            <span className="text-heading-h1 glow-emissive" style={{ fontWeight: 700, color: 'var(--text-header)' }}>
               {newStreak}
             </span>
-            <span className="ml-2">
-              <Flame size={28} className="inline" style={{ color: 'var(--icon-badge)' }} />
+            <span style={{ marginLeft: 'var(--spacing-200)' }}>
+              <Flame size={28} style={{ display: 'inline', color: 'var(--icon-badge)' }} />
             </span>
-            <p className="text-label-sm mt-1" style={{ color: 'var(--text-paragraph)' }}>days</p>
+            <p className="text-label-sm" style={{ marginTop: 'var(--spacing-100)', color: 'var(--text-paragraph)' }}>days</p>
           </div>
 
           <WeekStreakDisplay weekView={streakData.weekView} highlightToday />

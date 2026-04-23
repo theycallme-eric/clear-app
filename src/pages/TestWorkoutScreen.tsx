@@ -4,12 +4,12 @@ export const TestWorkoutScreen = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen grain-overlay flex items-center justify-center">
-      <div className="text-center px-4">
-        <h1 className="text-heading-h4 font-bold mb-4" style={{ color: 'var(--text-header)' }}>
+    <div className="grain-overlay" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ textAlign: 'center', paddingLeft: 'var(--spacing-400)', paddingRight: 'var(--spacing-400)' }}>
+        <h1 className="text-heading-h4" style={{ fontWeight: 700, marginBottom: 'var(--spacing-400)', color: 'var(--text-header)' }}>
           Test Workout
         </h1>
-        <p className="text-paragraph-sm mb-4" style={{ color: 'var(--text-paragraph)' }}>
+        <p className="text-paragraph-sm" style={{ marginBottom: 'var(--spacing-400)', color: 'var(--text-paragraph)' }}>
           Use the main flow to test workouts: Generate → Review → Workout
         </p>
         <button

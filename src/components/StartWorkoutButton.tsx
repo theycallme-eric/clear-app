@@ -9,10 +9,17 @@ interface StartWorkoutButtonProps {
 export const StartWorkoutButton = ({ onClick, disabled }: StartWorkoutButtonProps) => {
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 p-4 z-40"
-      style={{ background: 'linear-gradient(to top, var(--background), var(--background) 60%, transparent)' }}
+      style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        padding: 'var(--spacing-400)',
+        zIndex: 40,
+        background: 'linear-gradient(to top, var(--background), var(--background) 60%, transparent)',
+      }}
     >
-      <div className="max-w-md mx-auto">
+      <div style={{ maxWidth: '28rem', margin: '0 auto' }}>
         <CTAButton
           onClick={onClick}
           disabled={disabled}

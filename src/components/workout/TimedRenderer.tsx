@@ -148,10 +148,10 @@ export const TimedRenderer = ({
     return (
         <Card cornerSize="md" padding="none">
             {/* Label */}
-            <div className="px-4 pt-3 pb-1">
+            <div style={{ padding: 'var(--spacing-300) var(--spacing-400) var(--spacing-100)' }}>
                 <span
-                    className="text-label-xs font-bold uppercase tracking-widest"
-                    style={{ color: 'var(--text-card-label)' }}
+                    className="text-label-xs"
+                    style={{ fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-card-label)' }}
                 >
                     {isAmrap && isComplete ? `${section.type.replace('_', ' ')} \u2022 AMRAP Complete`
                         : isLadder && isComplete && finishedEarly ? `${section.type.replace('_', ' ')} \u2022 Complete`
@@ -162,7 +162,7 @@ export const TimedRenderer = ({
 
             {/* Previous Best badge — visible before starting */}
             {previousBest && timerState === 'idle' && (
-                <div className="px-4 -mt-1 pb-1">
+                <div style={{ padding: '0 var(--spacing-400)', marginTop: 'calc(-1 * var(--spacing-100))', paddingBottom: 'var(--spacing-100)' }}>
                     <span
                         className="text-paragraph-sm"
                         style={{ color: 'var(--text-timer)' }}
@@ -175,7 +175,7 @@ export const TimedRenderer = ({
             )}
 
             {/* Timer + controls */}
-            <div className="px-4 py-3">
+            <div style={{ padding: 'var(--spacing-300) var(--spacing-400)' }}>
                 <SectionTimer
                     mode={timerMode}
                     initialSeconds={initialSeconds}
@@ -189,10 +189,10 @@ export const TimedRenderer = ({
 
             {/* For Time: PR comparison (non-ladder) */}
             {isForTime && !isLadder && isComplete && (
-                <div className="px-4 pb-2 text-center">
+                <div style={{ padding: '0 var(--spacing-400) var(--spacing-200)', textAlign: 'center' }}>
                     {previousBest && previousBest.structureType === 'for_time' ? (
                         elapsedSeconds < previousBest.value ? (
-                            <p className="text-label-sm font-bold glow-emissive" style={{ color: 'var(--text-header)' }}>
+                            <p className="text-label-sm glow-emissive" style={{ fontWeight: 'bold', color: 'var(--text-header)' }}>
                                 New Personal Best! (Previous: {formatTime(previousBest.value)})
                             </p>
                         ) : (
@@ -210,10 +210,10 @@ export const TimedRenderer = ({
 
             {/* Ladder: cap reached -- interactive rung selector (Path B only) */}
             {isLadder && isComplete && !finishedEarly && (
-                <div className="px-4 pb-3 space-y-3">
+                <div style={{ padding: '0 var(--spacing-400) var(--spacing-300)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-300)' }}>
                     <span
-                        className="text-label-xs font-bold uppercase tracking-widest block text-center"
-                        style={{ color: 'var(--text-header)' }}
+                        className="text-label-xs"
+                        style={{ fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', textAlign: 'center', color: 'var(--text-header)' }}
                     >
                         How far did you get?
                     </span>
@@ -228,18 +228,18 @@ export const TimedRenderer = ({
 
             {/* Ladder: rep scheme label + plain text rungs (during workout / after early finish) */}
             {isLadder && (finishedEarly || !isComplete) && (
-                <div className="px-4 pb-2 space-y-2">
-                    <div className="flex items-baseline gap-2">
+                <div style={{ padding: '0 var(--spacing-400) var(--spacing-200)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--spacing-200)' }}>
                         <span
-                            className="text-label-xs font-bold uppercase tracking-widest"
-                            style={{ color: 'var(--text-card-label)' }}
+                            className="text-label-xs"
+                            style={{ fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-card-label)' }}
                         >
                             Ladder:
                         </span>
                         {firstStructure.type === 'for_time' && !isComplete && (
                             <span
-                                className="text-label-xs uppercase tracking-widest"
-                                style={{ color: 'var(--text-paragraph)', opacity: 0.6 }}
+                                className="text-label-xs"
+                                style={{ textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-paragraph)', opacity: 0.6 }}
                             >
                                 {firstStructure.time_cap_mins} min cap
                             </span>
@@ -251,29 +251,29 @@ export const TimedRenderer = ({
 
             {/* AMRAP completion UI */}
             {isAmrap && isComplete && (
-                <div className="px-4 pb-4 space-y-4">
+                <div style={{ padding: '0 var(--spacing-400) var(--spacing-400)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
                     {/* Elapsed time confirmation */}
-                    <div className="text-center">
+                    <div style={{ textAlign: 'center' }}>
                         <span
-                            className="text-time-lg font-bold font-mono opacity-60"
-                            style={{ color: 'var(--text-timer)' }}
+                            className="text-time-lg"
+                            style={{ fontWeight: 'bold', fontFamily: 'monospace', opacity: 0.6, color: 'var(--text-timer)' }}
                         >
                             {formatTime(elapsedSeconds)} ✓
                         </span>
                     </div>
 
                     {/* Rounds stepper */}
-                    <div className="space-y-2">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
                         <span
-                            className="text-label-xs font-bold uppercase tracking-widest block text-center"
-                            style={{ color: 'var(--text-header)' }}
+                            className="text-label-xs"
+                            style={{ fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', textAlign: 'center', color: 'var(--text-header)' }}
                         >
                             Rounds Completed
                         </span>
-                        <div className="flex items-center justify-center gap-4">
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--spacing-400)' }}>
                             <button
                                 onClick={() => setRoundsCompleted(prev => Math.max(0, prev - 1))}
-                                className="min-w-[48px] min-h-[48px] flex items-center justify-center"
+                                style={{ minWidth: '48px', minHeight: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                             >
                                 <ChamferedFrame
                                     cornerSize="sm"
@@ -281,22 +281,22 @@ export const TimedRenderer = ({
                                     borderColor="var(--border-cta-secondary)"
                                     hasLeftBorder
                                 >
-                                    <div className="px-3 py-2">
+                                    <div style={{ padding: 'var(--spacing-200) var(--spacing-300)' }}>
                                         <Minus size={24} style={{ color: 'var(--text-cta)' }} />
                                     </div>
                                 </ChamferedFrame>
                             </button>
 
                             <span
-                                className="text-time-xl font-bold font-mono min-w-[60px] text-center"
-                                style={{ color: 'var(--text-timer)' }}
+                                className="text-time-xl"
+                                style={{ fontWeight: 'bold', fontFamily: 'monospace', minWidth: '60px', textAlign: 'center', color: 'var(--text-timer)' }}
                             >
                                 {roundsCompleted}
                             </span>
 
                             <button
                                 onClick={() => setRoundsCompleted(prev => prev + 1)}
-                                className="min-w-[48px] min-h-[48px] flex items-center justify-center"
+                                style={{ minWidth: '48px', minHeight: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                             >
                                 <ChamferedFrame
                                     cornerSize="sm"
@@ -304,7 +304,7 @@ export const TimedRenderer = ({
                                     borderColor="var(--border-cta-primary)"
                                     hasLeftBorder
                                 >
-                                    <div className="px-3 py-2">
+                                    <div style={{ padding: 'var(--spacing-200) var(--spacing-300)' }}>
                                         <Plus size={24} style={{ color: 'var(--text-cta)' }} />
                                     </div>
                                 </ChamferedFrame>
@@ -314,9 +314,9 @@ export const TimedRenderer = ({
 
                     {/* Previous best comparison for AMRAP */}
                     {previousBest && previousBest.structureType === 'amrap' && roundsCompleted > 0 && (
-                        <div className="text-center">
+                        <div style={{ textAlign: 'center' }}>
                             {roundsCompleted > previousBest.value ? (
-                                <p className="text-label-sm font-bold glow-emissive" style={{ color: 'var(--text-header)' }}>
+                                <p className="text-label-sm glow-emissive" style={{ fontWeight: 'bold', color: 'var(--text-header)' }}>
                                     New Personal Best! (Previous: {previousBest.value} round{previousBest.value !== 1 ? 's' : ''})
                                 </p>
                             ) : (
@@ -327,7 +327,7 @@ export const TimedRenderer = ({
                         </div>
                     )}
                     {!previousBest && isAmrap && roundsCompleted > 0 && (
-                        <div className="text-center">
+                        <div style={{ textAlign: 'center' }}>
                             <p className="text-paragraph-sm" style={{ color: 'var(--text-disabled)' }}>
                                 First attempt recorded.
                             </p>
@@ -344,10 +344,10 @@ export const TimedRenderer = ({
 
             {/* AMRAP "each round" label for multi-exercise sections */}
             {isAmrap && exerciseCount >= 2 && (
-                <div className="px-4 mt-3 -mb-1">
+                <div style={{ padding: '0 var(--spacing-400)', marginTop: 'var(--spacing-300)', marginBottom: 'calc(-1 * var(--spacing-100))' }}>
                     <span
-                        className="text-label-xs font-bold uppercase tracking-widest"
-                        style={{ color: 'var(--text-card-label)' }}
+                        className="text-label-xs"
+                        style={{ fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-card-label)' }}
                     >
                         Each Round:
                     </span>
@@ -356,10 +356,10 @@ export const TimedRenderer = ({
 
             {/* Ladder "each rung" label for multi-exercise sections */}
             {isLadder && exerciseCount >= 2 && (
-                <div className="px-4 mt-2 -mb-1">
+                <div style={{ padding: '0 var(--spacing-400)', marginTop: 'var(--spacing-200)', marginBottom: 'calc(-1 * var(--spacing-100))' }}>
                     <span
-                        className="text-label-xs font-bold uppercase tracking-widest"
-                        style={{ color: 'var(--text-card-label)' }}
+                        className="text-label-xs"
+                        style={{ fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-card-label)' }}
                     >
                         Each Rung:
                     </span>
@@ -367,15 +367,15 @@ export const TimedRenderer = ({
             )}
 
             {/* Exercises */}
-            <div className="pb-3 space-y-1">
+            <div style={{ paddingBottom: 'var(--spacing-300)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-100)' }}>
                 {section.exercises.map((exercise, i) => {
                     // Interval exercises render as annotations, not full cards
                     if (exercise.is_interval_exercise) {
                         return (
-                            <div key={exercise.id} className="px-4 -mt-2 pb-2">
+                            <div key={exercise.id} style={{ padding: '0 var(--spacing-400)', marginTop: 'calc(-1 * var(--spacing-200))', paddingBottom: 'var(--spacing-200)' }}>
                                 <span
-                                    className="text-paragraph-sm italic"
-                                    style={{ color: 'var(--text-paragraph)' }}
+                                    className="text-paragraph-sm"
+                                    style={{ fontStyle: 'italic', color: 'var(--text-paragraph)' }}
                                 >
                                     {exercise.reps} {exercise.name} between each set
                                 </span>

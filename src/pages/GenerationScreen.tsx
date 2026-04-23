@@ -51,7 +51,7 @@ export const GenerationScreen = () => {
       header={<PageHeader left="back" onBack={() => navigate("/")} right="menu" onMenu={() => navigate("/settings")} />}
       footer={<GenerateButton onClick={handleGenerate} disabled={!canGenerate} isLoading={isGenerating} />}
     >
-      <div className="pt-6 space-y-6 stagger-reveal">
+      <div className="stagger-reveal" style={{ paddingTop: 'var(--spacing-600)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-600)' }}>
         <div className="goal-badge">
           <span className="goal-badge__label">TRAINING GOAL</span>
           <span className="goal-badge__value">{goalPreset?.label || 'Balanced'}</span>

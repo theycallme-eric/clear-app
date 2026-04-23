@@ -49,8 +49,8 @@ export const PageHeader = ({
       return (
         <button
           onClick={onBack}
-          className="p-2 transition-colors"
-          style={{ color: 'var(--icon-cta)' }}
+          className="transition-colors"
+          style={{ color: 'var(--icon-cta)', padding: 'var(--spacing-200)' }}
           aria-label="Go back"
         >
           <ArrowLeft size={24} />
@@ -72,8 +72,8 @@ export const PageHeader = ({
     // String title
     return (
       <h1
-        className="text-heading-h4 font-bold tracking-wider uppercase"
-        style={{ color: 'var(--text-header)' }}
+        className="text-heading-h4"
+        style={{ color: 'var(--text-header)', fontWeight: 'bold', letterSpacing: '0.05em', textTransform: 'uppercase' }}
       >
         {center}
       </h1>
@@ -86,8 +86,8 @@ export const PageHeader = ({
       return (
         <button
           onClick={onMenu}
-          className="p-2 transition-colors"
-          style={{ color: 'var(--icon-cta)' }}
+          className="transition-colors"
+          style={{ color: 'var(--icon-cta)', padding: 'var(--spacing-200)' }}
           aria-label="Menu"
         >
           <Menu size={24} />
@@ -99,7 +99,20 @@ export const PageHeader = ({
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 flex items-stretch h-12 backdrop-blur-md scanlines">
+    <header
+      className="scanlines"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 40,
+        display: 'flex',
+        alignItems: 'stretch',
+        height: '48px',
+        backdropFilter: 'blur(12px)',
+      }}
+    >
       {/* Main body — chamfered frame, bottom border only, no accent bar */}
       <ChamferedFrame
         cornerSize="md"
@@ -107,16 +120,22 @@ export const PageHeader = ({
         borderColor="var(--border-heading)"
         hasLeftBorder={true}
         bottomBorderOnly
-        className="flex-1"
+        style={{ flex: 1 }}
       >
-        <div className="grid grid-cols-[48px_1fr_48px] items-center h-full px-4">
-          <div className="flex items-center justify-start">
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '48px 1fr 48px',
+          alignItems: 'center',
+          height: '100%',
+          padding: '0 var(--spacing-400)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
             {renderLeft()}
           </div>
-          <div className="flex items-center justify-center">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {renderCenter()}
           </div>
-          <div className="flex items-center justify-end">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
             {renderRight()}
           </div>
         </div>

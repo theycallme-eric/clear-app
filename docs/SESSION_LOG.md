@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-04-22 (13th session)
+**Last Session:** 2026-04-22 (14th session)
 
 ---
 
@@ -13,14 +13,62 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Design System Hardening
-**Current Task:** Tailwind removal + design system re-extraction (session plans created)
-**Last Completed:** Full token audit — zero primitive refs in components, fabricated tokens removed, 13 new semantics added
+**Current Phase:** Workout Generation Overhaul
+**Current Task:** All 5 phases complete — ready for real-world testing
+**Last Completed:** Workout generation overhaul (muscle data, goal persistence, prompt v3.1, weekly coverage, balanced upgrade, headless test harness)
 **Blocking Issues:** None
 
 ---
 
 ## Session Entries
+
+### Session: 2026-04-22 - Workout Generation Overhaul
+
+**Duration:** ~3 hours
+**Mode:** Claude Code
+**Branch:** `feature/tailwind-removal`
+
+#### What Got Done
+- **Phase 1 — Exercise muscle groups**: Created `exercise_muscle_groups` junction table (488 rows) mapping all ~140 exercises to 18 standardized muscle groups with primary/synergist/stabilizer roles. Updated `exercise_definitions_with_anchors` view to include muscle data as JSONB. Migration applied locally.
+- **Phase 2 — Goal to settings**: Removed per-workout `GoalSelector` from GenerationScreen. Goal now reads from user profile (set in Settings). Added read-only goal badge to generation screen. Removed `goal` from `WorkoutParams` interface. Edge function reads `goal_preset` from profile if not in request.
+- **Phase 3 — Prompt v3.1**: Full rewrite of system prompt. Added THE ARC (workout as intensity curve), THEMATIC COHERENCE (exercises serve one idea), MUSCLE GROUP INTELLIGENCE (use muscle tags for selection). Rewrote warmup as flow-based pattern prep, accessory as "what makes you better at today's primary," cooldown to target worked muscles. Updated exercise listing format: added `muscles:[...]`, removed `cues:[...]`.
+- **Phase 4 — Weekly coverage**: Built `buildCoverageContext()` in edge function — queries last 7 days of completed sessions, aggregates muscle group hits by role and recency. Injected as formatted block in user prompt. Added WEEKLY COVERAGE section to prompt with rules for using coverage data.
+- **Phase 5 — Balanced upgrade**: Rewrote balanced goal from "a bit of everything" to intentional programming with time allocation breakdown, weekly coverage adaptation, and active use of interesting structures (ladders, pyramids, EMOM, circuits).
+- **Headless test harness**: Built `scripts/test-generation.ts` — standalone script that queries local DB for exercise library, builds the same prompt as the edge function, calls Claude directly, validates responses (exercise IDs, equipment, duration, warmup/cooldown relevance, structure rules). Ran 4 test generations — all pass.
+- **`/test-generation` command**: Created `.claude/commands/test-generation.md` skill with argument parsing, pre-checks, and result interpretation guide. Registered in CLAUDE.md and README.md.
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Goal from profile, not per-workout | Eliminates inconsistency (hypertrophy one day, conditioning the next = no progress). Simplifies generation screen. |
+| Drop coaching cues from exercise listing | Cues bloat the prompt. LLM generates its own anyway. Muscle data in, cues out = net neutral tokens. |
+| Accessories can be synergists/antagonists | Earlier draft was too restrictive ("only exercises that directly serve primary"). Tricep extensions on press day are valid. |
+| Headless testing via direct Claude call | More useful than calling through edge function — portable, no auth needed, tests prompt quality directly. |
+| Coverage data flows silently to LLM | No visible coverage indicator on generation screen yet. Could add later as a separate feature. |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `supabase/migrations/00026_exercise_muscle_groups.sql` | Created — junction table + 488 rows of muscle data + view update |
+| `src/types/database.ts` | Regenerated — includes new table types |
+| `src/pages/GenerationScreen.tsx` | Modified — removed GoalSelector, added goal badge |
+| `src/hooks/useWorkoutGeneration.ts` | Modified — reads goal from userPreferences |
+| `src/types/workout.ts` | Modified — removed goal from WorkoutParams, updated balanced description |
+| `src/index.css` | Modified — added goal-badge styles |
+| `supabase/functions/generate-workout/index.ts` | Modified — muscle data in listing, coverage context, profile goal |
+| `supabase/functions/generate-workout/prompt.ts` | Modified — full v3.1 rewrite |
+| `scripts/test-generation.ts` | Created — headless generation test harness |
+| `.claude/commands/test-generation.md` | Created — /test-generation skill |
+| `.claude/README.md` | Modified — registered new command |
+| `CLAUDE.md` | Modified — added to decision tree + command table |
+
+#### Status
+- Build passes, TypeScript clean
+- Migration applied to local Supabase
+- 4 test generations run and validated
+- All committed on `feature/tailwind-removal` branch
+
+---
 
 ### Session: 2026-04-22 - Design Token Audit & System Hardening
 

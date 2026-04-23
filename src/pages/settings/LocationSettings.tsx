@@ -34,12 +34,12 @@ export const LocationList = ({
   onAddLocation,
 }: LocationListProps) => {
   return (
-    <div className="space-y-4">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
       <Card cornerSize="md" padding="md">
-        <p className="text-label-xs uppercase tracking-widest mb-4" style={{ color: 'var(--text-card-label)' }}>
+        <p className="text-label-xs" style={{ textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--spacing-400)', color: 'var(--text-card-label)' }}>
           Default Location
         </p>
-        <div className="flex flex-col gap-2">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
           {preferences.locations.map((location) => {
             // Filter out Bodyweight and take first 3 items for display
             const displayEquipment = location.equipment
@@ -56,7 +56,7 @@ export const LocationList = ({
                 onClick={() => onSetDefault(location.id)}
                 label={location.name}
                 description={equipmentDesc}
-                className="w-full"
+                style={{ width: '100%' }}
                 onEdit={() => onEditLocation(location)}
               />
             );
@@ -64,7 +64,7 @@ export const LocationList = ({
         </div>
       </Card>
 
-      <Card onClick={onAddLocation} padding="md" className="text-center">
+      <Card onClick={onAddLocation} padding="md" style={{ textAlign: 'center' }}>
         <span className="text-label-sm" style={{ color: 'var(--icon-cta)' }}>
           + Add Location
         </span>
@@ -103,11 +103,11 @@ export const LocationEditor = ({
   onDelete,
 }: LocationEditorProps) => {
   return (
-    <div className="space-y-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-600)' }}>
       <Card cornerSize="md" padding="md">
         {/* Location Name */}
-        <div className="space-y-2 mb-6">
-          <label className="block text-label-xs uppercase tracking-widest" style={{ color: 'var(--text-card-label)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)', marginBottom: 'var(--spacing-600)' }}>
+          <label className="text-label-xs" style={{ display: 'block', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-card-label)' }}>
             Location Name
           </label>
           <Input
@@ -118,11 +118,11 @@ export const LocationEditor = ({
         </div>
 
         {/* Equipment Type */}
-        <div className="mb-4">
-          <p className="text-label-xs uppercase tracking-widest mb-2" style={{ color: 'var(--text-card-label)' }}>
+        <div style={{ marginBottom: 'var(--spacing-400)' }}>
+          <p className="text-label-xs" style={{ textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--spacing-200)', color: 'var(--text-card-label)' }}>
             Equipment Type
           </p>
-          <div className="flex flex-col gap-2">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
             {TIER_OPTIONS.map((tier) => (
               <RadioButton
                 key={tier.value}
@@ -130,31 +130,31 @@ export const LocationEditor = ({
                 onClick={() => onTierSelect(tier.value)}
                 label={tier.label}
                 description={tier.description}
-                className="w-full"
+                style={{ width: '100%' }}
               />
             ))}
           </div>
         </div>
 
         {/* Customize Equipment Accordion */}
-        <div className="pt-4 -mx-4 px-4" style={{ borderTop: '2px solid var(--border-spacer)' }}>
+        <div style={{ paddingTop: 'var(--spacing-400)', marginLeft: 'calc(var(--spacing-400) * -1)', marginRight: 'calc(var(--spacing-400) * -1)', paddingLeft: 'var(--spacing-400)', paddingRight: 'var(--spacing-400)', borderTop: '2px solid var(--border-spacer)' }}>
           <button
             onClick={onToggleEquipmentAccordion}
-            className="w-full flex items-center justify-between"
+            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
           >
-            <span className="text-cta-sm font-medium" style={{ color: 'var(--text-header)' }}>
+            <span className="text-cta-sm" style={{ fontWeight: 500, color: 'var(--text-header)' }}>
               Customize Equipment
             </span>
             {equipmentAccordionOpen ? (
-              <ChevronUp className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
+              <ChevronUp style={{ width: 20, height: 20, color: 'var(--icon-cta)' }} />
             ) : (
-              <ChevronDown className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
+              <ChevronDown style={{ width: 20, height: 20, color: 'var(--icon-cta)' }} />
             )}
           </button>
 
           {equipmentAccordionOpen && (
-            <div className="pt-4">
-              <div className="flex flex-wrap gap-2">
+            <div style={{ paddingTop: 'var(--spacing-400)' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-200)' }}>
                 {EQUIPMENT_BY_TIER.full.map((equipment) => {
                   const isSelected = selectedEquipment.includes(equipment);
                   const isBodyweight = equipment === 'Bodyweight';
@@ -184,7 +184,7 @@ export const LocationEditor = ({
           variant="secondary"
           size="md"
           fullWidth
-          className="[--btn-text:theme(colors.rose.500)]"
+          style={{ '--btn-text': 'rgb(244, 63, 94)' } as React.CSSProperties}
         >
           Delete Location
         </CTAButton>

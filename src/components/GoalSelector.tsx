@@ -11,20 +11,20 @@ export const GoalSelector = ({ selected, onSelect }: GoalSelectorProps) => {
   return (
     <Card cornerSize="md" padding="md">
       <label
-        className="text-label-xs uppercase tracking-widest mb-4 block"
-        style={{ color: "var(--text-card-label)" }}
+        className="text-label-xs"
+        style={{ textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--spacing-400)', display: 'block', color: "var(--text-card-label)" }}
       >
         Training Goal
       </label>
 
-      <div className="flex flex-col gap-2">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
         {GOAL_PRESETS.map((preset) => (
           <RadioButton
             key={preset.value}
             selected={selected === preset.value}
             onClick={() => onSelect(preset.value)}
             label={preset.label}
-            className="w-full"
+            style={{ width: '100%' }}
           />
         ))}
       </div>

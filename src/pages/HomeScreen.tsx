@@ -56,7 +56,7 @@ function HomeFavoritesList() {
 
   return (
     <>
-      <div className="space-y-2">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
         {favorites.map((fav) => (
           <FavoriteListItem
             key={fav.id}
@@ -69,8 +69,8 @@ function HomeFavoritesList() {
 
       <button
         onClick={() => navigate("/history")}
-        className="w-full mt-3 py-2 text-center text-paragraph-sm font-medium transition-colors"
-        style={{ color: 'var(--text-cta)' }}
+        className="text-paragraph-sm transition-colors"
+        style={{ width: '100%', marginTop: 'var(--spacing-300)', paddingTop: 'var(--spacing-200)', paddingBottom: 'var(--spacing-200)', textAlign: 'center', fontWeight: 500, color: 'var(--text-cta)' }}
       >
         View All Favorites
       </button>
@@ -159,7 +159,7 @@ export const HomeScreen = () => {
 
   return (
     <AppLayout header={<PageHeader right="menu" onMenu={() => navigate("/settings")} />}>
-      <div className="pt-6 space-y-6 stagger-reveal">
+      <div className="stagger-reveal" style={{ paddingTop: 'var(--spacing-600)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-600)' }}>
         <Card
           onClick={() => navigate("/generate")}
           padding="md"
@@ -168,8 +168,8 @@ export const HomeScreen = () => {
           surfaceColor="var(--surface-cta-primary)"
         >
           <h2
-            className="text-heading-h2 font-bold uppercase tracking-wider mb-2"
-            style={{ color: 'var(--text-on-cta)' }}
+            className="text-heading-h2"
+            style={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--spacing-200)', color: 'var(--text-on-cta)' }}
           >
             Generate Workout
           </h2>
@@ -181,16 +181,17 @@ export const HomeScreen = () => {
         <Card
           onClick={hasHistory ? () => workoutFlow.handleQuickStart(suggestedIntensity, suggestedAnchor, () => navigate("/review")) : undefined}
           padding="md"
-          className={!hasHistory ? "opacity-50 cursor-not-allowed" : ""}
+          className={!hasHistory ? "cursor-not-allowed" : ""}
+          style={!hasHistory ? { opacity: 0.5 } : undefined}
           borderColor="var(--border-cta-primary)"
           accentColor="var(--surface-cta-accent)"
           surfaceColor="var(--surface-cta-primary)"
         >
-          <div className="flex items-center gap-2 mb-2">
-            <Zap className="w-5 h-5" style={{ color: 'var(--icon-on-cta)' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-200)', marginBottom: 'var(--spacing-200)' }}>
+            <Zap style={{ width: 20, height: 20, color: 'var(--icon-on-cta)' }} />
             <span
-              className="text-heading-h5 font-bold uppercase tracking-wider"
-              style={{ color: 'var(--text-on-cta)' }}
+              className="text-heading-h5"
+              style={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-on-cta)' }}
             >
               Quick Start
             </span>
@@ -208,23 +209,23 @@ export const HomeScreen = () => {
 
         <Card padding="md">
           <h3
-            className="text-label-xs uppercase tracking-widest mb-4"
-            style={{ color: 'var(--text-card-label)' }}
+            className="text-label-xs"
+            style={{ textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--spacing-400)', color: 'var(--text-card-label)' }}
           >
             Streak
           </h3>
 
-          <div className="text-center mb-4">
-            <span className="text-heading-h1 font-bold glow-emissive" style={{ color: 'var(--text-header)' }}>
+          <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-400)' }}>
+            <span className="text-heading-h1 glow-emissive" style={{ fontWeight: 700, color: 'var(--text-header)' }}>
               {streakData.currentStreak}
             </span>
-            <span className="ml-2">
-              <Flame className="inline w-8 h-8" style={{ color: 'var(--icon-badge)' }} />
+            <span style={{ marginLeft: 'var(--spacing-200)' }}>
+              <Flame style={{ display: 'inline', width: 32, height: 32, color: 'var(--icon-badge)' }} />
             </span>
-            <p className="text-label-sm mt-1" style={{ color: 'var(--text-paragraph)' }}>days</p>
+            <p className="text-label-sm" style={{ marginTop: 'var(--spacing-100)', color: 'var(--text-paragraph)' }}>days</p>
           </div>
 
-          <WeekStreakDisplay weekView={streakData.weekView} className="mb-4" />
+          <WeekStreakDisplay weekView={streakData.weekView} style={{ marginBottom: 'var(--spacing-400)' }} />
 
           {streakData.weekView[new Date().toISOString().split('T')[0]] !== 'workout' && <CTAButton onClick={handleMarkRestDay} variant="secondary" size="sm" fullWidth>
             Mark Rest Day
@@ -248,15 +249,15 @@ export const HomeScreen = () => {
                 <ErrorState message="Couldn't load workouts" onRetry={loadHomeData} showLeftColumn={false} />
               ) : workoutHistory.length === 0 ? (
                 <Card padding="md" showLeftColumn={false}>
-                  <div className="text-center">
-                    <Dumbbell className="w-10 h-10 mx-auto mb-4" style={{ color: 'var(--text-disabled)' }} />
+                  <div style={{ textAlign: 'center' }}>
+                    <Dumbbell style={{ width: 40, height: 40, margin: '0 auto', marginBottom: 'var(--spacing-400)', color: 'var(--text-disabled)' }} />
                     <p
-                      className="text-heading-h5 font-medium uppercase tracking-wide mb-1"
-                      style={{ color: 'var(--text-header)' }}
+                      className="text-heading-h5"
+                      style={{ fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.025em', marginBottom: 'var(--spacing-100)', color: 'var(--text-header)' }}
                     >
                       No Workouts Yet
                     </p>
-                    <p className="text-paragraph-sm mb-4" style={{ color: 'var(--text-paragraph)' }}>
+                    <p className="text-paragraph-sm" style={{ marginBottom: 'var(--spacing-400)', color: 'var(--text-paragraph)' }}>
                       Generate your first workout to get started
                     </p>
                     <CTAButton onClick={() => navigate("/generate")} variant="secondary" size="sm" fullWidth>
@@ -266,7 +267,7 @@ export const HomeScreen = () => {
                 </Card>
               ) : (
                 <>
-                  <div className="space-y-2">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
                     {workoutHistory.slice(0, 3).map((workout) => (
                       <WorkoutListItem
                         key={workout.id}
@@ -279,8 +280,8 @@ export const HomeScreen = () => {
 
                   <button
                     onClick={() => navigate("/history")}
-                    className="w-full mt-3 py-2 text-center text-paragraph-sm font-medium transition-colors"
-                    style={{ color: 'var(--text-cta)' }}
+                    className="text-paragraph-sm transition-colors"
+                    style={{ width: '100%', marginTop: 'var(--spacing-300)', paddingTop: 'var(--spacing-200)', paddingBottom: 'var(--spacing-200)', textAlign: 'center', fontWeight: 500, color: 'var(--text-cta)' }}
                   >
                     View All History
                   </button>

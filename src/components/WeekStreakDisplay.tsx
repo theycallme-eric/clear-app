@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import { ChamferedFrame } from "./ChamferedFrame";
 
 interface WeekStreakDisplayProps {
@@ -44,22 +43,29 @@ export function WeekStreakDisplay({
   const weekDays = getWeekDays(weekView, highlightToday);
 
   return (
-    <div className={cn("grid grid-cols-7 gap-2", className)}>
+    <div className={className} style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 'var(--spacing-200)' }}>
       {weekDays.map((day, index) => {
         const isWorkout = day.status === "workout";
         const isRest = day.status === "rest";
         return (
-          <div key={index} className="flex flex-col items-center gap-1">
+          <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--spacing-100)' }}>
             <ChamferedFrame
               cornerSize="sm"
               surfaceColor={isWorkout ? 'var(--surface-radio-selected)' : isRest ? 'var(--surface-info)' : 'transparent'}
               borderColor={isWorkout ? 'var(--border-radio-select)' : isRest ? 'var(--border-info)' : 'var(--border-radio-unselected)'}
               hasLeftBorder={true}
-              className="aspect-square w-full max-w-10"
+              style={{ aspectRatio: '1', width: '100%', maxWidth: '40px' }}
             >
               <div
-                className="w-full h-full flex items-center justify-center text-label-sm"
-                style={{ color: isWorkout ? 'var(--text-label-selected)' : isRest ? 'var(--text-info-light)' : 'var(--text-disabled)' }}
+                className="text-label-sm"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: isWorkout ? 'var(--text-label-selected)' : isRest ? 'var(--text-info-light)' : 'var(--text-disabled)',
+                }}
               >
                 {isWorkout ? "\u25CF" : isRest ? "\u25D0" : "\u25CB"}
               </div>

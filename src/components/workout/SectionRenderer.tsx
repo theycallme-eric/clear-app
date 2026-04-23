@@ -110,19 +110,19 @@ export const SectionRenderer = ({
     if (wrapAll) {
         return (
             <Card cornerSize="md" padding="none">
-                <div className="px-4 pt-3 pb-2">
+                <div style={{ padding: 'var(--spacing-300) var(--spacing-400) var(--spacing-200)' }}>
                     <span
-                        className="text-label-xs font-bold uppercase tracking-widest"
-                        style={{ color: 'var(--text-card-label)' }}
+                        className="text-label-xs"
+                        style={{ fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-card-label)' }}
                     >
                         {section.type.replace('_', ' ')}
                     </span>
                 </div>
-                <div className="pb-3">
+                <div style={{ paddingBottom: 'var(--spacing-300)' }}>
                     {section.exercises.map((exercise, i) => (
                         <div key={exercise.id}>
                             {i > 0 && (
-                                <div className="mx-4 my-1" style={{ borderTop: '2px solid var(--border-spacer)' }} />
+                                <div style={{ margin: 'var(--spacing-100) var(--spacing-400)', borderTop: '2px solid var(--border-spacer)' }} />
                             )}
                             <ActiveExerciseCard
                                 exercise={exercise}
@@ -145,7 +145,7 @@ export const SectionRenderer = ({
     const structureGroups = groups.filter(item => 'type' in item && (item.type === 'superset' || item.type === 'circuit'));
 
     return (
-        <div className="space-y-4">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
             {/* Non-timed ladder section */}
             {sectionHasLadder && (
                 <LadderRenderer
@@ -187,19 +187,19 @@ export const SectionRenderer = ({
                     {/* Standalone exercises wrapped in a section card */}
                     {standaloneExercises.length > 0 && (
                         <Card cornerSize="md" padding="none">
-                            <div className="px-4 pt-3 pb-1">
+                            <div style={{ padding: 'var(--spacing-300) var(--spacing-400) var(--spacing-100)' }}>
                                 <span
-                                    className="text-label-xs font-bold uppercase tracking-widest"
-                                    style={{ color: 'var(--text-card-label)' }}
+                                    className="text-label-xs"
+                                    style={{ fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-card-label)' }}
                                 >
                                     {section.type.replace('_', ' ')}
                                 </span>
                             </div>
-                            <div className="pb-3">
+                            <div style={{ paddingBottom: 'var(--spacing-300)' }}>
                                 {standaloneExercises.map((ex, i) => (
                                     <div key={ex.id}>
                                         {i > 0 && (
-                                            <div className="mx-4" style={{ borderTop: '2px solid var(--border-spacer)' }} />
+                                            <div style={{ margin: '0 var(--spacing-400)', borderTop: '2px solid var(--border-spacer)' }} />
                                         )}
                                         <ActiveExerciseCard
                                             exercise={ex}

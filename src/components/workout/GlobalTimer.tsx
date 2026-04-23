@@ -29,8 +29,19 @@ export const GlobalTimer = ({ isRunning, onTimeUpdate, startTime }: GlobalTimerP
 
     return (
         <div
-            className="sticky top-0 z-10 flex items-center justify-center px-5 py-3 backdrop-blur-md scanlines"
-            style={{ backgroundColor: 'color-mix(in srgb, var(--background) 80%, transparent)' }}
+            className="scanlines"
+            style={{
+                position: 'sticky',
+                top: 0,
+                zIndex: 10,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 'var(--spacing-300) var(--spacing-500)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+                backgroundColor: 'color-mix(in srgb, var(--background) 80%, transparent)',
+            }}
         >
             <TimerDisplay elapsedSeconds={elapsedSeconds} />
         </div>

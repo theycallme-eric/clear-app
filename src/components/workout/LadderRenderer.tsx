@@ -19,28 +19,28 @@ export const LadderRenderer = ({
 
     return (
         <Card cornerSize="md" padding="none">
-            <div className="px-4 pt-3 pb-2 space-y-2">
-                <div className="flex items-baseline gap-2">
+            <div style={{ padding: 'var(--spacing-300) var(--spacing-400) var(--spacing-200)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--spacing-200)' }}>
                     <span
-                        className="text-label-xs font-bold uppercase tracking-widest"
-                        style={{ color: 'var(--text-card-label)' }}
+                        className="text-label-xs"
+                        style={{ fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-card-label)' }}
                     >
                         {section.type.replace('_', ' ')} &bull; Ladder:
                     </span>
                 </div>
                 <LadderRungs rungs={rungs} mode="text" />
                 {exerciseCount >= 2 && (
-                    <div className="mt-2">
+                    <div style={{ marginTop: 'var(--spacing-200)' }}>
                         <span
-                            className="text-label-xs font-bold uppercase tracking-widest"
-                            style={{ color: 'var(--text-card-label)' }}
+                            className="text-label-xs"
+                            style={{ fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-card-label)' }}
                         >
                             Each Rung:
                         </span>
                     </div>
                 )}
             </div>
-            <div className="pb-3">
+            <div style={{ paddingBottom: 'var(--spacing-300)' }}>
                 {section.exercises.map((exercise) => (
                     <ActiveExerciseCard
                         key={exercise.id}

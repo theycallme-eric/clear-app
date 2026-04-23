@@ -20,20 +20,52 @@ export function ConfirmationModal({
 }: ConfirmationModalProps) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm"
-      style={{ backgroundColor: 'var(--surface-overlay)' }}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 50,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backdropFilter: 'blur(4px)',
+        backgroundColor: 'var(--surface-overlay)',
+      }}
     >
-      <Card padding="lg" className="mx-4 max-w-sm w-full text-center">
+      <Card
+        padding="lg"
+        style={{
+          margin: `0 var(--spacing-400)`,
+          maxWidth: '24rem',
+          width: '100%',
+          textAlign: 'center',
+        }}
+      >
         <h2
-          className="text-heading-h4 font-bold uppercase tracking-wider mb-2"
-          style={{ color: 'var(--text-header)' }}
+          className="text-heading-h4"
+          style={{
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            marginBottom: 'var(--spacing-200)',
+            color: 'var(--text-header)',
+          }}
         >
           {title}
         </h2>
-        <p className="text-paragraph-sm mb-6" style={{ color: 'var(--text-paragraph)' }}>
+        <p
+          className="text-paragraph-sm"
+          style={{
+            marginBottom: 'var(--spacing-600)',
+            color: 'var(--text-paragraph)',
+          }}
+        >
           {description}
         </p>
-        <div className="space-y-2">
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--spacing-200)',
+        }}>
           <CTAButton onClick={onConfirm} size="md" fullWidth>
             {confirmLabel}
           </CTAButton>

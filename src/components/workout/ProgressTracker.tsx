@@ -1,5 +1,3 @@
-import { cn } from "@/lib/utils";
-
 interface ProgressTrackerProps {
     /** Progress value 0-100 */
     progress: number;
@@ -15,18 +13,20 @@ export function ProgressTracker({ progress, className }: ProgressTrackerProps) {
 
     return (
         <div
-            className={cn("w-full", className)}
+            className={className}
             style={{
+                width: '100%',
                 height: '10px',
                 border: '2px solid var(--border-slider)',
                 padding: '1px',
             }}
         >
             <div
-                className="h-full transition-all duration-300"
                 style={{
+                    height: '100%',
                     width: `${clamped}%`,
                     background: 'var(--surface-slider-active)',
+                    transition: 'all 300ms',
                 }}
             />
         </div>

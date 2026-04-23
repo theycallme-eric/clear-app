@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
 import {
   TAB_HEIGHT,
   TAB_CHAMFER,
@@ -74,16 +73,22 @@ export function TabBar<T extends string>({
   // --- Embedded variant: buttons only ---
   if (variant === "embedded") {
     return (
-      <div className={cn("relative", className)} style={{ height: TAB_HEIGHT }}>
-        <div className="relative z-10 flex h-full">
+      <div className={className} style={{ position: 'relative', height: TAB_HEIGHT }}>
+        <div style={{ position: 'relative', zIndex: 10, display: 'flex', height: '100%' }}>
           {tabs.map((tab) => {
             const isActive = tab.value === activeTab;
             return (
               <button
                 key={tab.value}
                 onClick={() => onChange(tab.value)}
-                className="flex-1 text-label-xs font-bold uppercase tracking-widest text-center transition-colors cursor-pointer"
+                className="text-label-xs transition-colors"
                 style={{
+                  flex: 1,
+                  fontWeight: 'bold',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
+                  textAlign: 'center',
+                  cursor: 'pointer',
                   color: isActive ? 'var(--text-tab-active)' : 'var(--text-tab-inactive)',
                 }}
               >
@@ -98,10 +103,10 @@ export function TabBar<T extends string>({
 
   // --- Standalone variant: full SVG + buttons ---
   return (
-    <div ref={containerRef} className={cn("relative h-10", className)}>
+    <div ref={containerRef} className={className} style={{ position: 'relative', height: '40px' }}>
       {w > 0 && h > 0 && (
         <svg
-          className="absolute inset-0 w-full h-full pointer-events-none"
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
           width={w}
           height={h}
           viewBox={`0 0 ${w} ${h}`}
@@ -143,15 +148,21 @@ export function TabBar<T extends string>({
         </svg>
       )}
 
-      <div className="relative z-10 flex h-full">
+      <div style={{ position: 'relative', zIndex: 10, display: 'flex', height: '100%' }}>
         {tabs.map((tab) => {
           const isActive = tab.value === activeTab;
           return (
             <button
               key={tab.value}
               onClick={() => onChange(tab.value)}
-              className="flex-1 text-label-xs font-bold uppercase tracking-widest text-center transition-colors cursor-pointer"
+              className="text-label-xs transition-colors"
               style={{
+                flex: 1,
+                fontWeight: 'bold',
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em',
+                textAlign: 'center',
+                cursor: 'pointer',
                 color: isActive ? 'var(--text-tab-active)' : 'var(--text-tab-inactive)',
               }}
             >

@@ -31,14 +31,14 @@ export const StructureSettings = ({
   onToggleLegend,
 }: StructureSettingsProps) => {
   return (
-    <div className="space-y-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-600)' }}>
       <Card cornerSize="md" padding="md">
         {/* Goal Selection */}
-        <div className="mb-4">
-          <p className="text-label-xs uppercase tracking-widest mb-2" style={{ color: 'var(--text-card-label)' }}>
+        <div style={{ marginBottom: 'var(--spacing-400)' }}>
+          <p className="text-label-xs" style={{ textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--spacing-200)', color: 'var(--text-card-label)' }}>
             Goal
           </p>
-          <div className="flex flex-col gap-2">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
             {GOAL_PRESETS.map((preset) => (
               <RadioButton
                 key={preset.value}
@@ -46,7 +46,7 @@ export const StructureSettings = ({
                 onClick={() => onGoalSelect(preset.value)}
                 label={preset.label}
                 description={preset.description}
-                className="w-full"
+                style={{ width: '100%' }}
               />
             ))}
           </div>
@@ -54,24 +54,24 @@ export const StructureSettings = ({
 
         {/* Sections Accordion */}
         {selectedGoal && (
-          <div className="pt-4 -mx-4 px-4" style={{ borderTop: '2px solid var(--border-spacer)' }}>
+          <div style={{ paddingTop: 'var(--spacing-400)', marginLeft: 'calc(var(--spacing-400) * -1)', marginRight: 'calc(var(--spacing-400) * -1)', paddingLeft: 'var(--spacing-400)', paddingRight: 'var(--spacing-400)', borderTop: '2px solid var(--border-spacer)' }}>
             <button
               onClick={onToggleSectionsAccordion}
-              className="w-full flex items-center justify-between"
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
             >
-              <span className="text-cta-sm font-medium" style={{ color: 'var(--text-header)' }}>
+              <span className="text-cta-sm" style={{ fontWeight: 500, color: 'var(--text-header)' }}>
                 Customize Sections
               </span>
               {sectionsAccordionOpen ? (
-                <ChevronUp className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
+                <ChevronUp style={{ width: 20, height: 20, color: 'var(--icon-cta)' }} />
               ) : (
-                <ChevronDown className="w-5 h-5" style={{ color: 'var(--icon-cta)' }} />
+                <ChevronDown style={{ width: 20, height: 20, color: 'var(--icon-cta)' }} />
               )}
             </button>
 
             {sectionsAccordionOpen && (
-              <div className="pt-4 space-y-4">
-              <div className="flex flex-wrap gap-2">
+              <div style={{ paddingTop: 'var(--spacing-400)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-200)' }}>
                 {WORKOUT_SECTIONS.map((section) => {
                   const isSelected = selectedSections.includes(section.id);
                   const isAccessory = section.id === 'accessory';
@@ -95,22 +95,22 @@ export const StructureSettings = ({
               {/* Legend */}
               <button
                 onClick={onToggleLegend}
-                className="w-full flex items-center justify-between text-cta-sm transition-colors"
-                style={{ color: 'var(--text-cta)' }}
+                className="text-cta-sm transition-colors"
+                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: 'var(--text-cta)' }}
               >
                 <span>What do these mean?</span>
                 {legendOpen ? (
-                  <ChevronUp className="w-4 h-4" style={{ color: 'var(--icon-cta)' }} />
+                  <ChevronUp style={{ width: 16, height: 16, color: 'var(--icon-cta)' }} />
                 ) : (
-                  <ChevronDown className="w-4 h-4" style={{ color: 'var(--icon-cta)' }} />
+                  <ChevronDown style={{ width: 16, height: 16, color: 'var(--icon-cta)' }} />
                 )}
               </button>
 
               {legendOpen && (
-                <div className="space-y-3 pt-2" style={{ borderTop: '2px solid var(--border-spacer)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-300)', paddingTop: 'var(--spacing-200)', borderTop: '2px solid var(--border-spacer)' }}>
                   {WORKOUT_SECTIONS.map((section) => (
                     <div key={section.id}>
-                      <p className="text-label-xs uppercase tracking-wide" style={{ color: 'var(--text-card-label)' }}>
+                      <p className="text-label-xs" style={{ textTransform: 'uppercase', letterSpacing: '0.025em', color: 'var(--text-card-label)' }}>
                         {section.name}
                       </p>
                       <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>

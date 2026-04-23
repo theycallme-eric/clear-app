@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import { RefreshCw } from "lucide-react";
 import { Card } from "./Card";
 
@@ -20,23 +19,35 @@ export const ErrorState = ({
   showLeftColumn,
 }: ErrorStateProps) => {
   return (
-    <Card padding="md" className={cn("text-center", className)} showLeftColumn={showLeftColumn}>
-      <p
-        className="text-label-sm uppercase tracking-wide mb-2"
-        style={{ color: 'var(--text-header)' }}
-      >
-        {message}
-      </p>
-      {onRetry && (
-        <button
-          onClick={onRetry}
-          className="inline-flex items-center gap-2 mt-2 px-4 py-2 text-label-sm transition-colors"
-          style={{ color: 'var(--icon-cta)' }}
+    <Card padding="md" className={className} showLeftColumn={showLeftColumn}>
+      <div style={{ textAlign: 'center' }}>
+        <p
+          className="text-label-sm"
+          style={{ textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--spacing-200)', color: 'var(--text-header)' }}
         >
-          <RefreshCw className="w-4 h-4" />
-          Try Again
-        </button>
-      )}
+          {message}
+        </p>
+        {onRetry && (
+          <button
+            onClick={onRetry}
+            className="text-label-sm transition-colors"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 'var(--spacing-200)',
+              marginTop: 'var(--spacing-200)',
+              paddingLeft: 'var(--spacing-400)',
+              paddingRight: 'var(--spacing-400)',
+              paddingTop: 'var(--spacing-200)',
+              paddingBottom: 'var(--spacing-200)',
+              color: 'var(--icon-cta)',
+            }}
+          >
+            <RefreshCw style={{ width: 'var(--spacing-400)', height: 'var(--spacing-400)' }} />
+            Try Again
+          </button>
+        )}
+      </div>
     </Card>
   );
 };

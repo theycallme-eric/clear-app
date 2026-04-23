@@ -5,6 +5,7 @@ type ColumnSize = "sm" | "md" | "lg";
 interface LeftColumnProps {
   size?: ColumnSize;
   className?: string;
+  style?: React.CSSProperties;
   /** Surface fill color */
   surfaceColor?: string;
   /** Border stroke color */
@@ -26,6 +27,7 @@ interface LeftColumnProps {
 export function LeftColumn({
   size = "sm",
   className,
+  style,
   surfaceColor = "var(--surface-cta-accent)",
   borderColor = "var(--border-cta-primary)",
 }: LeftColumnProps) {
@@ -40,11 +42,15 @@ export function LeftColumn({
 
   return (
     <div
-      className={cn("self-stretch shrink-0 border-2 pulse-micro", className)}
+      className={cn("pulse-micro", className)}
       style={{
+        alignSelf: 'stretch',
+        flexShrink: 0,
+        border: '2px solid',
         width,
         backgroundColor: surfaceColor,
         borderColor: borderColor,
+        ...style,
       }}
     />
   );

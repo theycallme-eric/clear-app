@@ -43,15 +43,9 @@ import {
 import { PageHeader } from "@/components/PageHeader";
 import { AppLayout } from "@/layouts";
 
-// shadcn/ui components
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+// Form components
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
-import { Progress } from "@/components/ui/progress";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
 // Custom app components
 import { IntensitySlider } from "@/components/IntensitySlider";
@@ -97,8 +91,6 @@ export const ComponentGallery = () => {
   // Local state for interactive demos (no app side effects)
   const [intensityValue, setIntensityValue] = useState(7);
   const [anchorValue, setAnchorValue] = useState<AnchorType | null>("LOWER BODY");
-  const [sliderValue, setSliderValue] = useState([50]);
-  const [switchOn, setSwitchOn] = useState(true);
   const [radioTextSelected, setRadioTextSelected] = useState<string | null>("Option A");
   const [radioIconSelected, setRadioIconSelected] = useState<number | null>(1);
   const [galleryTab, setGalleryTab] = useState<'alpha' | 'beta' | 'gamma'>('alpha');
@@ -892,92 +884,6 @@ export const ComponentGallery = () => {
             </div>
           </Section>
 
-          <Section title="Museum — shadcn/ui Buttons">
-            <div className="space-y-4">
-              <Subsection label="Variants">
-                <div className="flex flex-wrap gap-2">
-                  <Button variant="default">Default</Button>
-                  <Button variant="secondary">Secondary</Button>
-                  <Button variant="destructive">Destructive</Button>
-                  <Button variant="outline">Outline</Button>
-                  <Button variant="ghost">Ghost</Button>
-                  <Button variant="link">Link</Button>
-                </div>
-              </Subsection>
-
-              <Subsection label="Sizes">
-                <div className="flex items-center gap-2">
-                  <Button size="sm">Small</Button>
-                  <Button size="default">Default</Button>
-                  <Button size="lg">Large</Button>
-                  <Button size="icon"><Zap className="w-4 h-4" /></Button>
-                </div>
-              </Subsection>
-            </div>
-          </Section>
-
-          <Section title="Museum — shadcn/ui Inputs">
-            <div className="space-y-4">
-              <Subsection label="Slider">
-                <Slider value={sliderValue} onValueChange={setSliderValue} max={100} step={1} />
-                <p className="text-label-xs mt-1">Value: {sliderValue[0]}</p>
-              </Subsection>
-
-              <Subsection label="Switch">
-                <div className="flex items-center gap-4">
-                  <Switch checked={switchOn} onCheckedChange={setSwitchOn} />
-                  <span className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>{switchOn ? "On" : "Off"}</span>
-                  <Switch disabled />
-                  <span className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>Disabled</span>
-                </div>
-              </Subsection>
-            </div>
-          </Section>
-
-          <Section title="Museum — shadcn/ui Feedback">
-            <div className="space-y-4">
-              <Subsection label="Badge variants">
-                <div className="flex flex-wrap gap-2">
-                  <Badge variant="default">Default</Badge>
-                  <Badge variant="secondary">Secondary</Badge>
-                  <Badge variant="destructive">Destructive</Badge>
-                  <Badge variant="outline">Outline</Badge>
-                </div>
-              </Subsection>
-
-              <Subsection label="Progress">
-                <div className="space-y-2">
-                  <Progress value={25} />
-                  <Progress value={66} />
-                  <Progress value={100} />
-                </div>
-              </Subsection>
-
-              <Subsection label="LoadingSpinner (sizes)">
-                <div className="flex items-center gap-6">
-                  <LoadingSpinner size="sm" />
-                  <LoadingSpinner size="md" message="Loading" />
-                  <LoadingSpinner size="lg" />
-                </div>
-              </Subsection>
-
-              <Subsection label="SkeletonCard">
-                <SkeletonCard />
-              </Subsection>
-            </div>
-          </Section>
-
-          <Section title="Museum — shadcn/ui Card">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-heading-h5">Card Title</CardTitle>
-                <CardDescription>Card description text</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-paragraph-sm">Card content goes here.</p>
-              </CardContent>
-            </Card>
-          </Section>
 
       </div>
 

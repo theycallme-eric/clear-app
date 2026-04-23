@@ -27,22 +27,21 @@ export const SupersetCard = ({ exercises, onLog, sectionType }: StructureCardPro
             cornerSize="md"
             padding="none"
         >
-            <div className="px-4 pt-3 pb-1">
+            <div style={{ padding: 'var(--spacing-300) var(--spacing-400) var(--spacing-100)' }}>
                 <span
-                    className="text-label-xs font-bold uppercase tracking-widest"
-                    style={{ color: 'var(--text-card-label)' }}
+                    className="text-label-xs"
+                    style={{ fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-card-label)' }}
                 >
                     {sectionType ? `${sectionType.replace('_', ' ')} \u2022 Superset` : 'Superset'}
                 </span>
             </div>
             {/* Vertical connector + exercises */}
-            <div className="flex ml-4">
+            <div style={{ display: 'flex', marginLeft: 'var(--spacing-400)' }}>
                 {/* Connector line — trimmed to align with exercise text */}
                 <div
-                    className="w-0.5 my-3 shrink-0"
-                    style={{ backgroundColor: 'var(--text-header)' }}
+                    style={{ width: '2px', margin: 'var(--spacing-300) 0', flexShrink: 0, backgroundColor: 'var(--text-header)' }}
                 />
-                <div className="pl-2 flex-1 min-w-0 pb-3">
+                <div style={{ paddingLeft: 'var(--spacing-200)', flex: 1, minWidth: 0, paddingBottom: 'var(--spacing-300)' }}>
                     {exercises.map((exercise, i) => (
                         <ActiveExerciseCard
                             key={exercise.id}
@@ -57,10 +56,10 @@ export const SupersetCard = ({ exercises, onLog, sectionType }: StructureCardPro
             </div>
             {/* Consolidated rest after pair */}
             {pairRest && (
-                <div className="px-4 pb-3 pt-1">
+                <div style={{ padding: 'var(--spacing-100) var(--spacing-400) var(--spacing-300)' }}>
                     <span
-                        className="text-label-xs uppercase tracking-widest"
-                        style={{ color: 'var(--text-paragraph)' }}
+                        className="text-label-xs"
+                        style={{ textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-paragraph)' }}
                     >
                         Rest: {pairRest} after both
                     </span>
@@ -82,10 +81,10 @@ export const CircuitCard = ({ exercises, onLog, sectionType, structure }: Struct
             cornerSize="md"
             padding="none"
         >
-            <div className="px-4 pt-3 pb-1">
+            <div style={{ padding: 'var(--spacing-300) var(--spacing-400) var(--spacing-100)' }}>
                 <span
-                    className="text-label-xs font-bold uppercase tracking-widest"
-                    style={{ color: 'var(--text-card-label)' }}
+                    className="text-label-xs"
+                    style={{ fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-card-label)' }}
                 >
                     {sectionType
                         ? `${sectionType.replace('_', ' ')} \u2022 ${rounds ? `Circuit \u2022 ${rounds} Rounds` : 'Circuit'}`
@@ -95,17 +94,17 @@ export const CircuitCard = ({ exercises, onLog, sectionType, structure }: Struct
 
             {/* EACH ROUND label */}
             {exercises.length >= 2 && (
-                <div className="px-4 mt-1 -mb-1">
+                <div style={{ padding: '0 var(--spacing-400)', marginTop: 'var(--spacing-100)', marginBottom: 'calc(-1 * var(--spacing-100))' }}>
                     <span
-                        className="text-label-xs font-bold uppercase tracking-widest"
-                        style={{ color: 'var(--text-card-label)' }}
+                        className="text-label-xs"
+                        style={{ fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-card-label)' }}
                     >
                         Each Round:
                     </span>
                 </div>
             )}
 
-            <div className="pb-3 space-y-1">
+            <div style={{ paddingBottom: 'var(--spacing-300)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-100)' }}>
                 {exercises.map((exercise, i) => (
                     <ActiveExerciseCard
                         key={exercise.id}
@@ -120,10 +119,10 @@ export const CircuitCard = ({ exercises, onLog, sectionType, structure }: Struct
 
             {/* Consolidated round rest */}
             {roundRest && (
-                <div className="px-4 pb-3 pt-1">
+                <div style={{ padding: 'var(--spacing-100) var(--spacing-400) var(--spacing-300)' }}>
                     <span
-                        className="text-label-xs uppercase tracking-widest"
-                        style={{ color: 'var(--text-paragraph)' }}
+                        className="text-label-xs"
+                        style={{ textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-paragraph)' }}
                     >
                         {roundRest} rest between rounds
                     </span>

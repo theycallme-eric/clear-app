@@ -87,26 +87,44 @@ export function Chip({
       surfaceColor={finalSurfaceColor}
       borderColor={finalBorderColor}
       hasLeftBorder={true}
-      className="h-full"
+      style={{ height: '100%' }}
     >
-      <div className="flex items-center justify-center gap-1 px-3 h-full">
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 'var(--spacing-100)',
+        padding: `0 var(--spacing-300)`,
+        height: '100%',
+      }}>
         {isSelected && showCheck && (
           <Check
-            className="w-3 h-3 shrink-0"
-            style={{ color: finalIconColor }}
+            style={{ width: 12, height: 12, flexShrink: 0, color: finalIconColor }}
           />
         )}
         {icon && !isSelected && (
           <span
-            className="w-4 h-4 flex items-center justify-center shrink-0"
-            style={{ color: finalIconColor }}
+            style={{
+              width: 16,
+              height: 16,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              color: finalIconColor,
+            }}
           >
             {icon}
           </span>
         )}
         <span
-          className="text-label-xs uppercase tracking-wide whitespace-nowrap"
-          style={{ color: finalTextColor }}
+          className="text-label-xs"
+          style={{
+            textTransform: 'uppercase',
+            letterSpacing: '0.025em',
+            whiteSpace: 'nowrap',
+            color: finalTextColor,
+          }}
         >
           {children}
         </span>
@@ -121,10 +139,11 @@ export function Chip({
         onClick={onClick}
         disabled={disabled}
         className={cn(
-          "h-[28px] transition-colors",
+          "transition-colors",
           disabled ? "cursor-not-allowed" : "cursor-pointer",
           className
         )}
+        style={{ height: 28 }}
       >
         {content}
       </button>
@@ -132,7 +151,7 @@ export function Chip({
   }
 
   return (
-    <div className={cn("h-[28px]", className)}>
+    <div className={className} style={{ height: 28 }}>
       {content}
     </div>
   );

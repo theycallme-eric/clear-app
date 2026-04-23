@@ -31,9 +31,10 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         surfaceColor={surfaceColor}
         borderColor={borderColor}
         hasLeftBorder={true}
-        className={cn("w-full min-h-[85px] transition-colors", className)}
+        className={cn("transition-colors", className)}
+        style={{ width: "100%", minHeight: "85px" }}
       >
-        <div className="relative flex h-full">
+        <div style={{ position: "relative", display: "flex", height: "100%" }}>
           <textarea
             disabled={disabled}
             onFocus={(e) => {
@@ -45,23 +46,37 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
               props.onBlur?.(e);
             }}
             className={cn(
-              "flex-1 w-full bg-transparent px-3 py-2 resize-none",
               "text-label-md",
-              "text-[var(--text-input)]",
-              "placeholder:text-[var(--text-input-placeholder)]",
-              "focus:outline-none",
-              disabled && "text-[var(--text-input-disabled)] cursor-not-allowed",
-              iconRight && "pr-10"
+              disabled && "cursor-not-allowed"
             )}
+            style={{
+              flex: 1,
+              width: "100%",
+              background: "transparent",
+              padding: "var(--spacing-200) var(--spacing-300)",
+              resize: "none",
+              color: disabled ? "var(--text-input-disabled)" : "var(--text-input)",
+              outline: "none",
+              border: "none",
+              ...(iconRight ? { paddingRight: "var(--spacing-800)" } : {}),
+            }}
             ref={ref}
             {...props}
           />
           {iconRight && (
             <span
-              className={cn(
-                "absolute top-2 right-3 flex items-center justify-center w-6 h-6 shrink-0",
-                disabled ? "text-[var(--icon-input-disabled)]" : "text-[var(--icon-input)]"
-              )}
+              style={{
+                position: "absolute",
+                top: "var(--spacing-200)",
+                right: "var(--spacing-300)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "var(--spacing-600)",
+                height: "var(--spacing-600)",
+                flexShrink: 0,
+                color: disabled ? "var(--icon-input-disabled)" : "var(--icon-input)",
+              }}
             >
               {iconRight}
             </span>

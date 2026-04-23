@@ -66,7 +66,10 @@ export const ClearLogo = ({
   };
 
   return (
-    <div className={cn("relative inline-block", className)}>
+    <div
+      className={className}
+      style={{ position: 'relative', display: 'inline-block' }}
+    >
       {/* Invisible sizer */}
       <span aria-hidden="true" style={{ ...textBase, visibility: "hidden" }}>
         CLEAR
@@ -153,11 +156,17 @@ const IconVariant = ({
 
   return (
     <div
-      className={cn(
-        "relative inline-flex items-center justify-center overflow-hidden",
-        className
-      )}
-      style={{ width: containerSize, height: containerSize, borderRadius: 16 }}
+      className={className}
+      style={{
+        position: 'relative',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        width: containerSize,
+        height: containerSize,
+        borderRadius: 16,
+      }}
     >
       {/* Background + border */}
       <div

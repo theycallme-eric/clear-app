@@ -128,26 +128,26 @@ export const SectionTimer = ({
                 borderColor={borderColor}
                 hasLeftBorder={true}
             >
-                <div className="flex flex-col items-center py-3">
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 'var(--spacing-300) 0' }}>
                     <span
-                        className="text-time-xl font-bold text-center tracking-tight"
-                        style={{ color: textColor, transition: 'color 1s ease' }}
+                        className="text-time-xl"
+                        style={{ fontWeight: 'bold', textAlign: 'center', letterSpacing: '-0.025em', color: textColor, transition: 'color 1s ease' }}
                     >
                         {formatTime(seconds)}
                     </span>
                     {/* EMOM minute indicator */}
                     {emom && timerState !== 'idle' && !isComplete && (
                         <span
-                            className="text-label-sm font-mono font-bold uppercase tracking-wider mt-1"
-                            style={{ color: textColor, transition: 'color 1s ease' }}
+                            className="text-label-sm"
+                            style={{ fontFamily: 'monospace', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: 'var(--spacing-100)', color: textColor, transition: 'color 1s ease' }}
                         >
                             MIN {currentMinute} OF {totalMinutes}
                         </span>
                     )}
                     {isComplete && (
                         <span
-                            className="text-label-xs font-bold uppercase"
-                            style={{ color: textColor }}
+                            className="text-label-xs"
+                            style={{ fontWeight: 'bold', textTransform: 'uppercase', color: textColor }}
                         >
                             Done
                         </span>
@@ -156,7 +156,7 @@ export const SectionTimer = ({
             </ChamferedFrame>
 
             {/* Controls — hidden when parent renders custom completion UI */}
-            {!hideControls && <div className="flex gap-3 mt-3">
+            {!hideControls && <div style={{ display: 'flex', gap: 'var(--spacing-300)', marginTop: 'var(--spacing-300)' }}>
                 {timerState === 'idle' && (
                     <CTAButton onClick={handleStart} size="md" fullWidth>
                         Start

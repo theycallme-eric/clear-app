@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { ChevronDown, ChevronUp } from "@/components/icons";
-import { cn } from "@/lib/utils";
 import { Exercise } from "@/types/workout";
 import { Card } from "../Card";
 import { Input } from "../ui/input";
@@ -93,33 +92,41 @@ export const ActiveExerciseCard = ({
 
     const Wrapper = bare ? 'div' : Card;
     const wrapperProps = bare
-        ? { className: cn("overflow-hidden transition-opacity duration-200", isEmomInactive && "opacity-40", className) }
-        : { padding: "none" as const, className: cn("overflow-hidden transition-opacity duration-200", isEmomInactive && "opacity-40", className) };
+        ? { style: { overflow: 'hidden', transition: 'opacity 200ms', opacity: isEmomInactive ? 0.4 : undefined } as React.CSSProperties, className }
+        : { padding: "none" as const, style: { overflow: 'hidden', transition: 'opacity 200ms', opacity: isEmomInactive ? 0.4 : undefined } as React.CSSProperties, className };
 
     return (
         <Wrapper {...wrapperProps}>
             {/* EMOM active accent bar */}
             {isEmomActive && (
                 <div
-                    className="h-0.5"
-                    style={{ backgroundColor: 'var(--border-cta-primary)' }}
+                    style={{ height: '2px', backgroundColor: 'var(--border-cta-primary)' }}
                 />
             )}
             {/* Header - Always visible (glanceable) */}
             <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className={cn("w-full flex items-start gap-3 text-left", bare ? "py-2 px-4" : "p-4")}
+                style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 'var(--spacing-300)',
+                    textAlign: 'left',
+                    ...(bare
+                        ? { padding: 'var(--spacing-200) var(--spacing-400)' }
+                        : { padding: 'var(--spacing-400)' }),
+                }}
             >
-                <div className="flex-1 min-w-0 space-y-1">
-                    <div className="flex items-center justify-between gap-2">
+                <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 'var(--spacing-100)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--spacing-200)' }}>
                         <h4
-                            className="text-label-md font-bold leading-tight uppercase"
-                            style={{ color: isEmomInactive ? 'var(--text-disabled)' : 'var(--text-card-header)' }}
+                            className="text-label-md"
+                            style={{ fontWeight: 'bold', lineHeight: 1.2, textTransform: 'uppercase', color: isEmomInactive ? 'var(--text-disabled)' : 'var(--text-card-header)' }}
                         >
                             {pairLabel && (
                                 <span
-                                    className="text-label-xs font-bold uppercase tracking-widest mr-2"
-                                    style={{ color: 'var(--text-card-header)' }}
+                                    className="text-label-xs"
+                                    style={{ fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', marginRight: 'var(--spacing-200)', color: 'var(--text-card-header)' }}
                                 >
                                     {pairLabel}
                                 </span>
@@ -128,8 +135,8 @@ export const ActiveExerciseCard = ({
                         </h4>
                         {minuteLabel && (
                             <span
-                                className="text-label-xs uppercase tracking-wider shrink-0"
-                                style={{ color: 'var(--text-paragraph)' }}
+                                className="text-label-xs"
+                                style={{ textTransform: 'uppercase', letterSpacing: '0.05em', flexShrink: 0, color: 'var(--text-paragraph)' }}
                             >
                                 {minuteLabel}
                             </span>
@@ -137,8 +144,8 @@ export const ActiveExerciseCard = ({
                     </div>
                     {/* Compact prescription */}
                     <div
-                        className="text-paragraph-sm flex flex-wrap gap-x-3 gap-y-1"
-                        style={{ color: 'var(--text-paragraph)' }}
+                        className="text-paragraph-sm"
+                        style={{ display: 'flex', flexWrap: 'wrap', columnGap: 'var(--spacing-300)', rowGap: 'var(--spacing-100)', color: 'var(--text-paragraph)' }}
                     >
                         {!hideReps && (
                             <span>{formatPrescription(exercise.sets, exercise.reps)}</span>
@@ -151,19 +158,26 @@ export const ActiveExerciseCard = ({
                         )}
                     </div>
                 </div>
-                <span className="p-1 shrink-0" style={{ color: 'var(--icon-cta)' }}>
+                <span style={{ padding: 'var(--spacing-100)', flexShrink: 0, color: 'var(--icon-cta)' }}>
                     {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                 </span>
             </button>
 
             {/* Expanded Area */}
             {isExpanded && (
-                <div className={cn("px-4 space-y-3", bare ? "pb-2" : "pb-4")}>
+                <div style={{
+                    paddingLeft: 'var(--spacing-400)',
+                    paddingRight: 'var(--spacing-400)',
+                    paddingBottom: bare ? 'var(--spacing-200)' : 'var(--spacing-400)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 'var(--spacing-300)',
+                }}>
                     {/* Tempo & Rest details */}
                     {(exercise.tempo || hasRest(exercise.rest)) && (
                         <div
-                            className="text-paragraph-sm flex flex-wrap gap-x-3 gap-y-1"
-                            style={{ color: 'var(--text-paragraph)' }}
+                            className="text-paragraph-sm"
+                            style={{ display: 'flex', flexWrap: 'wrap', columnGap: 'var(--spacing-300)', rowGap: 'var(--spacing-100)', color: 'var(--text-paragraph)' }}
                         >
                             {exercise.tempo && <span>Tempo: {exercise.tempo}</span>}
                             {hasRest(exercise.rest) && <span>Rest: {exercise.rest}</span>}
@@ -173,8 +187,8 @@ export const ActiveExerciseCard = ({
                     {/* Coaching Cues */}
                     {exercise.coachingCues && (
                         <p
-                            className="text-paragraph-sm italic"
-                            style={{ color: 'var(--text-paragraph)' }}
+                            className="text-paragraph-sm"
+                            style={{ fontStyle: 'italic', color: 'var(--text-paragraph)' }}
                         >
                             {Array.isArray(exercise.coachingCues)
                                 ? exercise.coachingCues.join(". ")
@@ -185,8 +199,8 @@ export const ActiveExerciseCard = ({
                     {/* Regression / Progression */}
                     {(exercise.regression || exercise.progression) && (
                         <div
-                            className="text-paragraph-sm space-y-1 pt-2"
-                            style={{ color: 'var(--text-paragraph)' }}
+                            className="text-paragraph-sm"
+                            style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-100)', paddingTop: 'var(--spacing-200)', color: 'var(--text-paragraph)' }}
                         >
                             {exercise.regression && (
                                 <p><span style={{ color: 'var(--text-disabled)' }}>Easier:</span> {exercise.regression}</p>
@@ -199,12 +213,12 @@ export const ActiveExerciseCard = ({
 
                     {/* Weight / Reps Inputs */}
                     {showInputs && (
-                        <div className={hasWeight ? "grid grid-cols-2 gap-3" : ""}>
+                        <div style={hasWeight ? { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-300)' } : undefined}>
                             {hasWeight && (
-                                <div className="space-y-2">
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
                                     <label
-                                        className="text-label-xs uppercase tracking-wider"
-                                        style={{ color: 'var(--text-disabled)' }}
+                                        className="text-label-xs"
+                                        style={{ textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-disabled)' }}
                                     >
                                         Weight
                                     </label>
@@ -215,10 +229,10 @@ export const ActiveExerciseCard = ({
                                     />
                                 </div>
                             )}
-                            <div className="space-y-2">
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
                                 <label
-                                    className="text-label-xs uppercase tracking-wider"
-                                    style={{ color: 'var(--text-disabled)' }}
+                                    className="text-label-xs"
+                                    style={{ textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-disabled)' }}
                                 >
                                     Reps
                                 </label>

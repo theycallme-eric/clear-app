@@ -13,19 +13,19 @@ export function RouteErrorFallback({ resetErrorBoundary }: FallbackProps) {
 
   return (
     <AppLayout header={<PageHeader center="Error" />}>
-      <div className="mt-8">
+      <div style={{ marginTop: 'var(--spacing-700)' }}>
         <ErrorState
           message="Something went wrong on this page"
           onRetry={resetErrorBoundary}
         />
-        <div className="flex justify-center mt-4">
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 'var(--spacing-400)' }}>
           <button
             onClick={() => {
               resetErrorBoundary();
               navigate("/");
             }}
-            className="text-label-sm uppercase tracking-wide transition-colors"
-            style={{ color: "var(--icon-cta)" }}
+            className="text-label-sm transition-colors"
+            style={{ color: "var(--icon-cta)", textTransform: 'uppercase', letterSpacing: '0.05em' }}
           >
             Go Home
           </button>

@@ -1,5 +1,4 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
 import { LeftColumn } from "./LeftColumn";
 import { TabBar, type Tab } from "./TabBar";
 import {
@@ -123,26 +122,30 @@ export function TabbedPanel<T extends string>({
   }
 
   return (
-    <div className={cn("relative flex items-stretch w-full", className)}>
+    <div className={className} style={{ position: 'relative', display: 'flex', alignItems: 'stretch', width: '100%' }}>
       {/* Left column — accent bar */}
       {showLeftColumn && (
         <LeftColumn
           size="md"
           surfaceColor="var(--surface-card-accent)"
           borderColor="var(--border-tab-active)"
-          className="relative z-10"
+          style={{ position: 'relative', zIndex: 10 }}
         />
       )}
 
       {/* Panel body */}
       <div
         ref={bodyRef}
-        className={cn("flex-1 relative", showLeftColumn && "-ml-[2px]")}
+        style={{
+          flex: 1,
+          position: 'relative',
+          ...(showLeftColumn ? { marginLeft: '-2px' } : {}),
+        }}
       >
         {/* SVG: fills + borders */}
         {w > 0 && h > 0 && (
           <svg
-            className="absolute inset-0 w-full h-full pointer-events-none"
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
             width={w}
             height={h}
             viewBox={`0 0 ${w} ${h}`}
@@ -238,14 +241,14 @@ export function TabbedPanel<T extends string>({
         )}
 
         {/* Content layer */}
-        <div className="relative z-10">
+        <div style={{ position: 'relative', zIndex: 10 }}>
           <TabBar
             tabs={tabs}
             activeTab={activeTab}
             onChange={onChange}
             variant="embedded"
           />
-          <div key={activeTab} className="px-4 py-3 animate-tab-enter">
+          <div key={activeTab} className="animate-tab-enter" style={{ padding: 'var(--spacing-300) var(--spacing-400)' }}>
             {children}
           </div>
         </div>

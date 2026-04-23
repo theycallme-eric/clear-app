@@ -9,15 +9,15 @@ export const WelcomeScreen = () => {
 
   return (
     <AuthLayout>
-      <div className="flex-1 flex flex-col items-center justify-center">
-        <div className="flex flex-col items-center text-center max-w-sm">
-          <ClearLogo size="xl" boot className="mb-4" />
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', maxWidth: '24rem' }}>
+          <ClearLogo size="xl" boot style={{ marginBottom: 'var(--spacing-400)' }} />
 
-          <p className="text-paragraph-lg mb-12" style={{ color: 'var(--text-paragraph)' }}>
+          <p className="text-paragraph-lg" style={{ marginBottom: 'var(--spacing-1000)', color: 'var(--text-paragraph)' }}>
             Strength training, simplified.
           </p>
 
-          <div className="w-full space-y-4">
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
             <CTAButton
               onClick={() => navigate("/create-account")}
               size="lg"
