@@ -191,11 +191,12 @@ Code quality, refactoring, cleanup.
   - Added: 2026-04-22
   - Completed: 2026-04-22
   - Context: Full audit found ~20 files using primitives directly. Added 13 new semantic tokens, deleted 17 unused, removed fabricated brown/cream tokens. Zero visual changes. Prevention rules added to CLAUDE.md.
-- [ ] **Remove Tailwind CSS** - Replace all Tailwind utility classes with CSS custom properties and vanilla CSS
+- [x] **Remove Tailwind CSS** - Replace all Tailwind utility classes with CSS custom properties and vanilla CSS
   - Priority: Medium
   - Type: Tech Debt
   - Added: 2026-04-22
-  - Context: ~67 files use Tailwind (mostly layout utilities). 12 shadcn/ui files use Tailwind color tokens. Session plan at `.claude/plans/SESSION_PLAN_tailwind_removal.md`. Estimate 2-3 sessions.
+  - Completed: 2026-04-22
+  - Context: 92 files changed. All Tailwind utilities converted to inline styles with CSS custom properties. 11 unused shadcn/ui primitives deleted. Branch `feature/tailwind-removal`.
 - [ ] **Design system extraction** - Complete platform-agnostic design system in `design-system/` directory
   - Priority: Medium
   - Type: Tech Debt

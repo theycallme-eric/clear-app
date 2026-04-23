@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-04-22 (14th session)
+**Last Session:** 2026-04-22 (15th session)
 
 ---
 
@@ -13,14 +13,51 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Workout Generation Overhaul
-**Current Task:** All 5 phases complete — ready for real-world testing
-**Last Completed:** Workout generation overhaul (muscle data, goal persistence, prompt v3.1, weekly coverage, balanced upgrade, headless test harness)
-**Blocking Issues:** None
+**Current Phase:** Tailwind Removal + Auth Improvements
+**Current Task:** Tailwind removal complete, forgot password flow added — needs Supabase redirect URL config
+**Last Completed:** Tailwind removal (92 files), forgot password / reset password screens
+**Blocking Issues:** Supabase redirect URL allowlist needs `*/reset-password` added for password reset emails to work
 
 ---
 
 ## Session Entries
+
+### Session: 2026-04-22 - Tailwind Removal & Forgot Password Flow
+
+**Duration:** ~1 hour
+**Mode:** Claude Code
+**Branch:** `feature/tailwind-removal`
+
+#### What Got Done
+- **Tailwind removal (92 files):** Converted all Tailwind utility classes to inline styles using CSS custom properties across every component, layout, and page. Deleted 11 unused shadcn/ui primitives (badge, button, card, progress, slider, switch, toast, toaster, tooltip, use-toast, useToast hook).
+- **Forgot password screen:** New `ForgotPasswordScreen.tsx` at `/forgot-password` — email input, calls `supabase.auth.resetPasswordForEmail()`, shows confirmation state. Vague confirmation message prevents email enumeration.
+- **Reset password screen:** New `ResetPasswordScreen.tsx` at `/reset-password` — unguarded route (user arrives authenticated via recovery link). Listens for `PASSWORD_RECOVERY` event, shows new password + confirm fields, calls `updateUser()`.
+- **SignInScreen wiring:** "Forgot password?" link now navigates to `/forgot-password` instead of showing a placeholder toast.
+- **Linter pass on SignInScreen:** Tailwind classes converted to inline styles by linter/user.
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Reset password route is unguarded (not PublicOnly or Protected) | User arrives authenticated via Supabase recovery link — PublicOnlyRoute would redirect them away |
+| Single commit for tailwind removal + forgot password | Both on same feature branch, keeps history clean |
+| Vague "if an account exists" confirmation | Prevents email enumeration attacks |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/pages/ForgotPasswordScreen.tsx` | Created — email entry for password reset |
+| `src/pages/ResetPasswordScreen.tsx` | Created — new password entry after recovery link |
+| `src/App.tsx` | Modified — added forgot-password and reset-password routes |
+| `src/pages/SignInScreen.tsx` | Modified — forgot password link navigates instead of toasting |
+| 80+ component/page/layout files | Modified — Tailwind utilities → inline styles |
+| 11 shadcn/ui files | Deleted — unused primitives removed |
+
+#### Status
+- Build passes, typecheck clean
+- 1 commit on branch: `7307d1f`
+- Supabase redirect URL config still needed for reset emails to work in production
+
+---
 
 ### Session: 2026-04-22 - Workout Generation Overhaul
 
