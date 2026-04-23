@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-04-23 (17th session)
+**Last Session:** 2026-04-23 (18th session)
 
 ---
 
@@ -13,14 +13,63 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Design System Documentation (complete)
-**Current Task:** All design system self-training infrastructure in place
-**Last Completed:** LLM-reproducible design system docs, passive drift detection, aesthetic calibration system
-**Blocking Issues:** Production Supabase dashboard needs reset-password redirect URL added
+**Current Phase:** Generation Screen Overhaul
+**Current Task:** Auto-anchor recommendation based on muscle group coverage
+**Last Completed:** Generation screen simplified — anchor grid removed, coverage-based RPC added, prompt updated for notes override
+**Blocking Issues:** Production Supabase dashboard needs reset-password redirect URL added; migration 00027 needs `supabase db reset` or `migration up` locally
 
 ---
 
 ## Session Entries
+
+### Session: 2026-04-23 - Generation Screen Overhaul: Auto-Anchor + Simplification
+
+**Duration:** ~1 hour
+**Mode:** Claude Code
+**Branch:** `feature/generation-screen-overhaul`
+
+#### What Got Done
+- **Coverage-based anchor RPC** (`00027_suggest_anchor_rpc.sql`): Supabase RPC that queries last 7 days of completed sessions, joins through workout_sections → exercises → exercise_muscle_groups, groups by body region (lower/upper push/upper pull/core), scores by staleness + underwork, returns suggested anchor with reason
+- **useSuggestedAnchor hook**: Calls RPC on mount, caches result, falls back to local `getSuggestedAnchor()` heuristic if RPC fails
+- **GenerationScreen simplified**: Removed interactive AnchorGrid and goal badge. Added read-only "Recommended Focus" card showing system-suggested anchor with reason text
+- **Textarea white background bug fixed**: Added `background: transparent` to form element CSS reset
+- **Prompt updated**: Added principle #8 making notes-based anchor override explicit (e.g., "upper body today" overrides auto-selection)
+- **Type narrowed**: `WorkoutParams.anchor` changed from `AnchorType | null` to `AnchorType`
+- **Import cleanup**: `anchor-mapping.ts` redirected from `AnchorGrid` to `@/types/workout`
+- **Goal badge CSS removed**: Dead styles cleaned up from index.css
+- **Code review fixes**: Generate button disabled while anchor loads; removed stale `workoutHistory` from hook dependency array
+
+#### What Came Up (Unexpected)
+- Two concurrent sessions (tailwind removal close-out + this work) competed over file state. Tailwind removal PR (#30) was already merged to main by the other session, making `feature/tailwind-removal` stale. Had to create a fresh branch off main and re-apply all changes.
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| RPC over simple recency heuristic | Session-level anchors can't distinguish muscle coverage — RPC operates on actual exercise muscle groups for smarter recommendations |
+| Read-only card, not interactive | System recommends; notes override. No need for user to manually pick anchor when coverage data is available |
+| Keep AnchorGrid component in codebase | Still used by ComponentGallery — don't delete, just stop importing in GenerationScreen |
+| `SECURITY DEFINER` on RPC | Needs to query across tables with RLS; function runs with creator's permissions |
+| Fallback to local heuristic on RPC failure | Graceful degradation — new users or offline still get a reasonable suggestion |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/index.css` | Modified — `background: transparent` in form reset; removed goal-badge CSS |
+| `src/pages/GenerationScreen.tsx` | Modified — removed AnchorGrid/goal badge, added recommended focus card |
+| `src/hooks/useSuggestedAnchor.ts` | Created — hook for coverage-based anchor suggestion |
+| `supabase/migrations/00027_suggest_anchor_rpc.sql` | Created — RPC for muscle group coverage analysis |
+| `src/types/workout.ts` | Modified — narrowed `WorkoutParams.anchor` to non-nullable |
+| `src/components/OptionalFields.tsx` | Modified — updated notes placeholder |
+| `src/lib/anchor-mapping.ts` | Modified — redirected type import to `@/types/workout` |
+| `supabase/functions/generate-workout/prompt.ts` | Modified — added notes-override principle |
+
+#### Status
+- Build passes, typecheck passes
+- 1 commit on `feature/generation-screen-overhaul`
+- Not yet pushed or PR'd
+- Migration `00027` needs to be applied locally
+
+---
 
 ### Session: 2026-04-23 - LLM-Reproducible Design System & Self-Training Infrastructure
 
