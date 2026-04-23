@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-04-22 (15th session)
+**Last Session:** 2026-04-22 (16th session)
 
 ---
 
@@ -13,14 +13,52 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Tailwind Removal + Auth Improvements
-**Current Task:** Tailwind fully removed, forgot password flow complete — ready for PR
-**Last Completed:** Tailwind removal (100+ files), forgot/reset password screens, Supabase redirect config
+**Current Phase:** Tailwind Removal (complete, PR open)
+**Current Task:** PR #30 open for review — fabricated tokens fixed, @layer remnants removed
+**Last Completed:** Fabricated token fixes, @layer/@apply removal, CTAButton Tailwind-to-CSS conversion
 **Blocking Issues:** Production Supabase dashboard needs reset-password redirect URL added
 
 ---
 
 ## Session Entries
+
+### Session: 2026-04-22 - Fabricated Token Fixes & Tailwind Remnant Cleanup
+
+**Duration:** ~30 min
+**Mode:** Claude Code
+**Branch:** `feature/tailwind-removal`
+
+#### What Got Done
+- **Fabricated token audit:** Scanned all components for CSS variables used but not defined in `src/index.css`. Found `--surface-cta-accent` (5 files), `--color-green` (1 file), and `--btn-*` Tailwind arbitrary properties (CTAButton).
+- **Token fixes:** Replaced `--surface-cta-accent` → `--surface-cta-primary-accent` in HomeScreen, CTAButton, LeftColumn, ActionButton, ActionCard. Replaced `--color-green` → `--text-success` in ForgotPasswordScreen.
+- **@layer/@apply removal:** Removed `@layer base`, `@layer components`, `@layer utilities` wrappers from `index.css`. Converted `@apply border-border` and `@apply bg-background text-foreground font-body antialiased` to plain CSS.
+- **CTAButton Tailwind conversion:** Replaced Tailwind arbitrary property syntax (`[--btn-surface:var(...)]`) with inline style CSS custom properties + `.cta-btn-primary:hover` / `.cta-btn-secondary:hover` CSS classes.
+- **Fixed `--font-body` reference:** Changed to `--font-paragraph` (the actual defined token).
+- **PR created:** #30
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Left ActionButton Tailwind syntax unfixed | Only used in ComponentGallery (museum) — frozen as snapshot |
+| Used CSS classes for CTAButton hover instead of JS state | Cleaner, no re-renders, matches existing transition-colors pattern |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/index.css` | Modified — removed @layer wrappers, @apply directives, added CTA hover classes, fixed --font-body |
+| `src/components/CTAButton.tsx` | Modified — inline style CSS vars replacing Tailwind arbitrary properties |
+| `src/components/LeftColumn.tsx` | Modified — default prop token fix |
+| `src/components/ActionButton.tsx` | Modified — token fix |
+| `src/components/ActionCard.tsx` | Modified — token fix |
+| `src/pages/HomeScreen.tsx` | Modified — token fix |
+| `src/pages/ForgotPasswordScreen.tsx` | Modified — --color-green → --text-success |
+
+#### Status
+- Build passes, typecheck clean
+- PR #30 open: https://github.com/theycallme-eric/clear-app/pull/30
+- ActionButton still has Tailwind syntax but only used in museum (intentional)
+
+---
 
 ### Session: 2026-04-22 - Tailwind Removal & Forgot Password Flow
 
