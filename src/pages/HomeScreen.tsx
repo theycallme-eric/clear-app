@@ -164,7 +164,7 @@ export const HomeScreen = () => {
           onClick={() => navigate("/generate")}
           padding="md"
           borderColor="var(--border-cta-primary)"
-          accentColor="var(--surface-cta-accent)"
+          accentColor="var(--surface-cta-primary-accent)"
           surfaceColor="var(--surface-cta-primary)"
         >
           <h2
@@ -184,7 +184,7 @@ export const HomeScreen = () => {
           className={!hasHistory ? "cursor-not-allowed" : ""}
           style={!hasHistory ? { opacity: 0.5 } : undefined}
           borderColor="var(--border-cta-primary)"
-          accentColor="var(--surface-cta-accent)"
+          accentColor="var(--surface-cta-primary-accent)"
           surfaceColor="var(--surface-cta-primary)"
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-200)', marginBottom: 'var(--spacing-200)' }}>
