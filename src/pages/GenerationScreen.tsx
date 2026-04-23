@@ -65,7 +65,7 @@ export const GenerationScreen = () => {
             <>
               <span
                 className="text-heading-h4"
-                style={{ color: 'var(--text-primary)', display: 'block', marginBottom: 'var(--spacing-100)' }}
+                style={{ color: 'var(--text-header)', display: 'block', marginBottom: 'var(--spacing-100)' }}
               >
                 {suggestedAnchor}
               </span>

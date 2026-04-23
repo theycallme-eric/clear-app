@@ -33,6 +33,9 @@ export function useSuggestedAnchor(): SuggestedAnchorResult {
         if (error) throw error;
 
         const result = typeof data === 'string' ? JSON.parse(data) : data;
+        if (!result?.suggested_anchor || !result?.reason) {
+          throw new Error('Invalid RPC response shape');
+        }
         setSuggestedAnchor(result.suggested_anchor as AnchorType);
         setReason(result.reason);
       } catch (err) {
