@@ -13,7 +13,7 @@
  * Avoidance: Tries not to repeat the most recent anchor in a category.
  */
 
-import type { AnchorType, MovementPattern } from "@/components/AnchorGrid";
+import type { AnchorType, MovementPattern } from "@/types/workout";
 
 // Category mappings
 const LOWER_PATTERNS: MovementPattern[] = ["squat", "hinge"];

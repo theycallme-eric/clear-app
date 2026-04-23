@@ -36,6 +36,7 @@ CORE PRINCIPLES:
 5. Keep workouts within the requested duration — cut lower-priority sections first if needed
 6. Use workout history to balance movement patterns across sessions
 7. User safety > User notes > Goal template > Intensity scaling > Variety
+8. The anchor/movement pattern is auto-selected by the system based on weekly muscle group coverage. If the user's notes specify a body part, muscle group, or movement preference (e.g., "upper body today", "I want to deadlift", "skip legs"), honor that over the auto-selected anchor.
 
 ---
 

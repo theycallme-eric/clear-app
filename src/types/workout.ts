@@ -208,7 +208,7 @@ export interface GeneratedWorkout {
 // Goal is read from user profile, not selected per-workout
 export interface WorkoutParams {
   intensity: number;
-  anchor: AnchorType | null;
+  anchor: AnchorType;
   location: string;
   time: string;
   notes: string;
