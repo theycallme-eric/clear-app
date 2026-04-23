@@ -14,9 +14,9 @@ Living document to capture progress, decisions, and learnings across sessions. T
 
 ## Quick Status
 **Current Phase:** Tailwind Removal + Auth Improvements
-**Current Task:** Tailwind removal complete, forgot password flow added — needs Supabase redirect URL config
-**Last Completed:** Tailwind removal (92 files), forgot password / reset password screens
-**Blocking Issues:** Supabase redirect URL allowlist needs `*/reset-password` added for password reset emails to work
+**Current Task:** Tailwind fully removed, forgot password flow complete — ready for PR
+**Last Completed:** Tailwind removal (100+ files), forgot/reset password screens, Supabase redirect config
+**Blocking Issues:** Production Supabase dashboard needs reset-password redirect URL added
 
 ---
 
@@ -34,6 +34,8 @@ Living document to capture progress, decisions, and learnings across sessions. T
 - **Reset password screen:** New `ResetPasswordScreen.tsx` at `/reset-password` — unguarded route (user arrives authenticated via recovery link). Listens for `PASSWORD_RECOVERY` event, shows new password + confirm fields, calls `updateUser()`.
 - **SignInScreen wiring:** "Forgot password?" link now navigates to `/forgot-password` instead of showing a placeholder toast.
 - **Linter pass on SignInScreen:** Tailwind classes converted to inline styles by linter/user.
+- **Final Tailwind cleanup:** Deleted `tailwind.config.ts`, removed `tailwindcss` from PostCSS config, removed `@tailwind` directives from `index.css`, removed `cn()` utility from `utils.ts`.
+- **Supabase config fix:** Updated `site_url` from port 3000 to 5173, added reset-password redirect URLs to allowlist.
 
 #### Decisions Made
 | Decision | Rationale |
