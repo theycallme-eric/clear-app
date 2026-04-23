@@ -19,6 +19,19 @@ Every UI task must pass through this skill. The pre-flight catches the most comm
 
 ---
 
+## Phase 0: Load Design System References
+
+Before starting pre-flight, read these docs to calibrate your decisions:
+
+1. **`ui-rules.md`** — Spacing scale, typography classes, visual hierarchy, card anatomy, interactive states, atmosphere utilities
+2. **`token-decision-tree.md`** — Which semantic token to use for any surface, border, text, or icon
+3. **`anti-patterns.md`** — Common mistakes (hardcoded colors, rounded corners, Lucide icons, bounce animations, wrong hover patterns)
+4. **`memory/feedback_aesthetic.md`** — Accumulated taste calibration from Eric's visual feedback (spacing feel, atmosphere weight, visual balance)
+
+These are short, concrete references. Having them in context prevents the most common LLM mistakes.
+
+---
+
 ## Phase 1: Pre-flight (MANDATORY — before writing any code)
 
 ### Step 1: Inventory what exists
@@ -145,6 +158,8 @@ export function ComponentName({ className, ...props }: ComponentNameProps) {
 
 ## Token Creation Rules
 
+For choosing existing tokens, see **`token-decision-tree.md`** — it covers all 100+ semantic tokens.
+
 ### When to create a new semantic token
 
 Create a new token when:
@@ -154,7 +169,7 @@ Create a new token when:
 
 ### When NOT to create a new token
 
-- The role already has a token — use it
+- The role already has a token — use it (check `token-decision-tree.md`)
 - It's a one-off decorative value with no semantic meaning
 - You're tempted to create a token per-component instead of per-role (e.g., `--surface-history-card` when `--surface-card` already covers it)
 
@@ -166,17 +181,16 @@ Create a new token when:
    - States: `hover`, `selected`, `disabled`, `active`
 2. Add to BOTH `:root` and `[data-theme="blue"]` in `src/index.css`
 3. Map to primitive color variables (e.g., `var(--color-orange-500)`) — never hardcoded hex
-4. If Tailwind classes are needed, update `tailwind.config.ts`
 
 ### Naming examples
 
 ```css
 /* Good — describes the role */
---surface-tab-active: var(--color-brown-800);
+--surface-tab-active: var(--color-orange-800);
 --surface-tab-inactive: transparent;
 --border-tab-active: var(--color-orange-500);
---text-tab-active: var(--color-cream-100);
---text-tab-inactive: var(--color-brown-400);
+--text-tab-active: var(--color-orange-100);
+--text-tab-inactive: var(--color-orange-400);
 
 /* Bad — describes the component or is too specific */
 --surface-history-tab: ...;        /* component-specific, not role-based */
@@ -268,17 +282,19 @@ Create a new token when:
 
 - `src/index.css` — CSS variables / design tokens
 - `src/pages/ComponentGallery.tsx` — Visual component inventory
-- `tailwind.config.ts` — Tailwind theme config
 - `src/lib/utils.ts` — `cn()` helper
 - `docs/design-philosophy.md` — Design language and feel
 
 ## Related Skills
 
-- [chamfered-component](.claude/skills/chamfered-component.md) — ChamferedFrame + LeftColumn patterns
-- [token-check](.claude/skills/token-check.md) — Verify design token usage
-- [gallery-add](.claude/skills/gallery-add.md) — Add to component gallery
-- [icon-transform](.claude/skills/icon-transform.md) — Create new icons
+- [ui-rules](ui-rules.md) — Spacing, typography, visual hierarchy, cards, states, atmosphere
+- [token-decision-tree](token-decision-tree.md) — Which token to use for any role
+- [anti-patterns](anti-patterns.md) — Common mistakes to avoid
+- [chamfered-component](chamfered-component.md) — ChamferedFrame + LeftColumn patterns
+- [token-check](token-check.md) — Verify design token usage
+- [gallery-add](gallery-add.md) — Add to component gallery
+- [icon-transform](icon-transform.md) — Create new icons
 
 ## Related Agents
 
-- [figma-ui-implementer](.claude/agents/figma-ui-implementer.md) — For Figma-to-code implementation
+- [figma-ui-implementer](../agents/figma-ui-implementer.md) — For Figma-to-code implementation

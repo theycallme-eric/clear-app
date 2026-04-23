@@ -17,6 +17,21 @@ interface ExerciseCardProps {
   showSwapControls?: boolean;
 }
 
+/**
+ * ExerciseCard - Expandable exercise display with optional swap controls.
+ *
+ * @tokens
+ * - Header: --text-card-header (exercise name), --text-paragraph (sets/reps/equipment)
+ * - Chevron icon: --icon-cta
+ * - Body text: --text-paragraph (tempo, rest, coaching cues, regression/progression)
+ * - Last weight: --text-timer
+ * - Dimmed labels: --text-disabled ("Easier:", "Harder:")
+ * - Error text: --text-error
+ * - Swap controls: --icon-cta (active), --text-disabled (disabled swap)
+ * - Typography: text-label-md (name), text-paragraph-sm (details), text-label-xs (button labels)
+ * - Spacing: --spacing-100 to --spacing-400
+ */
+
 /** Check if a rest value is meaningful (non-zero, non-empty) */
 const hasRest = (rest?: string): boolean => {
   if (!rest) return false;

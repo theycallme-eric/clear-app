@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-04-22 (16th session)
+**Last Session:** 2026-04-23 (17th session)
 
 ---
 
@@ -13,14 +13,78 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Tailwind Removal (complete, PR open)
-**Current Task:** PR #30 open for review — fabricated tokens fixed, @layer remnants removed
-**Last Completed:** Fabricated token fixes, @layer/@apply removal, CTAButton Tailwind-to-CSS conversion
+**Current Phase:** Design System Documentation (complete)
+**Current Task:** All design system self-training infrastructure in place
+**Last Completed:** LLM-reproducible design system docs, passive drift detection, aesthetic calibration system
 **Blocking Issues:** Production Supabase dashboard needs reset-password redirect URL added
 
 ---
 
 ## Session Entries
+
+### Session: 2026-04-23 - LLM-Reproducible Design System & Self-Training Infrastructure
+
+**Duration:** ~2 hours
+**Mode:** Claude Code
+**Branch:** `feature/tailwind-removal`
+
+#### What Got Done
+- **ui-rules.md** (new): 400-line concrete implementation reference — spacing scale, typography classes, visual hierarchy, card anatomy with container decision tree, interactive states, atmosphere utilities, page layout patterns
+- **token-decision-tree.md** (new): Systematic lookup table for all 100+ semantic tokens — surfaces, borders, text, icons, brand, with theme swap rule and state baselines
+- **anti-patterns.md** (new): 11 categories of don't/do pairs covering every observed LLM mistake
+- **chamfered-component.md** (enriched): Added 4 sections — CSS variable hover technique, SVG double-width stroke + clip, ResizeObserver pattern, creating new angular shapes
+- **component.md** (enriched): Added Phase 0 (load design system references before pre-flight), updated token creation rules
+- **Integration pass**: Updated code-reviewer, figma-ui-implementer, gallery-add, token-check, token-audit to reference new docs
+- **Component JSDoc**: Added @tokens blocks to Card, CTAButton, Chip, ExerciseCard, TabbedPanel
+- **token-lint.ts** (new script): Scans for hex colors, primitive tokens, border-radius, lucide imports — `npm run token-lint`
+- **registry-check.ts** (new script): Compares component.md registry vs actual src/components/ — `npm run registry-check`
+- **Session-start hook**: Added automatic drift detection (registry + token-lint) to session-start-check.sh
+- **Close-session step 5**: Design System Drift Check — registry sync, token lint, doc drift, taste feedback with graduation process
+- **Aesthetic calibration system**: feedback_aesthetic.md with 30-entry cap, 3+ repetition graduation bar to ui-rules.md/anti-patterns.md
+- **GitHub Issue #31**: Monthly check-in for May 23 to evaluate self-training effectiveness
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Single aesthetic feedback file, not one per correction | Prevents memory bloat, enables consolidation and graduation |
+| 3+ repetition graduation bar | Prevents one-off preferences from becoming rules |
+| Registry-check matches filename to export name | Filters out icons, sub-components, helpers — focuses on reusable components |
+| Drift checks at session start AND close | Catches missed close-sessions; no action required from user |
+| Taste feedback refines existing rules, doesn't append new ones | Prevents ui-rules.md from growing unbounded |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `.claude/skills/ui-rules.md` | Created — spacing, typography, hierarchy, cards, states, atmosphere, layout |
+| `.claude/skills/token-decision-tree.md` | Created — systematic token lookup |
+| `.claude/skills/anti-patterns.md` | Created — don't/do pairs for common LLM mistakes |
+| `.claude/skills/chamfered-component.md` | Modified — 4 new sections (hover, SVG, resize, shapes) |
+| `.claude/skills/component.md` | Modified — Phase 0, token rules update |
+| `.claude/skills/close-session.md` | Modified — step 5 drift check + taste feedback |
+| `.claude/skills/gallery-add.md` | Modified — semantic token template |
+| `.claude/skills/token-check.md` | Rewritten — delegates to decision tree + lint |
+| `.claude/skills/token-audit.md` | Modified — removes duplicated table, adds pointers |
+| `.claude/agents/code-reviewer.md` | Modified — 11-item design system checklist + doc drift |
+| `.claude/agents/figma-ui-implementer.md` | Modified — CLEAR-specific context + skill references |
+| `.claude/README.md` | Modified — new skills in tables |
+| `.claude/hooks/session-start-check.sh` | Modified — drift detection at session start |
+| `CLAUDE.md` | Modified — typography, atmosphere, decision tree links |
+| `package.json` | Modified — token-lint + registry-check scripts |
+| `scripts/token-lint.ts` | Created — automated design system violation scanner |
+| `scripts/registry-check.ts` | Created — component registry sync checker |
+| `src/components/Card.tsx` | Modified — @tokens JSDoc |
+| `src/components/CTAButton.tsx` | Modified — @tokens JSDoc |
+| `src/components/Chip.tsx` | Modified — @tokens JSDoc |
+| `src/components/ExerciseCard.tsx` | Modified — @tokens JSDoc |
+| `src/components/TabbedPanel.tsx` | Modified — @tokens JSDoc |
+
+#### Status
+- Build passes, typecheck clean
+- 30 uncommitted files on `feature/tailwind-removal` (includes some anchor-suggestion work from another session)
+- PR #30 still open from previous session
+- GitHub Issue #31 created for monthly check-in
+
+---
 
 ### Session: 2026-04-22 - Fabricated Token Fixes & Tailwind Remnant Cleanup
 

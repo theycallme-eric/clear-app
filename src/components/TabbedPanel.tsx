@@ -32,6 +32,17 @@ const CORNER = 12;
  *
  * Outer shape has chamfered corners at top-right (tab area) and bottom-right (panel area).
  * Tab diagonals use a larger chamfer for a dramatic angled cut.
+ *
+ * @tokens
+ * - Panel surface: --surface-card (body fill)
+ * - Tab active surface: (transparent — inherits panel fill)
+ * - Tab inactive surface: --surface-tab-inactive
+ * - Outer border: --border-tab-active
+ * - Inactive tab border: --border-tab-inactive
+ * - Left column accent: --surface-card-accent
+ * - Tab text active: --text-tab-active (via TabBar)
+ * - Tab text inactive: --text-tab-inactive (via TabBar)
+ * - Content padding: --spacing-300 / --spacing-400
  */
 export function TabbedPanel<T extends string>({
   tabs,

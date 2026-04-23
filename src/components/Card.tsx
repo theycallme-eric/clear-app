@@ -35,6 +35,12 @@ interface CardProps {
  *
  * Uses the same pattern as ActionCard but without hardcoded content structure,
  * allowing flexible content via children.
+ *
+ * @tokens
+ * - Surface: --surface-card (main bg), --surface-card-accent (left column)
+ * - Border: --border-card (frame + left column border)
+ * - Padding presets: none | sm (spacing-200/300) | md (spacing-300/400) | lg (spacing-400/600)
+ * - Overlap: marginLeft: -2 on ChamferedFrame, hasLeftBorder={false}
  */
 export function Card({
   children,

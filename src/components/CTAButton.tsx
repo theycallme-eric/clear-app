@@ -25,13 +25,17 @@ interface CTAButtonProps {
  * Hover states are handled via CSS custom properties that change on :hover,
  * allowing the child components to respond to hover without prop changes.
  *
- * Figma variables mapped:
- * - Primary default: surface/cta-primary, border/color/cta-primary
- * - Primary hover: surface/cta-primary-hover, border/color/cta-primary-hover
- * - Secondary default: surface/cta-secondary, border/color/cta-secondary
- * - Secondary hover: surface/cta-secondary-hover, border/color/cta-hover-secondary
- * - Accent (left bar): surface/cta-primary-accent
- * - Text: text-color/cta → text-color/cta-hover
+ * @tokens
+ * - CSS vars: --btn-surface, --btn-border, --btn-accent (set on wrapper, read by children)
+ * - Primary surface: --surface-cta-primary → --surface-cta-primary-hover (via .cta-btn-primary:hover)
+ * - Primary border: --border-cta-primary → --border-cta-primary-hover
+ * - Secondary surface: --surface-cta-secondary → --surface-cta-secondary-hover
+ * - Secondary border: --border-cta-secondary → --border-cta-secondary-hover
+ * - Accent (left bar): --surface-cta-primary-accent
+ * - Disabled: --surface-cta-primary-disabled / --surface-cta-secondary-disabled, --border-disabled
+ * - Text: --text-on-cta (on CTA surface), --text-cta (transparent variant), --text-disabled
+ * - Icons: --icon-on-cta (on CTA surface), --icon-cta (transparent variant)
+ * - Typography: text-cta-sm / text-cta-md / text-cta-lg
  */
 export function CTAButton({
   children,

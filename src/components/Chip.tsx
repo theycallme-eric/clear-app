@@ -36,6 +36,13 @@ interface ChipProps {
  * Variants:
  * - label: Display-only chip with more visible styling
  * - selectable: Interactive chip with selected/unselected states
+ *
+ * @tokens
+ * - Label surface: --surface-chip / --border-chip / --text-paragraph / --icon-chip
+ * - Selected surface: --surface-chip-selected / --border-chip-selected / --text-chip-selected / --icon-chip-selected
+ * - Unselected surface: --surface-chip-unselected / --border-chip-unselected / --text-chip-unselected / --icon-chip-unselected
+ * - Disabled: --surface-disabled / --border-disabled / --text-disabled / --icon-disabled
+ * - Typography: text-label-xs
  */
 export function Chip({
   children,

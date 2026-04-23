@@ -89,12 +89,23 @@ For **every** file reviewed:
 - [ ] Props are properly typed
 - [ ] Keys in lists are stable and unique
 
-#### Design System
-- [ ] Uses design tokens from `index.css`
-- [ ] No hardcoded colors (use `var(--color-*)`)
-- [ ] No hardcoded spacing (use spacing scale)
-- [ ] Components follow established patterns
-- [ ] Responsive breakpoints are correct
+#### Design System (reference: `anti-patterns.md`, `ui-rules.md`, `token-decision-tree.md`)
+- [ ] No hardcoded colors — hex, rgb(), or primitive tokens like `--color-orange-500` (use semantic tokens: `--surface-*`, `--border-*`, `--text-*`, `--icon-*`)
+- [ ] No `border-radius` — use `ChamferedFrame` or `corner-cut` class (CLEAR uses chamfered corners)
+- [ ] No `lucide-react` imports — use `src/components/icons.tsx`
+- [ ] No bounce/spring/elastic animations — use `linear` or `steps()`, ≤200ms
+- [ ] Typography uses classes (`text-heading-*`, `text-label-*`, `text-paragraph-*`, `text-cta-*`), not inline font styles
+- [ ] Spacing uses `--spacing-*` tokens, not raw pixel values
+- [ ] Hover states on ChamferedFrame components use CSS variable technique, not React state
+- [ ] Interactive elements have all required states: default, hover, selected (if applicable), disabled
+- [ ] ChamferedFrame paired with LeftColumn uses `hasLeftBorder={false}` + `marginLeft: -2`
+- [ ] New tokens added to BOTH `:root` and `[data-theme="blue"]` in `index.css`
+- [ ] Voice is terse/imperative, not friendly/motivational ("Initiate Workout" not "Let's go!")
+
+#### Documentation Drift
+- [ ] New components are listed in `component.md` registry — run `npm run registry-check` to verify
+- [ ] New tokens are documented in `token-decision-tree.md` (if new semantic tokens were added to `index.css`)
+- [ ] Atmosphere or spacing patterns match existing pages — check 1-2 similar pages for consistency
 
 #### Database/API
 - [ ] Queries are efficient
@@ -219,6 +230,9 @@ Ready for PR: Yes/No
 ## Related Skills
 
 - [pr-workflow](/.claude/skills/pr-workflow.md) — PR creation process
+- [anti-patterns](/.claude/skills/anti-patterns.md) — Common design system violations (detailed checklist)
+- [ui-rules](/.claude/skills/ui-rules.md) — Spacing, typography, visual hierarchy rules
+- [token-decision-tree](/.claude/skills/token-decision-tree.md) — Validate correct token choices
 - [token-check](/.claude/skills/token-check.md) — Design token compliance
 - [debug](/.claude/skills/debug.md) — Error resolution
 

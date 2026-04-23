@@ -53,6 +53,15 @@ What are you doing?
 │   ├─► Using a new icon?
 │   │   └─► icon-transform.md (add to src/components/icons.tsx)
 │   │
+│   ├─► Need implementation rules (spacing, typography, states)?
+│   │   └─► ui-rules.md
+│   │
+│   ├─► Unsure which token to use?
+│   │   └─► token-decision-tree.md
+│   │
+│   ├─► Avoiding common mistakes?
+│   │   └─► anti-patterns.md
+│   │
 │   └─► Checking design tokens?
 │       └─► token-check.md
 │
@@ -162,6 +171,9 @@ Agents are specialized AI personas. Invoke via Task tool with matching `subagent
 | [`chamfered-component`](skills/chamfered-component.md) | Building chamfered frame components | ChamferedFrame + LeftColumn pattern |
 | [`gallery-add`](skills/gallery-add.md) | After creating a component | Add visual test case to gallery |
 | [`token-check`](skills/token-check.md) | Reviewing component styles | Verify design tokens, no hardcoded values |
+| [`ui-rules`](skills/ui-rules.md) | Any UI work | Spacing, typography, hierarchy, cards, states, atmosphere |
+| [`token-decision-tree`](skills/token-decision-tree.md) | Choosing tokens | Systematic lookup: which token for what |
+| [`anti-patterns`](skills/anti-patterns.md) | Building components | Common mistakes and how to avoid them |
 | [`token-audit`](skills/token-audit.md) | Comprehensive token review | Full audit of design token usage |
 | [`icon-transform`](skills/icon-transform.md) | New Lucide icon introduced | Convert to CLEAR-style solid geometric icon |
 
@@ -322,6 +334,9 @@ debug.md → [fix] → token-check.md (if UI) → pr-workflow.md
 │   ├── component.md       ← UI components
 │   ├── chamfered-component.md
 │   ├── gallery-add.md
+│   ├── ui-rules.md            ← Spacing, typography, visual hierarchy, cards, states
+│   ├── token-decision-tree.md ← Which token to use for what
+│   ├── anti-patterns.md       ← Common LLM mistakes to avoid
 │   ├── token-check.md
 │   ├── token-audit.md
 │   ├── icon-transform.md

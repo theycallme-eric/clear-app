@@ -34,18 +34,22 @@ The component gallery provides visual test cases for all UI components. This ena
 
 ## Gallery Section Template
 
+Use typography classes from `ui-rules.md` and spacing tokens — not hardcoded values.
+
 ```tsx
 {/* ComponentName */}
-<section className="space-y-4">
-  <h2 className="text-xl font-bold">ComponentName</h2>
+<section style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
+  <h2 className="text-heading-h4" style={{ fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--text-header)' }}>
+    ComponentName
+  </h2>
 
-  <div className="space-y-2">
-    <p className="text-sm text-muted">Default</p>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
+    <p className="text-paragraph-sm" style={{ color: 'var(--text-muted)' }}>Default</p>
     <ComponentName />
   </div>
 
-  <div className="space-y-2">
-    <p className="text-sm text-muted">With Props</p>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
+    <p className="text-paragraph-sm" style={{ color: 'var(--text-muted)' }}>With Props</p>
     <ComponentName variant="secondary" size="lg" />
   </div>
 </section>
@@ -54,11 +58,14 @@ The component gallery provides visual test cases for all UI components. This ena
 ## Reference Files
 
 - `src/pages/ComponentGallery.tsx` — Gallery page
+- `ui-rules.md` — Typography classes and spacing tokens for gallery sections
 
 ## Related Skills
 
-- [component](.claude/skills/component.md) — Component creation guidelines
-- [token-check](.claude/skills/token-check.md) — Verify design tokens
+- [component](component.md) — Component creation guidelines
+- [ui-rules](ui-rules.md) — Spacing, typography, visual hierarchy
+- [token-decision-tree](token-decision-tree.md) — Which token to use for gallery state demos
+- [token-check](token-check.md) — Verify design tokens
 
 ## Checklist
 
