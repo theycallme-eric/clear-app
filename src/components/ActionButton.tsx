@@ -98,7 +98,7 @@ export function ActionButton({
         ? "var(--surface-cta-primary-disabled)"
         : "var(--surface-cta-secondary-disabled)";
     }
-    return "var(--surface-cta-accent)";
+    return "var(--surface-cta-primary-accent)";
   };
 
   return (

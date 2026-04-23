@@ -1,12 +1,73 @@
 @import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap');
 
 /* =============================================================================
+   BASE RESET (replaces Tailwind preflight)
+   ============================================================================= */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+}
+
+html {
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  tab-size: 4;
+}
+
+body {
+  margin: 0;
+  line-height: inherit;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+button, input, textarea, select {
+  font-family: inherit;
+  font-size: 100%;
+  font-weight: inherit;
+  line-height: inherit;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+button, [role="button"] {
+  cursor: pointer;
+  background: transparent;
+}
+
+img, svg, video {
+  display: block;
+  max-width: 100%;
+}
+
+ul, ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* =============================================================================
    CLEAR DESIGN SYSTEM
    Source of truth: docs/frontend/figma-design-tokens.json
    ============================================================================= */
 
-@layer base {
-  :root {
+:root {
     /* =========================================================================
        PRIMITIVES - Color Palettes
        ========================================================================= */
@@ -613,18 +674,20 @@
       --heading-h6-line-height: 24px;
     }
   }
+
+* {
+  border-color: var(--border);
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground font-body antialiased;
-    min-height: 100vh;
-    position: relative;
-  }
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-paragraph);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  position: relative;
+}
 
   /* =====================================================================
      BACKGROUND SYSTEM
@@ -838,12 +901,10 @@
   @media (prefers-reduced-motion: reduce) {
     .bg-animated-layer { display: none; }
   }
-}
 
-@layer components {
-  /* =========================================================================
-     COMPONENT CLASSES
-     Using new semantic tokens
+/* =========================================================================
+   COMPONENT CLASSES
+   Using new semantic tokens
      ========================================================================= */
 
   /* Exercise Card - consistent styling for workout exercises */
@@ -1107,10 +1168,8 @@
   .clear-logo-bottom-dim {
     animation: clear-logo-bottom-dim 1s forwards;
   }
-}
 
-@layer utilities {
-  .text-shadow-glow {
+.text-shadow-glow {
     text-shadow: 0 0 10px currentColor;
   }
 
@@ -1183,7 +1242,7 @@
 
   /* =========================================================================
      TYPOGRAPHY UTILITIES
-     From Figma design system - use these instead of Tailwind text-* classes
+     From Figma design system - custom typography utility classes
      ========================================================================= */
 
   /* ----- Headings (Rajdhani) - Responsive via CSS variables ----- */
@@ -1388,8 +1447,62 @@
     color: var(--text-primary);
   }
   .goal-badge__hint {
-    font-family: var(--font-body);
+    font-family: var(--font-paragraph);
     font-size: var(--text-xs);
     color: var(--text-muted);
   }
+
+/* CTAButton hover state overrides */
+.cta-btn-primary:hover {
+  --btn-surface: var(--surface-cta-primary-hover);
+  --btn-border: var(--border-cta-primary-hover);
+}
+.cta-btn-secondary:hover {
+  --btn-surface: var(--surface-cta-secondary-hover);
+  --btn-border: var(--border-cta-secondary-hover);
+}
+
+/* =============================================================================
+   UTILITY CLASSES (formerly provided by Tailwind)
+   ============================================================================= */
+
+/* Spin animation — for loading spinners */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Pulse animation — for skeleton loading states */
+@keyframes pulse {
+  50% { opacity: 0.5; }
+}
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Transition helper */
+.transition-colors {
+  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Cursor */
+.cursor-not-allowed {
+  cursor: not-allowed;
 }

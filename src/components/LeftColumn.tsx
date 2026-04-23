@@ -28,7 +28,7 @@ export function LeftColumn({
   size = "sm",
   className,
   style,
-  surfaceColor = "var(--surface-cta-accent)",
+  surfaceColor = "var(--surface-cta-primary-accent)",
   borderColor = "var(--border-cta-primary)",
 }: LeftColumnProps) {
   // Width in pixels based on size

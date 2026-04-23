@@ -69,7 +69,7 @@ export const ForgotPasswordScreen = () => {
             <div
               style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--spacing-400)", padding: "var(--spacing-400) 0", color: "var(--text-paragraph)" }}
             >
-              <CheckCircle size={40} style={{ color: "var(--color-green)" }} />
+              <CheckCircle size={40} style={{ color: "var(--text-success)" }} />
               <p className="text-paragraph-sm" style={{ textAlign: "center" }}>
                 If an account exists for <strong>{email}</strong>, you'll receive a
                 password reset link shortly.

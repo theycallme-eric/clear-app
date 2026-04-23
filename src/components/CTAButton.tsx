@@ -30,7 +30,7 @@ interface CTAButtonProps {
  * - Primary hover: surface/cta-primary-hover, border/color/cta-primary-hover
  * - Secondary default: surface/cta-secondary, border/color/cta-secondary
  * - Secondary hover: surface/cta-secondary-hover, border/color/cta-hover-secondary
- * - Accent (left bar): surface/cta-accent
+ * - Accent (left bar): surface/cta-primary-accent
  * - Text: text-color/cta → text-color/cta-hover
  */
 export function CTAButton({
@@ -139,7 +139,19 @@ export function CTAButton({
   }
 
   // Primary/Secondary variants - LeftColumn + ChamferedFrame
-  // Using CSS custom properties for hover state changes
+  // CSS custom properties for colors, with hover overrides via CSS classes
+  const btnVars = disabled
+    ? {
+        '--btn-surface': isPrimary ? 'var(--surface-cta-primary-disabled)' : 'var(--surface-cta-secondary-disabled)',
+        '--btn-border': 'var(--border-disabled)',
+        '--btn-accent': isPrimary ? 'var(--surface-cta-primary-disabled)' : 'var(--surface-cta-secondary-disabled)',
+      }
+    : {
+        '--btn-surface': isPrimary ? 'var(--surface-cta-primary)' : 'var(--surface-cta-secondary)',
+        '--btn-border': isPrimary ? 'var(--border-cta-primary)' : 'var(--border-cta-secondary)',
+        '--btn-accent': 'var(--surface-cta-primary-accent)',
+      };
+
   return (
     <button
       type={type}
@@ -148,33 +160,7 @@ export function CTAButton({
       className={cn(
         "group scanlines",
         disabled ? "cursor-not-allowed" : "cursor-pointer",
-        // CSS custom properties for colors - these change on hover
-        // Default state
-        isPrimary ? [
-          "[--btn-surface:var(--surface-cta-primary)]",
-          "[--btn-border:var(--border-cta-primary)]",
-          "[--btn-accent:var(--surface-cta-primary-accent)]",
-          // Hover state (when not disabled)
-          !disabled && "hover:[--btn-surface:var(--surface-cta-primary-hover)]",
-          !disabled && "hover:[--btn-border:var(--border-cta-primary-hover)]",
-        ] : [
-          "[--btn-surface:var(--surface-cta-secondary)]",
-          "[--btn-border:var(--border-cta-secondary)]",
-          "[--btn-accent:var(--surface-cta-accent)]",
-          // Hover state (when not disabled)
-          !disabled && "hover:[--btn-surface:var(--surface-cta-secondary-hover)]",
-          !disabled && "hover:[--btn-border:var(--border-cta-secondary-hover)]",
-        ],
-        // Disabled overrides
-        disabled && [
-          isPrimary
-            ? "[--btn-surface:var(--surface-cta-primary-disabled)]"
-            : "[--btn-surface:var(--surface-cta-secondary-disabled)]",
-          "[--btn-border:var(--border-disabled)]",
-          isPrimary
-            ? "[--btn-accent:var(--surface-cta-primary-disabled)]"
-            : "[--btn-accent:var(--surface-cta-secondary-disabled)]",
-        ],
+        !disabled && (isPrimary ? "cta-btn-primary" : "cta-btn-secondary"),
         className
       )}
       style={{
@@ -184,7 +170,8 @@ export function CTAButton({
         backdropFilter: 'blur(12px)',
         height: currentSize.height,
         ...(fullWidth ? { width: '100%' } : {}),
-      }}
+        ...btnVars,
+      } as React.CSSProperties}
     >
       {/* Left accent column */}
       <LeftColumn

@@ -50,7 +50,7 @@ export function ActionCard({
       {/* Left column - accent surface, border all sides */}
       <LeftColumn
         size={leftColSize}
-        surfaceColor="var(--surface-cta-accent)"
+        surfaceColor="var(--surface-cta-primary-accent)"
         borderColor="var(--border-cta-primary)"
         style={{ position: 'relative', zIndex: 10 }}
       />
