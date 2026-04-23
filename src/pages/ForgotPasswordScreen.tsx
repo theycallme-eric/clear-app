@@ -45,14 +45,20 @@ export const ForgotPasswordScreen = () => {
 
   return (
     <AuthLayout header={<PageHeader left="back" onBack={() => navigate("/sign-in")} />}>
-      <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full stagger-reveal">
+      <div
+        className="stagger-reveal"
+        style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", maxWidth: "24rem", margin: "0 auto", width: "100%" }}
+      >
         <h1
-          className="text-heading-h1 font-bold tracking-wider mb-2"
-          style={{ color: "var(--text-header)" }}
+          className="text-heading-h1"
+          style={{ fontWeight: 700, letterSpacing: "0.05em", marginBottom: "var(--spacing-200)", color: "var(--text-header)" }}
         >
           Reset Password
         </h1>
-        <p className="text-paragraph-sm mb-8" style={{ color: "var(--text-paragraph)" }}>
+        <p
+          className="text-paragraph-sm"
+          style={{ marginBottom: "var(--spacing-700)", color: "var(--text-paragraph)" }}
+        >
           {sent
             ? "Check your inbox for a reset link"
             : "Enter your email to receive a reset link"}
@@ -61,11 +67,10 @@ export const ForgotPasswordScreen = () => {
         {sent ? (
           <Card cornerSize="md" padding="md">
             <div
-              className="flex flex-col items-center gap-4 py-4"
-              style={{ color: "var(--text-paragraph)" }}
+              style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--spacing-400)", padding: "var(--spacing-400) 0", color: "var(--text-paragraph)" }}
             >
               <CheckCircle size={40} style={{ color: "var(--color-green)" }} />
-              <p className="text-paragraph-sm text-center">
+              <p className="text-paragraph-sm" style={{ textAlign: "center" }}>
                 If an account exists for <strong>{email}</strong>, you'll receive a
                 password reset link shortly.
               </p>
@@ -80,12 +85,12 @@ export const ForgotPasswordScreen = () => {
             </div>
           </Card>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-600)" }}>
             <Card cornerSize="md" padding="md">
-              <div className="space-y-2">
+              <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-200)" }}>
                 <label
-                  className="block text-paragraph-sm"
-                  style={{ color: "var(--text-paragraph)" }}
+                  className="text-paragraph-sm"
+                  style={{ display: "block", color: "var(--text-paragraph)" }}
                 >
                   Email
                 </label>

@@ -77,18 +77,24 @@ export const ResetPasswordScreen = () => {
   if (!isRecovery) {
     return (
       <AuthLayout header={<PageHeader left="back" onBack={() => navigate("/sign-in")} />}>
-        <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full stagger-reveal">
+        <div
+          className="stagger-reveal"
+          style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", maxWidth: "24rem", margin: "0 auto", width: "100%" }}
+        >
           <h1
-            className="text-heading-h1 font-bold tracking-wider mb-2"
-            style={{ color: "var(--text-header)" }}
+            className="text-heading-h1"
+            style={{ fontWeight: 700, letterSpacing: "0.05em", marginBottom: "var(--spacing-200)", color: "var(--text-header)" }}
           >
             Reset Password
           </h1>
-          <p className="text-paragraph-sm mb-8" style={{ color: "var(--text-paragraph)" }}>
+          <p
+            className="text-paragraph-sm"
+            style={{ marginBottom: "var(--spacing-700)", color: "var(--text-paragraph)" }}
+          >
             Verifying your reset link...
           </p>
           <Card cornerSize="md" padding="md">
-            <div className="flex justify-center py-8">
+            <div style={{ display: "flex", justifyContent: "center", padding: "var(--spacing-700) 0" }}>
               <Loader2
                 size={32}
                 className="animate-spin"
@@ -103,24 +109,30 @@ export const ResetPasswordScreen = () => {
 
   return (
     <AuthLayout header={<PageHeader left="back" onBack={() => navigate("/sign-in")} />}>
-      <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full stagger-reveal">
+      <div
+        className="stagger-reveal"
+        style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", maxWidth: "24rem", margin: "0 auto", width: "100%" }}
+      >
         <h1
-          className="text-heading-h1 font-bold tracking-wider mb-2"
-          style={{ color: "var(--text-header)" }}
+          className="text-heading-h1"
+          style={{ fontWeight: 700, letterSpacing: "0.05em", marginBottom: "var(--spacing-200)", color: "var(--text-header)" }}
         >
           New Password
         </h1>
-        <p className="text-paragraph-sm mb-8" style={{ color: "var(--text-paragraph)" }}>
+        <p
+          className="text-paragraph-sm"
+          style={{ marginBottom: "var(--spacing-700)", color: "var(--text-paragraph)" }}
+        >
           Choose a new password for your account
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-600)" }}>
           <Card cornerSize="md" padding="md">
             {/* New Password */}
-            <div className="space-y-2 mb-4">
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-200)", marginBottom: "var(--spacing-400)" }}>
               <label
-                className="block text-paragraph-sm"
-                style={{ color: "var(--text-paragraph)" }}
+                className="text-paragraph-sm"
+                style={{ display: "block", color: "var(--text-paragraph)" }}
               >
                 New Password
               </label>
@@ -134,7 +146,7 @@ export const ResetPasswordScreen = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="hover:opacity-80"
+                    style={{ opacity: 0.8 }}
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
@@ -143,10 +155,10 @@ export const ResetPasswordScreen = () => {
             </div>
 
             {/* Confirm Password */}
-            <div className="space-y-2">
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-200)" }}>
               <label
-                className="block text-paragraph-sm"
-                style={{ color: "var(--text-paragraph)" }}
+                className="text-paragraph-sm"
+                style={{ display: "block", color: "var(--text-paragraph)" }}
               >
                 Confirm Password
               </label>
@@ -160,7 +172,7 @@ export const ResetPasswordScreen = () => {
                   <button
                     type="button"
                     onClick={() => setShowConfirm(!showConfirm)}
-                    className="hover:opacity-80"
+                    style={{ opacity: 0.8 }}
                   >
                     {showConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
