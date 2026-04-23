@@ -35,14 +35,19 @@ Track completed work for project history and continuity between agents. This ens
    - Move the executed plan to the done folder: `mv .claude/plans/SESSION_PLAN_*.md .claude/plans/done/`
    - Only archive if all tasks in the plan were completed or explicitly skipped
 
-6. **Branch Cleanup**
+6. **Create PR** (if on a feature branch with commits)
+   - Ask user: "Ready to create a PR for this branch? (y/n)"
+   - If yes: run `/pr` (full review + create workflow)
+   - If no: skip — user may want to continue work next session
+
+7. **Branch Cleanup**
    - Switch to main and pull latest: `git checkout main && git pull origin main`
    - Delete local branches already merged to main: `git branch --merged main | grep -v 'main' | xargs -r git branch -d`
    - Delete their remote counterparts via GitHub API: `gh api repos/{owner}/{repo}/git/refs/heads/{branch} -X DELETE`
    - Prune stale remote tracking refs: `git remote prune origin`
    - Verify only `main` remains: `git branch -a`
 
-7. **Final Message**
+8. **Final Message**
    - Tell user: "Session complete. Log and backlog updated. Branches cleaned up. Ready for next plan."
 
 ## Session Log Entry Format
@@ -89,5 +94,6 @@ Track completed work for project history and continuity between agents. This ens
 - [ ] Session notes processed into tickets (if inbox items exist)
 - [ ] PROJECT_MAP.md updated (if major changes)
 - [ ] Executed plan archived to `.claude/plans/done/` (if applicable)
+- [ ] PR created via `/pr` (if on feature branch with commits)
 - [ ] Merged branches deleted (local + remote)
 - [ ] User notified session is complete

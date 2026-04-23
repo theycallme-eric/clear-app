@@ -11,13 +11,17 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   EquipmentTier,
   SectionType,
+  GoalPreset,
   EQUIPMENT_BY_TIER,
   WORKOUT_SECTIONS,
   SECTIONS_BY_GOAL,
+  GOAL_PRESETS,
 } from "@/types/workout";
 import { useOnboardingFlow } from "@/hooks/useOnboardingFlow";
 
-type OnboardingStep = 1 | 2 | 3 | 4;
+type OnboardingStep = 1 | 2 | 3 | 4 | 5;
+
+const ONBOARDING_GOALS = GOAL_PRESETS.filter(g => g.value !== 'active_recovery');
 
 const TIER_OPTIONS: { value: EquipmentTier; label: string; description: string }[] = [
   { value: 'minimal', label: 'Minimal', description: 'Bodyweight, bands, mat' },
@@ -34,17 +38,26 @@ export const OnboardingScreen = () => {
   const { handleOnboardingComplete } = useOnboardingFlow(() => navigate("/"));
   const [step, setStep] = useState<OnboardingStep>(1);
 
-  // Step 1: Equipment/Location
+  // Step 1: Goal
+  const [selectedGoal, setSelectedGoal] = useState<GoalPreset | null>(null);
+
+  // Step 2: Equipment/Location
   const [selectedTier, setSelectedTier] = useState<EquipmentTier | null>(null);
   const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
   const [equipmentAccordionOpen, setEquipmentAccordionOpen] = useState(false);
 
-  // Step 2: Sections
+  // Step 3: Sections
   const [sections, setSections] = useState<SectionType[]>([...DEFAULT_SECTIONS]);
   const [legendOpen, setLegendOpen] = useState(false);
 
-  // Step 3: Limitations
+  // Step 4: Limitations
   const [limitations, setLimitations] = useState("");
+
+  // Handle goal selection
+  const handleGoalSelect = (goal: GoalPreset) => {
+    setSelectedGoal(goal);
+    setSections([...SECTIONS_BY_GOAL[goal]]);
+  };
 
   // Handle tier selection
   const handleTierSelect = (tier: EquipmentTier) => {
@@ -80,7 +93,7 @@ export const OnboardingScreen = () => {
 
   // Navigation
   const handleNext = () => {
-    if (step < 4) setStep((step + 1) as OnboardingStep);
+    if (step < 5) setStep((step + 1) as OnboardingStep);
   };
 
   const handleBack = () => {
@@ -105,8 +118,8 @@ export const OnboardingScreen = () => {
         },
       ],
       defaultLocationId: locationId,
-      experienceLevel: 'some', // Default value (not shown in UI)
-      goal: 'balanced', // Default value (not shown in UI)
+      experienceLevel: 'some',
+      goal: selectedGoal!,
       sections: sections,
       limitations: limitations,
     };
@@ -116,10 +129,11 @@ export const OnboardingScreen = () => {
   // Check if current step is complete
   const canProceed = () => {
     switch (step) {
-      case 1: return selectedTier !== null;
-      case 2: return sections.length > 0;
-      case 3: return true; // Limitations is optional
-      case 4: return true;
+      case 1: return selectedGoal !== null;
+      case 2: return selectedTier !== null;
+      case 3: return sections.length > 0;
+      case 4: return true; // Limitations is optional
+      case 5: return true;
       default: return false;
     }
   };
@@ -129,7 +143,7 @@ export const OnboardingScreen = () => {
       style={{ position: 'fixed', bottom: 0, left: 0, right: 0, padding: 'var(--spacing-400)', zIndex: 40, background: 'linear-gradient(to top, var(--background), var(--background) 60%, transparent)' }}
     >
       <div style={{ maxWidth: '28rem', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-300)' }}>
-        {step === 3 ? (
+        {step === 4 ? (
           <div style={{ display: 'flex', gap: 'var(--spacing-300)' }}>
             <CTAButton
               onClick={handleNext}
@@ -148,7 +162,7 @@ export const OnboardingScreen = () => {
               Next
             </CTAButton>
           </div>
-        ) : step === 4 ? (
+        ) : step === 5 ? (
           <CTAButton
             onClick={handleComplete}
             size="lg"
@@ -168,7 +182,7 @@ export const OnboardingScreen = () => {
         )}
 
         <p className="text-paragraph-sm" style={{ textAlign: 'center', color: 'var(--text-paragraph)' }}>
-          Step {step} of 4
+          Step {step} of 5
         </p>
       </div>
     </div>
@@ -180,8 +194,51 @@ export const OnboardingScreen = () => {
       footer={onboardingFooter}
     >
       <div className="stagger-reveal" style={{ paddingTop: 'var(--spacing-600)' }}>
-          {/* Step 1: Equipment/Location */}
+          {/* Step 1: Goal */}
           {step === 1 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-600)' }}>
+              <div>
+                <h2
+                  className="text-heading-h2"
+                  style={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-header)' }}
+                >
+                  What's Your Focus?
+                </h2>
+                <p className="text-paragraph-sm" style={{ marginTop: 'var(--spacing-200)', color: 'var(--text-paragraph)' }}>
+                  This shapes how your workouts are built.
+                </p>
+              </div>
+
+              <Card cornerSize="md" padding="md">
+                <label
+                  className="text-label-xs"
+                  style={{ textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--spacing-400)', display: 'block', color: "var(--text-paragraph)" }}
+                >
+                  Training Goal
+                </label>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
+                  {ONBOARDING_GOALS.map((goal) => (
+                    <RadioButton
+                      key={goal.value}
+                      selected={selectedGoal === goal.value}
+                      onClick={() => handleGoalSelect(goal.value)}
+                      label={goal.label}
+                      description={goal.description}
+                      style={{ width: '100%' }}
+                    />
+                  ))}
+                </div>
+              </Card>
+
+              <p className="text-paragraph-sm" style={{ textAlign: 'center', color: 'var(--text-paragraph)' }}>
+                You can change this anytime in settings
+              </p>
+            </div>
+          )}
+
+          {/* Step 2: Equipment/Location */}
+          {step === 2 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-600)' }}>
               <div>
                 <h2
@@ -265,8 +322,8 @@ export const OnboardingScreen = () => {
             </div>
           )}
 
-          {/* Step 2: Workout Sections */}
-          {step === 2 && (
+          {/* Step 3: Workout Sections */}
+          {step === 3 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-600)' }}>
               <div>
                 <h2
@@ -347,8 +404,8 @@ export const OnboardingScreen = () => {
             </div>
           )}
 
-          {/* Step 3: Limitations */}
-          {step === 3 && (
+          {/* Step 4: Limitations */}
+          {step === 4 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-600)' }}>
               <div>
                 <h2
@@ -379,8 +436,8 @@ export const OnboardingScreen = () => {
             </div>
           )}
 
-          {/* Step 4: Confirmation */}
-          {step === 4 && (
+          {/* Step 5: Confirmation */}
+          {step === 5 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-600)' }}>
               <h2
                 className="text-heading-h2"
@@ -388,6 +445,35 @@ export const OnboardingScreen = () => {
               >
                 Here's Your Setup
               </h2>
+
+              {/* Goal */}
+              <Card padding="md">
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                  <div>
+                    <p
+                      className="text-label-xs"
+                      style={{ textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--spacing-100)', color: 'var(--text-card-label)' }}
+                    >
+                      Goal
+                    </p>
+                    <p
+                      className="text-heading-h5"
+                      style={{ fontWeight: 700, color: 'var(--text-header)' }}
+                    >
+                      {ONBOARDING_GOALS.find(g => g.value === selectedGoal)?.label}
+                    </p>
+                    <p className="text-paragraph-sm" style={{ marginTop: 'var(--spacing-100)', color: 'var(--text-paragraph)' }}>
+                      {ONBOARDING_GOALS.find(g => g.value === selectedGoal)?.description}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handleEditStep(1)}
+                    className="text-label-sm transition-colors" style={{ color: 'var(--icon-cta)' }}
+                  >
+                    Edit
+                  </button>
+                </div>
+              </Card>
 
               {/* Location */}
               <Card padding="md">
@@ -411,7 +497,7 @@ export const OnboardingScreen = () => {
                     </p>
                   </div>
                   <button
-                    onClick={() => handleEditStep(1)}
+                    onClick={() => handleEditStep(2)}
                     className="text-label-sm transition-colors" style={{ color: 'var(--icon-cta)' }}
                   >
                     Edit
@@ -443,7 +529,7 @@ export const OnboardingScreen = () => {
                     </p>
                   </div>
                   <button
-                    onClick={() => handleEditStep(2)}
+                    onClick={() => handleEditStep(3)}
                     className="text-label-sm transition-colors" style={{ color: 'var(--icon-cta)' }}
                   >
                     Edit
@@ -469,7 +555,7 @@ export const OnboardingScreen = () => {
                     </p>
                   </div>
                   <button
-                    onClick={() => handleEditStep(3)}
+                    onClick={() => handleEditStep(4)}
                     className="text-label-sm transition-colors" style={{ color: 'var(--icon-cta)' }}
                   >
                     Edit
