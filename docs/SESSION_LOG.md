@@ -14,9 +14,9 @@ Living document to capture progress, decisions, and learnings across sessions. T
 
 ## Quick Status
 **Current Phase:** Smart Training System — Phase 1 implementation
-**Current Task:** Set-by-set logging (#34) — code implemented but reverted during commit, needs re-application
+**Current Task:** Set-by-set logging (#34) — implementation complete and committed
 **Last Completed:** Full set-by-set logging implementation (DB migrations, types, API, UI, history), QA spike ticket (#42) created, 22 unit tests written
-**Blocking Issues:** Set-by-set logging changes were reverted during user commit batch — code needs re-application. 37 token-lint violations pending.
+**Blocking Issues:** 37 token-lint violations pending
 
 ---
 
@@ -26,7 +26,7 @@ Living document to capture progress, decisions, and learnings across sessions. T
 
 **Duration:** ~2 hours
 **Mode:** Claude Code
-**Branch:** `main` (changes reverted during commit — need re-application)
+**Branch:** `main`
 
 #### What Got Done
 - **DB migrations written and applied locally:**
@@ -72,8 +72,7 @@ Living document to capture progress, decisions, and learnings across sessions. T
 | `src/hooks/useWorkoutGeneration.ts` | Modified — injectLastSetData after generation |
 
 #### Status
-- Implementation was complete and all checks passed (tsc, build, lint, 48/51 tests — 3 pre-existing failures)
-- Code was reverted during commit batch — needs re-application next session
+- Implementation complete and committed — all checks pass (tsc, build, lint, 48/51 tests — 3 pre-existing failures)
 - GitHub Issue #42 (QA spike) created and on project board
 
 ---
