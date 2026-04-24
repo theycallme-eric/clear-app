@@ -81,9 +81,9 @@ function StructureResultBadge({ result }: { result: LoggedStructureResult }) {
   );
 }
 
-/** Check if a section has any logged data (weights or notes) */
+/** Check if a section has any logged data (weights, notes, or set logs) */
 function sectionHasLoggedData(section: LoggedSection): boolean {
-  return section.exercises.some(ex => ex.weight || ex.note);
+  return section.exercises.some(ex => ex.weight || ex.note || (ex.setLogs && ex.setLogs.length > 0));
 }
 
 /** Collapsible section: exercises always visible, expand to see logged weights/notes */
@@ -156,17 +156,34 @@ function SectionBlock({ section }: { section: LoggedSection }) {
               {exercise.equipment && ` • ${exercise.equipment}`}
             </p>
 
-            {/* Logged data: weight + notes — only when expanded */}
+            {/* Logged data: per-set breakdown or legacy weight — only when expanded */}
             {expanded && (
               <>
-                {exercise.weight && (
+                {exercise.setLogs && exercise.setLogs.length > 0 ? (
+                  <div style={{ marginTop: 'var(--spacing-100)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    {exercise.setLogs.map(set => (
+                      <p
+                        key={set.setNumber}
+                        className="text-label-xs"
+                        style={{ fontWeight: 700, color: 'var(--text-timer)' }}
+                      >
+                        <span style={{ color: 'var(--text-disabled)', marginRight: 'var(--spacing-200)' }}>
+                          Set {set.setNumber}
+                        </span>
+                        {set.weight != null && `${set.weight} ${set.weightUnit || 'lbs'}`}
+                        {set.weight != null && set.reps != null && ' × '}
+                        {set.reps != null && `${set.reps}`}
+                      </p>
+                    ))}
+                  </div>
+                ) : exercise.weight ? (
                   <p
                     className="text-label-xs"
                     style={{ marginTop: 'var(--spacing-100)', fontWeight: 700, color: 'var(--text-timer)' }}
                   >
                     {exercise.weight}
                   </p>
-                )}
+                ) : null}
 
                 {exercise.note && (
                   <p

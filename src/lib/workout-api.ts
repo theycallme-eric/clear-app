@@ -11,7 +11,7 @@ import type {
   GenerationError,
   GeneratedWorkout as APIGeneratedWorkout,
 } from '@/types/generation';
-import type { GeneratedWorkout, WorkoutSection, Exercise, SectionType } from '@/types/workout';
+import type { GeneratedWorkout, WorkoutSection, Exercise, SectionType, SetLog, ExerciseSetData } from '@/types/workout';
 import type { Database } from '@/types/database';
 import { DB_TO_SECTION } from './section-mapping';
 
@@ -40,6 +40,7 @@ export function transformAPIWorkoutToFrontend(
 
     const exercises: Exercise[] = section.exercises.map((ex, exIndex) => ({
       id: ex.exercise_id || `${section.section_type}-${exIndex}`,
+      exerciseDefinitionId: ex.exercise_id || undefined,
       name: ex.name,
       sets: ex.sets || 1,
       reps: typeof ex.reps === 'string' && ex.reps.includes(' ')
@@ -364,6 +365,7 @@ export async function completeWorkoutSession(
     mood: number | null;
     sessionNotes: string;
     loggedData?: Record<string, { weight?: string; reps?: string; notes?: string }>;
+    setLogData?: Record<string, ExerciseSetData>;
     structureResults?: Record<string, {
       structure_type: string;
       rounds_completed?: number;
@@ -426,6 +428,41 @@ export async function completeWorkoutSession(
         });
       } else {
         logger.workout.info(`${exerciseEntries.length} exercise(s) logged`, { sessionId });
+      }
+    }
+  }
+
+  // 2b. Persist per-set log data
+  if (data.setLogData) {
+    const setLogEntries = Object.entries(data.setLogData).filter(
+      ([, entry]) => entry.sets.length > 0
+    );
+
+    if (setLogEntries.length > 0) {
+      const allSetRows = setLogEntries.flatMap(([exerciseId, entry]) =>
+        entry.sets.map(set => ({
+          exercise_row_id: exerciseId,
+          set_number: set.setNumber,
+          weight: set.weight ?? null,
+          weight_unit: set.weightUnit || 'lbs',
+          reps: set.reps ?? null,
+          rpe: set.rpe ?? null,
+        }))
+      );
+
+      const { error: setLogError } = await supabase
+        .from('exercise_set_logs')
+        .insert(allSetRows);
+
+      if (setLogError) {
+        partialFailureCount++;
+        logger.workout.warn('exercise_set_logs insert failed', {
+          sessionId,
+          error: setLogError.message,
+          rowCount: allSetRows.length,
+        });
+      } else {
+        logger.workout.info(`${allSetRows.length} set log(s) saved`, { sessionId });
       }
     }
   }
@@ -652,6 +689,7 @@ export function buildWorkoutFromSections(
     status: 'not_started' as const,
     exercises: section.exercises.map((ex, eIndex) => ({
       id: `${section.section_type}-${sIndex}-ex-${eIndex}`,
+      exerciseDefinitionId: ex.exercise_id || undefined,
       name: ex.exercise_id?.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Unknown Exercise',
       sets: ex.sets,
       reps: ex.reps,
@@ -674,5 +712,37 @@ export function buildWorkoutFromSections(
     anchor: metadata.anchor.toUpperCase(),
     goal: metadata.goal,
     sections,
+  };
+}
+
+/**
+ * Fetch the last set data for a list of exercise definition IDs.
+ * Returns per-set history from the most recent completed session,
+ * with legacy weight_logged fallback for pre-migration data.
+ */
+export async function fetchLastSetData(
+  exerciseDefinitionIds: string[]
+): Promise<{ setData: Record<string, SetLog[]>; legacyData: Record<string, string> }> {
+  if (exerciseDefinitionIds.length === 0) {
+    return { setData: {}, legacyData: {} };
+  }
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { setData: {}, legacyData: {} };
+
+  const { data, error } = await supabase.rpc('get_last_set_data', {
+    p_user_id: user.id,
+    p_exercise_definition_ids: exerciseDefinitionIds,
+  });
+
+  if (error) {
+    logger.workout.warn('fetchLastSetData RPC failed', { error: error.message });
+    return { setData: {}, legacyData: {} };
+  }
+
+  const result = data as { setData: Record<string, SetLog[]>; legacyData: Record<string, string> } | null;
+  return {
+    setData: result?.setData || {},
+    legacyData: result?.legacyData || {},
   };
 }

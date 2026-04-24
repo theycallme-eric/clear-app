@@ -1,9 +1,10 @@
-import { Exercise } from "@/types/workout";
+import { Exercise, ExerciseSetData } from "@/types/workout";
 import { SupersetCard } from "./StructureCards";
 
 interface SupersetRendererProps {
     exercises: Exercise[];
     onLog: (id: string, data: { weight?: string; reps?: string; notes?: string }) => void;
+    onSetLog?: (id: string, data: ExerciseSetData) => void;
     sectionType: string;
     structure: NonNullable<Exercise['structure']>;
 }
@@ -12,6 +13,7 @@ interface SupersetRendererProps {
 export const SupersetRenderer = ({
     exercises,
     onLog,
+    onSetLog,
     sectionType,
     structure,
 }: SupersetRendererProps) => {
@@ -19,6 +21,7 @@ export const SupersetRenderer = ({
         <SupersetCard
             exercises={exercises}
             onLog={onLog}
+            onSetLog={onSetLog}
             sectionType={sectionType}
             sectionName={sectionType.replace('_', ' ')}
             structure={structure}

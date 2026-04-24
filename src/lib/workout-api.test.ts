@@ -124,6 +124,14 @@ describe('transformAPIWorkoutToFrontend', () => {
     expect(squat.regression).toBe('Goblet squat');
   });
 
+  it('injects exerciseDefinitionId from exercise_id', () => {
+    const result = transformAPIWorkoutToFrontend(makeAPIWorkout(), 5, 'squat');
+    const warmupEx = result.sections[0].exercises[0];
+    const primaryEx = result.sections[1].exercises[0];
+    expect(warmupEx.exerciseDefinitionId).toBe('jumping-jacks');
+    expect(primaryEx.exerciseDefinitionId).toBe('back-squat');
+  });
+
   it('preserves string reps like "30 sec"', () => {
     const api = makeAPIWorkout({
       sections: [

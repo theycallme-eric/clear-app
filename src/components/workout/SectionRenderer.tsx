@@ -1,4 +1,4 @@
-import { WorkoutSection, Exercise } from "@/types/workout";
+import { WorkoutSection, Exercise, ExerciseSetData } from "@/types/workout";
 import { ActiveExerciseCard } from "./ActiveExerciseCard";
 import { isLadderReps, parseRungs } from "./LadderRungs";
 import { Card } from "../Card";
@@ -20,6 +20,8 @@ export interface StructureResultData {
 interface SectionRendererProps {
     section: WorkoutSection;
     onLog: (id: string, data: { weight?: string; reps?: string; notes?: string }) => void;
+    /** Called with per-set data for exercises that use set-by-set logging */
+    onSetLog?: (id: string, data: ExerciseSetData) => void;
     /** Called when a timed section completes with structure-level result data */
     onStructureResult?: (sectionId: string, data: StructureResultData) => void;
 }
@@ -81,6 +83,7 @@ function groupExercises(exercises: Exercise[]) {
 export const SectionRenderer = ({
     section,
     onLog,
+    onSetLog,
     onStructureResult,
 }: SectionRendererProps) => {
 
@@ -127,6 +130,7 @@ export const SectionRenderer = ({
                             <ActiveExerciseCard
                                 exercise={exercise}
                                 onLog={onLog}
+                                onSetLog={onSetLog}
                                 sectionType={section.type}
                                 bare
                             />
@@ -167,6 +171,7 @@ export const SectionRenderer = ({
                                     key={`group-${idx}`}
                                     exercises={group.exercises}
                                     onLog={onLog}
+                                    onSetLog={onSetLog}
                                     sectionType={section.type}
                                     structure={group.structure}
                                 />
@@ -204,6 +209,7 @@ export const SectionRenderer = ({
                                         <ActiveExerciseCard
                                             exercise={ex}
                                             onLog={onLog}
+                                            onSetLog={onSetLog}
                                             sectionType={section.type}
                                             bare
                                             defaultExpanded={standaloneExercises.length === 1}

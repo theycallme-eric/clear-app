@@ -5,7 +5,7 @@ import {
     GeneratedWorkout,
     WorkoutNotes,
 } from "@/types/workout";
-import { completeWorkoutSession, fetchSessionForRepeat, createRepeatSession, buildWorkoutFromSections, injectDBUUIDs } from "@/lib/workout-api";
+import { completeWorkoutSession, fetchSessionForRepeat, createRepeatSession, buildWorkoutFromSections, injectDBUUIDs, fetchLastSetData } from "@/lib/workout-api";
 import { fetchWorkoutDetail } from "@/lib/home-data";
 import { getFavoriteDetail, recordFavoriteCompletion, getLastExerciseData, getPreviousBests, getSessionNotesHistory } from "@/lib/favorites-api";
 import type { RepeatSectionInput } from "@/lib/workout-api";
@@ -58,6 +58,7 @@ export const useWorkoutSession = ({
                     mood,
                     sessionNotes,
                     loggedData: workoutNotes?.loggedData,
+                    setLogData: workoutNotes?.setLogData,
                     structureResults: workoutNotes?.structureResults,
                 });
 
@@ -172,6 +173,31 @@ export const useWorkoutSession = ({
 
         workout = injectDBUUIDs(workout, saveResult.uuids);
 
+        // Pre-fill from last set data
+        const defIds = new Set<string>();
+        for (const section of workout.sections) {
+            for (const ex of section.exercises) {
+                if (ex.exerciseDefinitionId) defIds.add(ex.exerciseDefinitionId);
+            }
+        }
+        if (defIds.size > 0) {
+            const { setData, legacyData } = await fetchLastSetData(Array.from(defIds));
+            workout = {
+                ...workout,
+                sections: workout.sections.map(section => ({
+                    ...section,
+                    exercises: section.exercises.map(ex => {
+                        if (!ex.exerciseDefinitionId) return ex;
+                        const sets = setData[ex.exerciseDefinitionId];
+                        if (sets) return { ...ex, lastSetData: sets };
+                        const legacy = legacyData[ex.exerciseDefinitionId];
+                        if (legacy) return { ...ex, lastWeight: ex.lastWeight || legacy };
+                        return ex;
+                    }),
+                })),
+            };
+        }
+
         setGeneratedWorkout(workout);
         setCurrentSessionId(saveResult.sessionId);
         setIsRepeat(true);
@@ -254,6 +280,31 @@ export const useWorkoutSession = ({
 
         if (notesHistory.length > 0) {
             workout = { ...workout, sessionNotesHistory: notesHistory };
+        }
+
+        // Pre-fill per-set data from last session
+        const defIds = new Set<string>();
+        for (const section of workout.sections) {
+            for (const ex of section.exercises) {
+                if (ex.exerciseDefinitionId) defIds.add(ex.exerciseDefinitionId);
+            }
+        }
+        if (defIds.size > 0) {
+            const { setData, legacyData } = await fetchLastSetData(Array.from(defIds));
+            workout = {
+                ...workout,
+                sections: workout.sections.map(section => ({
+                    ...section,
+                    exercises: section.exercises.map(ex => {
+                        if (!ex.exerciseDefinitionId) return ex;
+                        const sets = setData[ex.exerciseDefinitionId];
+                        if (sets) return { ...ex, lastSetData: sets };
+                        const legacy = legacyData[ex.exerciseDefinitionId];
+                        if (legacy) return { ...ex, lastWeight: ex.lastWeight || legacy };
+                        return ex;
+                    }),
+                })),
+            };
         }
 
         setGeneratedWorkout(workout);

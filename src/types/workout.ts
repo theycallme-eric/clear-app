@@ -4,6 +4,21 @@ export type AnchorType = 'LOWER BODY' | 'UPPER BODY' | 'FULL BODY' | 'POWER' | '
 // Movement patterns (what gets sent to API and stored in DB)
 export type MovementPattern = 'squat' | 'hinge' | 'press' | 'pull' | 'power';
 
+// Per-set log data
+export interface SetLog {
+  setNumber: number;
+  weight?: number;
+  weightUnit?: 'lbs' | 'kg';
+  reps?: number;
+  rpe?: number;
+}
+
+// Aggregated set data for an exercise
+export interface ExerciseSetData {
+  sets: SetLog[];
+  notes?: string;
+}
+
 // Exercise with logged data for history
 export interface LoggedExercise {
   id: string;
@@ -13,6 +28,7 @@ export interface LoggedExercise {
   weight?: string; // logged weight like "185lbs"
   note?: string; // user note for this exercise
   equipment?: string; // equipment used (e.g. "barbell", "dumbbells")
+  setLogs?: SetLog[]; // per-set breakdown (new sessions)
 }
 
 // Structure result from a timed section (AMRAP/For Time/EMOM)
@@ -171,6 +187,8 @@ export interface Exercise {
   rest?: string;
   lastWeight?: string;
   lastNotes?: string;
+  lastSetData?: SetLog[]; // Per-set pre-fill from previous session
+  exerciseDefinitionId?: string; // exercise_definitions.exercise_id for pre-fill lookup
   coachingCues?: string[]; // Changed to array
   regression?: string;
   progression?: string;
@@ -217,6 +235,7 @@ export interface WorkoutParams {
 // Workout notes collected during and after workout
 export interface WorkoutNotes {
   loggedData: Record<string, { weight?: string; reps?: string; notes?: string }>;
+  setLogData?: Record<string, ExerciseSetData>; // Per-set data keyed by exercise row UUID
   structureResults: Record<string, {
     structure_type: string;
     rounds_completed?: number;

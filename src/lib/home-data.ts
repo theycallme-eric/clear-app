@@ -224,6 +224,27 @@ export async function fetchWorkoutDetail(sessionId: string): Promise<import('@/t
     }
   }
 
+  // Fetch per-set logs for all exercises
+  const allExerciseIds = (sections || []).flatMap(s =>
+    (s.exercises || []).map((ex: { id: string }) => ex.id)
+  );
+  let setLogsMap: Record<string, Array<{ set_number: number; weight: number | null; weight_unit: string | null; reps: number | null; rpe: number | null }>> = {};
+  if (allExerciseIds.length > 0) {
+    const { data: setData } = await supabase
+      .from('exercise_set_logs')
+      .select('exercise_row_id, set_number, weight, weight_unit, reps, rpe')
+      .in('exercise_row_id', allExerciseIds)
+      .order('set_number', { ascending: true });
+    if (setData) {
+      for (const row of setData) {
+        if (!setLogsMap[row.exercise_row_id]) {
+          setLogsMap[row.exercise_row_id] = [];
+        }
+        setLogsMap[row.exercise_row_id].push(row);
+      }
+    }
+  }
+
   // Map section type to display name
   const sectionNameMap: Record<string, string> = {
     warmup: 'Warm-up',
@@ -256,17 +277,27 @@ export async function fetchWorkoutDetail(sessionId: string): Promise<import('@/t
       name: sectionNameMap[section.section_type] || section.section_type,
       exercises: (section.exercises || [])
         .sort((a: { order_index?: number }, b: { order_index?: number }) => (a.order_index || 0) - (b.order_index || 0))
-        .map((ex: Database['public']['Tables']['exercises']['Row']) => ({
-          id: ex.id,
-          name: ex.exercise_id?.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()) || 'Unknown',
-          sets: ex.sets || 1,
-          reps: ex.reps || '—',
-          weight: ex.weight_logged || undefined,
-          note: ex.exercise_notes || undefined,
-          equipment: ex.equipment_used && ex.equipment_used !== 'bodyweight'
-            ? ex.equipment_used.replace(/_/g, ' ')
-            : undefined,
-        })),
+        .map((ex: Database['public']['Tables']['exercises']['Row']) => {
+          const exerciseSetLogs = setLogsMap[ex.id];
+          return {
+            id: ex.id,
+            name: ex.exercise_id?.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()) || 'Unknown',
+            sets: ex.sets || 1,
+            reps: ex.reps || '—',
+            weight: ex.weight_logged || undefined,
+            note: ex.exercise_notes || undefined,
+            equipment: ex.equipment_used && ex.equipment_used !== 'bodyweight'
+              ? ex.equipment_used.replace(/_/g, ' ')
+              : undefined,
+            setLogs: exerciseSetLogs?.map(sl => ({
+              setNumber: sl.set_number,
+              weight: sl.weight ?? undefined,
+              weightUnit: (sl.weight_unit as 'lbs' | 'kg') || 'lbs',
+              reps: sl.reps ?? undefined,
+              rpe: sl.rpe ?? undefined,
+            })),
+          };
+        }),
       structureResult,
     };
   });

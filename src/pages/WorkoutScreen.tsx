@@ -6,6 +6,7 @@ import { WorkoutLayout } from "@/layouts";
 import { SectionRenderer, StructureResultData } from "@/components/workout/SectionRenderer";
 import { ProgressTracker } from "@/components/workout/ProgressTracker";
 import { useWorkoutFlowContext } from "@/contexts/WorkoutFlowContext";
+import type { ExerciseSetData } from "@/types/workout";
 
 type LoggedExerciseData = Record<string, { weight?: string; reps?: string; notes?: string }>;
 
@@ -14,6 +15,7 @@ export const WorkoutScreen = () => {
   const { generatedWorkout, handleFinishWorkout } = useWorkoutFlowContext();
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const [loggedData, setLoggedData] = useState<LoggedExerciseData>({});
+  const [setLogData, setSetLogData] = useState<Record<string, ExerciseSetData>>({});
   const [structureResults, setStructureResults] = useState<Record<string, StructureResultData>>({});
 
   const touchStartX = useRef<number | null>(null);
@@ -56,6 +58,7 @@ export const WorkoutScreen = () => {
     if (isLastSection) {
       handleFinishWorkout({
         loggedData,
+        setLogData: Object.keys(setLogData).length > 0 ? setLogData : undefined,
         structureResults,
         durationSeconds: Math.floor((Date.now() - startTime.current) / 1000)
       }, () => navigate("/summary"));
@@ -71,6 +74,10 @@ export const WorkoutScreen = () => {
       [id]: { ...(prev[id] || {}), ...data }
     }));
   };
+
+  const handleSetLog = useCallback((id: string, data: ExerciseSetData) => {
+    setSetLogData(prev => ({ ...prev, [id]: data }));
+  }, []);
 
   const handleStructureResult = useCallback((sectionId: string, data: StructureResultData) => {
     setStructureResults(prev => ({ ...prev, [sectionId]: data }));
@@ -113,6 +120,7 @@ export const WorkoutScreen = () => {
         key={currentSectionIndex}
         section={currentSection}
         onLog={handleLog}
+        onSetLog={handleSetLog}
         onStructureResult={handleStructureResult}
       />
     </WorkoutLayout>
