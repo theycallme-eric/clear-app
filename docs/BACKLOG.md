@@ -95,11 +95,11 @@ Important but not blocking. Address after core features complete.
 ### Low Priority
 Nice to have. Address when time permits or for future versions.
 
-- [ ] **Re-enable coaching cues in generation** - Add `coaching_cues` back to output schema in prompt files
+- [x] **Re-enable coaching cues in generation** - Add `coaching_cues` back to output schema in prompt files
   - Priority: Low
   - Type: Enhancement
   - Added: 2026-03-05
-  - Context: Removed from `generate-workout/prompt.ts` and `generate-section/index.ts` output schemas to reduce output tokens and speed up generation. Regression was kept. To restore: add `"coaching_cues": ["array of coaching cue strings"],` back to each prompt's output schema. Frontend (`ExerciseCard.tsx`) already renders them conditionally — no UI changes needed. DB column still exists.
+  - Completed: 2026-04-23 — Superseded by GitHub Issue #37 (client-side DB enrichment approach)
 
 - [ ] **Dev-only gate for devtools** - Hide ComponentGallery and other dev tools behind `import.meta.env.DEV` so they're excluded from production builds
   - Priority: Low
@@ -170,11 +170,11 @@ New functionality to build.
   - Added: 2026-03-05
   - Context: Separate goal/mode for maximal strength testing. Would need warmup ramp-up sets, attempt tracking, rest period guidance (3-5 min), and history to track PR progression over time.
 
-- [ ] **Progressive loading for strength workouts** - Add a progressive load section to strength-focused workouts
+- [x] **Progressive loading for strength workouts** - Add a progressive load section to strength-focused workouts
   - Priority: Low
   - Type: Feature
   - Added: 2026-03-05
-  - Context: Strength training benefits from structured warm-up/ramp-up sets building toward working weight. Could be a new section type or integrated into primary_lift section with ascending load percentages (e.g., bar only → 50% → 70% → 85% → working sets).
+  - Completed: 2026-04-23 — Superseded by GitHub Issue #36 (Progressive Overload Engine)
 
 - [ ]
 
