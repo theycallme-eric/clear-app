@@ -26,7 +26,11 @@ Living document to capture progress, decisions, and learnings across sessions. T
 
 **Duration:** ~2 hours
 **Mode:** Claude Code
+<<<<<<< HEAD
 **Branch:** `main`
+=======
+**Branch:** `main` (changes reverted during commit — need re-application)
+>>>>>>> 3b64d8c (Log session 20: set-by-set logging implementation + QA spike)
 
 #### What Got Done
 - **DB migrations written and applied locally:**
@@ -72,7 +76,12 @@ Living document to capture progress, decisions, and learnings across sessions. T
 | `src/hooks/useWorkoutGeneration.ts` | Modified — injectLastSetData after generation |
 
 #### Status
+<<<<<<< HEAD
 - Implementation complete and committed — all checks pass (tsc, build, lint, 48/51 tests — 3 pre-existing failures)
+=======
+- Implementation was complete and all checks passed (tsc, build, lint, 48/51 tests — 3 pre-existing failures)
+- Code was reverted during commit batch — needs re-application next session
+>>>>>>> 3b64d8c (Log session 20: set-by-set logging implementation + QA spike)
 - GitHub Issue #42 (QA spike) created and on project board
 
 ---
