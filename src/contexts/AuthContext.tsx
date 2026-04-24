@@ -366,8 +366,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Actions
   const signOut = useCallback(async () => {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      logger.auth.warn('signOut API call failed, clearing local session', { error });
+    }
+    // Always clear local state, even if the server-side revocation fails
     clearStayLoggedIn();
+    setState({
+      status: 'unauthenticated',
+      user: null,
+      profile: null,
+      locations: [],
+      error: null,
+    });
   }, []);
 
   const updateProfile = useCallback(async (updates: Partial<Profile>) => {
