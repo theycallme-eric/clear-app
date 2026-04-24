@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-04-23 (18th session)
+**Last Session:** 2026-04-23 (19th session)
 
 ---
 
@@ -13,14 +13,46 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Generation Screen Overhaul
-**Current Task:** Auto-anchor recommendation based on muscle group coverage
-**Last Completed:** Generation screen simplified — anchor grid removed, coverage-based RPC added, prompt updated for notes override
-**Blocking Issues:** Production Supabase dashboard needs reset-password redirect URL added; migration 00027 needs `supabase db reset` or `migration up` locally
+**Current Phase:** Smart Training System planning
+**Current Task:** Ticket suite created, ready to begin Phase 1 (Set-by-Set Logging + Coaching Cues)
+**Last Completed:** 8-ticket PRD suite created as GitHub Issues (#34–#41), superseded issues closed with context preserved
+**Blocking Issues:** Production Supabase dashboard needs reset-password redirect URL added; 37 token-lint violations pending
 
 ---
 
 ## Session Entries
+
+### Session: 2026-04-23 - Smart Training System: PRD Ticket Suite
+
+**Duration:** ~30 min
+**Mode:** Claude Code
+**Branch:** `main` (planning only — no code changes)
+
+#### What Got Done
+- **8 GitHub Issues created (#34–#41):** Full PRD ticket suite for the Smart Training System — set-by-set logging, rest timer, progressive overload, coaching cues, smart intensity, workout insights, offline-first, and adaptive learning loop
+- **Cross-referenced existing issues:** #18 (circuit auto-progress), #24 (section notes), #26 (1RM testing) linked as related work
+- **Closed superseded issues:** #20 (coaching cues via LLM) → superseded by #37 (client-side DB enrichment); #27 (progressive loading) → superseded by #36 (overload engine). All original context preserved in closing comments and new ticket bodies
+- **New labels created:** `area:data`, `area:generation`, `status:blocked`
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Close #20 and #27 as superseded | New tickets (#37, #36) fully encompass the original scope with better approaches — no context lost |
+| Keep #26 (1RM testing) open | Distinct feature that extends #36's PR system but isn't replaced by it |
+| Keep #18 and #24 open | Related but independent UX improvements, not encompassed by new tickets |
+| Client-side cue enrichment over LLM re-enable | Avoids the token cost that caused original removal — better approach |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| No code files changed | Planning-only session |
+
+#### Status
+- No commits — planning session
+- 8 issues ready on GitHub board
+- Next: start Phase 1 — pull #34 (Set-by-Set Logging) or #37 (Coaching Cues)
+
+---
 
 ### Session: 2026-04-23 - Generation Screen Overhaul: Auto-Anchor + Simplification
 

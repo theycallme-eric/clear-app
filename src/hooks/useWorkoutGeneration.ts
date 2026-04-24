@@ -16,9 +16,48 @@ import {
     transformAPIWorkoutToFrontend,
     saveGeneratedWorkout,
     injectDBUUIDs,
+    fetchLastSetData,
 } from "@/lib/workout-api";
 import type { SavedWorkoutUUIDs } from "@/lib/workout-api";
 import { resolveAnchorToPattern } from "@/lib/anchor-mapping";
+
+/**
+ * Fetch last set data for all exercises in a workout and attach as pre-fill.
+ * Looks up by exerciseDefinitionId, falls back to legacy weight_logged.
+ */
+async function injectLastSetData(workout: GeneratedWorkout): Promise<GeneratedWorkout> {
+    // Collect all exercise definition IDs
+    const defIds = new Set<string>();
+    for (const section of workout.sections) {
+        for (const ex of section.exercises) {
+            if (ex.exerciseDefinitionId) defIds.add(ex.exerciseDefinitionId);
+        }
+    }
+
+    if (defIds.size === 0) return workout;
+
+    const { setData, legacyData } = await fetchLastSetData(Array.from(defIds));
+
+    // Attach to exercises
+    return {
+        ...workout,
+        sections: workout.sections.map(section => ({
+            ...section,
+            exercises: section.exercises.map(ex => {
+                if (!ex.exerciseDefinitionId) return ex;
+                const sets = setData[ex.exerciseDefinitionId];
+                if (sets) {
+                    return { ...ex, lastSetData: sets };
+                }
+                const legacy = legacyData[ex.exerciseDefinitionId];
+                if (legacy) {
+                    return { ...ex, lastWeight: ex.lastWeight || legacy };
+                }
+                return ex;
+            }),
+        })),
+    };
+}
 
 export const useWorkoutGeneration = (
     userPreferences: UserPreferences,
@@ -171,6 +210,9 @@ export const useWorkoutGeneration = (
                         exercises: savedUUIDs.sections.reduce((sum, s) => sum + s.exercises.length, 0),
                     });
                 }
+
+                // Pre-fill from last session data
+                workout = await injectLastSetData(workout);
 
                 setGeneratedWorkout(workout);
                 toast.success("Workout generated!", {

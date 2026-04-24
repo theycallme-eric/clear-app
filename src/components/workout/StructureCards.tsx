@@ -1,10 +1,11 @@
-import { ExerciseStructure, Exercise } from "@/types/workout";
+import { ExerciseStructure, Exercise, ExerciseSetData } from "@/types/workout";
 import { ActiveExerciseCard } from "./ActiveExerciseCard";
 import { Card } from "../Card";
 
 interface StructureCardProps {
     exercises: Exercise[];
     onLog: (id: string, data: { weight?: string; reps?: string; notes?: string }) => void;
+    onSetLog?: (id: string, data: ExerciseSetData) => void;
     sectionType?: string;
     sectionName?: string;
     structure: ExerciseStructure;
@@ -17,7 +18,7 @@ const hasRest = (rest?: string): boolean => {
     return cleaned !== '0s' && cleaned !== '0' && cleaned !== '';
 };
 
-export const SupersetCard = ({ exercises, onLog, sectionType }: StructureCardProps) => {
+export const SupersetCard = ({ exercises, onLog, onSetLog, sectionType }: StructureCardProps) => {
     // Get the shared rest from the last exercise
     const lastExercise = exercises[exercises.length - 1];
     const pairRest = hasRest(lastExercise?.rest) ? lastExercise.rest : null;
@@ -47,6 +48,7 @@ export const SupersetCard = ({ exercises, onLog, sectionType }: StructureCardPro
                             key={exercise.id}
                             exercise={exercise}
                             onLog={onLog}
+                            onSetLog={onSetLog}
                             sectionType={sectionType}
                             bare
                             pairLabel={`A${i + 1}`}
