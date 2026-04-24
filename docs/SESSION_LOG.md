@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-04-24 (21st session)
+**Last Session:** 2026-04-24 (22nd session)
 
 ---
 
@@ -14,13 +14,50 @@ Living document to capture progress, decisions, and learnings across sessions. T
 
 ## Quick Status
 **Current Phase:** Smart Training System — Phase 1 deployed
-**Current Task:** None — set-by-set logging (#34) shipped to production
-**Last Completed:** Production deployment of set-by-set logging (7 pending migrations applied, Supabase linked)
+**Current Task:** None
+**Last Completed:** Sign-out fix + SPA rewrite + Supabase Site URL config for Vercel
 **Blocking Issues:** 37 token-lint violations pending
 
 ---
 
 ## Session Entries
+
+### Session: 2026-04-24 - Fix Vercel Deployment Gaps (Sign-out, SPA Routing, Auth Emails)
+
+**Duration:** ~30 min
+**Mode:** Claude Code
+**Branch:** `fix/signout-hanging` (merged via PR #47)
+
+#### What Got Done
+- **Fixed sign-out hanging on Vercel:** `supabase.auth.signOut()` promise never settled in production — reordered to clear local state first, then fire-and-forget server revocation
+- **Added SPA rewrite rule:** Created `vercel.json` with catch-all rewrite to `index.html` — fixes 404 on page refresh for all client-side routes
+- **Fixed password reset email URLs:** Supabase Site URL was still pointing at localhost — updated to production Vercel URL in Supabase dashboard (manual config change, not code)
+
+#### What Came Up (Unexpected)
+- The sign-out issue from session 20 (PR #45) wasn't fully fixed — the try/catch approach only handles rejections, not hanging promises that never settle
+- Multiple deployment gaps compounded: couldn't test password reset because sign-out was broken, couldn't reliably navigate because pages 404'd on refresh
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Clear state before signOut API call | Promise can hang indefinitely — try/catch doesn't help with non-settling promises |
+| Fire-and-forget server revocation | Server-side token will expire naturally; local UX shouldn't block on it |
+| Single `vercel.json` rewrite rule | Standard SPA pattern — all routes serve index.html, React Router handles the rest |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/contexts/AuthContext.tsx` | Modified — reordered signOut to clear state first, fire-and-forget server call |
+| `vercel.json` | Created — SPA catch-all rewrite rule for Vercel |
+
+#### Status
+- PR #47 merged to main, production deploying
+- Sign-out: confirmed working on preview
+- Page refresh: confirmed working on preview
+- Password reset emails: fixed via Supabase dashboard config
+- User requested a deployment audit session (separate) to catch similar gaps proactively
+
+---
 
 ### Session: 2026-04-24 - Deploy Set-by-Set Logging to Production
 
