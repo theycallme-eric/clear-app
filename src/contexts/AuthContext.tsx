@@ -366,12 +366,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Actions
   const signOut = useCallback(async () => {
-    try {
-      await supabase.auth.signOut();
-    } catch (error) {
-      logger.auth.warn('signOut API call failed, clearing local session', { error });
-    }
-    // Always clear local state, even if the server-side revocation fails
+    // Clear local state FIRST — supabase.auth.signOut() can hang on Vercel
+    // (promise never settles), so we can't depend on it completing
     clearStayLoggedIn();
     setState({
       status: 'unauthenticated',
@@ -379,6 +375,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       profile: null,
       locations: [],
       error: null,
+    });
+    // Best-effort server-side session revocation (fire-and-forget)
+    supabase.auth.signOut().catch((error) => {
+      logger.auth.warn('signOut server revocation failed', { error });
     });
   }, []);
 
