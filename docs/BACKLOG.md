@@ -101,10 +101,11 @@ Nice to have. Address when time permits or for future versions.
   - Added: 2026-03-05
   - Completed: 2026-04-23 — Superseded by GitHub Issue #37 (client-side DB enrichment approach)
 
-- [ ] **Dev-only gate for devtools** - Hide ComponentGallery and other dev tools behind `import.meta.env.DEV` so they're excluded from production builds
+- [x] **Dev-only gate for devtools** - Hide ComponentGallery and other dev tools behind `import.meta.env.DEV` so they're excluded from production builds
   - Priority: Low
   - Type: Tech Debt
   - Added: 2026-03-10
+  - Completed: 2026-04-25
   - Context: Gallery is useful during development but shouldn't ship to users. Gate the route registration so it's tree-shaken out of prod builds. Apply same pattern to any future dev tooling.
 
 - [ ] **Dropdown click-outside dismiss** - ChamferedFrame filter dropdowns stay open when clicking outside

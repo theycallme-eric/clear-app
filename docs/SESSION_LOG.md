@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-04-24 (22nd session)
+**Last Session:** 2026-04-25 (23rd session)
 
 ---
 
@@ -15,12 +15,55 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ## Quick Status
 **Current Phase:** Smart Training System — Phase 1 deployed
 **Current Task:** None
-**Last Completed:** Sign-out fix + SPA rewrite + Supabase Site URL config for Vercel
+**Last Completed:** Integration gap audit — timeouts, silent failures, auth hardening
 **Blocking Issues:** 37 token-lint violations pending
 
 ---
 
 ## Session Entries
+
+### Session: 2026-04-25 - Integration Gap Audit & Fixes
+
+**Duration:** ~1 hr
+**Mode:** Claude Code
+**Branch:** `fix/integration-gap-audit` (merged via PR #49)
+
+#### What Got Done
+- **Full codebase audit** across 4 categories: deployment parity, hanging promises, silent failures, auth edge cases — ran 4 parallel research agents
+- **Timeout protection:** Created `withTimeout` utility (`src/lib/async-utils.ts`) and wrapped all Supabase Edge Function (60s), RPC (15s), and batch DB write (10s) calls — prevents indefinite hangs on `completeWorkoutSession`, `generateWorkout`, `saveGeneratedWorkout`, and repeat flows
+- **Silent failure fixes:** `favorites-api.ts` — completion insert, sections fetch, and completions fetch now check errors instead of silently dropping data
+- **Auth hardening:** Cross-tab sign-out via `storage` event listener, `queryClient.clear()` on sign-out, deduplication of concurrent `TOKEN_REFRESHED` handlers
+- **Mount safety:** `.catch()` and `mountedRef` guards on async `.then()` chains in `SessionDetailScreen` and `ResetPasswordScreen`
+- **Dev route gating:** `/dev/gallery` and `/dev/test-workout` now only render when `import.meta.env.DEV` is true
+- **Audit document:** Full findings and priority ranking in `docs/AUDIT_integration_gaps.md`
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Timeouts as escape hatches, not structural fix | Proper fix for `completeWorkoutSession` is consolidating into a single atomic RPC — but timeouts are a quick win that prevents hangs now |
+| 60s / 15s / 10s timeout tiers | Edge functions need generous headroom for LLM latency; RPCs and queries are faster operations |
+| Fire-and-forget signOut preserved | Vercel-specific hang issue means we can't await `supabase.auth.signOut()` — clear local state first, server revocation is best-effort |
+| Cross-tab via storage event, not BroadcastChannel | Simpler, broader browser support, and Supabase already uses localStorage for tokens |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/lib/async-utils.ts` | Created — `withTimeout` utility + timeout constants |
+| `src/lib/workout-api.ts` | Modified — wrapped 8 async calls with timeouts |
+| `src/lib/favorites-api.ts` | Modified — added error checking on 3 unchecked Supabase calls |
+| `src/contexts/AuthContext.tsx` | Modified — cross-tab sign-out, cache clear, fetch dedup |
+| `src/pages/SessionDetailScreen.tsx` | Modified — mount safety + .catch() on .then() chains |
+| `src/pages/ResetPasswordScreen.tsx` | Modified — mount guard + .catch() on getSession() |
+| `src/App.tsx` | Modified — dev routes gated behind import.meta.env.DEV |
+| `src/hooks/useHomeData.ts` | Modified — try/catch on query invalidation |
+| `docs/AUDIT_integration_gaps.md` | Created — full audit findings with priority ranking |
+
+#### Status
+- Build + typecheck + lint all pass
+- 48 tests pass, 3 pre-existing failures (BootScreen animation in jsdom)
+- Merged to main via PR #49
+
+---
 
 ### Session: 2026-04-24 - Fix Vercel Deployment Gaps (Sign-out, SPA Routing, Auth Emails)
 
