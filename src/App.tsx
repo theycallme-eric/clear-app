@@ -80,9 +80,13 @@ const App = () => (
                 <Route path="/settings" element={<SettingsScreen />} />
               </Route>
 
-              {/* Dev routes (no auth guard) */}
-              <Route path="/dev/gallery" element={<ComponentGallery />} />
-              <Route path="/dev/test-workout" element={<TestWorkoutScreen />} />
+              {/* Dev routes — only available in development */}
+              {import.meta.env.DEV && (
+                <>
+                  <Route path="/dev/gallery" element={<ComponentGallery />} />
+                  <Route path="/dev/test-workout" element={<TestWorkoutScreen />} />
+                </>
+              )}
 
               {/* Catch-all */}
               <Route path="*" element={<NotFound />} />

@@ -3,6 +3,7 @@
 
 import { supabase } from './supabase';
 import { logger } from './logger';
+import { withTimeout, TIMEOUTS } from './async-utils';
 import type {
   GenerateWorkoutRequest,
   GenerateWorkoutResponse,
@@ -127,12 +128,16 @@ export async function generateWorkout(
     logger.workout.debug('Calling Edge Function');
 
     // Call the Edge Function with explicit auth header
-    const { data, error } = await supabase.functions.invoke('generate-workout', {
-      body: request,
-      headers: {
-        Authorization: `Bearer ${session.access_token}`,
-      },
-    });
+    const { data, error } = await withTimeout(
+      supabase.functions.invoke('generate-workout', {
+        body: request,
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      }),
+      TIMEOUTS.edgeFunction,
+      'generateWorkout'
+    );
 
     const durationMs = Math.round(performance.now() - startTime);
 
@@ -185,12 +190,16 @@ export async function generateSection(
       return { error: 'Not authenticated', details: 'Please sign in to swap exercises' };
     }
 
-    const { data, error } = await supabase.functions.invoke('generate-section', {
-      body: request,
-      headers: {
-        Authorization: `Bearer ${session.access_token}`,
-      },
-    });
+    const { data, error } = await withTimeout(
+      supabase.functions.invoke('generate-section', {
+        body: request,
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      }),
+      TIMEOUTS.edgeFunction,
+      'generateSection'
+    );
 
     const durationMs = Math.round(performance.now() - startTime);
 
@@ -272,17 +281,21 @@ export async function saveGeneratedWorkout(
     }));
 
     // Single atomic RPC call — returns session ID + all section/exercise UUIDs
-    const { data: rpcResult, error: rpcError } = await supabase.rpc('save_generated_workout', {
-      p_user_id: user.id,
-      p_location_id: locationId,
-      p_date: new Date().toISOString().split('T')[0],
-      p_anchor: workout.metadata.request.anchor as Database['public']['Enums']['anchor_type'],
-      p_intensity: workout.metadata.request.intensity,
-      p_time_target_mins: workout.metadata.request.duration_mins || undefined,
-      p_prompt_version: workout.metadata.prompt_version || undefined,
-      p_goal_preset: (workout.metadata.request.goal || 'balanced') as Database['public']['Enums']['goal_preset'],
-      p_sections: sectionsForRpc,
-    });
+    const { data: rpcResult, error: rpcError } = await withTimeout(
+      supabase.rpc('save_generated_workout', {
+        p_user_id: user.id,
+        p_location_id: locationId,
+        p_date: new Date().toISOString().split('T')[0],
+        p_anchor: workout.metadata.request.anchor as Database['public']['Enums']['anchor_type'],
+        p_intensity: workout.metadata.request.intensity,
+        p_time_target_mins: workout.metadata.request.duration_mins || undefined,
+        p_prompt_version: workout.metadata.prompt_version || undefined,
+        p_goal_preset: (workout.metadata.request.goal || 'balanced') as Database['public']['Enums']['goal_preset'],
+        p_sections: sectionsForRpc,
+      }),
+      TIMEOUTS.rpc,
+      'saveGeneratedWorkout'
+    );
 
     const durationMs = Math.round(performance.now() - startTime);
 
@@ -405,17 +418,21 @@ export async function completeWorkoutSession(
     );
 
     if (exerciseEntries.length > 0) {
-      const exerciseResults = await Promise.all(
-        exerciseEntries.map(([exerciseId, entry]) =>
-          supabase
-            .from('exercises')
-            .update({
-              weight_logged: entry.weight || null,
-              exercise_notes: entry.notes || null,
-            })
-            .eq('id', exerciseId)
-            .then(({ error: updateError }) => ({ exerciseId, error: updateError }))
-        )
+      const exerciseResults = await withTimeout(
+        Promise.all(
+          exerciseEntries.map(([exerciseId, entry]) =>
+            supabase
+              .from('exercises')
+              .update({
+                weight_logged: entry.weight || null,
+                exercise_notes: entry.notes || null,
+              })
+              .eq('id', exerciseId)
+              .then(({ error: updateError }) => ({ exerciseId, error: updateError }))
+          )
+        ),
+        TIMEOUTS.query,
+        'completeWorkout/exercises'
       );
 
       const failures = exerciseResults.filter(r => r.error);
@@ -474,22 +491,26 @@ export async function completeWorkoutSession(
     );
 
     if (structureEntries.length > 0) {
-      const structureResults = await Promise.all(
-        structureEntries.map(([sectionId, entry]) =>
-          supabase
-            .from('structure_results')
-            .insert({
-              section_id: sectionId,
-              structure_type: entry.structure_type,
-              completion_time_seconds: entry.completion_time_seconds ?? null,
-              completed_under_cap: entry.completed_under_cap ?? null,
-              rounds_completed: entry.rounds_completed ?? null,
-              rep_scheme: entry.rep_scheme ?? null,
-              highest_rung: entry.highest_rung ?? null,
-              notes: entry.notes ?? null,
-            })
-            .then(({ error: insertError }) => ({ sectionId, error: insertError }))
-        )
+      const structureResults = await withTimeout(
+        Promise.all(
+          structureEntries.map(([sectionId, entry]) =>
+            supabase
+              .from('structure_results')
+              .insert({
+                section_id: sectionId,
+                structure_type: entry.structure_type,
+                completion_time_seconds: entry.completion_time_seconds ?? null,
+                completed_under_cap: entry.completed_under_cap ?? null,
+                rounds_completed: entry.rounds_completed ?? null,
+                rep_scheme: entry.rep_scheme ?? null,
+                highest_rung: entry.highest_rung ?? null,
+                notes: entry.notes ?? null,
+              })
+              .then(({ error: insertError }) => ({ sectionId, error: insertError }))
+          )
+        ),
+        TIMEOUTS.query,
+        'completeWorkout/structureResults'
       );
 
       const failures = structureResults.filter(r => r.error);
@@ -512,17 +533,21 @@ export async function completeWorkoutSession(
     .eq('session_id', sessionId);
 
   if (!sectionsError && sections && sections.length > 0) {
-    const sectionResults = await Promise.all(
-      sections.map(section =>
-        supabase
-          .from('workout_sections')
-          .update({
-            status: 'completed' as const,
-            completed_at: new Date().toISOString(),
-          })
-          .eq('id', section.id)
-          .then(({ error: updateError }) => ({ sectionId: section.id, error: updateError }))
-      )
+    const sectionResults = await withTimeout(
+      Promise.all(
+        sections.map(section =>
+          supabase
+            .from('workout_sections')
+            .update({
+              status: 'completed' as const,
+              completed_at: new Date().toISOString(),
+            })
+            .eq('id', section.id)
+            .then(({ error: updateError }) => ({ sectionId: section.id, error: updateError }))
+        )
+      ),
+      TIMEOUTS.query,
+      'completeWorkout/sectionTimestamps'
     );
 
     const failures = sectionResults.filter(r => r.error);
@@ -639,16 +664,20 @@ export async function createRepeatSession(
 
   const locationId = profile?.default_location_id || null;
 
-  const { data: rpcResult, error: rpcError } = await supabase.rpc('save_generated_workout', {
-    p_user_id: user.id,
-    p_location_id: locationId,
-    p_date: new Date().toISOString().split('T')[0],
-    p_anchor: metadata.anchor as Database['public']['Enums']['anchor_type'],
-    p_intensity: metadata.intensity,
-    p_time_target_mins: metadata.durationMins || undefined,
-    p_goal_preset: (metadata.goalPreset || 'balanced') as Database['public']['Enums']['goal_preset'],
-    p_sections: sections,
-  });
+  const { data: rpcResult, error: rpcError } = await withTimeout(
+    supabase.rpc('save_generated_workout', {
+      p_user_id: user.id,
+      p_location_id: locationId,
+      p_date: new Date().toISOString().split('T')[0],
+      p_anchor: metadata.anchor as Database['public']['Enums']['anchor_type'],
+      p_intensity: metadata.intensity,
+      p_time_target_mins: metadata.durationMins || undefined,
+      p_goal_preset: (metadata.goalPreset || 'balanced') as Database['public']['Enums']['goal_preset'],
+      p_sections: sections,
+    }),
+    TIMEOUTS.rpc,
+    'createRepeatSession'
+  );
 
   if (rpcError) {
     logger.workout.error('createRepeatSession RPC failed', { error: rpcError.message });

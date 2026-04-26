@@ -73,11 +73,16 @@ export async function saveFavorite(
     return { error: 'Could not load workout session' };
   }
 
-  const { data: sections } = await supabase
+  const { data: sections, error: sectionsError } = await supabase
     .from('workout_sections')
     .select('*, exercises(*)')
     .eq('session_id', sessionId)
     .order('order_index', { ascending: true });
+
+  if (sectionsError) {
+    logger.data.error('saveFavorite: sections fetch failed', { error: sectionsError.message });
+    return { error: 'Could not load workout sections' };
+  }
 
   // Build the JSONB snapshot (matches GeneratedWorkout shape for reload)
   const snapshot = {
@@ -129,12 +134,16 @@ export async function saveFavorite(
 
   // If from summary, record this session as the first completion
   if (fromSummary) {
-    await supabase
+    const { error: completionError } = await supabase
       .from('saved_workout_completions')
       .insert({
         saved_workout_id: saved.id,
         session_id: sessionId,
       });
+
+    if (completionError) {
+      logger.data.warn('saveFavorite: completion record failed', { error: completionError.message });
+    }
   }
 
   logger.data.info('Workout favorited', { savedWorkoutId: saved.id, fromSummary });
@@ -225,11 +234,15 @@ export async function getFavoriteDetail(savedWorkoutId: string) {
   }
 
   // Fetch completion history
-  const { data: completions } = await supabase
+  const { data: completions, error: completionsError } = await supabase
     .from('saved_workout_completions')
     .select('*, workout_sessions(date, duration_mins, mood)')
     .eq('saved_workout_id', savedWorkoutId)
     .order('completed_at', { ascending: false });
+
+  if (completionsError) {
+    logger.data.warn('getFavoriteDetail: completions fetch failed', { error: completionsError.message });
+  }
 
   return {
     ...saved,

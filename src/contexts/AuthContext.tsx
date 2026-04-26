@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState, useCallback, ReactNode } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
 import { clearStayLoggedIn } from '@/lib/auth-storage';
@@ -91,12 +92,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     error: null,
   });
 
+  const queryClient = useQueryClient();
   const mountedRef = useRef(true);
   const initializingRef = useRef(false);
 
   // Operation lock prevents fetchUserData from running during write operations
   // This prevents TOKEN_REFRESHED from reading stale data during completeOnboarding
   const operationLockRef = useRef<string | null>(null);
+
+  // Prevents concurrent fetchUserData calls from multiple rapid TOKEN_REFRESHED events
+  const fetchInProgressRef = useRef(false);
 
   // Fetch profile and locations for a user
   const fetchUserData = useCallback(async (userId: string): Promise<{ profile: Profile; locations: UserLocation[] } | null> => {
@@ -322,7 +327,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             return;
           }
 
+          // Deduplicate: skip if a fetch is already running from a prior event
+          if (fetchInProgressRef.current) {
+            logger.auth.debug('Skipping duplicate fetchUserData — already in progress', { event });
+            return;
+          }
+
           // Fetch user data with retry for resilience against transient failures
+          fetchInProgressRef.current = true;
           let userData: { profile: Profile; locations: UserLocation[] } | null = null;
           try {
             userData = await withRetry(
@@ -336,6 +348,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           } catch {
             // withRetry exhausted - userData will be null, handled below
             logger.auth.error('fetchUserData failed after retries', { event });
+          } finally {
+            fetchInProgressRef.current = false;
           }
 
           if (!mountedRef.current) return;
@@ -358,9 +372,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     );
 
+    // Cross-tab sign-out: detect when auth tokens are removed from storage by another tab
+    const handleStorageChange = (e: StorageEvent) => {
+      // Supabase stores tokens under keys starting with 'sb-'
+      if (e.key?.startsWith('sb-') && e.oldValue && !e.newValue && mountedRef.current) {
+        logger.auth.info('Cross-tab sign-out detected');
+        setState({
+          status: 'unauthenticated',
+          user: null,
+          profile: null,
+          locations: [],
+          error: null,
+        });
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+
     return () => {
       mountedRef.current = false;
       subscription.unsubscribe();
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, [initialize, fetchUserData]);
 
@@ -369,6 +400,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Clear local state FIRST — supabase.auth.signOut() can hang on Vercel
     // (promise never settles), so we can't depend on it completing
     clearStayLoggedIn();
+    queryClient.clear();
     setState({
       status: 'unauthenticated',
       user: null,
@@ -380,7 +412,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     supabase.auth.signOut().catch((error) => {
       logger.auth.warn('signOut server revocation failed', { error });
     });
-  }, []);
+  }, [queryClient]);
 
   const updateProfile = useCallback(async (updates: Partial<Profile>) => {
     if (!state.user) {
