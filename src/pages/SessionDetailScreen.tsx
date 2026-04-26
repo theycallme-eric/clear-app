@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -226,6 +226,9 @@ export const SessionDetailScreen = () => {
   const [isEditingName, setIsEditingName] = useState(false);
   const [editNameValue, setEditNameValue] = useState("");
 
+  const mountedRef = useRef(true);
+  useEffect(() => { return () => { mountedRef.current = false; }; }, []);
+
   const { data: workout, isLoading, isError } = useQuery({
     queryKey: queryKeys.workoutDetail(id!),
     queryFn: () => fetchWorkoutDetail(id!),
@@ -236,27 +239,34 @@ export const SessionDetailScreen = () => {
   // If navigated from favorites tab, we already know the savedWorkoutId
   useEffect(() => {
     if (!id) return;
+
+    const loadFavoriteName = (swId: string) => {
+      getFavoriteDetail(swId)
+        .then(detail => { if (mountedRef.current && detail?.title) setFavoriteName(detail.title); })
+        .catch(() => { /* non-critical — name just won't show */ });
+    };
+
     if (savedWorkoutId) {
       setFavoriteState({ isFav: true, savedWorkoutId, loading: false });
-      // Fetch the favorite's custom title
-      getFavoriteDetail(savedWorkoutId).then(detail => {
-        if (detail?.title) setFavoriteName(detail.title);
-      });
+      loadFavoriteName(savedWorkoutId);
       return;
     }
-    checkIsFavorited(id).then(result => {
-      setFavoriteState({
-        isFav: result.isFavorited,
-        savedWorkoutId: result.savedWorkoutId,
-        loading: false,
-      });
-      // Fetch title if favorited
-      if (result.isFavorited && result.savedWorkoutId) {
-        getFavoriteDetail(result.savedWorkoutId).then(detail => {
-          if (detail?.title) setFavoriteName(detail.title);
+
+    checkIsFavorited(id)
+      .then(result => {
+        if (!mountedRef.current) return;
+        setFavoriteState({
+          isFav: result.isFavorited,
+          savedWorkoutId: result.savedWorkoutId,
+          loading: false,
         });
-      }
-    });
+        if (result.isFavorited && result.savedWorkoutId) {
+          loadFavoriteName(result.savedWorkoutId);
+        }
+      })
+      .catch(() => {
+        if (mountedRef.current) setFavoriteState({ isFav: false, loading: false });
+      });
   }, [id, savedWorkoutId]);
 
   useEffect(() => {

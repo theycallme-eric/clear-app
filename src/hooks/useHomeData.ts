@@ -34,10 +34,14 @@ export function useHomeData(userId: string | null) {
 
   const loadHomeData = useCallback(async () => {
     if (!userId) return;
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: queryKeys.workoutHistory(userId) }),
-      queryClient.invalidateQueries({ queryKey: queryKeys.streakData(userId) }),
-    ]);
+    try {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: queryKeys.workoutHistory(userId) }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.streakData(userId) }),
+      ]);
+    } catch {
+      // Query invalidation is best-effort — data will refresh on next visit
+    }
   }, [userId, queryClient]);
 
   const checkForIncompleteSession = useCallback(async () => {

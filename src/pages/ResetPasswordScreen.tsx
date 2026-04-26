@@ -27,13 +27,14 @@ export const ResetPasswordScreen = () => {
     });
 
     // Also check if we already have a session (recovery link already processed)
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setIsRecovery(true);
-      }
-    });
+    let mounted = true;
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        if (mounted && session) setIsRecovery(true);
+      })
+      .catch(() => { /* recovery link may be expired — user stays on verification screen */ });
 
-    return () => subscription.unsubscribe();
+    return () => { mounted = false; subscription.unsubscribe(); };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
