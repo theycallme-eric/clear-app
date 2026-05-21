@@ -47,15 +47,17 @@ Track completed work for project history and continuity between agents. This ens
    - Move the executed plan to the done folder: `mv .claude/plans/SESSION_PLAN_*.md .claude/plans/done/`
    - Only archive if all tasks in the plan were completed or explicitly skipped
 
-7. **Create PR** (if on a feature branch with commits)
-   - Ask user: "Ready to create a PR for this branch? (y/n)"
-   - If yes: run `/pr` (full review + create workflow)
+7. **Create & Merge PR** (if on a feature branch with commits)
+   - Ask user: "Ready to create and merge a PR for this branch? (y/n)"
+   - If yes:
+     a. Run `/pr` (full review + create workflow)
+     b. After PR is created, **merge it**: `gh pr merge [N] --squash --delete-branch`
+     c. Do NOT stop at PR creation — the session isn't closed until the PR is merged
    - If no: skip — user may want to continue work next session
 
 8. **Branch Cleanup**
    - Switch to main and pull latest: `git checkout main && git pull origin main`
    - Delete local branches already merged to main: `git branch --merged main | grep -v 'main' | xargs -r git branch -d`
-   - Delete their remote counterparts via GitHub API: `gh api repos/{owner}/{repo}/git/refs/heads/{branch} -X DELETE`
    - Prune stale remote tracking refs: `git remote prune origin`
    - Verify only `main` remains: `git branch -a`
 
@@ -107,6 +109,6 @@ Track completed work for project history and continuity between agents. This ens
 - [ ] PROJECT_MAP.md updated (if major changes)
 - [ ] Design system drift check (if UI work): registry, token-lint, doc drift, taste feedback saved
 - [ ] Executed plan archived to `.claude/plans/done/` (if applicable)
-- [ ] PR created via `/pr` (if on feature branch with commits)
-- [ ] Merged branches deleted (local + remote)
+- [ ] PR created AND merged (if on feature branch with commits)
+- [ ] Local branches cleaned up, remotes pruned
 - [ ] User notified session is complete
