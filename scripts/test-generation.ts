@@ -60,6 +60,8 @@ interface ExerciseDefinition {
   anchors: string[] | null;
   primary_anchor: string | null;
   muscle_groups: MuscleGroupEntry[] | null;
+  component_movements: string[] | null;
+  exercise_role: string | null;
 }
 
 interface GeneratedExercise {
@@ -121,10 +123,14 @@ function buildExerciseListing(exercises: ExerciseDefinition[]): string {
     const primaryStr = ex.can_be_primary && hasBarbellOption ? '[PRIMARY w/barbell] ' : '';
     const regressionStr = ex.regression ? ` | regression:${ex.regression}` : '';
     const anchorsStr = ex.anchors?.length ? ` | anchors:[${ex.anchors.join(',')}]` : '';
+    const roleStr = ex.exercise_role ? ` | role:${ex.exercise_role}` : '';
+    const componentsStr = ex.component_movements?.length
+      ? ` | components:[${ex.component_movements.join(',')}]`
+      : '';
     const musclesStr = ex.muscle_groups?.length
       ? ` | muscles:[${ex.muscle_groups.map(m => `${m.muscle}:${m.role}`).join(',')}]`
       : '';
-    return `  ${ex.id} | ${ex.name} | equipment:[${equipStr}] | sections:[${sectionsStr}] ${primaryStr}${anchorsStr}${musclesStr}${regressionStr}`;
+    return `  ${ex.id} | ${ex.name}${roleStr} | equipment:[${equipStr}] | sections:[${sectionsStr}] ${primaryStr}${anchorsStr}${componentsStr}${musclesStr}${regressionStr}`;
   }).join('\n');
 }
 
@@ -162,7 +168,8 @@ function validateWorkout(
   exerciseIds: Set<string>,
   availableEquipment: Set<string>,
   tc: TestCase,
-  muscleMap: Map<string, MuscleGroupEntry[]>
+  muscleMap: Map<string, MuscleGroupEntry[]>,
+  componentMap: Map<string, string[]>
 ): { errors: string[]; warnings: string[]; musclesCovered: { primary: string[]; synergist: string[] } } {
   const errors: string[] = [];
   const warnings: string[] = [];
@@ -191,6 +198,25 @@ function validateWorkout(
         errors.push(`${ex.name}: non-standard structure "${ex.structure.type}" missing group_id`);
       }
     }
+
+    // Variety rule: no two exercises in a section share >75% components
+    for (let i = 0; i < section.exercises.length; i++) {
+      for (let j = i + 1; j < section.exercises.length; j++) {
+        const aComps = componentMap.get(section.exercises[i].exercise_id) || [];
+        const bComps = componentMap.get(section.exercises[j].exercise_id) || [];
+        if (aComps.length > 0 && bComps.length > 0) {
+          const aSet = new Set(aComps);
+          const bSet = new Set(bComps);
+          const shared = aComps.filter(c => bSet.has(c)).length;
+          const minLen = Math.min(aSet.size, bSet.size);
+          if (minLen > 0 && shared / minLen > 0.75) {
+            warnings.push(
+              `Variety: ${section.exercises[i].name} & ${section.exercises[j].name} share ${shared}/${minLen} components in ${section.section_type}`
+            );
+          }
+        }
+      }
+    }
   }
 
   // Check duration
@@ -208,10 +234,27 @@ function validateWorkout(
   const hasCooldown = workout.sections.some(s => s.section_type === 'cooldown');
   if (!hasCooldown) warnings.push('No cooldown section');
 
-  // Check warmup relevance: warmup exercises should target muscles used in primary
+  // Component coverage: warmup must cover primary lift's component_movements
   const primarySection = workout.sections.find(s => s.section_type === 'primary_lift');
   const warmupSection = workout.sections.find(s => s.section_type === 'warmup');
   if (primarySection && warmupSection) {
+    const primaryExercise = primarySection.exercises[0];
+    if (primaryExercise) {
+      const primaryComponents = componentMap.get(primaryExercise.exercise_id) || [];
+      if (primaryComponents.length > 0) {
+        const warmupComponents = new Set<string>();
+        for (const wEx of warmupSection.exercises) {
+          const comps = componentMap.get(wEx.exercise_id) || [];
+          for (const c of comps) warmupComponents.add(c);
+        }
+        const gaps = primaryComponents.filter(c => !warmupComponents.has(c));
+        if (gaps.length > 0) {
+          warnings.push(`Warmup component gaps for ${primaryExercise.name}: missing [${gaps.join(', ')}]`);
+        }
+      }
+    }
+
+    // Also check muscle overlap (existing check)
     const primaryMuscleSet = new Set<string>();
     for (const ex of primarySection.exercises) {
       const muscles = muscleMap.get(ex.exercise_id) || [];
@@ -319,7 +362,7 @@ async function main() {
   // Fetch exercise library
   const { data: exercises, error } = await supabase
     .from('exercise_definitions_with_anchors')
-    .select('id, name, equipment_options, sections, regression, can_be_primary, anchors, primary_anchor, muscle_groups');
+    .select('id, name, equipment_options, sections, regression, can_be_primary, anchors, primary_anchor, muscle_groups, component_movements, exercise_role');
 
   if (error || !exercises) {
     throw new Error(`Failed to fetch exercises: ${error?.message}`);
@@ -330,6 +373,12 @@ async function main() {
   const muscleMap = new Map<string, MuscleGroupEntry[]>();
   for (const ex of exercises) {
     if (ex.muscle_groups) muscleMap.set(ex.id, ex.muscle_groups);
+  }
+
+  // Build component map for validation
+  const componentMap = new Map<string, string[]>();
+  for (const ex of exercises) {
+    if (ex.component_movements?.length) componentMap.set(ex.id, ex.component_movements);
   }
 
   // Full gym equipment
@@ -424,7 +473,7 @@ async function main() {
       const workout = await callClaude(systemPrompt, userPrompt, apiKey);
       const elapsed = Date.now() - start;
 
-      const validation = validateWorkout(workout, exerciseIds, availableEquipmentSet, tc, muscleMap);
+      const validation = validateWorkout(workout, exerciseIds, availableEquipmentSet, tc, muscleMap, componentMap);
 
       results.push({
         testCase: tc,

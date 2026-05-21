@@ -1,5 +1,5 @@
 // User-facing anchor types (what user selects in UI)
-export type AnchorType = 'LOWER BODY' | 'UPPER BODY' | 'FULL BODY' | 'POWER' | 'SURPRISE';
+export type AnchorType = 'LOWER BODY' | 'UPPER BODY' | 'FULL BODY' | 'POWER';
 
 // Movement patterns (what gets sent to API and stored in DB)
 export type MovementPattern = 'squat' | 'hinge' | 'press' | 'pull' | 'power';

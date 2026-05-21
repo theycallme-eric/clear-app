@@ -49,7 +49,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 // Custom app components
 import { IntensitySlider } from "@/components/IntensitySlider";
-import { AnchorGrid, AnchorType } from "@/components/AnchorGrid";
+
 import { LocationAccordion } from "@/components/LocationAccordion";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { LoadingSkeleton, SkeletonCard } from "@/components/LoadingSkeleton";
@@ -90,7 +90,7 @@ export const ComponentGallery = () => {
   const navigate = useNavigate();
   // Local state for interactive demos (no app side effects)
   const [intensityValue, setIntensityValue] = useState(7);
-  const [anchorValue, setAnchorValue] = useState<AnchorType | null>("LOWER BODY");
+
   const [radioTextSelected, setRadioTextSelected] = useState<string | null>("Option A");
   const [radioIconSelected, setRadioIconSelected] = useState<number | null>(1);
   const [galleryTab, setGalleryTab] = useState<'alpha' | 'beta' | 'gamma'>('alpha');
@@ -558,16 +558,6 @@ export const ComponentGallery = () => {
             <IntensitySlider value={intensityValue} onChange={setIntensityValue} />
           </Section>
 
-          <Section title="App — AnchorGrid">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
-              <Subsection label="Primary Lift mode">
-                <AnchorGrid selected={anchorValue} onSelect={setAnchorValue} />
-              </Subsection>
-              <Subsection label="Body focus mode (no primary lift)">
-                <AnchorGrid selected={null} onSelect={() => { }} />
-              </Subsection>
-            </div>
-          </Section>
 
           <Section title="App — LocationAccordion">
             <LocationAccordion

@@ -115,6 +115,8 @@ interface ExerciseDefinition {
   anchors: string[] | null; // All anchors this exercise belongs to
   primary_anchor: string | null; // The main anchor for this exercise
   muscle_groups: MuscleGroupEntry[] | null; // Muscle group data
+  component_movements: string[] | null; // Movement primitives
+  exercise_role: string | null; // compound_lift, accessory, activation, mobility, conditioning, stability, cardio
 }
 
 interface CoverageEntry {
@@ -234,17 +236,18 @@ function buildUserPrompt(
   const exerciseListStr = availableExercises.map((ex) => {
     const equipStr = ex.equipment_options.join(', ');
     const sectionsStr = ex.sections.join(', ');
-    // [PRIMARY] only applies to barbell variants of consolidated exercises
     const hasBarbellOption = ex.equipment_options.includes('barbell');
     const primaryStr = ex.can_be_primary && hasBarbellOption ? '[PRIMARY w/barbell] ' : '';
     const regressionStr = ex.regression ? ` | regression:${ex.regression}` : '';
-    // Include anchors so Claude knows which exercises work for which focus
     const anchorsStr = ex.anchors?.length ? ` | anchors:[${ex.anchors.join(',')}]` : '';
-    // Include muscle groups for intelligent exercise selection
+    const roleStr = ex.exercise_role ? ` | role:${ex.exercise_role}` : '';
+    const componentsStr = ex.component_movements?.length
+      ? ` | components:[${ex.component_movements.join(',')}]`
+      : '';
     const musclesStr = ex.muscle_groups?.length
       ? ` | muscles:[${ex.muscle_groups.map(m => `${m.muscle}:${m.role}`).join(',')}]`
       : '';
-    return `  ${ex.id} | ${ex.name} | equipment:[${equipStr}] | sections:[${sectionsStr}] ${primaryStr}${anchorsStr}${musclesStr}${regressionStr}`;
+    return `  ${ex.id} | ${ex.name}${roleStr} | equipment:[${equipStr}] | sections:[${sectionsStr}] ${primaryStr}${anchorsStr}${componentsStr}${musclesStr}${regressionStr}`;
   }).join('\n');
 
   const goal = request.goal || 'balanced';
@@ -546,7 +549,7 @@ serve(async (req: Request) => {
     // Use the view that includes all anchors (primary and secondary)
     const { data: exerciseDefinitions } = await supabase
       .from('exercise_definitions_with_anchors')
-      .select('id, name, equipment_options, default_equipment, sections, coaching_cues, regression, can_be_primary, equipment_display_names, anchors, primary_anchor, muscle_groups');
+      .select('id, name, equipment_options, default_equipment, sections, coaching_cues, regression, can_be_primary, equipment_display_names, anchors, primary_anchor, muscle_groups, component_movements, exercise_role');
 
     // Build available equipment set (always include bodyweight)
     const availableEquipment = new Set([...location.equipment, 'bodyweight']);
@@ -627,12 +630,51 @@ serve(async (req: Request) => {
       }
     }
 
+    // Warmup component verification (logging only, no rejection in v1)
+    try {
+      const primarySection = workout.sections.find(
+        (s: GeneratedSection) => s.section_type === 'primary_lift'
+      );
+      const warmupSection = workout.sections.find(
+        (s: GeneratedSection) => s.section_type === 'warmup'
+      );
+      if (primarySection && warmupSection) {
+        const primaryExercise = primarySection.exercises[0];
+        if (primaryExercise) {
+          const primaryDef = (availableExercises as ExerciseDefinition[]).find(
+            (e) => e.id === primaryExercise.exercise_id
+          );
+          if (primaryDef?.component_movements?.length) {
+            const warmupComponents = new Set<string>();
+            for (const wEx of warmupSection.exercises) {
+              const wDef = (availableExercises as ExerciseDefinition[]).find(
+                (e) => e.id === wEx.exercise_id
+              );
+              if (wDef?.component_movements) {
+                for (const c of wDef.component_movements) warmupComponents.add(c);
+              }
+            }
+            const gaps = primaryDef.component_movements.filter(
+              (c: string) => !warmupComponents.has(c)
+            );
+            if (gaps.length > 0) {
+              console.log(
+                `[Warmup Component Gap] Primary: ${primaryDef.id} (${primaryDef.component_movements.join(',')}) | Gaps: ${gaps.join(',')}`
+              );
+            }
+          }
+        }
+      }
+    } catch (verifyErr) {
+      console.warn('Warmup verification error (non-fatal):', verifyErr);
+    }
+
     // Return generated workout with metadata
     return new Response(
       JSON.stringify({
         workout,
         metadata: {
-          prompt_version: 'v3.1.0',
+          prompt_version: 'v4.0.0',
           generated_at: new Date().toISOString(),
           request: {
             intensity: request.intensity,
