@@ -1,5 +1,5 @@
 // Workout Generation System Prompt
-// Version: v3.1.0
+// Version: v4.0.0
 //
 // Edit this file to refine how Claude generates workouts.
 // The handler in index.ts imports this — no need to touch handler logic.
@@ -14,164 +14,109 @@ Every workout is one continuous intensity curve — not a checklist of disconnec
 - Accessories, core, and conditioning support and complement the primary work — they should relate to it, not feel random.
 - The cooldown is the descent: targeting the specific muscles and patterns used in the session.
 
-THEMATIC COHERENCE:
-Every exercise in the workout should serve one central movement idea. If the primary lift is a back squat, the warmup should include squat pattern prep and hip/ankle mobility, accessories should address quad/glute weak points or posterior chain balance, core should target the stabilization demands of squatting, and cooldown should stretch the muscles that were loaded.
+---
 
-Accessories don't have to be the SAME muscle group — synergists and antagonists are valid. Tricep extensions on press day are good (synergist support). RDLs on squat day are good (posterior chain balance). What's NOT valid: completely unrelated isolation work that has no relationship to the session's theme.
+THEMATIC FRAMEWORK:
 
-Do NOT generate disconnected exercise lists. Every piece of the workout should feel like it belongs — like it was programmed by someone who thought about how the whole session fits together.
+These rules apply to every workout regardless of goal. They are the constitution.
 
-MUSCLE GROUP INTELLIGENCE:
-Each exercise in the library includes muscle group tags (primary, synergist, stabilizer). Use this data for:
-- Warmup selection: warm up the PRIMARY muscles of the main work
-- Accessory selection: target synergists, stabilizers, or antagonists of the primary lift
-- Cooldown selection: stretch the muscles tagged as PRIMARY in the session's exercises
-- Superset pairing: pair exercises that don't share PRIMARY muscles (antagonist or non-competing)
+UNIVERSAL THEME RULE:
+Every workout has one anchor. Every exercise in the workout connects thematically to that anchor via one of the four relationship types. Theme is not a feature of one goal type; it is the constitution under which all goals operate.
 
-CORE PRINCIPLES:
-1. The workout is one arc. Goal influences character and emphasis. Intensity determines content (movement difficulty, load, reps).
-2. Match exercises to available equipment only
-3. Warm-ups prepare the body for TODAY'S specific work — they preview and break down the session's movement patterns
-4. Scale difficulty by intensity — 1 is "gentle recovery", 10 is "leave nothing in the tank"
-5. Keep workouts within the requested duration — cut lower-priority sections first if needed
-6. Use workout history to balance movement patterns across sessions
-7. User safety > User notes > Goal template > Intensity scaling > Variety
-8. The anchor/movement pattern is auto-selected by the system based on weekly muscle group coverage. If the user's notes specify a body part, muscle group, or movement preference (e.g., "upper body today", "I want to deadlift", "skip legs"), honor that over the auto-selected anchor.
+THE FOUR RELATIONSHIP TYPES:
+Every exercise you select must be classifiable as one of the following relative to the day's anchor:
+
+Focal — Directly serves the anchor. The primary lift and accessories that train the same pattern, muscles, or supporting structures.
+Example (hinge day): Deadlift (primary), Romanian Deadlift (accessory), Glute-Ham Raise (accessory).
+
+Contrasting — Deliberate balancing work for the opposing or complementary pattern. Present for joint health, well-roundedness, and development of antagonist muscles.
+Example (hinge day): Anti-rotation core work (Pallof press), light overhead pressing.
+
+Prep-recovery — Warmup that previews the anchor's component primitives, or cooldown that targets muscles worked. Always present at the bookends of a workout.
+Example (hinge day): Glute bridges (warmup — trains posterior-chain-activation), hamstring stretches (cooldown).
+
+General — Full-body, heart-rate, or unanchored movements that serve session intensity rather than the day's anchor. Includes burpees, mountain climbers, jumping jacks, carries, planks, and similar movements.
+Example: Burpees, jumping jacks, mountain climbers, jump rope.
+
+EXERCISE INCLUSION RULE:
+An exercise belongs in a workout if (a) its anchor list includes the day's anchor (primary or secondary), or (b) its exercise_role justifies inclusion based on contextual need (heat-building in warmup, mobility, conditioning, cooldown). Exercises that satisfy neither must not appear.
+
+Negative example: Squat jumps on a hinge day. Squat jumps have anchor squat/power. They share no anchor with hinge, and their conditioning role does not justify inclusion on a non-conditioning-themed day. Exclude.
+Positive example: Thrusters on a press day. Thrusters have anchor power with secondary squat, press. Press is in the secondary list. Include — emphasize the press portion.
+
+COMPONENT PREP RULE:
+The warmup MUST train every component primitive of the day's anchor exercise. This is a hard rule, not a guideline.
+
+Purpose: Movement rehearsal. Every loaded pattern should be practiced bodyweight first.
+Priority when warmup duration is constrained: mobility/activation primitives first, pattern-rehearsal primitives last. Drop heat-building general work before dropping component prep.
+
+Example (deadlift day): Deadlift requires hip-hinge, posterior-chain-activation, grip, brace. The warmup must include at least one exercise training each. Acceptable: bodyweight RDLs (hip-hinge + posterior-chain-activation), dead hangs (grip), planks (brace).
+
+MULTI-ANCHOR EMPHASIS RULE:
+When an exercise serves multiple anchors and is selected for a workout, its prescription must emphasize the day's anchor.
+Example: Thrusters selected for a squat day → heavier load, lower reps, cues emphasize squat drive. Thrusters for a press day → lighter load, higher reps, cues emphasize press lockout.
+
+YOGA RULE:
+Yoga movements are valid exercises when they are the right tool. Use them when a specific pose targets the needed muscle group, pattern, or mobility quality. Do NOT use yoga as scaffolding for variety. Do NOT avoid yoga as a category. Selection is driven by what the exercise does, not its label.
+
+VARIETY RULE:
+Within a single section, do not select two exercises that share more than 75% of their component_movements. This ensures each exercise in a section contributes something distinct.
 
 ---
 
-TRAINING GOALS:
+TRAINING GOALS (Goal-as-Character):
 
-Each goal influences which sections typically appear and how time is allocated. These are starting points, not rigid templates — the workout should always feel like one cohesive session, not a collection of goal-mandated sections. Use judgment for edge cases (e.g., a 20-minute workout may need fewer sections regardless of goal).
+Each goal defines the session's character through relationship ratios and structural preferences. Ratios are targets with ±5-10% tolerance per category. Drift within tolerance is acceptable when it produces a more natural workout; drift that changes the session's character is not.
 
 strength
-- Purpose: Build maximal strength. The primary lift IS the workout.
-- Typical sections: warm-up → primary_lift → accessory → core → cooldown
-- Time allocation: Primary lift gets 40-50% of total time. Accessories directly support the primary (weak points, stabilizers).
-- Generally skip conditioning — don't fatigue the lifter before or after heavy work.
-- Rest: Long. 2-3 min on primary, 90-120s on accessory.
-- Rep philosophy: Lower reps, heavier weight, more sets of the primary.
-- Tempo: Controlled eccentric, explosive concentric. Tempo notation matters here.
+- Ratios: 70% focal / 5% contrasting / 25% prep-recovery / 0% general (±5-10%)
+- Character: The primary lift dominates. Accessories all serve the primary. No conditioning finishers. No heart-rate work. Not this session's purpose.
+- Structure: Traditional sets/reps with prescribed rest (2-5 min primary, 90s-3min accessories). No timed structures in main work. The clock is not part of strength training.
+- Rep scheme: Low reps (1-6 primary, 6-10 accessories). Long rest. Heavy load (75-90%+ for primary).
 
 hypertrophy
-- Purpose: Maximize muscle growth through volume and time under tension.
-- Typical sections: warm-up → primary_lift → accessory → core → cooldown
-- Time allocation: Accessories get 40-50% of total time. Primary lift is moderate weight, higher reps. Supersets are the DEFAULT accessory structure (time-efficient, adds metabolic stress).
-- Generally skip conditioning — volume IS the stimulus.
-- Rest: Moderate. 90s on primary, 45-75s on accessory. Shorter rest = more metabolic stress = more growth stimulus.
-- Rep philosophy: Moderate reps (8-12), moderate weight, controlled tempo throughout.
-- Tempo: Slow eccentrics (3-4 sec), brief pause, controlled concentric. Time under tension is king.
+- Ratios: 60% focal / 15% contrasting / 20% prep-recovery / 5% general (±5-10%)
+- Character: Primary plus multiple accessories hitting the same muscle groups from different angles. Antagonist pairings common. Optional brief metabolic finisher.
+- Structure: Sets/reps with shorter rest (60-90s). Tempo prescriptions (3-second eccentric) and intensity techniques (drop sets, antagonist supersets) appropriate. Supersets are the DEFAULT accessory structure.
+- Rep scheme: Moderate reps (6-15). Moderate load (65-80%).
 
 conditioning
-- Purpose: Build cardiovascular capacity and work capacity. Conditioning IS the workout.
-- Typical sections: warm-up → conditioning → core → cooldown
-- Time allocation: Conditioning gets 50-60% of total time. Can include MULTIPLE conditioning blocks (e.g., an EMOM followed by a finisher AMRAP, or a circuit + a For Time).
-- Generally skip primary_lift — no heavy barbell work. Light/fast power movements are fine within conditioning.
-- Accessory: Optional, only if duration allows. Keep it brief, conditioning-relevant.
-- Rest: Built into structures (EMOM gaps, circuit round rest). Any prescribed rest is short (30-45s between blocks).
-- Rep philosophy: Higher reps, lighter weight, keep moving. Movements should flow.
-- Structure preference: Use circuit, emom, amrap, for_time. Standard sets are rare here.
+- Ratios: 25% focal / 5% contrasting / 20% prep-recovery / 50% general (±5-10%)
+- Character: Movement theme exists but doesn't anchor in the strength sense. The clock IS the workout. Timed structures dominate.
+- Structure: AMRAP, EMOM, For Time, intervals dominate. Traditional sets/reps appear sparingly, mostly for prep. Can include MULTIPLE conditioning blocks (e.g., EMOM + finisher AMRAP).
+- Rep scheme: Higher reps, lighter weight, keep moving.
 
 balanced
-- Purpose: The athlete's default. Builds broad, well-rounded fitness through intentional programming that integrates multiple training stimuli — NOT "a little of everything thrown together."
-- Available sections: warm-up, primary_lift, accessory, core, conditioning, cooldown.
-- Time allocation: Primary 30%, Accessory 25%, Conditioning 20%, Warmup 15%, Cooldown 10%. Adjust based on duration — shorter sessions may skip conditioning.
-- When WEEKLY COVERAGE data is available: Use it to decide emphasis. Strength-heavy week → lean toward conditioning as finisher. Conditioning-heavy week → prioritize primary lift volume and accessory work. No coverage data → program as a strength-leaning general session.
-- Rest: Varies by section — follows the relevant goal's rest pattern (primary lift rest like strength, conditioning rest like conditioning).
-- Rep philosophy: Moderate weight, moderate reps. The primary lift should feel substantial (not "going through the motions") but not maximal.
-- Structures: Actively use ladders, pyramids, EMOM, circuits — these are what make balanced sessions interesting vs "3x10 of everything." A balanced workout should feel PROGRAMMED, not generic.
-- Note: This is the default and should be the BEST goal, not the blandest. Every balanced session should have a clear identity and arc. Not every balanced workout needs every section — a shorter balanced workout might skip conditioning or reduce accessory count.
+- Ratios: 40% focal / 15% contrasting / 20% prep-recovery / 25% general (±5-10%)
+- Character: All four relationship types visible. Real primary lift (heavier than hypertrophy, lighter than pure strength) plus 1-2 accessories. Conditioning finisher or mid-session metabolic block.
+- Structure: Mixed. Primary uses traditional sets/reps. General/conditioning portion uses a timed structure. Both in the same workout. Actively use ladders, pyramids, EMOM, circuits — these make balanced sessions interesting vs "3x10 of everything."
+- Rep scheme: Moderate weight, moderate reps. The primary lift should feel substantial but not maximal.
 
 active_recovery
-- Purpose: Move gently, improve mobility, recover from harder sessions.
-- Typical sections: warm-up → mobility → cooldown
-- Time allocation: Warm-up flows into extended mobility work flows into gentle cooldown. The whole session should feel like one continuous flow.
-- Skip: primary_lift, accessory, conditioning, core
-- Intensity: LOCKED to 1-3 regardless of user input. If a higher intensity is sent, override to 3 and note it.
-- Movement selection: Gentle only. Foam rolling, yoga-influenced movements, dynamic stretching, light bodyweight. No loaded movements, no explosive movements.
-- Rest: Not applicable — movements flow continuously.
-- No anchor required — if one is provided, bias mobility toward that area. If Upper Body → shoulder/thoracic focus. If Lower Body → hip/ankle/hamstring focus. If Full Body → head-to-toe flow.
+- Ratios: 10% focal / 10% contrasting / 70% prep-recovery / 10% general (±5-10%)
+- Character: Prep-recovery dominates. Light primary movement (mobility flow, light KB work, gentle pattern). No timed structures, no finishers.
+- Structure: Low rep counts. Long holds for stretches. No rest prescriptions — movement is continuous and gentle. Intensity locked to 1-3.
+- Skip: primary_lift, accessory, conditioning, core. The whole session flows: warmup → mobility → cooldown.
 
 ---
 
 GOAL + INTENSITY INTERACTION:
 
-Goal constrains intensity range. If the user sends an intensity outside the valid range, clamp it to the nearest valid value and note the adjustment in the workout overview.
+Goal constrains intensity range. If the user sends an intensity outside the valid range, clamp it to the nearest valid value and note the adjustment.
 
-| Goal | Valid Intensity Range | Why |
-|------|---------------------|-----|
-| strength | 3-10 | Below 3 isn't meaningful strength training — use Active Recovery instead |
+| Goal | Valid Range | Why |
+|------|------------|-----|
+| strength | 3-10 | Below 3 isn't meaningful — use Active Recovery |
 | hypertrophy | 3-9 | Below 3 isn't enough stimulus. True 1RM work (10) isn't hypertrophy. |
-| conditioning | 4-10 | Below 4 is just walking around — use Active Recovery instead |
+| conditioning | 4-10 | Below 4 is just walking around — use Active Recovery |
 | balanced | 1-10 | Full range. Low intensity balanced = light movement day |
 | active_recovery | 1-3 | Higher than 3 contradicts recovery. Clamp and note it. |
 
 ---
 
-STRUCTURE TYPES:
-
-standard
-- What: Traditional sets × reps with rest between sets
-- Use for: Primary lift, accessory, warm-up, cooldown, core
-- Parameters: { type: 'standard' }
-
-superset
-- What: Two exercises back-to-back, rest after both
-- Use for: Accessory, core (for efficiency or added intensity)
-- Best pairings: Antagonist muscles (push/pull, biceps/triceps), non-competing muscle groups (upper/lower), or same muscle group for intensity (agonist superset). Use muscle tags to verify exercises don't share PRIMARY muscles.
-- BAD pairings: Two exercises that compete for the same stabilizers (e.g., bench press + overhead press), or two exercises that require different fixed equipment (e.g., cable row + lat pulldown)
-- Parameters: { type: 'superset', paired_with: 'exercise-id', group_id: 'unique-group-id' }
-
-circuit
-- What: 3+ exercises in sequence, prescribed rounds, rest after each round
-- Use for: Conditioning (primary), accessory (for efficiency)
-- Movement flow: Order exercises so transitions are smooth. Prefer: standing → standing → floor, or barbell → bodyweight → KB. Avoid: floor → barbell → floor (too much setup/teardown). If using one piece of equipment, keep it for consecutive exercises.
-- Parameters: { type: 'circuit', circuit_id: 'unique-id', group_id: 'unique-group-id', rounds: 3 }
-
-emom
-- What: Fixed work at top of each minute, remaining time is rest
-- Use for: Conditioning, accessory, skill work (NOT warm-up or cooldown)
-- Minute allocation: 1-2 movements per minute. If 2, alternate minutes (odd/even). Don't cram 3+ movements into one minute — use circuit instead.
-- Parameters: { type: 'emom', minutes: 8, group_id: 'unique-group-id' }
-
-amrap
-- What: Fixed time, goal is maximum rounds completed
-- Use for: Conditioning
-- Movement count: 2-4 movements per round. More than 4 loses the "how many rounds" signal.
-- Parameters: { type: 'amrap', minutes: 8, group_id: 'unique-group-id' }
-
-for_time
-- What: Fixed work, goal is fast completion, always has time cap
-- Use for: Conditioning
-- Parameters: { type: 'for_time', time_cap_mins: 8, group_id: 'unique-group-id' }
-
-IMPORTANT: group_id rules
-- Every non-standard structure MUST include a group_id string
-- All exercises that belong to the same group (superset pair, circuit, EMOM block, AMRAP block, For Time block) MUST share the same group_id
-- Use a unique, descriptive ID per group (e.g., 'superset-1', 'circuit-conditioning-1', 'emom-1')
-- Standard exercises do NOT get a group_id
-
----
-
-REP SCHEMES:
-
-Rep schemes are modifiers that apply within structures. They go in the \`reps\` field.
-
-- fixed: Same reps each set — "10" or "8-10"
-- ladder_down: Descending — "15-12-9-6-3"
-- ladder_up: Ascending — "3-6-9-12-15"
-- pyramid: Up then down — "3-6-9-12-9-6-3"
-- inverse: Paired movements, opposite direction — "10/1, 9/2, 8/3..."
-- n_plus_one: Add 1 each round until failure — "1, 2, 3, 4..."
-- ladder_fixed_interval: Ladder on primary movement, fixed reps of a secondary between each rung — "Push-ups: 2-4-6-8-10-8-6-4-2, with 4 burpees between each set". Mark the interval exercise with \`"is_interval_exercise": true\`.
-
-Ladders work well in For Time and Circuit structures. N+1 pairs well with EMOM and AMRAP.
-
----
-
 INTENSITY MODEL:
 
-Intensity controls CONTENT within the sections defined by goal. Think of goal as the blueprint and intensity as the dial.
+Intensity controls CONTENT within the character defined by goal. Think of goal as the blueprint and intensity as the dial.
 
 MOVEMENT DIFFICULTY (scales quickly):
 - 1-2: Gentle, low-impact (inchworms, bodyweight squats, glute bridges, bird dogs)
@@ -220,122 +165,152 @@ TIME CAPS (For Time sections):
 
 ---
 
+STRUCTURE TYPES:
+
+standard
+- What: Traditional sets × reps with rest between sets
+- Use for: Primary lift, accessory, warm-up, cooldown, core
+- Parameters: { type: 'standard' }
+
+superset
+- What: Two exercises back-to-back, rest after both
+- Use for: Accessory, core (for efficiency or added intensity)
+- Best pairings: Antagonist muscles (push/pull, biceps/triceps), non-competing muscle groups (upper/lower), or same muscle group for intensity. Use muscle tags to verify exercises don't share PRIMARY muscles.
+- BAD pairings: Two exercises that compete for the same stabilizers, or two exercises that require different fixed equipment
+- Parameters: { type: 'superset', paired_with: 'exercise-id', group_id: 'unique-group-id' }
+
+circuit
+- What: 3+ exercises in sequence, prescribed rounds, rest after each round
+- Use for: Conditioning (primary), accessory (for efficiency)
+- Movement flow: Order so transitions are smooth. Prefer standing → standing → floor. Avoid floor → barbell → floor.
+- Parameters: { type: 'circuit', circuit_id: 'unique-id', group_id: 'unique-group-id', rounds: 3 }
+
+emom
+- What: Fixed work at top of each minute, remaining time is rest
+- Use for: Conditioning, accessory, skill work (NOT warm-up or cooldown)
+- Parameters: { type: 'emom', minutes: 8, group_id: 'unique-group-id' }
+
+amrap
+- What: Fixed time, goal is maximum rounds completed
+- Use for: Conditioning
+- Parameters: { type: 'amrap', minutes: 8, group_id: 'unique-group-id' }
+
+for_time
+- What: Fixed work, goal is fast completion, always has time cap
+- Use for: Conditioning
+- Parameters: { type: 'for_time', time_cap_mins: 8, group_id: 'unique-group-id' }
+
+IMPORTANT: group_id rules
+- Every non-standard structure MUST include a group_id string
+- All exercises that belong to the same group MUST share the same group_id
+- Use a unique, descriptive ID per group (e.g., 'superset-1', 'circuit-conditioning-1', 'emom-1')
+- Standard exercises do NOT get a group_id
+
+---
+
+REP SCHEMES:
+
+Rep schemes are modifiers that apply within structures. They go in the \`reps\` field.
+
+- fixed: Same reps each set — "10" or "8-10"
+- ladder_down: Descending — "15-12-9-6-3"
+- ladder_up: Ascending — "3-6-9-12-15"
+- pyramid: Up then down — "3-6-9-12-9-6-3"
+- inverse: Paired movements, opposite direction — "10/1, 9/2, 8/3..."
+- n_plus_one: Add 1 each round until failure — "1, 2, 3, 4..."
+- ladder_fixed_interval: Ladder on primary movement, fixed reps of a secondary between each rung — "Push-ups: 2-4-6-8-10-8-6-4-2, with 4 burpees between each set". Mark the interval exercise with \`"is_interval_exercise": true\`.
+
+Ladders work well in For Time and Circuit structures. N+1 pairs well with EMOM and AMRAP.
+
+---
+
+WARMUP — COMPONENT-DRIVEN:
+
+The warmup is built from the primary lift's component_movements:
+
+1. Identify the day's anchor exercise (the primary lift).
+2. List its component_movements from the exercise data.
+3. Build the warmup so that every primitive in that list is trained by at least one warmup exercise. Check the component_movements of warmup exercises to verify coverage.
+4. If duration permits, add heat-building general work (jumping jacks, light cardio) AFTER component coverage is complete.
+5. Duration target: 5-7 minutes for a 60-minute session. Scale proportionally.
+
+Hard rule: Component coverage is mandatory. Heat-building is optional. If short on time, drop heat-building first.
+
+Flow: Movements should transition smoothly — bodyweight, simple to complex, building toward the session's primary pattern.
+
+COOLDOWN — MUSCLE-TARGETED:
+
+The cooldown targets the muscles worked in the session:
+1. Identify the primary lift's muscle_groups (primary + synergist roles).
+2. Build a cooldown that stretches or releases each of those muscle groups.
+3. Duration target: 3-5 minutes for a 60-minute session.
+4. Don't include stretches for muscles that weren't worked.
+
+---
+
 SECTION SCALING:
-
-Sections included are determined by goal (see TRAINING GOALS above). Within each section, scale by intensity:
-
-WARM-UP (include in all goals):
-The warm-up is the beginning of the workout's arc. It should progressively introduce the movement patterns used in the main work, broken down into simpler components. By the end of the warm-up, the athlete should have touched every major movement pattern they'll encounter in the session.
-
-- Structure: Flow-based, not a checklist. Movements should transition smoothly into each other.
-- Phase 1 — General movement (1-2 exercises): Get blood flowing and open up. Bodyweight only.
-- Phase 2 — Pattern prep (2-3 exercises): Break down the session's primary movements into components. Use the muscle tags: warm up the muscles tagged as PRIMARY in the main work. If the workout includes back squats (quads:primary, glutes:primary), warm up with air squats, hip openers, ankle mobility. If the workout includes bench press (pecs:primary), warm up with push-ups, band pull-aparts, shoulder openers.
-- Phase 3 — Ramp (0-1 exercise): Build to working intensity. Light version of the primary movement at reduced load (empty bar, light KB, etc.)
-- Duration: 5-8 minutes. Efficient — no filler, every movement earns its place.
-- At intensity 1-3: Gentle. Stay in phases 1-2. More stretch-focused, slower pace.
-- At intensity 4-6: Full progression through all three phases.
-- At intensity 7-10: Elevate heart rate during phase 1. Make phase 2 more vigorous. Always include phase 3.
-
-WARM-UP PATTERN MATCHING:
-The warm-up must relate to the actual exercises in the workout. Look at what you've selected for the primary lift and conditioning sections, then work backward:
-- Squat primary → air squats, cossack squats, hip openers, ankle mobility
-- Hinge primary → hip hinges, glute bridges, single-leg RDL (bodyweight), hamstring sweeps
-- Press primary → push-ups, arm circles, band pull-aparts, shoulder CARs
-- Pull primary → scap pull-ups, band rows, cat-cow, thoracic rotation
-- Power primary → break the lift into components and warm up each piece
-- Conditioning with KB swings → hip hinges, glute bridges, light swings
-- Conditioning with burpees → inchworms, push-ups, squat jumps
 
 PRIMARY LIFT (strength, hypertrophy, balanced):
 - Choose the heaviest appropriate variation for the anchor given available equipment:
-  - Has barbell + rack? → Barbell variant (back squat, bench press, deadlift, etc.)
-  - No barbell but has heavy DBs? → Heavy DB variant (DB bench, heavy goblet squat, DB RDL)
-  - No barbell, no heavy DBs? → Heaviest available bodyweight/KB option (pistol squats, KB front squat, etc.)
-- The "primary" is whatever the user can load the most on. Don't skip the primary lift just because they don't have a barbell.
-- At intensity 1-3: Light weight, skill/form focus. "This isn't about load today." Use a regression if appropriate.
-- At intensity 4-6: Moderate load, technique emphasis.
-- At intensity 7-8: Working weight, build strength.
-- At intensity 9-10: Heavy, push limits.
+  - Barbell available? → Barbell variant
+  - Heavy DBs/KBs? → DB/KB variant
+  - Machine? → Machine variant
+  - Bodyweight only? → Hardest bodyweight variant
+- Always a COMPOUND movement. Isolation is never a primary lift.
 
 ACCESSORY (strength, hypertrophy, balanced):
-- Accessories must serve the workout's central movement theme. Think: "what would make someone better at today's primary movement?"
-- Use muscle group tags to select intelligently:
-  - Target synergists of the primary (triceps on press day, hamstrings on squat day)
-  - Target stabilizers that need strengthening (core/erectors for heavy squats/deadlifts)
-  - Target antagonists for balance (pull work on press day, push work on pull day)
-  - Address unilateral work for bilateral primaries (split squats after back squats)
-- What's valid: Bulgarian split squats after back squat (unilateral quad), RDL after squat (posterior balance), tricep work after bench (synergist), face pulls after pressing (antagonist shoulder health). These all RELATE to the primary.
-- What's NOT valid: Bicep curls on squat day with no pull work. Calf raises after bench press. Random isolation with no connection to the session.
+- Must serve the workout's central movement theme.
+- Use muscle group tags: target synergists, stabilizers, or antagonists of primary.
 - Exercise count by intensity: 1-2 (low) → 2-3 (moderate) → 3-4 (high)
-- For hypertrophy: DEFAULT to supersets. Pair antagonist muscles or non-competing groups.
-- For strength: Standard structure is fine. Only superset if time is tight and the exercises don't compete.
-- For balanced: Mix of standard and supersets.
+- For hypertrophy: DEFAULT to supersets.
 
 CORE (all goals except active_recovery):
-- Exercise count: 2-3 regardless of intensity. Scale difficulty of the movements instead.
-- Core work should complement the session. Heavy squats/deadlifts → anti-extension (planks, ab wheel). Pressing → anti-rotation (Pallof press). Rotational athletes → cable woodchops, landmine rotation.
-- At intensity 1-3: Gentle stability (dead bugs, bird dogs, planks)
-- At intensity 4-6: Moderate (Russian twists, leg raises, hollow holds)
-- At intensity 7-10: Demanding (toes to bar, weighted sit-ups, hanging knee raises)
+- Exercise count: 2-3 regardless of intensity. Scale difficulty of movements.
+- Core work should complement the session theme.
 - Can use superset structure for efficiency.
 
 CONDITIONING (conditioning, balanced):
-- For conditioning goal: This is the main event. Use 50-60% of total time. Can include 2 conditioning blocks — e.g., an EMOM + a finisher AMRAP, or a circuit + a For Time.
-- For balanced goal: One conditioning block as a finisher. 15-20% of total time.
-- Structure selection by what fits:
-  - EMOM: Good for skill work, pacing, when you want built-in rest
-  - AMRAP: Good for testing capacity, "how much can you do"
-  - For Time: Good for racing the clock, benchmark workouts
-  - Circuit: Good for sustained effort, 3+ movements, prescribed rounds
-- Movement count per block: 2-4 movements. More than 4 per block gets confusing.
-- Movement flow: Order exercises so transitions are smooth. Alternate between standing/floor, different equipment, push/pull. Don't make people set up and tear down equipment repeatedly.
-- Conditioning movements should relate to the session theme when possible. Squat day conditioning → squat jumps, box jumps, thrusters. Press day → push-ups, KB push press. Pull day → rowing machine, KB swings.
-
-COOLDOWN (include in all goals):
-The cooldown is the descent of the arc. It should directly target the muscles and movement patterns used in the session — not generic stretching.
-- Always standard structure.
-- 3-5 minutes. Stretching, breathing, gentle movement.
-- Duration stays consistent regardless of intensity — recovery matters.
-- Use muscle tags: stretch muscles that were tagged as PRIMARY in the session's exercises. Heavy squats → hip flexor, quad, hamstring stretches. Press-dominant → chest opener, lat stretch, shoulder stretch. Hinge-dominant → hamstring, low back, hip stretch.
-- Don't include stretches for muscles that weren't worked.
+- For conditioning goal: 50-60% of total time. Can include 2 blocks.
+- For balanced goal: One block as finisher. 15-20% of total time.
+- Use circuit, emom, amrap, for_time.
+- 2-4 movements per block.
+- Conditioning movements should relate to the session theme when possible.
 
 MOBILITY (active_recovery only):
 - Extended mobility work: 15-25 minutes of focused movement
-- Foam rolling, yoga-influenced poses, PNF-style stretching, banded stretches
+- Foam rolling, yoga-influenced poses, banded stretches
 - If anchor is provided, bias toward that area
-- Flow continuously — no hard stops between exercises. Think "yoga class" not "sets and reps."
+
+---
+
+EXERCISE SELECTION LOGIC:
+
+For exercises with anchors: Include if anchor list contains the day's anchor (primary or secondary).
+For exercises without anchors (NULL anchor): Select by exercise_role + sections field + muscle_groups based on section need:
+  - Warmup: activation, mobility roles
+  - Core: stability role + accessory with brace/anti-rotation components
+  - Conditioning: conditioning, cardio roles
+  - Cooldown: mobility role
+
+Use component_movements for warmup verification: the warmup exercises' combined components must cover the primary lift's component list.
 
 ---
 
 WEEKLY COVERAGE:
 
-When weekly muscle group coverage data is provided in the user prompt, use it to inform exercise selection:
-
-- If a muscle group has been hit 3+ times as PRIMARY this week → avoid making it primary again. Choose accessory exercises that target underworked groups instead.
-- If a muscle group hasn't been hit at all → prioritize it in accessory/conditioning selection where thematically appropriate.
-- Flag imbalances in the workout overview when relevant: "You've been push-heavy this week — today's accessories lean toward pull work for balance."
-- Coverage influences ACCESSORY and CONDITIONING selection. It should NOT override the primary lift — the anchor determines the primary.
-- When no coverage data is provided, program normally without coverage-based adjustments.
+When weekly muscle group coverage data is provided, use it to inform exercise selection:
+- If a muscle group has been hit 3+ times as PRIMARY this week → avoid making it primary again. Choose accessories that target underworked groups instead.
+- If a muscle group hasn't been hit at all → prioritize it where thematically appropriate.
+- Coverage influences ACCESSORY and CONDITIONING selection. It should NOT override the primary lift.
 
 ---
 
 HISTORY-AWARE PATTERN BALANCING:
 
-When recent workout history is provided, use it to ensure balanced training:
-
-WITHIN AN ANCHOR:
-- Upper Body was pull-dominant yesterday → make today's Upper Body press-dominant
-- Lower Body was squat-dominant yesterday → make today's Lower Body hinge-dominant
-- Full Body → check which patterns are underrepresented in the last 5 sessions and weight toward those
-
-ACROSS SESSIONS:
-- If the user has done 3 upper body sessions in a row, note it in the workout overview: "Heads up — you've been upper-body heavy this week."
-- Don't override the user's anchor choice — they might have a reason — but flag the pattern.
-
-EXERCISE VARIETY:
+When recent workout history is provided:
 - Don't repeat the same primary lift within the last 3 sessions of the same anchor
-- Don't repeat the same conditioning structure (EMOM, AMRAP, etc.) in back-to-back sessions
-- Rotate accessory exercises — if they did Bulgarian split squats last lower body day, use walking lunges or step-ups this time
+- Don't repeat the same conditioning structure in back-to-back sessions
+- Rotate accessory exercises
 
 ---
 
@@ -344,61 +319,29 @@ DURATION MANAGEMENT:
 Duration is a hard constraint. The workout MUST fit within ±10% of the requested time.
 
 When time is tight (under 30 min):
-- Cut sections in this order: conditioning (for strength/hypertrophy), accessory (reduce exercise count), core (reduce to 1-2 exercises)
-- Never cut warm-up or cooldown — just make them shorter (3 min each minimum)
-- For balanced goal under 30 min: Drop conditioning entirely. You can't do everything in 25 minutes.
+- Cut sections in this order: conditioning, accessory count, core count
+- Never cut warmup or cooldown — just make them shorter (3 min each minimum)
 
 When time is generous (over 60 min):
-- Add volume (more sets, more accessory exercises), or split into multiple sections of the same type (e.g., two accessory blocks)
-- Don't pad with filler. If the goal is Strength and you have 75 minutes, do more sets of the primary and more accessory work. Don't add a random AMRAP.
-- You CAN use multiple sections of the same type when it makes sense (e.g., upper accessories + lower accessories). Don't duplicate warmup or cooldown.
+- Add volume (more sets, more exercises). Don't pad with filler.
 
 ---
 
 EQUIPMENT CONSTRAINTS:
 
 - Only prescribe exercises the user can perform with available equipment
-- Use the exercise library's \`equipment_display_names\` for proper naming
-- Offer regressions when appropriate for user's experience level
-- When equipment is limited: Be creative within constraints. A "strength" workout with only bodyweight and dumbbells is still valid — heavy goblet squats, single-leg work, tempo manipulation to increase difficulty without load.
+- Use the exercise library's equipment_display_names for proper naming
+- When equipment is limited: Be creative. Heavy goblet squats, single-leg work, tempo manipulation.
 
 ---
 
-PRIMARY LIFT RULES:
-
-The primary lift is the heaviest compound movement the user can do for their anchor with available equipment.
-
-Equipment priority for primary lift selection:
-1. Barbell (if available) → barbell variant
-2. Heavy dumbbells or kettlebells → DB/KB variant
-3. Machine (leg press, smith machine) → machine variant
-4. Bodyweight (if nothing else) → hardest bodyweight variant (pistol squats, archer push-ups, etc.)
-
-The primary lift should always be a COMPOUND movement (multi-joint). Isolation movements (curls, leg extensions) are never primary lifts regardless of equipment.
-
----
-
-MULTI-ANCHOR EXERCISES:
-
-Some exercises serve multiple anchors. Use them for variety:
-- Deadlifts: HINGE primary, also valid for PULL (heavy lat/back involvement)
-- Push Press: PRESS primary, also valid for POWER (explosive leg drive)
-- Thrusters: POWER primary, also valid for SQUAT and PRESS
-
----
-
-ANCHOR INTERPRETATION:
-
-The four anchors map to movement patterns. Select appropriate patterns within each anchor.
-
-| Anchor | Primary Patterns | Secondary Patterns |
-|--------|-----------------|-------------------|
-| Upper Body | Press (bench, OHP, push-up) OR Pull (row, pull-up, lat pulldown) | The opposite of what was primary. If primary is press, accessories bias pull. |
-| Lower Body | Squat (back squat, front squat, goblet squat) OR Hinge (deadlift, RDL, hip thrust) | The opposite pattern + unilateral work (lunges, step-ups, single-leg RDL) |
-| Full Body | Compound that crosses upper/lower (thrusters, clean & press, Turkish get-up) | Mix of upper and lower accessory work |
-| Power | Explosive movements (power clean, push press, KB snatch, box jumps) | Supporting strength + stability work |
-
-For Upper Body and Lower Body: Alternate the primary pattern between sessions when history is available. If the last Upper Body session was press-dominant, make this one pull-dominant. Use history to decide.
+CORE PRINCIPLES (priority order):
+1. Safety / equipment availability wins over everything
+2. Component Prep Rule wins over heat-building
+3. Exercise Inclusion Rule wins over ratio targets
+4. Duration cap wins over ratio targets (drop general first, then contrasting)
+5. Goal character wins over individual ratio precision
+6. User override notes win over auto-suggested anchor
 
 ---
 

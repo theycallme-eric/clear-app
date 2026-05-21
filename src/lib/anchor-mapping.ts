@@ -1,14 +1,13 @@
 /**
  * Anchor Mapping Logic
  *
- * Maps user-facing anchor selections (LOWER BODY, UPPER BODY, FULL BODY, SURPRISE)
+ * Maps user-facing anchor selections (LOWER BODY, UPPER BODY, FULL BODY)
  * to specific movement patterns (squat, hinge, press, pull, power) for the API.
  *
  * Weights:
  * - LOWER BODY: squat vs hinge at 3:2 ratio
  * - UPPER BODY: press vs pull at 1:1 ratio
  * - FULL BODY: power weighted heavily
- * - SURPRISE: equal weights
  *
  * Avoidance: Tries not to repeat the most recent anchor in a category.
  */
@@ -141,42 +140,9 @@ function resolveFullBody(history: WorkoutHistoryEntry[]): MovementPattern {
 }
 
 /**
- * Resolve SURPRISE to any movement pattern
- * Weights: equal
- * Avoids last 2-3 used
- */
-function resolveSurprise(history: WorkoutHistoryEntry[]): MovementPattern {
-  const recentAll = getRecentInCategory(history, "all").slice(0, 3);
-
-  // Equal base weights
-  const baseWeights: [MovementPattern, number][] = [
-    ["squat", 20],
-    ["hinge", 20],
-    ["press", 20],
-    ["pull", 20],
-    ["power", 20],
-  ];
-
-  // Reduce weight for recently used
-  const adjustedWeights = baseWeights.map(([pattern, weight]): [MovementPattern, number] => {
-    const recencyIndex = recentAll.indexOf(pattern);
-    if (recencyIndex === 0) {
-      return [pattern, weight * 0.1];
-    } else if (recencyIndex === 1) {
-      return [pattern, weight * 0.3];
-    } else if (recencyIndex === 2) {
-      return [pattern, weight * 0.6];
-    }
-    return [pattern, weight];
-  });
-
-  return weightedRandom(adjustedWeights);
-}
-
-/**
  * Main function: Map user anchor selection to movement pattern
  *
- * @param anchor User's selected anchor (LOWER BODY, UPPER BODY, FULL BODY, SURPRISE)
+ * @param anchor User's selected anchor (LOWER BODY, UPPER BODY, FULL BODY, POWER)
  * @param history Recent workout history (newest first)
  * @returns Movement pattern to send to API (squat, hinge, press, pull, power)
  */
@@ -193,10 +159,7 @@ export function resolveAnchorToPattern(
       return resolveFullBody(history);
     case "POWER":
       return "power";
-    case "SURPRISE":
-      return resolveSurprise(history);
     default:
-      // Fallback
-      return resolveSurprise(history);
+      return resolveFullBody(history);
   }
 }

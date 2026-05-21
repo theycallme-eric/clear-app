@@ -1,4 +1,3 @@
-Connecting to db 5432
 export type Json =
   | string
   | number
@@ -78,13 +77,14 @@ export type Database = {
         Row: {
           can_be_primary: boolean
           coaching_cues: string[] | null
+          component_movements: string[]
           created_at: string
           default_equipment: string
           equipment_display_names: Json | null
           equipment_options: string[]
+          exercise_role: string
           id: string
           name: string
-          pattern_id: string
           progression: string | null
           regression: string | null
           sections: Database["public"]["Enums"]["section_type"][]
@@ -93,13 +93,14 @@ export type Database = {
         Insert: {
           can_be_primary?: boolean
           coaching_cues?: string[] | null
+          component_movements?: string[]
           created_at?: string
           default_equipment: string
           equipment_display_names?: Json | null
           equipment_options: string[]
+          exercise_role?: string
           id: string
           name: string
-          pattern_id: string
           progression?: string | null
           regression?: string | null
           sections: Database["public"]["Enums"]["section_type"][]
@@ -108,26 +109,20 @@ export type Database = {
         Update: {
           can_be_primary?: boolean
           coaching_cues?: string[] | null
+          component_movements?: string[]
           created_at?: string
           default_equipment?: string
           equipment_display_names?: Json | null
           equipment_options?: string[]
+          exercise_role?: string
           id?: string
           name?: string
-          pattern_id?: string
           progression?: string | null
           regression?: string | null
           sections?: Database["public"]["Enums"]["section_type"][]
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "exercise_definitions_pattern_id_fkey"
-            columns: ["pattern_id"]
-            isOneToOne: false
-            referencedRelation: "movement_patterns"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "exercise_definitions_progression_fkey"
             columns: ["progression"]
@@ -361,33 +356,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      movement_patterns: {
-        Row: {
-          anchor: Database["public"]["Enums"]["anchor_type"]
-          category: Database["public"]["Enums"]["movement_category"]
-          created_at: string
-          description: string | null
-          id: string
-          name: string
-        }
-        Insert: {
-          anchor: Database["public"]["Enums"]["anchor_type"]
-          category: Database["public"]["Enums"]["movement_category"]
-          created_at?: string
-          description?: string | null
-          id: string
-          name: string
-        }
-        Update: {
-          anchor?: Database["public"]["Enums"]["anchor_type"]
-          category?: Database["public"]["Enums"]["movement_category"]
-          created_at?: string
-          description?: string | null
-          id?: string
-          name?: string
-        }
-        Relationships: []
       }
       profiles: {
         Row: {
@@ -742,14 +710,15 @@ export type Database = {
           anchors: Database["public"]["Enums"]["anchor_type"][] | null
           can_be_primary: boolean | null
           coaching_cues: string[] | null
+          component_movements: string[] | null
           created_at: string | null
           default_equipment: string | null
           equipment_display_names: Json | null
           equipment_options: string[] | null
+          exercise_role: string | null
           id: string | null
           muscle_groups: Json | null
           name: string | null
-          pattern_id: string | null
           primary_anchor: Database["public"]["Enums"]["anchor_type"] | null
           progression: string | null
           regression: string | null
@@ -757,13 +726,6 @@ export type Database = {
           updated_at: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "exercise_definitions_pattern_id_fkey"
-            columns: ["pattern_id"]
-            isOneToOne: false
-            referencedRelation: "movement_patterns"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "exercise_definitions_progression_fkey"
             columns: ["progression"]
@@ -806,12 +768,12 @@ export type Database = {
           exercise_notes: string | null
           id: string | null
           order_index: number | null
-          pattern_id: string | null
           reps: string | null
           rest_seconds: number | null
           section_id: string | null
           section_type: Database["public"]["Enums"]["section_type"] | null
           sets: number | null
+          structure: Json | null
           tempo: string | null
           updated_at: string | null
           user_id: string | null
@@ -820,13 +782,6 @@ export type Database = {
           workout_intensity: number | null
         }
         Relationships: [
-          {
-            foreignKeyName: "exercise_definitions_pattern_id_fkey"
-            columns: ["pattern_id"]
-            isOneToOne: false
-            referencedRelation: "movement_patterns"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "exercises_exercise_id_fkey"
             columns: ["exercise_id"]
@@ -899,7 +854,6 @@ export type Database = {
         | "press"
         | "pull"
         | "power"
-        | "surprise"
         | "upper_body"
         | "lower_body"
         | "full_body"
@@ -907,10 +861,9 @@ export type Database = {
       experience_level: "new" | "some" | "confident"
       goal_preset:
         | "strength"
-        | "balanced"
-        | "conditioning"
-        | "quick"
         | "hypertrophy"
+        | "conditioning"
+        | "balanced"
         | "active_recovery"
       movement_category: "lower_body" | "upper_body" | "core" | "full_body"
       rest_day_reason: "rest" | "injury" | "sick"
@@ -1064,7 +1017,6 @@ export const Constants = {
         "press",
         "pull",
         "power",
-        "surprise",
         "upper_body",
         "lower_body",
         "full_body",
@@ -1073,10 +1025,9 @@ export const Constants = {
       experience_level: ["new", "some", "confident"],
       goal_preset: [
         "strength",
-        "balanced",
-        "conditioning",
-        "quick",
         "hypertrophy",
+        "conditioning",
+        "balanced",
         "active_recovery",
       ],
       movement_category: ["lower_body", "upper_body", "core", "full_body"],

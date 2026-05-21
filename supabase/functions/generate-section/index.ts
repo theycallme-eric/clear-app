@@ -73,6 +73,9 @@ interface ExerciseDefinition {
   regression: string | null;
   can_be_primary: boolean;
   anchors: string[] | null;
+  component_movements: string[] | null;
+  exercise_role: string | null;
+  muscle_groups: { muscle: string; role: string }[] | null;
 }
 
 // ============================================
@@ -84,13 +87,15 @@ function buildSwapSystemPrompt(): string {
 
 RULES:
 1. Only replace what is asked — preserve everything else exactly
-2. The replacement must fit the same role in the section
+2. The replacement must fit the same role in the section and serve the day's anchor thematically
 3. Never duplicate an exercise that's staying in the section or listed in exclude_exercises
 4. Match the intensity level and available equipment
 5. Maintain the same structure type for unit swaps (if replacing an AMRAP, return an AMRAP)
 6. All non-standard exercises MUST include group_id in their structure. Exercises in the same group share the same group_id.
 7. Use ONLY exercise_id values from the provided exercise library
 8. Return valid JSON matching the section schema — no markdown, no explanation
+9. Prefer replacements that share component_movements with the exercise being replaced (component overlap = thematic fit)
+10. Within a section, do not select two exercises that share more than 75% of their component_movements (variety rule)
 
 OUTPUT FORMAT:
 {
@@ -130,8 +135,15 @@ function buildSwapUserPrompt(
   const exerciseListStr = exerciseLibrary.map(ex => {
     const equipStr = ex.equipment_options.join(', ');
     const sectionsStr = ex.sections.join(', ');
-    const anchorsStr = ex.anchors?.length ? ` anchors:[${ex.anchors.join(', ')}]` : '';
-    return `  ${ex.id} | ${ex.name} | equipment:[${equipStr}] | sections:[${sectionsStr}]${anchorsStr}`;
+    const anchorsStr = ex.anchors?.length ? ` | anchors:[${ex.anchors.join(',')}]` : '';
+    const roleStr = ex.exercise_role ? ` | role:${ex.exercise_role}` : '';
+    const componentsStr = ex.component_movements?.length
+      ? ` | components:[${ex.component_movements.join(',')}]`
+      : '';
+    const musclesStr = ex.muscle_groups?.length
+      ? ` | muscles:[${ex.muscle_groups.map(m => `${m.muscle}:${m.role}`).join(',')}]`
+      : '';
+    return `  ${ex.id} | ${ex.name}${roleStr} | equipment:[${equipStr}] | sections:[${sectionsStr}]${anchorsStr}${componentsStr}${musclesStr}`;
   }).join('\n');
 
   let swapInstructions = '';
@@ -421,7 +433,7 @@ serve(async (req: Request) => {
     // Fetch exercise library filtered to available equipment and section type
     const { data: exerciseDefinitions } = await supabase
       .from('exercise_definitions_with_anchors')
-      .select('id, name, equipment_options, sections, coaching_cues, regression, can_be_primary, anchors');
+      .select('id, name, equipment_options, sections, coaching_cues, regression, can_be_primary, anchors, component_movements, exercise_role, muscle_groups');
 
     const availableEquipmentSet = new Set(equipment);
 
