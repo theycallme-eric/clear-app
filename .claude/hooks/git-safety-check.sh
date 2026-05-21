@@ -7,6 +7,8 @@ set -e
 # Read JSON input from stdin
 INPUT=$(cat)
 
+source "$(dirname "$0")/hook-utils.sh"
+
 # Extract the command being run
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
 
@@ -149,4 +151,5 @@ fi
 # fi
 
 # All checks passed
+hook_log "PASS"
 exit 0

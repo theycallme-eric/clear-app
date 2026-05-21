@@ -7,6 +7,8 @@ set -e
 
 cd "$CLAUDE_PROJECT_DIR" 2>/dev/null || exit 0
 
+source "$(dirname "$0")/hook-utils.sh"
+
 OUTPUT=""
 
 # --- Check current branch and uncommitted changes ---

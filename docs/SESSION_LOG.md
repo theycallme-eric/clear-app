@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-04-25 (23rd session)
+**Last Session:** 2026-05-21 (24th session)
 
 ---
 
@@ -15,12 +15,55 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ## Quick Status
 **Current Phase:** Smart Training System — Phase 1 deployed
 **Current Task:** None
-**Last Completed:** Integration gap audit — timeouts, silent failures, auth hardening
+**Last Completed:** Claude Code hooks infrastructure — automated design system checks
 **Blocking Issues:** 37 token-lint violations pending
 
 ---
 
 ## Session Entries
+
+### Session: 2026-05-21 - Claude Code Hooks Infrastructure
+
+**Duration:** ~30 min
+**Mode:** Claude Code
+**Branch:** `feature/claude-hooks-infrastructure`
+
+#### What Got Done
+- **Discussed hooks vs skills tradeoffs** — evaluated which manual skills could become automated hooks, identified pitfalls (speed tax, false confidence, invisible failures, scope creep)
+- **Design system lint hook** — PostToolUse grep-based check on Edit/Write for hex colors, primitive tokens, border-radius, lucide-react, !important in src/ files. No Node, <200ms.
+- **Branch guard hook** — PreToolUse warning when editing src/ files while on main. Catches the problem at edit time, not push time.
+- **UI pre-flight nudge hook** — UserPromptSubmit keyword detection reminds about mandatory component.md pre-flight for UI-related prompts.
+- **Shared hook infrastructure** — hook-utils.sh provides kill switch (global + per-hook), timestamped logging with auto-rotation, and error trap (crashes log and exit 0, never block).
+- **Debug/test tooling** — hook-debug.sh with status, test, disable, enable commands for quick troubleshooting.
+- **Wired existing hooks** — git-safety-check and session-start-check now also use shared utils (kill switch, logging, error trap).
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| All new hooks non-blocking (exit 0) | Warnings only — can observe behavior before promoting to hard gates |
+| Pure grep, no Node for lint hook | Speed matters on every file edit; full token-lint.ts stays as manual pre-PR check |
+| Kill switch via file touch | Works from any terminal without Claude — critical escape hatch |
+| Skipped build-on-commit hook | Too slow, PR workflow already catches build failures |
+| Skipped branch guard as hard block | Redundant with git-safety push block; warning is sufficient |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `.claude/hooks/design-system-lint.sh` | Created — PostToolUse design system grep lint |
+| `.claude/hooks/branch-guard.sh` | Created — PreToolUse main branch warning |
+| `.claude/hooks/ui-preflight-nudge.sh` | Created — UserPromptSubmit UI pre-flight reminder |
+| `.claude/hooks/hook-utils.sh` | Created — Shared kill switch, logging, error trap |
+| `.claude/hooks/hook-debug.sh` | Created — Debug/test/disable/enable CLI tool |
+| `.claude/hooks/git-safety-check.sh` | Modified — Wired into shared utils |
+| `.claude/hooks/session-start-check.sh` | Modified — Wired into shared utils |
+| `.claude/settings.json` | Modified — Registered 3 new hooks |
+| `.gitignore` | Modified — Ignore hook runtime files (.disabled*, logs/) |
+
+#### Status
+- Build: N/A (no src/ changes)
+- 1 commit on feature branch, ready for PR
+
+---
 
 ### Session: 2026-04-25 - Integration Gap Audit & Fixes
 
