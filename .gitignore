@@ -19,6 +19,10 @@ dist-ssr
 # Supabase temp files
 supabase/.temp/
 
+# Hook runtime files
+.claude/hooks/.disabled*
+.claude/hooks/logs/
+
 # macOS artifacts
 *.textClipping
 
