@@ -1,11 +1,12 @@
 import { ExerciseStructure, Exercise, ExerciseSetData } from "@/types/workout";
-import { ActiveExerciseCard } from "./ActiveExerciseCard";
+import { ActiveExerciseCard, RestButton } from "./ActiveExerciseCard";
 import { Card } from "../Card";
 
 interface StructureCardProps {
     exercises: Exercise[];
     onLog: (id: string, data: { weight?: string; reps?: string; notes?: string }) => void;
     onSetLog?: (id: string, data: ExerciseSetData) => void;
+    onRestStart?: (restSeconds: number) => void;
     sectionType?: string;
     sectionName?: string;
     structure: ExerciseStructure;
@@ -18,7 +19,14 @@ const hasRest = (rest?: string): boolean => {
     return cleaned !== '0s' && cleaned !== '0' && cleaned !== '';
 };
 
-export const SupersetCard = ({ exercises, onLog, onSetLog, sectionType }: StructureCardProps) => {
+/** Parse rest string to seconds */
+const parseRestSeconds = (rest?: string): number => {
+    if (!rest) return 0;
+    const num = parseInt(rest);
+    return isNaN(num) ? 0 : num;
+};
+
+export const SupersetCard = ({ exercises, onLog, onSetLog, onRestStart, sectionType }: StructureCardProps) => {
     // Get the shared rest from the last exercise
     const lastExercise = exercises[exercises.length - 1];
     const pairRest = hasRest(lastExercise?.rest) ? lastExercise.rest : null;
@@ -56,22 +64,17 @@ export const SupersetCard = ({ exercises, onLog, onSetLog, sectionType }: Struct
                     ))}
                 </div>
             </div>
-            {/* Consolidated rest after pair */}
-            {pairRest && (
-                <div style={{ padding: 'var(--spacing-100) var(--spacing-400) var(--spacing-300)' }}>
-                    <span
-                        className="text-label-xs"
-                        style={{ textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-paragraph)' }}
-                    >
-                        Rest: {pairRest} after both
-                    </span>
+            {/* Rest timer button after pair */}
+            {pairRest && onRestStart && (
+                <div style={{ padding: '0 var(--spacing-400) var(--spacing-300)' }}>
+                    <RestButton restLabel={pairRest} onStart={() => onRestStart(parseRestSeconds(pairRest))} />
                 </div>
             )}
         </Card>
     );
 };
 
-export const CircuitCard = ({ exercises, onLog, sectionType, structure }: StructureCardProps) => {
+export const CircuitCard = ({ exercises, onLog, onSetLog, onRestStart, sectionType, structure }: StructureCardProps) => {
     const rounds = 'rounds' in structure ? structure.rounds : undefined;
 
     // Get round rest from the last exercise
@@ -112,6 +115,7 @@ export const CircuitCard = ({ exercises, onLog, sectionType, structure }: Struct
                         key={exercise.id}
                         exercise={exercise}
                         onLog={onLog}
+                        onSetLog={onSetLog}
                         sectionType={sectionType}
                         bare
                         pairLabel={`${i + 1}.`}
@@ -119,15 +123,10 @@ export const CircuitCard = ({ exercises, onLog, sectionType, structure }: Struct
                 ))}
             </div>
 
-            {/* Consolidated round rest */}
-            {roundRest && (
-                <div style={{ padding: 'var(--spacing-100) var(--spacing-400) var(--spacing-300)' }}>
-                    <span
-                        className="text-label-xs"
-                        style={{ textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-paragraph)' }}
-                    >
-                        {roundRest} rest between rounds
-                    </span>
+            {/* Rest timer button between rounds */}
+            {roundRest && onRestStart && (
+                <div style={{ padding: '0 var(--spacing-400) var(--spacing-300)' }}>
+                    <RestButton restLabel={roundRest} onStart={() => onRestStart(parseRestSeconds(roundRest))} />
                 </div>
             )}
         </Card>
