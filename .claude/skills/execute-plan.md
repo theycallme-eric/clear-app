@@ -87,23 +87,20 @@ Also check:
 
 ### 5. Initialize Progress Tracking
 
-Use TodoWrite to create items for each task:
+Use TaskCreate to create items for each task:
 
 ```
-TodoWrite([
-  { content: "Task 1: [name from plan]", status: "pending", activeForm: "[active description]" },
-  { content: "Task 2: [name from plan]", status: "pending", activeForm: "[active description]" },
-  ...
-])
+TaskCreate({ title: "Task 1: [name from plan]", description: "[active description]" })
+TaskCreate({ title: "Task 2: [name from plan]", description: "[active description]" })
 ```
 
-All tasks start as `pending`.
+All tasks start as pending. Use TaskList to review progress.
 
 ### 6. Execute Tasks Sequentially
 
 For each task:
 
-1. **Mark in_progress** — Update TodoWrite
+1. **Mark in_progress** — TaskUpdate({ id: "...", status: "in_progress" })
 2. **Read the task's `**Do:**` section** — Understand what to do
 3. **Follow loaded skill steps** — If task type maps to a skill, follow it
 4. **Execute the work** — Make the changes, create files, etc.
@@ -140,7 +137,7 @@ Options:
 
 ### 8. Complete Task
 
-- Only mark `completed` in TodoWrite when:
+- Only mark `completed` via TaskUpdate when:
   - ALL acceptance criteria pass, OR
   - User explicitly skipped failing criteria
 
@@ -171,7 +168,7 @@ After all tasks complete:
 
 ## Progress Tracking Format
 
-TodoWrite items should look like:
+TaskList output should look like:
 
 ```
 [in_progress] Task 1: Create AuthContext
@@ -207,7 +204,7 @@ After completion:
 - [ ] Context files read
 - [ ] Tasks parsed with Do/Acceptance sections
 - [ ] Relevant skills pre-loaded based on task types
-- [ ] TodoWrite initialized with all tasks
+- [ ] TaskCreate used for all tasks
 - [ ] Each task executed with acceptance validation
 - [ ] Failures warned, user acknowledged skip/retry
 - [ ] Session logged via close-session skill

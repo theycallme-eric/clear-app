@@ -85,7 +85,7 @@ Where should this go?
 5. **If user says yes to execute:**
    - Read `.claude/skills/execute-plan.md`
    - Follow the skill to execute the plan systematically
-   - Track progress with TodoWrite
+   - Track progress with TaskCreate/TaskUpdate
    - Validate acceptance criteria for each task
 
 ---
