@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-05-21 (24th session)
+**Last Session:** 2026-05-26 (27th session)
 
 ---
 
@@ -13,14 +13,164 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** Smart Training System — Phase 1 deployed
+**Current Phase:** UI polish + discovery
 **Current Task:** None
-**Last Completed:** Claude Code hooks infrastructure — automated design system checks
-**Blocking Issues:** 37 token-lint violations pending
+**Last Completed:** UI polish batch + Strava comparative analysis tickets
+**Blocking Issues:** None
 
 ---
 
 ## Session Entries
+
+### Session: 2026-05-26 - UI Polish + Strava Comparative Analysis
+
+**Duration:** ~1.5 hrs
+**Mode:** Claude Code
+**Branch:** `fix/generation-screen-polish` (committed, not yet PR'd)
+
+#### What Got Done
+- **UI polish from annotated screenshots:**
+  - Added `font-weight: bold` to all `text-heading-h*` CSS classes (design philosophy says headings are always bold, but classes were missing it)
+  - Increased textarea and input padding from spacing-200/300 to spacing-300/400 for better breathing room
+  - Fixed RadioButton description text alignment when wrapping (`textAlign: 'left'`)
+  - Updated Balanced goal description from vague "Adapts to your week" to factual "Equal parts strength, conditioning & mobility"
+- **Section guide refactor:**
+  - Discovered 3 phantom section types (Skill/Power, Carries, Stability/Balance) defined in UI but never supported by the AI generation prompt
+  - Converted "Customize Sections" toggleable chips to read-only "Section Guide" showing definitions
+  - Removed phantom section types from `SectionType` union, `WORKOUT_SECTIONS`, and mapping files
+  - Sections now always derived from `SECTIONS_BY_GOAL[goal]` — no user override
+- **Strava comparative analysis:**
+  - Reviewed Strava deep-dive PDF + synthesis (from separate Tally project) through CLEAR lens
+  - Identified 5 enhancement opportunities for CLEAR
+  - Created tickets #61-#65 and added all to project board
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Remove section customization UI | Prompt doesn't support custom section combos well; letting users toggle sections they don't understand risks incoherent workouts |
+| Remove phantom section types entirely | skill_power, carries, stability_balance were never in the AI prompt's vocabulary — dead code that created confusion |
+| Sections derived from goal, not user-overridable | Simpler, more reliable, and the prompt is tuned for specific section combos per goal |
+| All 5 Strava insights as standalone tickets (not comments) | Comments on existing issues get buried; standalone tickets are searchable and trackable |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/index.css` | Modified — added font-weight: bold to all heading classes |
+| `src/components/ui/textarea.tsx` | Modified — increased inner padding |
+| `src/components/ui/input.tsx` | Modified — increased inner padding |
+| `src/components/RadioButton.tsx` | Modified — added textAlign: left to description span |
+| `src/types/workout.ts` | Modified — removed 3 phantom section types, updated Balanced description |
+| `src/pages/settings/StructureSettings.tsx` | Modified — replaced chip toggles with section guide definitions |
+| `src/pages/SettingsScreen.tsx` | Modified — removed section toggle state/handlers |
+| `src/lib/section-mapping.ts` | Modified — removed phantom entries from DB/API mappings |
+| `src/hooks/useWorkoutGeneration.ts` | Modified — removed phantom entries from section map |
+
+#### Tickets Created
+| # | Title | Labels |
+|---|-------|--------|
+| #61 | Onboarding: add intent/motivation question | enhancement, P3, area:ui |
+| #62 | Progression visualization: milestone grid | enhancement, P3, area:ui |
+| #63 | Surface feel ratings in session history | enhancement, P3, area:ui |
+| #64 | Monthly training challenges | enhancement, P3, area:ui |
+| #65 | Long-arc training analytics | enhancement, P3, area:data |
+| #67 | Design system assembly reference + skill maintenance | enhancement, P2, area:workflow |
+
+#### Skill Audit & Fixes
+- Audited all 23 skills for staleness — found 4 broken
+- Fixed `execute-plan.md` and `inbox-workflow.md`: TodoWrite -> TaskCreate/TaskUpdate
+- Fixed `pr-workflow.md`: absolute path references -> relative
+- Fixed `close-session.md`: memory file path reference
+- Created #67 for assembly reference (LEGO-style composition recipes) and drift prevention strategy
+
+#### Status
+- Build passes, typecheck passes
+- 1 commit on `fix/generation-screen-polish` — not yet PR'd (stashed for future UI work)
+- Skill fixes are on main (uncommitted doc changes)
+
+---
+
+### Session: 2026-05-22 - Fix QueryClientProvider Crash
+
+**Duration:** ~15 min
+**Mode:** Claude Code
+**Branch:** `fix/query-client-provider-order` (merged via PR #60)
+
+#### What Got Done
+- **Diagnosed runtime crash:** "No QueryClient set, use QueryClientProvider to set one" — app was completely broken in production
+- **Root cause:** `AuthProvider` (which calls `useQueryClient()`) was rendered outside `QueryClientProvider` in `main.tsx`, while `QueryClientProvider` lived inside `App.tsx`
+- **Fix:** Moved `QueryClient` creation and `QueryClientProvider` from `App.tsx` up to `main.tsx`, wrapping `AuthProvider`. Removed duplicate from `App.tsx`.
+- **Merged via PR #60** — squash merge, branch deleted
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Move QueryClientProvider to main.tsx | Must wrap AuthProvider since AuthContext uses useQueryClient(). main.tsx is the natural home for top-level providers. |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `src/main.tsx` | Modified — added QueryClient creation + QueryClientProvider wrapping AuthProvider |
+| `src/App.tsx` | Modified — removed QueryClient creation + QueryClientProvider (no longer needed here) |
+
+#### Status
+- Build passes, typecheck passes
+- PR #60 merged to main
+- Blocking issue from session 25 resolved
+
+---
+
+### Session: 2026-05-21 - Workout Anatomy Spec Implementation
+
+**Duration:** ~2 hrs
+**Mode:** Claude Code
+**Branch:** `feature/workout-anatomy-spec` (merged via PR #59)
+
+#### What Got Done
+- **Schema migration (00030):** Added `component_movements TEXT[]` and `exercise_role TEXT` to `exercise_definitions`, retired `surprise` anchor → `full_body`, dropped `quick` goal → `balanced`, added `hypertrophy` + `active_recovery` to goal enum, collapsed `movement_patterns` table entirely, recreated dependent views and functions
+- **Exercise tagging (00031):** Tagged all 140 exercises with component_movements arrays (20-primitive vocabulary) and exercise_role values (7 roles: compound_lift, accessory, activation, mobility, conditioning, stability, cardio)
+- **Frontend cleanup:** Removed `SURPRISE` from `AnchorType`, deleted `resolveSurprise()` from anchor-mapping, deleted dead `AnchorGrid` component, cleaned up ComponentGallery
+- **System prompt v4.0:** Complete rewrite — replaced section-template model with thematic framework (focal/contrasting/prep-recovery/general relationships), goal-as-character with ratio targets per goal, component-driven warmup logic, muscle-targeted cooldown, variety rule (no >75% component overlap in a section)
+- **Edge function updates:** Both `generate-workout` and `generate-section` now include `component_movements` and `exercise_role` in exercise listings, warmup component verification (logging only), swap prompt updated with component overlap matching
+- **Test harness updates:** Added component coverage validation and variety rule validation to `scripts/test-generation.ts`
+- **Regenerated database types** after schema migration
+
+#### What Came Up (Unexpected)
+- `supabase db execute` command doesn't exist in our CLI version — used `supabase db query` instead
+- Enum scan error (`unknown oid`) when querying anchor_type after swap — fixed by casting to text
+- `active_recovery` goal test produced `"type": "timed"` for foam rolling — pre-existing edge case, not a v4.0 regression
+- **Runtime error post-merge:** "No QueryClient set, use QueryClientProvider" appeared in screenshot — needs investigation next session
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Collapse movement_patterns entirely | exercise_anchors junction already had all anchor data; movement_patterns was dead weight |
+| 48 surprise exercises become anchor-less | These (core, conditioning, mobility, carries) are genuinely not pattern-anchored — selected by exercise_role instead |
+| Warmup verification is logging-only in v1 | Non-fatal — lets us observe coverage gaps before making it a hard gate |
+| Variety rule validation warns, doesn't reject | Same approach — collect data before enforcing |
+| Keep `active_recovery` timed structure edge case | Pre-existing issue, not introduced by v4.0 |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `supabase/migrations/00030_workout_anatomy_schema.sql` | Created — Schema migration: new fields, enum swaps, table collapse |
+| `supabase/migrations/00031_tag_exercises.sql` | Created — Tag all 140 exercises with components + roles |
+| `src/types/database.ts` | Regenerated — Includes new fields and updated enums |
+| `src/types/workout.ts` | Modified — Removed SURPRISE from AnchorType |
+| `src/lib/anchor-mapping.ts` | Modified — Removed resolveSurprise, default → resolveFullBody |
+| `src/components/AnchorGrid.tsx` | Deleted — Dead component |
+| `src/pages/ComponentGallery.tsx` | Modified — Removed AnchorGrid section |
+| `supabase/functions/generate-workout/prompt.ts` | Rewritten — System prompt v4.0 |
+| `supabase/functions/generate-workout/index.ts` | Modified — New fields, warmup verification, v4.0.0 |
+| `supabase/functions/generate-section/index.ts` | Modified — New fields, swap prompt updates |
+| `scripts/test-generation.ts` | Modified — Component + variety validations |
+
+#### Status
+- Build: passing
+- TypeScript: clean
+- 1 squash commit merged to main via PR #59
+- Runtime error ("No QueryClient set") observed — may need investigation
+
+---
 
 ### Session: 2026-05-21 - Claude Code Hooks Infrastructure
 

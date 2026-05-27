@@ -167,6 +167,7 @@ Agents are specialized AI personas. Invoke via Task tool with matching `subagent
 
 | Skill | Trigger | What It Does |
 |-------|---------|--------------|
+| [`assembly-reference`](skills/assembly-reference.md) | Any UI work | Token lookup, spacing recipes, composition patterns, atmosphere rules |
 | [`component`](skills/component.md) | Creating/refactoring UI | Enforces design system, component structure |
 | [`chamfered-component`](skills/chamfered-component.md) | Building chamfered frame components | ChamferedFrame + LeftColumn pattern |
 | [`gallery-add`](skills/gallery-add.md) | After creating a component | Add visual test case to gallery |
@@ -334,8 +335,9 @@ debug.md → [fix] → token-check.md (if UI) → pr-workflow.md
 │   ├── component.md       ← UI components
 │   ├── chamfered-component.md
 │   ├── gallery-add.md
-│   ├── ui-rules.md            ← Spacing, typography, visual hierarchy, cards, states
-│   ├── token-decision-tree.md ← Which token to use for what
+│   ├── assembly-reference.md   ← START HERE: composition recipes, token cheat sheet, spacing
+│   ├── ui-rules.md            ← Full rules: spacing, typography, visual hierarchy, cards, states
+│   ├── token-decision-tree.md ← Edge cases: which token to use for what
 │   ├── anti-patterns.md       ← Common LLM mistakes to avoid
 │   ├── token-check.md
 │   ├── token-audit.md

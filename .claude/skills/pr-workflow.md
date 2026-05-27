@@ -124,6 +124,7 @@ Before creating a PR, verify:
 - [ ] **No hardcoded secrets** or API keys
 - [ ] **Changes are documented** if needed
 - [ ] **Commit messages are clear**
+- [ ] **Skill references intact** — if files were renamed/removed, `grep -r "filename" .claude/skills/ .claude/agents/` and update any stale references
 
 ---
 
@@ -202,8 +203,8 @@ gh pr merge --squash --delete-branch
 
 ## Related Skills
 
-- [code-reviewer agent](/.claude/agents/code-reviewer.md) — Automated code review
-- [close-session](/.claude/skills/close-session.md) — End of session workflow
+- [code-reviewer agent](.claude/agents/code-reviewer.md) — Automated code review
+- [close-session](.claude/skills/close-session.md) — End of session workflow
 
 ## Related Commands
 

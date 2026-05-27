@@ -36,7 +36,7 @@ Track completed work for project history and continuity between agents. This ens
      a. **Component registry**: Run `npm run registry-check` — verify `component.md` registry matches actual components in `src/components/`
      b. **Token lint**: Run `npm run token-lint` — catch any new violations introduced this session
      c. **Doc drift**: If new components were added, check they're listed in `component.md` registry. If new tokens were added, check `token-decision-tree.md` covers them.
-     d. **Taste feedback**: If the user gave aesthetic corrections during this session (spacing adjustments, atmosphere changes, visual weight feedback), append entries to `memory/feedback_aesthetic.md`. Then review the file:
+     d. **Taste feedback**: If the user gave aesthetic corrections during this session (spacing adjustments, atmosphere changes, visual weight feedback), append entries to the auto-memory file `feedback_aesthetic.md` (in the persistent memory directory). Then review the file:
         - **Graduate**: Any pattern with 3+ entries → refine the matching rule in `ui-rules.md` or `anti-patterns.md`, then remove from the feedback file
         - **Consolidate**: Merge similar entries
         - **Prune**: Remove one-offs older than ~5 sessions that haven't repeated
