@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { toast } from "@/components/ui/sonner";
 import { logger } from "@/lib/logger";
 import {
@@ -33,17 +33,28 @@ export const useWorkoutSession = ({
     const [isRepeat, setIsRepeat] = useState(false);
     const [repeatSavedWorkoutId, setRepeatSavedWorkoutId] = useState<string | null>(null);
 
+    // Deferred navigation: wait for workoutNotes state to commit before navigating
+    const finishCallback = useRef<(() => void) | null>(null);
+
+    useEffect(() => {
+        if (workoutNotes && finishCallback.current) {
+            const cb = finishCallback.current;
+            finishCallback.current = null;
+            cb();
+        }
+    }, [workoutNotes]);
+
     const handleStartWorkout = (onSuccess?: () => void) => {
         workoutStartTime.current = Date.now();
         if (onSuccess) onSuccess();
     };
 
-    const handleFinishWorkout = (notes: WorkoutNotes, onSuccess?: () => void) => {
+    const handleFinishWorkout = useCallback((notes: WorkoutNotes, onSuccess?: () => void) => {
         const elapsed = Math.floor((Date.now() - workoutStartTime.current) / 1000);
+        finishCallback.current = onSuccess || null;
         setTotalTime(elapsed);
         setWorkoutNotes(notes);
-        if (onSuccess) onSuccess();
-    };
+    }, []);
 
     const handleFinishSession = async (mood: number | null, sessionNotes: string, onSuccess?: () => void) => {
         // Calculate duration in minutes

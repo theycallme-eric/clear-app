@@ -11,6 +11,7 @@ export interface SetLog {
   weightUnit?: 'lbs' | 'kg';
   reps?: number;
   rpe?: number;
+  completed?: boolean;
 }
 
 // Aggregated set data for an exercise

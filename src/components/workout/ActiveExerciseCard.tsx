@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { ChevronDown, ChevronUp, X, Plus, Clock } from "@/components/icons";
+import { ChevronDown, ChevronUp, X, Plus, Clock, Check } from "@/components/icons";
 import { Exercise, ExerciseSetData, SetLog } from "@/types/workout";
 import { ChamferedFrame } from "../ChamferedFrame";
 import { Card } from "../Card";
@@ -257,6 +257,14 @@ export const ActiveExerciseCard = ({
         emitSetLog(updated);
     };
 
+    const handleToggleSetComplete = (index: number) => {
+        const updated = setLogs.map((s, i) =>
+            i === index ? { ...s, completed: !s.completed } : s
+        );
+        setSetLogs(updated);
+        emitSetLog(updated);
+    };
+
     // Legacy single-input handlers (non per-set exercises)
     const handleWeightChange = (v: string) => {
         setWeight(v);
@@ -464,10 +472,12 @@ export const ActiveExerciseCard = ({
                             {/* Column headers */}
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: hasWeight ? '32px minmax(0, 1fr) minmax(0, 1fr) 28px' : '32px minmax(0, 1fr) 28px',
+                                gridTemplateColumns: hasWeight ? '24px 28px 1fr 56px 24px' : '24px 28px 1fr 24px',
                                 gap: 'var(--spacing-200)',
                                 alignItems: 'center',
                             }}>
+                                {/* Spacer for checkbox column */}
+                                <span />
                                 <span
                                     className="text-label-xs"
                                     style={{ textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-disabled)' }}
@@ -488,6 +498,7 @@ export const ActiveExerciseCard = ({
                                 >
                                     Reps
                                 </span>
+                                {/* Spacer for remove button column */}
                                 <span />
                             </div>
 
@@ -497,11 +508,25 @@ export const ActiveExerciseCard = ({
                                     key={set.setNumber}
                                     style={{
                                         display: 'grid',
-                                        gridTemplateColumns: hasWeight ? '32px minmax(0, 1fr) minmax(0, 1fr) 28px' : '32px minmax(0, 1fr) 28px',
+                                        gridTemplateColumns: hasWeight ? '24px 28px 1fr 56px 24px' : '24px 28px 1fr 24px',
                                         gap: 'var(--spacing-200)',
                                         alignItems: 'center',
+                                        opacity: set.completed ? 0.5 : 1,
                                     }}
                                 >
+                                    <button
+                                        onClick={() => handleToggleSetComplete(index)}
+                                        style={{
+                                            width: 24,
+                                            height: 24,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            color: set.completed ? 'var(--icon-selected)' : 'var(--text-disabled)',
+                                        }}
+                                    >
+                                        <Check size={16} />
+                                    </button>
                                     <span
                                         className="text-label-xs"
                                         style={{ fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--text-disabled)' }}
@@ -527,8 +552,8 @@ export const ActiveExerciseCard = ({
                                     <button
                                         onClick={() => handleRemoveSet(index)}
                                         style={{
-                                            width: 28,
-                                            height: 28,
+                                            width: 24,
+                                            height: 24,
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
@@ -537,7 +562,7 @@ export const ActiveExerciseCard = ({
                                         }}
                                         disabled={setLogs.length <= 1}
                                     >
-                                        <X size={14} />
+                                        <X size={12} />
                                     </button>
                                 </div>
                             ))}
