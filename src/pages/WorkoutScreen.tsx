@@ -5,7 +5,9 @@ import { PageHeader } from "@/components/PageHeader";
 import { WorkoutLayout } from "@/layouts";
 import { SectionRenderer, StructureResultData } from "@/components/workout/SectionRenderer";
 import { ProgressTracker } from "@/components/workout/ProgressTracker";
+import { RestTimerBar } from "@/components/workout/RestTimerBar";
 import { useWorkoutFlowContext } from "@/contexts/WorkoutFlowContext";
+import { useRestTimer } from "@/hooks/useRestTimer";
 import type { ExerciseSetData } from "@/types/workout";
 
 type LoggedExerciseData = Record<string, { weight?: string; reps?: string; notes?: string }>;
@@ -17,6 +19,7 @@ export const WorkoutScreen = () => {
   const [loggedData, setLoggedData] = useState<LoggedExerciseData>({});
   const [setLogData, setSetLogData] = useState<Record<string, ExerciseSetData>>({});
   const [structureResults, setStructureResults] = useState<Record<string, StructureResultData>>({});
+  const { timer, startTimer, dismissTimer } = useRestTimer();
 
   const touchStartX = useRef<number | null>(null);
   const startTime = useRef(Date.now());
@@ -50,11 +53,13 @@ export const WorkoutScreen = () => {
 
   const handleBack = () => {
     if (currentSectionIndex > 0) {
+      dismissTimer();
       setCurrentSectionIndex((prev) => prev - 1);
     }
   };
 
   const handleNext = () => {
+    dismissTimer();
     if (isLastSection) {
       handleFinishWorkout({
         loggedData,
@@ -78,6 +83,10 @@ export const WorkoutScreen = () => {
   const handleSetLog = useCallback((id: string, data: ExerciseSetData) => {
     setSetLogData(prev => ({ ...prev, [id]: data }));
   }, []);
+
+  const handleRestStart = useCallback((restSeconds: number) => {
+    startTimer(restSeconds);
+  }, [startTimer]);
 
   const handleStructureResult = useCallback((sectionId: string, data: StructureResultData) => {
     setStructureResults(prev => ({ ...prev, [sectionId]: data }));
@@ -121,8 +130,17 @@ export const WorkoutScreen = () => {
         section={currentSection}
         onLog={handleLog}
         onSetLog={handleSetLog}
+        onRestStart={handleRestStart}
         onStructureResult={handleStructureResult}
       />
+
+      {timer.isActive && (
+        <RestTimerBar
+          remainingSeconds={timer.remainingSeconds}
+          totalSeconds={timer.totalSeconds}
+          onDismiss={dismissTimer}
+        />
+      )}
     </WorkoutLayout>
   );
 };

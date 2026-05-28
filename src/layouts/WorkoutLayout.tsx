@@ -12,13 +12,7 @@ export const WorkoutLayout = ({ header, footer, children, onTouchStart, onTouchE
   return (
     <div
       className="grain-overlay"
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        paddingBottom: '7rem',
-        position: 'relative',
-      }}
+      style={{ minHeight: '100vh' }}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
@@ -26,11 +20,12 @@ export const WorkoutLayout = ({ header, footer, children, onTouchStart, onTouchE
       <div style={{
         maxWidth: '28rem',
         margin: '0 auto',
-        width: '100%',
-        padding: '0 var(--spacing-400)',
         paddingTop: 'var(--spacing-1100)',
+        paddingBottom: footer ? 'var(--spacing-1300)' : 'var(--spacing-700)',
       }}>
-        {children}
+        <div style={{ padding: '0 var(--spacing-400)' }}>
+          {children}
+        </div>
       </div>
       {footer}
     </div>

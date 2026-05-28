@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import { ChevronDown, ChevronUp, X, Plus } from "@/components/icons";
+import { ChevronDown, ChevronUp, X, Plus, Clock, Check } from "@/components/icons";
 import { Exercise, ExerciseSetData, SetLog } from "@/types/workout";
+import { ChamferedFrame } from "../ChamferedFrame";
 import { Card } from "../Card";
 import { Input } from "../ui/input";
 import { ExerciseNotes } from "./ExerciseNotes";
@@ -10,6 +11,8 @@ interface ActiveExerciseCardProps {
     onLog: (id: string, data: { weight?: string; reps?: string; notes?: string }) => void;
     /** Called with per-set data for exercises that use set-by-set logging */
     onSetLog?: (id: string, data: ExerciseSetData) => void;
+    /** Called when user taps Rest button — triggers rest timer */
+    onRestStart?: (restSeconds: number) => void;
     /** Section type — hides weight/reps for warmup, cooldown, mobility */
     sectionType?: string;
     /** Render without Card wrapper (for use inside structure cards like Superset/Circuit) */
@@ -28,13 +31,20 @@ interface ActiveExerciseCardProps {
 }
 
 const HIDE_INPUTS_SECTIONS = ['warmup', 'cooldown', 'mobility'];
-const WEIGHTED_EQUIPMENT = ['barbell', 'dumbbell', 'dumbbells', 'kettlebell', 'cable', 'machine', 'ez bar', 'trap bar', 'smith machine', 'plate'];
+const WEIGHTED_EQUIPMENT = ['barbell', 'dumbbell', 'dumbbells', 'kettlebell', 'kettlebells', 'cable', 'cable machine', 'machine', 'ez bar', 'trap bar', 'smith machine', 'plate'];
 
 /** Check if a rest value is meaningful (non-zero, non-empty) */
 const hasRest = (rest?: string): boolean => {
     if (!rest) return false;
     const cleaned = rest.toLowerCase().replace(/\s/g, '');
     return cleaned !== '0s' && cleaned !== '0' && cleaned !== '';
+};
+
+/** Parse rest string to seconds */
+const parseRestSeconds = (rest?: string): number => {
+    if (!rest) return 0;
+    const num = parseInt(rest);
+    return isNaN(num) ? 0 : num;
 };
 
 /** Format sets×reps into compact prescription */
@@ -77,17 +87,45 @@ function summarizeSets(sets: SetLog[], hasWeight: boolean): string {
         })
         .filter(Boolean);
 
-    // If all entries are the same, compress to "135×8 ×4 sets" style
     if (parts.length > 1 && parts.every(p => p === parts[0])) {
         return `${parts[0]} (${parts.length} sets)`;
     }
     return parts.join(', ');
 }
 
+/** Reusable rest timer button with chamfered frame */
+export const RestButton = ({ restLabel, onStart }: { restLabel: string; onStart: () => void }) => (
+    <button onClick={onStart} style={{ width: '100%' }}>
+        <ChamferedFrame
+            cornerSize="sm"
+            surfaceColor="var(--surface-timer)"
+            borderColor="var(--border-timer)"
+        >
+            <div
+                className="text-cta-xs"
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 'var(--spacing-200)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    color: 'var(--text-timer)',
+                    padding: 'var(--spacing-200) var(--spacing-300)',
+                }}
+            >
+                <Clock size={14} />
+                Rest {restLabel}
+            </div>
+        </ChamferedFrame>
+    </button>
+);
+
 export const ActiveExerciseCard = ({
     exercise,
     onLog,
     onSetLog,
+    onRestStart,
     sectionType,
     bare = false,
     emomState,
@@ -105,30 +143,43 @@ export const ActiveExerciseCard = ({
     const hasStandardSets = exercise.sets != null && exercise.sets > 0;
     const isTimedStructure = ['emom', 'amrap', 'for_time'].includes(exercise.structure?.type || '');
     const isCircuit = exercise.structure?.type === 'circuit';
-    const showPerSetInputs = showInputs && isNumericReps && hasStandardSets && !isTimedStructure && !isCircuit && !!onSetLog;
+    const canLogSets = showInputs && isNumericReps && hasStandardSets && !isTimedStructure && !isCircuit && !!onSetLog;
 
     const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+    const [showPerSet, setShowPerSet] = useState(false);
     const [note, setNote] = useState(exercise.lastNotes || "");
 
-    // Per-set state (only used when showPerSetInputs)
+    // Rest timer
+    const restSeconds = parseRestSeconds(exercise.rest);
+    const showRestButton = hasRest(exercise.rest) && !!onRestStart;
+
+    // Per-set state
     const [setLogs, setSetLogs] = useState<SetLog[]>(() =>
-        showPerSetInputs ? buildInitialSets(exercise, hasWeight) : []
+        canLogSets ? buildInitialSets(exercise, hasWeight) : []
     );
 
-    // Single-input state (legacy, used when !showPerSetInputs)
+    // Unified single-line state: applies to all sets when not in per-set mode
+    const firstSet = setLogs[0];
+    const [uniformWeight, setUniformWeight] = useState(
+        firstSet?.weight != null ? String(firstSet.weight) : (exercise.weight_logged || exercise.lastWeight || "")
+    );
+    const [uniformReps, setUniformReps] = useState(
+        firstSet?.reps != null ? String(firstSet.reps) : (exercise.reps || "")
+    );
+
+    // Single-input state (legacy — for non per-set exercises like bodyweight)
     const [weight, setWeight] = useState(exercise.weight_logged || exercise.lastWeight || "");
     const [reps, setReps] = useState(exercise.reps || "");
 
     // Emit per-set data on mount if we have pre-fill data
     useEffect(() => {
-        if (showPerSetInputs && setLogs.length > 0) {
+        if (canLogSets && setLogs.length > 0) {
             const summary = summarizeSets(setLogs, hasWeight);
             onSetLog(exercise.id, { sets: setLogs, notes: note || undefined });
             if (summary) {
                 onLog(exercise.id, { weight: summary });
             }
         } else {
-            // Legacy pre-fill
             const prefilled: { weight?: string; notes?: string } = {};
             if (exercise.lastWeight) prefilled.weight = exercise.lastWeight;
             if (exercise.lastNotes) prefilled.notes = exercise.lastNotes;
@@ -142,13 +193,30 @@ export const ActiveExerciseCard = ({
     const emitSetLog = useCallback((updatedSets: SetLog[], updatedNote?: string) => {
         if (!onSetLog) return;
         onSetLog(exercise.id, { sets: updatedSets, notes: updatedNote || note || undefined });
-        // Also write summary to legacy loggedData for backward compat
         const summary = summarizeSets(updatedSets, hasWeight);
         if (summary) {
             onLog(exercise.id, { weight: summary });
         }
     }, [exercise.id, hasWeight, note, onLog, onSetLog]);
 
+    // Uniform weight/reps: update ALL sets at once
+    const handleUniformWeightChange = (v: string) => {
+        setUniformWeight(v);
+        const numVal = v === '' ? undefined : parseFloat(v);
+        const updated = setLogs.map(s => ({ ...s, weight: isNaN(numVal as number) ? undefined : numVal }));
+        setSetLogs(updated);
+        emitSetLog(updated);
+    };
+
+    const handleUniformRepsChange = (v: string) => {
+        setUniformReps(v);
+        const numVal = v === '' ? undefined : parseInt(v);
+        const updated = setLogs.map(s => ({ ...s, reps: isNaN(numVal as number) ? undefined : numVal }));
+        setSetLogs(updated);
+        emitSetLog(updated);
+    };
+
+    // Per-set individual handlers
     const handleSetWeightChange = (index: number, value: string) => {
         const numVal = value === '' ? undefined : parseFloat(value);
         const updated = setLogs.map((s, i) =>
@@ -189,7 +257,15 @@ export const ActiveExerciseCard = ({
         emitSetLog(updated);
     };
 
-    // Legacy single-input handlers
+    const handleToggleSetComplete = (index: number) => {
+        const updated = setLogs.map((s, i) =>
+            i === index ? { ...s, completed: !s.completed } : s
+        );
+        setSetLogs(updated);
+        emitSetLog(updated);
+    };
+
+    // Legacy single-input handlers (non per-set exercises)
     const handleWeightChange = (v: string) => {
         setWeight(v);
         onLog(exercise.id, { weight: v });
@@ -202,7 +278,7 @@ export const ActiveExerciseCard = ({
 
     const handleNoteSave = (v: string) => {
         setNote(v);
-        if (showPerSetInputs) {
+        if (canLogSets) {
             emitSetLog(setLogs, v);
         }
         onLog(exercise.id, { notes: v });
@@ -294,15 +370,11 @@ export const ActiveExerciseCard = ({
                     flexDirection: 'column',
                     gap: 'var(--spacing-300)',
                 }}>
-                    {/* Tempo & Rest details */}
-                    {(exercise.tempo || hasRest(exercise.rest)) && (
-                        <div
-                            className="text-paragraph-sm"
-                            style={{ display: 'flex', flexWrap: 'wrap', columnGap: 'var(--spacing-300)', rowGap: 'var(--spacing-100)', color: 'var(--text-paragraph)' }}
-                        >
-                            {exercise.tempo && <span>Tempo: {exercise.tempo}</span>}
-                            {hasRest(exercise.rest) && <span>Rest: {exercise.rest}</span>}
-                        </div>
+                    {/* Tempo */}
+                    {exercise.tempo && (
+                        <p className="text-paragraph-sm" style={{ color: 'var(--text-paragraph)' }}>
+                            Tempo: {exercise.tempo}
+                        </p>
                     )}
 
                     {/* Coaching Cues */}
@@ -321,7 +393,7 @@ export const ActiveExerciseCard = ({
                     {(exercise.regression || exercise.progression) && (
                         <div
                             className="text-paragraph-sm"
-                            style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-100)', paddingTop: 'var(--spacing-200)', color: 'var(--text-paragraph)' }}
+                            style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-100)', color: 'var(--text-paragraph)' }}
                         >
                             {exercise.regression && (
                                 <p><span style={{ color: 'var(--text-disabled)' }}>Easier:</span> {exercise.regression}</p>
@@ -332,19 +404,83 @@ export const ActiveExerciseCard = ({
                         </div>
                     )}
 
-                    {/* Per-Set Inputs */}
-                    {showPerSetInputs && (
+                    {/* ---- Logging inputs ---- */}
+                    {canLogSets && !showPerSet && (
+                        <>
+                            {/* Single-line uniform inputs */}
+                            <div style={{ display: 'grid', gridTemplateColumns: hasWeight ? 'minmax(0, 1fr) minmax(0, 1fr)' : 'minmax(0, 1fr)', gap: 'var(--spacing-300)' }}>
+                                {hasWeight && (
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
+                                        <label
+                                            className="text-label-xs"
+                                            style={{ textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-disabled)' }}
+                                        >
+                                            Weight
+                                        </label>
+                                        <Input
+                                            type="number"
+                                            inputMode="decimal"
+                                            value={uniformWeight}
+                                            onChange={(e) => handleUniformWeightChange(e.target.value)}
+                                            placeholder="lbs"
+                                        />
+                                    </div>
+                                )}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
+                                    <label
+                                        className="text-label-xs"
+                                        style={{ textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-disabled)' }}
+                                    >
+                                        Reps
+                                    </label>
+                                    <Input
+                                        type="number"
+                                        inputMode="numeric"
+                                        value={uniformReps}
+                                        onChange={(e) => handleUniformRepsChange(e.target.value)}
+                                        placeholder={exercise.reps}
+                                    />
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <span
+                                    className="text-paragraph-sm"
+                                    style={{ color: 'var(--text-disabled)' }}
+                                >
+                                    {setLogs.length} sets &bull; same weight
+                                </span>
+                                <button
+                                    onClick={() => setShowPerSet(true)}
+                                    className="text-cta-xs"
+                                    style={{
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.05em',
+                                        color: 'var(--text-cta)',
+                                        textDecoration: 'underline',
+                                        textUnderlineOffset: '3px',
+                                    }}
+                                >
+                                    Vary Sets
+                                </button>
+                            </div>
+                        </>
+                    )}
+
+                    {/* Per-Set Inputs (expanded) */}
+                    {canLogSets && showPerSet && (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
                             {/* Column headers */}
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: hasWeight ? 'auto 1fr 1fr auto' : 'auto 1fr auto',
+                                gridTemplateColumns: hasWeight ? '24px 28px 1fr 56px 24px' : '24px 28px 1fr 24px',
                                 gap: 'var(--spacing-200)',
                                 alignItems: 'center',
                             }}>
+                                {/* Spacer for checkbox column */}
+                                <span />
                                 <span
                                     className="text-label-xs"
-                                    style={{ textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-disabled)', minWidth: 40 }}
+                                    style={{ textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-disabled)' }}
                                 >
                                     Set
                                 </span>
@@ -363,7 +499,7 @@ export const ActiveExerciseCard = ({
                                     Reps
                                 </span>
                                 {/* Spacer for remove button column */}
-                                <span style={{ width: 28 }} />
+                                <span />
                             </div>
 
                             {/* Set rows */}
@@ -372,14 +508,28 @@ export const ActiveExerciseCard = ({
                                     key={set.setNumber}
                                     style={{
                                         display: 'grid',
-                                        gridTemplateColumns: hasWeight ? 'auto 1fr 1fr auto' : 'auto 1fr auto',
+                                        gridTemplateColumns: hasWeight ? '24px 28px 1fr 56px 24px' : '24px 28px 1fr 24px',
                                         gap: 'var(--spacing-200)',
                                         alignItems: 'center',
+                                        opacity: set.completed ? 0.5 : 1,
                                     }}
                                 >
+                                    <button
+                                        onClick={() => handleToggleSetComplete(index)}
+                                        style={{
+                                            width: 24,
+                                            height: 24,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            color: set.completed ? 'var(--icon-selected)' : 'var(--text-disabled)',
+                                        }}
+                                    >
+                                        <Check size={16} />
+                                    </button>
                                     <span
                                         className="text-label-xs"
-                                        style={{ fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--text-disabled)', minWidth: 40 }}
+                                        style={{ fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--text-disabled)' }}
                                     >
                                         {set.setNumber}
                                     </span>
@@ -402,8 +552,8 @@ export const ActiveExerciseCard = ({
                                     <button
                                         onClick={() => handleRemoveSet(index)}
                                         style={{
-                                            width: 28,
-                                            height: 28,
+                                            width: 24,
+                                            height: 24,
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
@@ -412,34 +562,48 @@ export const ActiveExerciseCard = ({
                                         }}
                                         disabled={setLogs.length <= 1}
                                     >
-                                        <X size={14} />
+                                        <X size={12} />
                                     </button>
                                 </div>
                             ))}
 
-                            {/* Add set button */}
-                            <button
-                                onClick={handleAddSet}
-                                className="text-cta-xs"
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 'var(--spacing-100)',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '0.05em',
-                                    color: 'var(--text-cta)',
-                                    paddingTop: 'var(--spacing-100)',
-                                }}
-                            >
-                                <Plus size={14} />
-                                Add Set
-                            </button>
+                            {/* Add set + collapse row */}
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <button
+                                    onClick={handleAddSet}
+                                    className="text-cta-xs"
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 'var(--spacing-100)',
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.05em',
+                                        color: 'var(--text-cta)',
+                                        paddingTop: 'var(--spacing-100)',
+                                    }}
+                                >
+                                    <Plus size={14} />
+                                    Add Set
+                                </button>
+                                <button
+                                    onClick={() => setShowPerSet(false)}
+                                    className="text-cta-xs"
+                                    style={{
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.05em',
+                                        color: 'var(--text-disabled)',
+                                        paddingTop: 'var(--spacing-100)',
+                                    }}
+                                >
+                                    Collapse
+                                </button>
+                            </div>
                         </div>
                     )}
 
                     {/* Legacy single Weight / Reps Inputs (non per-set exercises) */}
-                    {showInputs && !showPerSetInputs && (
-                        <div style={hasWeight ? { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-300)' } : undefined}>
+                    {showInputs && !canLogSets && (
+                        <div style={hasWeight ? { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: 'var(--spacing-300)' } : undefined}>
                             {hasWeight && (
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-200)' }}>
                                     <label
@@ -469,6 +633,11 @@ export const ActiveExerciseCard = ({
                                 />
                             </div>
                         </div>
+                    )}
+
+                    {/* Rest Timer Button */}
+                    {showRestButton && (
+                        <RestButton restLabel={exercise.rest!} onStart={() => onRestStart!(restSeconds)} />
                     )}
 
                     {/* Notes */}

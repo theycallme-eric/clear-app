@@ -22,6 +22,8 @@ interface SectionRendererProps {
     onLog: (id: string, data: { weight?: string; reps?: string; notes?: string }) => void;
     /** Called with per-set data for exercises that use set-by-set logging */
     onSetLog?: (id: string, data: ExerciseSetData) => void;
+    /** Called when user taps Rest button — triggers rest timer */
+    onRestStart?: (restSeconds: number) => void;
     /** Called when a timed section completes with structure-level result data */
     onStructureResult?: (sectionId: string, data: StructureResultData) => void;
 }
@@ -84,6 +86,7 @@ export const SectionRenderer = ({
     section,
     onLog,
     onSetLog,
+    onRestStart,
     onStructureResult,
 }: SectionRendererProps) => {
 
@@ -131,6 +134,7 @@ export const SectionRenderer = ({
                                 exercise={exercise}
                                 onLog={onLog}
                                 onSetLog={onSetLog}
+                                onRestStart={onRestStart}
                                 sectionType={section.type}
                                 bare
                             />
@@ -172,6 +176,7 @@ export const SectionRenderer = ({
                                     exercises={group.exercises}
                                     onLog={onLog}
                                     onSetLog={onSetLog}
+                                    onRestStart={onRestStart}
                                     sectionType={section.type}
                                     structure={group.structure}
                                 />
@@ -182,6 +187,8 @@ export const SectionRenderer = ({
                                     key={`group-${idx}`}
                                     exercises={group.exercises}
                                     onLog={onLog}
+                                    onSetLog={onSetLog}
+                                    onRestStart={onRestStart}
                                     sectionType={section.type}
                                     structure={group.structure}
                                 />

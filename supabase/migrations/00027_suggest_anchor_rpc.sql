@@ -15,7 +15,7 @@ BEGIN
     SELECT ws.id AS session_id, ws.date
     FROM workout_sessions ws
     WHERE ws.user_id = p_user_id
-      AND ws.status = 'completed'
+      AND ws.completed_at IS NOT NULL
       AND ws.date >= (CURRENT_DATE - INTERVAL '7 days')
   ),
   exercise_muscles AS (
@@ -26,7 +26,7 @@ BEGIN
     FROM recent_sessions rs
     JOIN workout_sections wsec ON wsec.session_id = rs.session_id
     JOIN exercises ex ON ex.section_id = wsec.id
-    JOIN exercise_muscle_groups emg ON emg.exercise_id = ex.id
+    JOIN exercise_muscle_groups emg ON emg.exercise_id = ex.exercise_id
   ),
   region_mapping AS (
     SELECT

@@ -58,6 +58,10 @@ import { ErrorState } from "@/components/ErrorState";
 import { EmptyState } from "@/components/EmptyState";
 import { ActionButton } from "@/components/ActionButton";
 import { ActionCard } from "@/components/ActionCard";
+
+// Workout components
+import { ActiveExerciseCard } from "@/components/workout/ActiveExerciseCard";
+import { RestTimerBar } from "@/components/workout/RestTimerBar";
 import { Card as ChamferedCard } from "@/components/Card";
 import { CTAButton } from "@/components/CTAButton";
 import { RadioButton } from "@/components/RadioButton";
@@ -97,6 +101,8 @@ export const ComponentGallery = () => {
   const [panelTab, setPanelTab] = useState<'one' | 'two'>('one');
   const [filterAnchor, setFilterAnchor] = useState<'ALL' | 'squat' | 'hinge'>('ALL');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [restTimerRemaining, setRestTimerRemaining] = useState(45);
+  const [restTimerActive, setRestTimerActive] = useState(false);
 
   const sampleFilterOptions: FilterOption<'ALL' | 'squat' | 'hinge'>[] = [
     { value: 'ALL', label: 'All Anchors' },
@@ -870,6 +876,71 @@ export const ComponentGallery = () => {
                 <ActionCard cornerSize="lg">
                   Large Chamfer
                 </ActionCard>
+              </Subsection>
+            </div>
+          </Section>
+
+          {/* ─── WORKOUT COMPONENTS ─── */}
+          <Section title="Workout — ActiveExerciseCard (Per-Set)">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
+              <Subsection label="Weighted exercise (barbell) — per-set mode">
+                <ActiveExerciseCard
+                  exercise={{
+                    id: 'demo-back-squat',
+                    name: 'Back Squat',
+                    sets: 4,
+                    reps: '6',
+                    effort: '75%',
+                    rest: '120s',
+                    equipment: 'barbell',
+                    coachingCues: ['Brace hard before descent', 'Drive knees out over toes'],
+                    regression: 'Goblet Squat',
+                    lastWeight: '185',
+                    lastSetData: [
+                      { setNumber: 1, weight: 185, reps: 6 },
+                      { setNumber: 2, weight: 185, reps: 6 },
+                      { setNumber: 3, weight: 185, reps: 5 },
+                      { setNumber: 4, weight: 175, reps: 6 },
+                    ],
+                  }}
+                  onLog={() => {}}
+                  onSetLog={() => {}}
+                  onRestStart={(s) => { setRestTimerRemaining(s); setRestTimerActive(true); }}
+                  sectionType="primary_lift"
+                  defaultExpanded
+                />
+              </Subsection>
+              <Subsection label="Bodyweight exercise (no weight column)">
+                <ActiveExerciseCard
+                  exercise={{
+                    id: 'demo-pull-ups',
+                    name: 'Pull-Ups',
+                    sets: 3,
+                    reps: '8',
+                    rest: '90s',
+                    equipment: 'bodyweight',
+                    coachingCues: ['Full dead hang at bottom', 'Chin over bar'],
+                  }}
+                  onLog={() => {}}
+                  onSetLog={() => {}}
+                  onRestStart={(s) => { setRestTimerRemaining(s); setRestTimerActive(true); }}
+                  sectionType="accessory"
+                  defaultExpanded
+                />
+              </Subsection>
+            </div>
+          </Section>
+
+          <Section title="Workout — RestTimerBar">
+            <p className="text-paragraph-sm" style={{ color: 'var(--text-disabled)', marginBottom: 'var(--spacing-300)' }}>
+              In-app this is fixed to the bottom. Tap a Rest button on the cards above to trigger the live timer.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
+              <Subsection label="Normal state (45s remaining)">
+                <RestTimerBar remainingSeconds={45} totalSeconds={90} onDismiss={() => {}} inline />
+              </Subsection>
+              <Subsection label="Low time state (≤5s)">
+                <RestTimerBar remainingSeconds={3} totalSeconds={90} onDismiss={() => {}} inline />
               </Subsection>
             </div>
           </Section>

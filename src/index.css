@@ -413,7 +413,7 @@ ul, ol {
     --text-cta: var(--color-blue-100);
     --text-cta-hover: var(--color-blue-500);
     --text-on-cta: var(--color-orange-100);
-    --text-timer: var(--color-green-400);
+    --text-timer: var(--color-green-900);
     --text-timer-low: var(--color-red-900);
     --text-label-info: var(--color-blue-100);
     --text-label-selected: var(--color-green-500);
