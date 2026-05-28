@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-05-28 (28th session)
+**Last Session:** 2026-05-28 (29th session)
 
 ---
 
@@ -14,13 +14,39 @@ Living document to capture progress, decisions, and learnings across sessions. T
 
 ## Quick Status
 **Current Phase:** Workout screen + generation perf
-**Current Task:** PR ready for review
-**Last Completed:** Workout screen improvements + anchor-aware generation filtering
+**Current Task:** Branch merged, tickets updated
+**Last Completed:** Rest timer audit, #35 closed, #71 created (haptic feedback system)
 **Blocking Issues:** None
 
 ---
 
 ## Session Entries
+
+### Session: 2026-05-28 - Rest Timer Audit & Ticket Housekeeping
+
+**Duration:** ~15 min
+**Mode:** Claude Code
+**Branch:** `feature/workout-screen-and-generation-perf` (merged)
+
+#### What Got Done
+- **Audited #35 (Rest Timer) against acceptance criteria** — 11-point checklist, all requirements met or intentionally scoped out
+- **Closed #35** with completion summary covering all implemented features
+- **Created #71 (Haptic Feedback System)** — foundational haptic vocabulary ticket rather than one-off vibration call. `P3:low`, `status:needs-detail`, added to project board
+- **Added mobile-first rule** to project memory
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Manual RestButton over auto-start | User control preferred; auto-start after set log not needed |
+| No time adjustment on timer | Timer reflects prescribed rest; user dismisses early if needed |
+| Haptics as foundational ticket, not one-off | Prevents inconsistent patterns; establishes vocabulary for whole app |
+
+#### Status
+- No code changes this session — ticket management only
+- Branch already merged via PR #70
+- #35 closed, #71 created
+
+---
 
 ### Session: 2026-05-28 - Workout Screen & Generation Performance
 
