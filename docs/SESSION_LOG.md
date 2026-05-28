@@ -1,7 +1,7 @@
 # Session Log
 **Project:** [Name]  
 **Started:** [Date]  
-**Last Session:** 2026-05-26 (27th session)
+**Last Session:** 2026-05-28 (28th session)
 
 ---
 
@@ -13,14 +13,80 @@ Living document to capture progress, decisions, and learnings across sessions. T
 ---
 
 ## Quick Status
-**Current Phase:** UI polish + discovery
-**Current Task:** None
-**Last Completed:** UI polish batch + Strava comparative analysis tickets
+**Current Phase:** Workout screen + generation perf
+**Current Task:** PR ready for review
+**Last Completed:** Workout screen improvements + anchor-aware generation filtering
 **Blocking Issues:** None
 
 ---
 
 ## Session Entries
+
+### Session: 2026-05-28 - Workout Screen & Generation Performance
+
+**Duration:** ~2 hrs
+**Mode:** Claude Code
+**Branch:** `feature/workout-screen-and-generation-perf`
+
+#### What Got Done
+- **Anchor-aware exercise filtering** for workout generation:
+  - Pre-filters exercise library by day's anchor before building LLM prompt
+  - Keeps direct anchor matches, contrasting anchors (for balanced programming), and role-exempt exercises (activation, mobility, conditioning, stability, cardio)
+  - Safety net: falls back to full list if filtered count drops below 20
+  - Logs before/after counts for monitoring
+- **Rest timer** (new component + hook):
+  - `RestTimerBar` — fixed-bottom bar with ChamferedFrame, progress bar, countdown, dismiss
+  - `useRestTimer` — hook with Web Audio API completion sound, auto-dismiss after 2s
+  - Wired through all renderers (SectionRenderer → SupersetRenderer/CircuitRenderer → StructureCards)
+  - Static text "Rest: 90s" replaced with interactive RestButton in supersets/circuits
+- **Per-set completion toggle:**
+  - Added checkbox per set row in ActiveExerciseCard (per-set mode)
+  - `SetLog.completed` field added to type
+  - Completed sets dim to 50% opacity
+- **ActiveExerciseCard grid tightened** for mobile (28→24px touch targets, fixed column widths)
+- **WorkoutLayout simplified** — removed flex column, added footer-aware bottom padding
+- **useWorkoutSession race fix** — deferred navigation waits for workoutNotes state to commit via useEffect
+- **Migration bug fixes** (00027, 00030): suggest_anchor RPC used wrong column (`status` → `completed_at`) and wrong join (`ex.id` → `ex.exercise_id`)
+- **Timer color fix:** `--text-timer` changed from green-400 to green-900 (dark on green, matching selected chip style)
+- **Gallery examples** added for ActiveExerciseCard (weighted + bodyweight) and RestTimerBar (normal + low time)
+- **Created ticket #69** — expand power exercise library (P3, future work)
+- **Memory updated** — added mobile-first responsive rule
+
+#### Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Filter by anchor, not send everything | Smaller prompt → faster generation → better exercise selection (less noise) |
+| Contrasting anchors included (squat↔pull, hinge↔press, etc.) | Prompt's thematic framework requires ~5-15% contrasting exercises for balanced programming |
+| Safety net threshold of 20 exercises | Prevents model starvation on unusual anchor + limited equipment combos |
+| Power gets no contrasting filter | Full-body by nature; self-contained. Noted for future expansion (ticket #69) |
+| Dark text on green timer (green-900) | Matches selected chip pattern — high contrast, consistent with design system |
+
+#### Files Changed
+| File | Action |
+|------|--------|
+| `supabase/functions/generate-workout/index.ts` | Modified — anchor-aware filtering + contrasting anchor map |
+| `src/components/workout/RestTimerBar.tsx` | Created — rest countdown bar with ChamferedFrame |
+| `src/hooks/useRestTimer.ts` | Created — timer hook with audio feedback |
+| `src/components/workout/ActiveExerciseCard.tsx` | Modified — per-set completion, tighter grid, rest button |
+| `src/components/workout/StructureCards.tsx` | Modified — rest buttons in superset/circuit cards |
+| `src/components/workout/SectionRenderer.tsx` | Modified — onRestStart prop threading |
+| `src/components/workout/CircuitRenderer.tsx` | Modified — onRestStart/onSetLog prop threading |
+| `src/components/workout/SupersetRenderer.tsx` | Modified — onRestStart prop threading |
+| `src/hooks/useWorkoutSession.ts` | Modified — deferred navigation race fix |
+| `src/layouts/WorkoutLayout.tsx` | Modified — simplified layout, footer padding |
+| `src/pages/WorkoutScreen.tsx` | Modified — rest timer integration |
+| `src/types/workout.ts` | Modified — SetLog.completed field |
+| `src/index.css` | Modified — --text-timer token updated |
+| `src/pages/ComponentGallery.tsx` | Modified — workout component gallery examples |
+| `supabase/migrations/00027_suggest_anchor_rpc.sql` | Modified — bug fix |
+| `supabase/migrations/00030_workout_anatomy_schema.sql` | Modified — bug fix |
+
+#### Status
+- Build passes, types pass, working tree clean
+- 4 commits, 16 files changed, +638/-93 lines
+- Ready for PR
+
+---
 
 ### Session: 2026-05-26 - UI Polish + Strava Comparative Analysis
 
