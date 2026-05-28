@@ -94,6 +94,67 @@ interface RecentWorkout {
 // System prompt imported from ./prompt.ts
 
 // ============================================
+// ANCHOR-AWARE EXERCISE FILTERING
+// ============================================
+
+// For balanced programming, include exercises from the contrasting anchor
+const CONTRASTING_ANCHORS: Record<string, string[]> = {
+  squat: ['pull'],   // lower push ↔ upper pull
+  hinge: ['press'],  // posterior ↔ anterior press
+  press: ['pull'],   // push ↔ pull
+  pull: ['press'],   // pull ↔ push
+  power: [],         // full-body — self-contained
+};
+
+// Roles that pass regardless of anchor (warmup/cooldown/conditioning universals)
+const ANCHOR_EXEMPT_ROLES = new Set([
+  'activation', 'mobility', 'conditioning', 'stability', 'cardio',
+]);
+
+// If anchor filtering produces fewer than this many exercises, skip it
+const ANCHOR_FILTER_MIN_THRESHOLD = 20;
+
+/**
+ * Filter exercises to only those relevant to the day's anchor + thematic needs.
+ * Reduces prompt size without losing workout quality.
+ *
+ * An exercise passes if ANY of:
+ *   (a) Its anchors array contains the day's anchor
+ *   (b) Its exercise_role is anchor-exempt (conditioning, mobility, etc.)
+ *   (c) Its anchors array contains a contrasting anchor for the day
+ */
+function filterByAnchor(
+  exercises: ExerciseDefinition[],
+  dayAnchor: string
+): ExerciseDefinition[] {
+  const contrastingAnchors = CONTRASTING_ANCHORS[dayAnchor] || [];
+
+  const filtered = exercises.filter((ex) => {
+    const exAnchors = ex.anchors || [];
+
+    // (a) Direct anchor match
+    if (exAnchors.includes(dayAnchor)) return true;
+
+    // (b) Role-exempt (warmup/cooldown/conditioning universals)
+    if (ex.exercise_role && ANCHOR_EXEMPT_ROLES.has(ex.exercise_role)) return true;
+
+    // (c) Contrasting anchor for balanced programming
+    if (contrastingAnchors.some((ca) => exAnchors.includes(ca))) return true;
+
+    return false;
+  });
+
+  // Safety net: if filtered list is too small, skip anchor filtering
+  if (filtered.length < ANCHOR_FILTER_MIN_THRESHOLD) {
+    console.log(`[Anchor Filter] Skipped: ${filtered.length} exercises below threshold (${ANCHOR_FILTER_MIN_THRESHOLD}). Using full list (${exercises.length}).`);
+    return exercises;
+  }
+
+  console.log(`[Anchor Filter] anchor=${dayAnchor}: ${exercises.length} → ${filtered.length} exercises`);
+  return filtered;
+}
+
+// ============================================
 // HELPER FUNCTIONS
 // ============================================
 
@@ -563,7 +624,7 @@ serve(async (req: Request) => {
 
     // Filter exercises: must have at least one equipment option available AND
     // at least one section that matches the user's enabled sections
-    const availableExercises = (exerciseDefinitions || []).filter((ex: any) => {
+    const equipmentFiltered = (exerciseDefinitions || []).filter((ex: any) => {
       const hasEquipment = (ex.equipment_options || []).some((eq: string) =>
         availableEquipment.has(eq)
       );
@@ -572,6 +633,12 @@ serve(async (req: Request) => {
       );
       return hasEquipment && hasSection;
     });
+
+    // Anchor-aware filtering: keep only exercises relevant to today's focus
+    const availableExercises = filterByAnchor(
+      equipmentFiltered as ExerciseDefinition[],
+      request.anchor
+    );
 
     const exerciseLibrary = new Set((exerciseDefinitions || []).map((e: any) => e.id));
 
