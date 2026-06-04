@@ -10,7 +10,7 @@ export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextArea
 }
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, disabled, iconRight, ...props }, ref) => {
+  ({ className, disabled, iconRight, style, ...props }, ref) => {
     const [isFocused, setIsFocused] = useState(false);
 
     const surfaceColor = disabled
@@ -53,12 +53,13 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
               flex: 1,
               width: "100%",
               background: "transparent",
-              padding: "var(--spacing-200) var(--spacing-300)",
+              padding: "var(--spacing-400) var(--spacing-500)",
               resize: "none",
               color: disabled ? "var(--text-input-disabled)" : "var(--text-input)",
               outline: "none",
               border: "none",
               ...(iconRight ? { paddingRight: "var(--spacing-800)" } : {}),
+              ...style,
             }}
             ref={ref}
             {...props}

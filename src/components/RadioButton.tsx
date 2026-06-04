@@ -90,7 +90,7 @@ export function RadioButton({
             display: 'flex',
             padding: '0 var(--spacing-300)',
             ...(hasDescription
-              ? { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 'var(--spacing-200)', paddingBottom: 'var(--spacing-200)' }
+              ? { flexDirection: 'row', justifyContent: onEdit ? 'space-between' : 'flex-start', alignItems: 'center', paddingTop: 'var(--spacing-200)', paddingBottom: 'var(--spacing-200)' }
               : { alignItems: 'center', justifyContent: 'center' }),
           }}
         >
@@ -106,7 +106,7 @@ export function RadioButton({
             {description && (
               <span
                 className="text-paragraph-sm"
-                style={{ color: textColor, opacity: 0.8 }}
+                style={{ color: textColor, opacity: 0.8, textAlign: 'left' }}
               >
                 {description}
               </span>

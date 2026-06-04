@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
@@ -35,7 +35,7 @@ const DEFAULT_SECTIONS: SectionType[] = SECTIONS_BY_GOAL.balanced;
 
 export const OnboardingScreen = () => {
   const navigate = useNavigate();
-  const { handleOnboardingComplete } = useOnboardingFlow(() => navigate("/"));
+  const { handleOnboardingComplete, isSubmitting } = useOnboardingFlow(() => navigate("/"));
   const [step, setStep] = useState<OnboardingStep>(1);
 
   // Step 1: Goal
@@ -45,6 +45,23 @@ export const OnboardingScreen = () => {
   const [selectedTier, setSelectedTier] = useState<EquipmentTier | null>(null);
   const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
   const [equipmentAccordionOpen, setEquipmentAccordionOpen] = useState(false);
+  const equipmentAccordionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (equipmentAccordionOpen && equipmentAccordionRef.current) {
+      // Delay to let content render, then scroll with margin for fixed footer
+      setTimeout(() => {
+        const el = equipmentAccordionRef.current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const footerHeight = 120;
+        const targetBottom = rect.bottom + footerHeight;
+        if (targetBottom > window.innerHeight) {
+          window.scrollBy({ top: targetBottom - window.innerHeight, behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  }, [equipmentAccordionOpen]);
 
   // Step 3: Sections
   const [sections, setSections] = useState<SectionType[]>([...DEFAULT_SECTIONS]);
@@ -145,30 +162,35 @@ export const OnboardingScreen = () => {
       <div style={{ maxWidth: '28rem', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-300)' }}>
         {step === 4 ? (
           <div style={{ display: 'flex', gap: 'var(--spacing-300)' }}>
-            <CTAButton
-              onClick={handleNext}
-              variant="secondary"
-              size="sm"
-              style={{ flex: 1 }}
-            >
-              Skip for Now
-            </CTAButton>
-            <CTAButton
-              onClick={handleNext}
-              disabled={!canProceed()}
-              size="sm"
-              style={{ flex: 1 }}
-            >
-              Next
-            </CTAButton>
+            <div style={{ flex: 1 }}>
+              <CTAButton
+                onClick={handleNext}
+                variant="secondary"
+                size="lg"
+                fullWidth
+              >
+                Skip for Now
+              </CTAButton>
+            </div>
+            <div style={{ flex: 1 }}>
+              <CTAButton
+                onClick={handleNext}
+                disabled={!canProceed()}
+                size="lg"
+                fullWidth
+              >
+                Next
+              </CTAButton>
+            </div>
           </div>
         ) : step === 5 ? (
           <CTAButton
             onClick={handleComplete}
+            disabled={isSubmitting}
             size="lg"
             fullWidth
           >
-            Complete
+            {isSubmitting ? "Completing..." : "Complete"}
           </CTAButton>
         ) : (
           <CTAButton
@@ -276,6 +298,7 @@ export const OnboardingScreen = () => {
 
               {/* Equipment Accordion */}
               {selectedTier && (
+                <div ref={equipmentAccordionRef}>
                 <Card cornerSize="md" padding="none">
                   <button
                     onClick={() => setEquipmentAccordionOpen(!equipmentAccordionOpen)}
@@ -314,6 +337,7 @@ export const OnboardingScreen = () => {
                     </div>
                   )}
                 </Card>
+                </div>
               )}
 
               <p className="text-paragraph-sm" style={{ textAlign: 'center', color: 'var(--text-paragraph)' }}>
@@ -438,10 +462,10 @@ export const OnboardingScreen = () => {
 
           {/* Step 5: Confirmation */}
           {step === 5 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-600)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-300)' }}>
               <h2
                 className="text-heading-h2"
-                style={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-header)' }}
+                style={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-header)', marginBottom: 'var(--spacing-200)' }}
               >
                 Here's Your Setup
               </h2>

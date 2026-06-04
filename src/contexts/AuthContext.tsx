@@ -2,7 +2,6 @@ import { createContext, useContext, useEffect, useRef, useState, useCallback, Re
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
-import { clearStayLoggedIn } from '@/lib/auth-storage';
 import { UserLocation, SectionType, ExperienceLevel, GoalPreset, EquipmentTier } from '@/types/workout';
 import type { Database } from '@/types/database';
 import { SECTION_TO_DB, DB_TO_SECTION } from '@/lib/section-mapping';
@@ -399,7 +398,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = useCallback(async () => {
     // Clear local state FIRST — supabase.auth.signOut() can hang on Vercel
     // (promise never settles), so we can't depend on it completing
-    clearStayLoggedIn();
     queryClient.clear();
     setState({
       status: 'unauthenticated',
@@ -579,7 +577,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       // Use atomic RPC to create location + update profile in single transaction
       // This prevents race conditions where TOKEN_REFRESHED could read stale data
-      const { data: locationId, error: rpcError } = await supabase.rpc('complete_onboarding', {
+      logger.auth.debug('completeOnboarding RPC calling', {
+        userId: state.user.id,
+        tier: data.location.tier,
+        equipmentCount: equipmentForDb.length,
+        sectionsCount: enabledSectionsForDb.length,
+        hasLimitations: !!data.limitations,
+      });
+
+      const rpcResult = await supabase.rpc('complete_onboarding', {
         p_user_id: state.user.id,
         p_location_name: data.location.name,
         p_location_tier: data.location.tier,
@@ -587,13 +593,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         p_experience_level: data.experienceLevel,
         p_goal_preset: data.goal,
         p_sections: enabledSectionsForDb as Database['public']['Enums']['section_type'][],
-        p_limitations: data.limitations || undefined,
+        p_limitations: data.limitations || null,
       });
 
-      if (rpcError) {
-        logger.auth.error('completeOnboarding RPC failed', { error: rpcError.message });
-        throw rpcError;
+      logger.auth.debug('completeOnboarding RPC returned', { data: rpcResult.data, error: rpcResult.error, status: rpcResult.status });
+
+      if (rpcResult.error) {
+        logger.auth.error('completeOnboarding RPC failed', { error: rpcResult.error.message, details: rpcResult.error.details, hint: rpcResult.error.hint, code: rpcResult.error.code });
+        throw rpcResult.error;
       }
+
+      const locationId = rpcResult.data;
 
       logger.auth.info('completeOnboarding RPC succeeded', {
         locationId,
@@ -620,9 +630,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }],
         }));
       }
-    } catch (err) {
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message
+        : (err && typeof err === 'object' && 'message' in err) ? String((err as { message: unknown }).message)
+        : JSON.stringify(err);
       logger.auth.error('completeOnboarding exception', {
-        error: err instanceof Error ? err.message : String(err),
+        error: errMsg,
+        details: err && typeof err === 'object' ? err : undefined,
         durationMs: Math.round(performance.now() - startTime),
       });
       throw err;

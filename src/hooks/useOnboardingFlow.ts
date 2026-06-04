@@ -1,3 +1,4 @@
+import { useState, useRef } from 'react';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { toast } from '@/components/ui/sonner';
 import { logger } from '@/lib/logger';
@@ -5,8 +6,16 @@ import { UserPreferences } from '@/types/workout';
 
 export const useOnboardingFlow = (onSuccess: () => void) => {
   const { completeOnboarding } = useAuthContext();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submittingRef = useRef(false);
 
   const handleOnboardingComplete = async (preferences: UserPreferences) => {
+    // Synchronous guard — useState alone can't prevent double-clicks
+    // because React batches state updates
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+    setIsSubmitting(true);
+
     try {
       const locationData = preferences.locations[0];
       if (!locationData) {
@@ -36,8 +45,11 @@ export const useOnboardingFlow = (onSuccess: () => void) => {
       toast.error('Something went wrong', {
         description: 'Please try again.',
       });
+    } finally {
+      submittingRef.current = false;
+      setIsSubmitting(false);
     }
   };
 
-  return { handleOnboardingComplete };
+  return { handleOnboardingComplete, isSubmitting };
 };

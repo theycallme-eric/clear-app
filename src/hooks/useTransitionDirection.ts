@@ -13,8 +13,7 @@ export type TransitionType = 'forward' | 'back' | 'up' | 'down' | 'fade' | 'none
  */
 const ROUTE_DEPTH: Record<string, number> = {
   '/welcome': 0,
-  '/sign-in': 1,
-  '/create-account': 1,
+  '/login': 1,
   '/onboarding': 1,
   '/': 2,
   '/generate': 3,

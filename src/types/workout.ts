@@ -77,9 +77,9 @@ export type EquipmentTier = 'minimal' | 'home' | 'building' | 'full';
 // Equipment definitions by tier (cumulative)
 export const EQUIPMENT_BY_TIER: Record<EquipmentTier, string[]> = {
   minimal: ['Bodyweight', 'Resistance Bands', 'Mat', 'Foam Roller'],
-  home: ['Bodyweight', 'Resistance Bands', 'Mat', 'Foam Roller', 'Dumbbells', 'Kettlebells', 'Bench (flat)', 'Pull-up Bar', 'TRX / Suspension Trainer', 'Treadmill'],
-  building: ['Bodyweight', 'Resistance Bands', 'Mat', 'Foam Roller', 'Dumbbells', 'Kettlebells', 'Bench (flat)', 'Pull-up Bar', 'TRX / Suspension Trainer', 'Treadmill', 'Barbell', 'Squat Rack / Cage', 'Cable Machine', 'Adjustable Bench', 'Lat Pulldown', 'Rowing Machine'],
-  full: ['Bodyweight', 'Resistance Bands', 'Mat', 'Foam Roller', 'Dumbbells', 'Kettlebells', 'Bench (flat)', 'Pull-up Bar', 'TRX / Suspension Trainer', 'Treadmill', 'Barbell', 'Squat Rack / Cage', 'Cable Machine', 'Adjustable Bench', 'Lat Pulldown', 'Rowing Machine', 'Leg Press', 'Smith Machine', 'Hack Squat', 'Chest Press Machine', 'Shoulder Press Machine', 'Leg Curl / Extension', 'Pec Deck / Fly Machine', 'Assisted Pull-up/Dip', 'Battle Ropes', 'Assault Bike', 'Stair Climber'],
+  home: ['Bodyweight', 'Resistance Bands', 'Mat', 'Foam Roller', 'Dumbbells', 'Kettlebells', 'Bench (flat)', 'Pull-up Bar', 'Treadmill'],
+  building: ['Bodyweight', 'Resistance Bands', 'Mat', 'Foam Roller', 'Dumbbells', 'Kettlebells', 'Bench (flat)', 'Pull-up Bar', 'Treadmill', 'Barbell', 'Squat Rack / Cage', 'Cable Machine', 'Adjustable Bench', 'Lat Pulldown', 'Rowing Machine'],
+  full: ['Bodyweight', 'Resistance Bands', 'Mat', 'Foam Roller', 'Dumbbells', 'Kettlebells', 'Bench (flat)', 'Pull-up Bar', 'Treadmill', 'Barbell', 'Squat Rack / Cage', 'Cable Machine', 'Adjustable Bench', 'Lat Pulldown', 'Rowing Machine', 'Leg Press', 'Smith Machine', 'Hack Squat', 'Chest Press Machine', 'Shoulder Press Machine', 'Leg Curl / Extension', 'Pec Deck / Fly Machine', 'Assisted Pull-up/Dip', 'Battle Ropes', 'Assault Bike', 'Stair Climber'],
 };
 
 // Experience levels

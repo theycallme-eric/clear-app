@@ -49,7 +49,7 @@ export function ProtectedRoute() {
 }
 
 /**
- * Wraps public-only routes (welcome, sign-in, create-account).
+ * Wraps public-only routes (welcome, login).
  * Redirects to / if already authenticated and onboarded.
  */
 export function PublicOnlyRoute() {

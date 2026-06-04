@@ -22,11 +22,8 @@ import { HistoryScreen } from "@/pages/HistoryScreen";
 import { SessionDetailScreen } from "@/pages/SessionDetailScreen";
 import { SettingsScreen } from "@/pages/SettingsScreen";
 import { WelcomeScreen } from "@/pages/WelcomeScreen";
-import { SignInScreen } from "@/pages/SignInScreen";
-import { CreateAccountScreen } from "@/pages/CreateAccountScreen";
+import { OTPLoginScreen } from "@/pages/OTPLoginScreen";
 import { OnboardingScreen } from "@/pages/OnboardingScreen";
-import { ForgotPasswordScreen } from "@/pages/ForgotPasswordScreen";
-import { ResetPasswordScreen } from "@/pages/ResetPasswordScreen";
 import { ComponentGallery } from "@/pages/ComponentGallery";
 import { TestWorkoutScreen } from "@/pages/TestWorkoutScreen";
 import NotFound from "./pages/NotFound";
@@ -42,13 +39,8 @@ const App = () => (
             {/* Public-only routes (redirect if authenticated) */}
             <Route element={<PublicOnlyRoute />}>
               <Route path="/welcome" element={<WelcomeScreen />} />
-              <Route path="/sign-in" element={<SignInScreen />} />
-              <Route path="/create-account" element={<CreateAccountScreen />} />
-              <Route path="/forgot-password" element={<ForgotPasswordScreen />} />
+              <Route path="/login" element={<OTPLoginScreen />} />
             </Route>
-
-            {/* Reset password — unguarded (user arrives authenticated via recovery link) */}
-            <Route path="/reset-password" element={<ResetPasswordScreen />} />
 
             {/* Onboarding route (must be auth'd but NOT onboarded) */}
             <Route element={<OnboardingRoute />}>

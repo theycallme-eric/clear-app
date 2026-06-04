@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "@/components/icons";
 import { ClearLogo } from "@/components/ClearLogo";
 import { CTAButton } from "@/components/CTAButton";
 import { AuthLayout } from "@/layouts";
@@ -19,21 +19,12 @@ export const WelcomeScreen = () => {
 
           <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-400)' }}>
             <CTAButton
-              onClick={() => navigate("/create-account")}
+              onClick={() => navigate("/login")}
               size="lg"
               fullWidth
               iconRight={<ArrowRight size={20} />}
             >
-              Create Account
-            </CTAButton>
-
-            <CTAButton
-              onClick={() => navigate("/sign-in")}
-              variant="secondary"
-              size="lg"
-              fullWidth
-            >
-              Sign In
+              Continue
             </CTAButton>
           </div>
         </div>
